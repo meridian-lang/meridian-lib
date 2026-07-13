@@ -131,6 +131,16 @@
         "line" : 43
       },
       "text" : "An access request for a classified resource must be approved by a security officer before the grant"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "deonticProhibition",
+      "source" : {
+        "file" : "grantaccess.meri",
+        "line" : 44
+      },
+      "text" : "A denied user must not invoke access.grant for classified resources"
     }
   ],
   "meridian_skill" : {
@@ -164,37 +174,37 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 45,
+        "line" : 46,
         "text" : "Workflow"
       },
       {
         "kind" : "procedure",
         "level" : 3,
-        "line" : 47,
+        "line" : 48,
         "text" : "Workflow — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 57,
+        "line" : 58,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 65,
+        "line" : 66,
         "text" : "When NOT to use this skill"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 67,
+        "line" : 68,
         "text" : "When NOT to use this skill — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 76,
+        "line" : 77,
         "text" : "Report shape"
       },
       {
@@ -218,19 +228,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 52,
-        "text" : "Note"
-      },
-      {
-        "kind" : "topic",
-        "level" : 3,
-        "line" : 54,
+        "line" : 53,
         "text" : "Note"
       },
       {
         "kind" : "topic",
         "level" : 3,
         "line" : 55,
+        "text" : "Note"
+      },
+      {
+        "kind" : "topic",
+        "level" : 3,
+        "line" : 56,
         "text" : "Emit"
       }
     ],
@@ -277,14 +287,15 @@
         "lines" : [
           "A user with clearance \"denied\" must not access classified resources",
           "A user with role admin may access classified resources",
-          "An access request for a classified resource must be approved by a security officer before the grant"
+          "An access request for a classified resource must be approved by a security officer before the grant",
+          "A denied user must not invoke access.grant for classified resources"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 45,
+        "line" : 46,
         "lines" : [
 
         ],
@@ -293,7 +304,7 @@
       {
         "executes" : true,
         "heading" : "Workflow — steps",
-        "line" : 47,
+        "line" : 48,
         "lines" : [
           "if the user is authorized,",
           "grant access to the resource for the user",
@@ -308,7 +319,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 57,
+        "line" : 58,
         "lines" : [
           "Don't bypass this skill for \"just this once\" requests — every ad hoc grant",
           "is exactly the kind of standing access `revoke stale access` exists to",
@@ -322,7 +333,7 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill",
-        "line" : 65,
+        "line" : 66,
         "lines" : [
 
         ],
@@ -331,7 +342,7 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill — steps",
-        "line" : 67,
+        "line" : 68,
         "lines" : [
           "Route a request to `review requests` instead when a human reviewer, not a",
           "policy evaluation, is the point of the ask — for example a backlog of",
@@ -345,7 +356,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 76,
+        "line" : 77,
         "lines" : [
           "The receipt records whether access was granted, denied, or escalated for",
           "manual review, plus the security-officer approval reference when the",
@@ -386,59 +397,59 @@
   "source_map" : [
     {
       "meridian_line" : 43,
-      "swift_line" : 465
+      "swift_line" : 467
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 470
-    },
-    {
-      "meridian_line" : 49,
-      "swift_line" : 474
-    },
-    {
-      "meridian_line" : 51,
-      "swift_line" : 477
+      "swift_line" : 472
     },
     {
       "meridian_line" : 50,
-      "swift_line" : 480
+      "swift_line" : 476
     },
     {
       "meridian_line" : 52,
-      "swift_line" : 497
+      "swift_line" : 479
     },
     {
-      "meridian_line" : 54,
-      "swift_line" : 511
+      "meridian_line" : 51,
+      "swift_line" : 482
+    },
+    {
+      "meridian_line" : 53,
+      "swift_line" : 499
     },
     {
       "meridian_line" : 55,
-      "swift_line" : 524
+      "swift_line" : 515
+    },
+    {
+      "meridian_line" : 56,
+      "swift_line" : 529
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 592
+      "swift_line" : 599
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 597
+      "swift_line" : 604
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 666
+      "swift_line" : 675
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 671
+      "swift_line" : 680
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 740
+      "swift_line" : 751
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 745
+      "swift_line" : 756
     }
   ],
   "tools_used" : [
@@ -458,7 +469,7 @@
         }
       ],
       "skill_name" : "grant access",
-      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
+      "skill_version_hash" : "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7",
       "source_name" : "grant access a user a resource",
       "step_paths" : [
         "\/GrantAccessUserResource\/rules-steps\/procedure\/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076",
@@ -478,7 +489,7 @@
 
       ],
       "skill_name" : "grant access",
-      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
+      "skill_version_hash" : "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7",
       "source_name" : "when grantAccess fires",
       "step_paths" : [
         "\/WhenGrantaccessFires\/root\/procedure\/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61",
@@ -492,7 +503,7 @@
 
       ],
       "skill_name" : "grant access",
-      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
+      "skill_version_hash" : "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7",
       "source_name" : "when grantResourceAccess fires",
       "step_paths" : [
         "\/WhenGrantresourceaccessFires\/root\/procedure\/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791",
@@ -506,7 +517,7 @@
 
       ],
       "skill_name" : "grant access",
-      "skill_version_hash" : "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac",
+      "skill_version_hash" : "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7",
       "source_name" : "when authorizeResourceAccess fires",
       "step_paths" : [
         "\/WhenAuthorizeresourceaccessFires\/root\/procedure\/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df",

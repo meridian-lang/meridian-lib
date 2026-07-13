@@ -593,7 +593,9 @@ public struct MediaIngestInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -719,7 +721,9 @@ public struct WhenWatchthisvideoFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -750,7 +754,7 @@ public struct WhenWatchthisvideoFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWatchthisvideoFires/root/procedure/20e6334fb4deb45d52f5ececf370741a63fca60b8772e8f5582cd772f02ea7d6") {
             // L1
-            try await runtime.wait(.event("watchThisVideo", matching: nil))
+            try await runtime.wait(.event("watchThisVideo", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWatchthisvideoFires/root/procedure/20e6334fb4deb45d52f5ececf370741a63fca60b8772e8f5582cd772f02ea7d6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWatchthisvideoFires/root/procedure/50da80bfd8bf9fba3fd79b9305acc7016f79da3855ddf45baabf46aceed266c5") {
@@ -792,7 +796,9 @@ public struct WhenProcessthisyoutubelinkFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -823,7 +829,7 @@ public struct WhenProcessthisyoutubelinkFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessthisyoutubelinkFires/root/procedure/4c10e6c89ae096965cdb2db751a76f564713d2617a82188a7f101322f2ec927d") {
             // L1
-            try await runtime.wait(.event("processThisYoutubeLink", matching: nil))
+            try await runtime.wait(.event("processThisYoutubeLink", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessthisyoutubelinkFires/root/procedure/4c10e6c89ae096965cdb2db751a76f564713d2617a82188a7f101322f2ec927d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessthisyoutubelinkFires/root/procedure/f5cf2d3d226dc2a7b9835a1700e591dee0288101ac65504206a8c8635e1fb5ff") {
@@ -865,7 +871,9 @@ public struct WhenIngestthispdfFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -896,7 +904,7 @@ public struct WhenIngestthispdfFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIngestthispdfFires/root/procedure/2ab5eff7bbaa78ef4415d027274ab5c69eb152b3106e1f08dd1f6bd72c5f2198") {
             // L1
-            try await runtime.wait(.event("ingestThisPdf", matching: nil))
+            try await runtime.wait(.event("ingestThisPdf", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIngestthispdfFires/root/procedure/2ab5eff7bbaa78ef4415d027274ab5c69eb152b3106e1f08dd1f6bd72c5f2198", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIngestthispdfFires/root/procedure/b66b4d0f3761e36e4ada86ef556cf7c7c6c2c1ff31e8db97652d47632ab5859c") {
@@ -938,7 +946,9 @@ public struct WhenSavethispodcastFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -969,7 +979,7 @@ public struct WhenSavethispodcastFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSavethispodcastFires/root/procedure/41c3bf64d206c5bd709035e830e9facb08fc45d872690f67080d5ba6c3b75a7e") {
             // L1
-            try await runtime.wait(.event("saveThisPodcast", matching: nil))
+            try await runtime.wait(.event("saveThisPodcast", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSavethispodcastFires/root/procedure/41c3bf64d206c5bd709035e830e9facb08fc45d872690f67080d5ba6c3b75a7e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSavethispodcastFires/root/procedure/f84bb7cf23d94dd2287850a88f39db2d12d01151c34d0ca30fb681a0e281ecc1") {
@@ -1011,7 +1021,9 @@ public struct WhenProcessthisbookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1042,7 +1054,7 @@ public struct WhenProcessthisbookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessthisbookFires/root/procedure/ea123c79f542240c485b45ef23eb6422bac24309e6ec35eb68f4157f481fcab7") {
             // L1
-            try await runtime.wait(.event("processThisBook", matching: nil))
+            try await runtime.wait(.event("processThisBook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessthisbookFires/root/procedure/ea123c79f542240c485b45ef23eb6422bac24309e6ec35eb68f4157f481fcab7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessthisbookFires/root/procedure/7311bba0f1aa0410c7d47dccbef915fde5e0b9d89ad27a05ed4ba67fed0d8820") {
@@ -1084,7 +1096,9 @@ public struct WhenPdfbookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1115,7 +1129,7 @@ public struct WhenPdfbookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPdfbookFires/root/procedure/78c50365424f4880d5e35fd90b5c93596db23426b0261d039f0cd508743e50f5") {
             // L1
-            try await runtime.wait(.event("pdfBook", matching: nil))
+            try await runtime.wait(.event("pdfBook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPdfbookFires/root/procedure/78c50365424f4880d5e35fd90b5c93596db23426b0261d039f0cd508743e50f5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPdfbookFires/root/procedure/c40618b8beed63fef116702df5d7d1e22fec91f0ca1ea57317d8529975173181") {
@@ -1157,7 +1171,9 @@ public struct WhenSummarizethisbookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1188,7 +1204,7 @@ public struct WhenSummarizethisbookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSummarizethisbookFires/root/procedure/776d0203960709e3752f8be7a422adbac8a7acb57679c1387688ac2dc9432d67") {
             // L1
-            try await runtime.wait(.event("summarizeThisBook", matching: nil))
+            try await runtime.wait(.event("summarizeThisBook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSummarizethisbookFires/root/procedure/776d0203960709e3752f8be7a422adbac8a7acb57679c1387688ac2dc9432d67", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSummarizethisbookFires/root/procedure/e3a51d4275ace56ccb2da41f61ae66c99e9c1a504eb6ed1b33e5263c4003ff8e") {
@@ -1230,7 +1246,9 @@ public struct WhenIngestitmybrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1261,7 +1279,7 @@ public struct WhenIngestitmybrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIngestitmybrainFires/root/procedure/580dd5c9cbc00ae6789e34046383e7bea1b2520f52dce357808d2e629747afb7") {
             // L1
-            try await runtime.wait(.event("ingestItMyBrain", matching: nil))
+            try await runtime.wait(.event("ingestItMyBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIngestitmybrainFires/root/procedure/580dd5c9cbc00ae6789e34046383e7bea1b2520f52dce357808d2e629747afb7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIngestitmybrainFires/root/procedure/56d0686c08291e704cfaedc9ce32ec56626920d0a6de0b3d978ad5d0f6a9427b") {
@@ -1303,7 +1321,9 @@ public struct WhenWhatsinthisscreenshotFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1334,7 +1354,7 @@ public struct WhenWhatsinthisscreenshotFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatsinthisscreenshotFires/root/procedure/c4be3bb0070b80e176a1f1629c8cd0e1aa005e5361f26f57f51188d57b430189") {
             // L1
-            try await runtime.wait(.event("whatSInThisScreenshot", matching: nil))
+            try await runtime.wait(.event("whatSInThisScreenshot", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatsinthisscreenshotFires/root/procedure/c4be3bb0070b80e176a1f1629c8cd0e1aa005e5361f26f57f51188d57b430189", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatsinthisscreenshotFires/root/procedure/7f396967d80290526e5056a37f6aaa69e6f44042df9bb1cde1328b3b890bd7d4") {
@@ -1376,7 +1396,9 @@ public struct WhenCheckoutthisrepoFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "media-ingest",
@@ -1407,7 +1429,7 @@ public struct WhenCheckoutthisrepoFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckoutthisrepoFires/root/procedure/1e42c470882bd783c28a3a37e60db2da7a32dd0ffe920653aac9e59af14603df") {
             // L1
-            try await runtime.wait(.event("checkOutThisRepo", matching: nil))
+            try await runtime.wait(.event("checkOutThisRepo", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckoutthisrepoFires/root/procedure/1e42c470882bd783c28a3a37e60db2da7a32dd0ffe920653aac9e59af14603df", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckoutthisrepoFires/root/procedure/e4e423ceb4ffd552ba54480afe1741f442cf181c558720e46fd5f0759b375f8f") {

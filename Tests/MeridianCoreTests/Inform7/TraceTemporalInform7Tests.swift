@@ -83,8 +83,12 @@ struct TraceTemporalInform7Tests {
             return
         }
         #expect(temporal.subjectKeyExpr != nil)
-        guard case .sinceLast(_, _, let holdsPattern) = temporal.kind else {
+        guard case .sinceLast(_, _, let holdsPattern, _) = temporal.kind else {
             Issue.record("expected composed since-the-last temporal definition, got \(temporal.kind)")
+            return
+        }
+        guard let holdsPattern else {
+            Issue.record("expected composed since-the-last holdsPattern")
             return
         }
         guard case .step("deploy") = holdsPattern.subject else {
@@ -291,7 +295,7 @@ struct BrokenTwinDiagnosticsTests {
         #expect(diagnostic.message.contains("not an event pattern"),
                 Comment(rawValue: diagnostic.message))
         let help = diagnostic.help ?? ""
-        #expect(help.contains("does not retain state history"),
+        #expect(help.contains("state history: enabled"),
                 Comment(rawValue: help))
     }
 
@@ -636,7 +640,7 @@ struct BrokenTwinDiagnosticsTests {
             code: .traceCrossSkillScope
         )
         #expect(diagnostic.message.contains("briefing"), Comment(rawValue: diagnostic.message))
-        #expect((diagnostic.help ?? "").contains("DECISION D4"),
+        #expect((diagnostic.help ?? "").contains("cross-skill allow-list"),
                 Comment(rawValue: diagnostic.help ?? ""))
     }
 
@@ -682,7 +686,7 @@ struct BrokenTwinDiagnosticsTests {
             if case .branch(let branch) = statement,
                case .predicate(let predicate) = branch.condition,
                case .traceTemporal(let temporal) = predicate,
-               case .sinceLast(_, _, let holdsPattern) = temporal.kind {
+               case .sinceLast(_, _, let holdsPattern, _) = temporal.kind {
                 return holdsPattern
             }
         }
@@ -935,17 +939,72 @@ struct TraceStatisticalInform7Tests {
         #expect(statistical.subjectKeyExpr != nil)
     }
 
-    @Test("SEM_6_04 `with 95% confidence` is reserved and rejected")
-    func sem604ConfidenceReserved() throws {
-        try expectDiagnostic(
+    @Test("SEM_6_04 `with 95% confidence` lowers Wilson interval metadata")
+    func sem604ConfidenceLowering() throws {
+        let workflow = try loweredWorkflow(
             mer: """
             To inspect traces:
               if the deploy step succeeds in at least 90% of runs with 95% confidence,
                 complete.
+              if it is unknown whether:
+                complete.
+              otherwise,
+                complete.
             """,
-            cfg: "",
-            code: .statisticalConfidenceReserved
+            cfg: ""
         )
+        guard let statistical = firstTraceStatistical(in: workflow.body) else {
+            Issue.record("expected statistical branch")
+            return
+        }
+        #expect(statistical.confidencePercent == 95)
+    }
+
+    @Test("SEM_4_10 cross-skill scope allowed when merconfig lists skills")
+    func sem410CrossSkillAllowList() throws {
+        let cfg = """
+        === trace ===
+        cross-skill allow-list: briefing, deploy
+        """
+        let workflow = try loweredWorkflow(
+            mer: """
+            To inspect traces:
+              if across skills briefing, deploy, the fetch step of the briefing skill has ever failed,
+                complete.
+              if it is unknown whether:
+                complete.
+              otherwise,
+                complete.
+            """,
+            cfg: cfg
+        )
+        guard let temporal = firstTraceTemporal(in: workflow.body) else {
+            Issue.record("expected temporal branch")
+            return
+        }
+        #expect(temporal.scope == .acrossSkills(["briefing", "deploy"]))
+    }
+
+    private func firstTraceStatistical(in block: IRBlock) -> TraceStatisticalIR? {
+        for statement in block.statements {
+            if case .branch(let branch) = statement,
+               case .predicate(let predicate) = branch.condition,
+               case .traceStatistical(let statistical) = predicate {
+                return statistical
+            }
+        }
+        return nil
+    }
+
+    private func firstTraceTemporal(in block: IRBlock) -> TraceTemporalIR? {
+        for statement in block.statements {
+            if case .branch(let branch) = statement,
+               case .predicate(let predicate) = branch.condition,
+               case .traceTemporal(let temporal) = predicate {
+                return temporal
+            }
+        }
+        return nil
     }
 
     @Test("SEM_6_05 syntactic analysis is conservative and transitive only")

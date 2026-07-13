@@ -1,0 +1,91 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.lookUpDosingProtocol.fired with kind = \"keyword\", spec = \"look up dosing protocol\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenLookupdosingprotocolFires\/root\/procedure\/20b34e21f06fce5531b9afd235538425a5698190f7e1bae5aaf9dbe1fa96e014",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "wait for event lookUpDosingProtocol.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenLookupdosingprotocolFires\/root\/procedure\/36f16d8518bdc8e9b9d9099cc58d27f9ebbae5e9ea409d683516f55880f7210a",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "wait for event renderProtocol.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRenderprotocolFires\/root\/procedure\/1281de4a1190ea9a254f7521abbbff257c3cfcdbe854e97907ca7f3027aec81f",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "emit trigger.renderProtocol.fired with kind = \"keyword\", spec = \"render protocol\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRenderprotocolFires\/root\/procedure\/46ce0727b0fc2d5810ac16b8c3f70cfe58d54941eedef79f63f427d6daa69e1d",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "!!! table (( data: table ))\n| risk level | max doses per day |\n| ---------- | ----------------- |\n| \"high\" | 1 |\n| \"low\" | 4 |",
+      "meridian_line" : 31,
+      "primitive" : "bind",
+      "stable_step_path" : "\/ProtocolRenderMedication\/tables\/tables\/bfc45974db0762ea1ab54f21d0c1c82448ed956cc06b124ea676a61019d4de94",
+      "swift_line" : 452
+    },
+    {
+      "canonical" : "bind protocol = invoke protocol.lookup with medication = medication.",
+      "meridian_line" : 49,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ProtocolRenderMedication\/workflow-steps\/procedure\/d46def68952ead8db9994f3183ed1ed37ba74b73f6b58788159ad2fedd599091",
+      "swift_line" : 455
+    },
+    {
+      "canonical" : "bind protocolName = the protocol's name.",
+      "meridian_line" : 50,
+      "primitive" : "bind",
+      "stable_step_path" : "\/ProtocolRenderMedication\/workflow-steps\/procedure\/d23eb5608aa840c23afde3f653c1941d53a7fbacddcea33a003012aaf0f8e763",
+      "swift_line" : 468
+    },
+    {
+      "canonical" : "bind protocolVersion = the protocol's version.",
+      "meridian_line" : 51,
+      "primitive" : "bind",
+      "stable_step_path" : "\/ProtocolRenderMedication\/workflow-steps\/procedure\/59afbae96583513805248836fc4eeee33882af319f3a6b37f59fc87673b1caea",
+      "swift_line" : 470
+    },
+    {
+      "canonical" : "bind maxDoses = the max doses per day corresponding to the risk level \"high\" in the table.",
+      "meridian_line" : 52,
+      "primitive" : "bind",
+      "stable_step_path" : "\/ProtocolRenderMedication\/workflow-steps\/procedure\/12f9e2d23d29a7243c66ee8e03f80f71491b17e79445dbd8f8690ef9c827a0f3",
+      "swift_line" : 472
+    },
+    {
+      "canonical" : "emit clinical.report with message = protocol summary.",
+      "meridian_line" : 56,
+      "primitive" : "emit",
+      "stable_step_path" : "\/ProtocolRenderMedication\/workflow-steps-2\/procedure\/9f3b288747b7851a567d74410a4b4fcb60efc301f4ef37dc00a370b4f6d32d99",
+      "swift_line" : 475
+    },
+    {
+      "canonical" : "assert not (don't quote a dosing tier from memory instead of running this lookup— the whole point of the render equals the that the table, not a clinician's recollection, is the current source).",
+      "meridian_line" : 64,
+      "primitive" : "assert",
+      "stable_step_path" : "\/ProtocolRenderMedication\/anti-patterns-steps\/prohibitions\/34a07d91646e5973f55e66423a288c176df51e4595a87645cb7464a9dd09a2f7",
+      "swift_line" : 443
+    },
+    {
+      "canonical" : "assert protocol summary contains \"protocol-summary\".",
+      "meridian_line" : 74,
+      "primitive" : "assert",
+      "stable_step_path" : "\/ProtocolRenderMedication\/guarantees\/invariants\/30366d03a91f0b944ef0aea3783b38a522eb435f7bf0b3e68c561c7013bdeb0a",
+      "swift_line" : 448
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "protocolrender.meri",
+  "swift_file" : "protocolrender.swift"
+}

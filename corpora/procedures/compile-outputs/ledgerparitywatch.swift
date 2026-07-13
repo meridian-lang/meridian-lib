@@ -424,7 +424,9 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
@@ -461,13 +463,15 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
         // L37
         let __meridianTruth_0_1 = try await runtime.evaluateTrace(TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("parity"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.99),
     denominator: .occurrences,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ), evaluationInstant: await runtime.currentDate())
         if __meridianTruth_0_1 == .true {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"parity\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.99),\n    denominator: .occurrences,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"parity\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.99),\n    denominator: .occurrences,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
             if __meridianShouldRun("/LedgerParityWatchLedger/workflow-steps/procedure/branch.then/128a719eacc47b8e5e5f8f65d2a4d72e7041c0bb261bb04f984d401a4cd1f2d0") {
                 // L38
                 try await runtime.emit(
@@ -479,8 +483,10 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/LedgerParityWatchLedger/workflow-steps/procedure/branch.then/128a719eacc47b8e5e5f8f65d2a4d72e7041c0bb261bb04f984d401a4cd1f2d0", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
         } else {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"parity\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.99),\n    denominator: .occurrences,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "otherwise", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"parity\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.99),\n    denominator: .occurrences,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "otherwise", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
+
             if __meridianShouldRun("/LedgerParityWatchLedger/workflow-steps/procedure/branch.else/f8dcc2f82f1eeca0d06f10a2ddcf7b4232adae9153f03112276659d221bdb9f5") {
                 // L40
                 try await runtime.emit(
@@ -492,6 +498,7 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/LedgerParityWatchLedger/workflow-steps/procedure/branch.else/f8dcc2f82f1eeca0d06f10a2ddcf7b4232adae9153f03112276659d221bdb9f5", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/LedgerParityWatchLedger/workflow-steps/procedure/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884")
         }
 
         // L42
@@ -501,10 +508,12 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
                 await runtime.registerMonitor(
                     query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("parity"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.99),
     denominator: .occurrences,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ),
                     cadence: .seconds(14400),
                     message: "Expected the parity step succeeds in at least 99% of occurrences within the last 30 days",
@@ -579,7 +588,9 @@ public struct WhenRunledgerparitywatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
@@ -611,7 +622,7 @@ public struct WhenRunledgerparitywatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunledgerparitywatchFires/root/procedure/65005b15da791f0082f343b312a35902567df258825ebc4f2fc2d8a930246fb7") {
             // L1
-            try await runtime.wait(.event("runLedgerParityWatch", matching: nil))
+            try await runtime.wait(.event("runLedgerParityWatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunledgerparitywatchFires/root/procedure/65005b15da791f0082f343b312a35902567df258825ebc4f2fc2d8a930246fb7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunledgerparitywatchFires/root/procedure/ae5376e3a28bfa0a914d64c23d3f35361dfa6302ed62fe1a52c7f514efea06a1") {
@@ -653,7 +664,9 @@ public struct WhenCheckledgerparityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
@@ -685,7 +698,7 @@ public struct WhenCheckledgerparityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckledgerparityFires/root/procedure/c51c83076009dd1084c5f6309ab120208f9363c7a86f39f69b826bdf89d9409e") {
             // L1
-            try await runtime.wait(.event("checkLedgerParity", matching: nil))
+            try await runtime.wait(.event("checkLedgerParity", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckledgerparityFires/root/procedure/c51c83076009dd1084c5f6309ab120208f9363c7a86f39f69b826bdf89d9409e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckledgerparityFires/root/procedure/54bf58e717f7452fc462ce1b78e6891e8ba171bcfa0127a8e67469baa7cc00e1") {
@@ -727,7 +740,9 @@ public struct WhenMonitorreconciliationparityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
@@ -759,7 +774,7 @@ public struct WhenMonitorreconciliationparityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonitorreconciliationparityFires/root/procedure/01d946bc8c5e71cf2df8da761ff54196ca4301e848a840c750ce83dd5d41e6b4") {
             // L1
-            try await runtime.wait(.event("monitorReconciliationParity", matching: nil))
+            try await runtime.wait(.event("monitorReconciliationParity", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonitorreconciliationparityFires/root/procedure/01d946bc8c5e71cf2df8da761ff54196ca4301e848a840c750ce83dd5d41e6b4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonitorreconciliationparityFires/root/procedure/aa08a44d1759c60f71eef4dbc810dee0c8ef73845595e058b84ca339e5b20a46") {

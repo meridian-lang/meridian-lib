@@ -25,6 +25,10 @@ examples/dx/
 | `match_branch_duplicate_wildcard.meridian` | compile error | MER3018 |
 | `lint_polite_uncertainty.meridian` | lint warnings | MER6001, MER6002 |
 | `recovery_multi_error.meridian` | compile error + recovery summary | MER2001, MER6004 |
+| `misspelled_tool.meridian` | compile error (close typo) | MER2002 + did-you-mean |
+| `misspelled_tool_far.meridian` | compile error (far typo) | MER2002 + candidate list |
+| `misspelled_property.meridian` | compile error (property typo on kind) | MER2004 |
+| `anaphora_ambiguous.meridian` | lint error | MER3014 + referent note |
 
 ## Manual smoke
 
@@ -37,6 +41,8 @@ FIX=examples/dx/fixtures
 meridian compile "$FIX/match_branch_valid.meridian" --merconfig "$CFG" --namespace none
 meridian compile "$FIX/match_branch_missing_colon.meridian" --merconfig "$CFG"  # MER1012
 meridian lint "$FIX/lint_polite_uncertainty.meridian"                           # MER6001/6002
+meridian compile "$FIX/misspelled_tool.meridian" --merconfig "$CFG"            # MER2002 did-you-mean
+meridian lint "$FIX/anaphora_ambiguous.meridian"                                # MER3014 referents
 meridian explain "$FIX/match_branch_valid.meridian" --merconfig "$CFG" \
   --trace verbalizer --trace-file /tmp/dx-trace.log
 ```

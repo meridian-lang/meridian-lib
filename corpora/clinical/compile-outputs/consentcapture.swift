@@ -405,7 +405,9 @@ public struct ConsentCapturePatient: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "consent capture",
@@ -465,6 +467,7 @@ public struct ConsentCapturePatient: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/956e24fa222a8c4087832d9bf71be49d521b4bdac90eb43fe3e8d2969e686563", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/fda9fba934a73fc827ae1cbad28be99d75e629f0646311cd0e432fbfb5b8a24e")
         }
 
         // L33
@@ -472,7 +475,7 @@ public struct ConsentCapturePatient: MeridianWorkflow {
             try await runtime.recordBranchTaken(condition: "!(meridianDef_Consent_granted(state.get(\"consent\")))", into: "then", step: "/ConsentCapturePatient/workflow/procedure/8821e557c04c15e78a02bc1d342a951e3303adbdfe541b4555b4fb2c2397d9f7")
             if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/20ea19025110b67f3701a9480c63509f8fce0350cd86101f10cb8f2263ea8e95") {
                 // L34
-                try await runtime.wait(.signal("consent_follow_up"))
+                try await runtime.wait(.signal("consent_follow_up"), sourceRange: nil)
                 try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/20ea19025110b67f3701a9480c63509f8fce0350cd86101f10cb8f2263ea8e95", state: state.snapshot())
             }
             if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a") {
@@ -489,6 +492,7 @@ public struct ConsentCapturePatient: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/8821e557c04c15e78a02bc1d342a951e3303adbdfe541b4555b4fb2c2397d9f7")
         }
 
         if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/bea0691c5b9689cc8bb71f8b1837669fe1e2e39b3d70a909595915c7eb338e4b") {
@@ -529,7 +533,9 @@ public struct WhenCapturepatientconsentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "consent capture",
@@ -561,7 +567,7 @@ public struct WhenCapturepatientconsentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/aa7b2048db6e800940fc835badf0eed500fb7ebc7fd45ae52705335d98c2602f") {
             // L1
-            try await runtime.wait(.event("capturePatientConsent", matching: nil))
+            try await runtime.wait(.event("capturePatientConsent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCapturepatientconsentFires/root/procedure/aa7b2048db6e800940fc835badf0eed500fb7ebc7fd45ae52705335d98c2602f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/d97abcf5d2a98099aa602928e630ac61246dfa180e250afbebd7ccdb637773a2") {
@@ -603,7 +609,9 @@ public struct WhenRecordconsentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "consent capture",
@@ -635,7 +643,7 @@ public struct WhenRecordconsentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/525b52c794bdc8b145c3132d7964b86ce5c7846c134b9eb4a970523806454a92") {
             // L1
-            try await runtime.wait(.event("recordConsent", matching: nil))
+            try await runtime.wait(.event("recordConsent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRecordconsentFires/root/procedure/525b52c794bdc8b145c3132d7964b86ce5c7846c134b9eb4a970523806454a92", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/634adb8c09c7fa256f5dd75df5f1b562d7aa9b2e628e424914e5ae8e5ef55f25") {

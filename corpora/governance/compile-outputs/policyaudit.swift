@@ -411,7 +411,7 @@ public struct PolicyAudit: MeridianWorkflow {
         "triggers": "\"audit policy coverage\"\n\"run policy audit\"\n\"check policy coverage\"",
     ]
 
-    public static let skillVersionHash = "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+    public static let skillVersionHash = "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct PolicyAudit: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "policy audit",
-            versionHash: "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+            versionHash: "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -527,7 +529,7 @@ public struct PolicyAudit: MeridianWorkflow {
 public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+    public static let skillVersionHash = "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -540,11 +542,13 @@ public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "policy audit",
-            versionHash: "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+            versionHash: "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -572,7 +576,7 @@ public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031") {
             // L1
-            try await runtime.wait(.event("auditPolicyCoverage", matching: nil))
+            try await runtime.wait(.event("auditPolicyCoverage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAuditpolicycoverageFires/root/procedure/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a") {
@@ -601,7 +605,7 @@ public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
 public struct WhenRunpolicyauditFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+    public static let skillVersionHash = "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -614,11 +618,13 @@ public struct WhenRunpolicyauditFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "policy audit",
-            versionHash: "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+            versionHash: "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -646,7 +652,7 @@ public struct WhenRunpolicyauditFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067") {
             // L1
-            try await runtime.wait(.event("runPolicyAudit", matching: nil))
+            try await runtime.wait(.event("runPolicyAudit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpolicyauditFires/root/procedure/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1") {
@@ -675,7 +681,7 @@ public struct WhenRunpolicyauditFires: MeridianWorkflow {
 public struct WhenCheckpolicycoverageFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+    public static let skillVersionHash = "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -688,11 +694,13 @@ public struct WhenCheckpolicycoverageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "policy audit",
-            versionHash: "e180bcb97ffbe56bfaf28633fe47afbd9b9d5049904970ebc499d301936b31c1"
+            versionHash: "0fd76cd47baaca632fe892840404980fc3cf3574a313df2590d080934502811e"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -720,7 +728,7 @@ public struct WhenCheckpolicycoverageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa") {
             // L1
-            try await runtime.wait(.event("checkPolicyCoverage", matching: nil))
+            try await runtime.wait(.event("checkPolicyCoverage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckpolicycoverageFires/root/procedure/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665") {

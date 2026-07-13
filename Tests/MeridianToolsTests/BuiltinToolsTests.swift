@@ -111,18 +111,20 @@ struct BuiltinToolsTests {
         #expect(try await MeridianTools.invoke("totallyMadeUpTool") == .null)
     }
 
-    @Test("llm.chat throws explicit not-implemented error")
+    @Test("llm.chat throws explicit not-configured error")
     func llmChatThrows() async throws {
+        LLMProviderRegistry.setOverride(nil)
         do {
             _ = try await MeridianTools.invoke("llm.chat", args: [:])
             Issue.record("Expected llm.chat to throw")
         } catch {
-            #expect(meridianMatches(error, named: "llm.not_implemented"))
+            #expect(meridianMatches(error, named: "llm.not_configured"))
         }
     }
 
-    @Test("llm.decide default returns false deterministically")
+    @Test("llm.decide default returns false for non-affirmative questions")
     func llmDecideDefault() async throws {
+        LLMProviderRegistry.setOverride(nil)
         let result = try await MeridianTools.invoke("llm.decide", args: [
             "question": .string("Should we ship this PR?")
         ])

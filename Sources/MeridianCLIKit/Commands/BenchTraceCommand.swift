@@ -232,7 +232,9 @@ enum BenchTraceRunner {
                 scope: .currentRun,
                 kind: .sinceLast(
                     anchor: TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded),
-                    holds: TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed)
+                    holds: TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed),
+                    holdsStatePredicateJSON: nil,
+                    holdsUsesStateHistory: false
                 )
             ))
         case .statisticalFrequency:

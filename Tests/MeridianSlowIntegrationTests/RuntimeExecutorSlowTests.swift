@@ -272,13 +272,9 @@ struct RuntimeExecutorExtendedCoverageTests {
 
     @Test("tempdir creation failure surfaces a clear message")
     func tempdirFailure() {
-        let original = ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_TEMP_FAIL"]
-        setenv("MERIDIAN_TEST_SWIFTPM_TEMP_FAIL", "1", 1)
-        defer {
-            if let original { setenv("MERIDIAN_TEST_SWIFTPM_TEMP_FAIL", original, 1) }
-            else { unsetenv("MERIDIAN_TEST_SWIFTPM_TEMP_FAIL") }
-        }
-        let failures = RuntimeExecutor(verbose: false).run(
+        var executor = RuntimeExecutor(verbose: false)
+        executor.forceTempdirFailure = true
+        let failures = executor.run(
             spec: .init(),
             swiftSource: "",
             workflows: [IRWorkflow(name: "run", parameters: [], body: IRBlock(statements: [.complete(CompleteIR())]))],
@@ -289,13 +285,9 @@ struct RuntimeExecutorExtendedCoverageTests {
 
     @Test("package scaffold failure surfaces a clear message")
     func scaffoldFailure() {
-        let original = ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL"]
-        setenv("MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL", "1", 1)
-        defer {
-            if let original { setenv("MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL", original, 1) }
-            else { unsetenv("MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL") }
-        }
-        let failures = RuntimeExecutor(verbose: false).run(
+        var executor = RuntimeExecutor(verbose: false)
+        executor.forceScaffoldFailure = true
+        let failures = executor.run(
             spec: .init(),
             swiftSource: "import MeridianRuntime\n",
             workflows: [IRWorkflow(name: "run", parameters: [], body: IRBlock(statements: [.complete(CompleteIR())]))],

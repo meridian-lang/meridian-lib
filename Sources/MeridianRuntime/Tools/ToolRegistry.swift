@@ -11,7 +11,7 @@ public enum ToolKind: Sendable {
     case subprocess(SubprocessSpec)
     /// HTTP tool — implemented in Phase 5.
     case http(HTTPSpec)
-    /// MCP tool — deferred to v1.1.
+    /// MCP tool — implemented via `dispatchMCP` and replaceable transport.
     case mcp(MCPSpec)
 }
 
@@ -367,6 +367,13 @@ public actor ToolRegistry {
 
     private func dispatchHTTP(_ spec: HTTPSpec, args: [String: Value]) async throws -> Value {
         let urlText = args["url"].map(valueString) ?? renderTemplate(spec.url, args: args)
+        if urlText.contains("{") {
+            throw ToolError.implementation(
+                code: "http.not_configured",
+                message: "HTTP tool URL template was not fully substituted: \(urlText)",
+                cause: nil
+            )
+        }
         guard let url = URL(string: urlText),
               let scheme = url.scheme?.lowercased(),
               ["http", "https"].contains(scheme) else {

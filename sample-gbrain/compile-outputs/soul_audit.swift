@@ -591,7 +591,9 @@ public struct SoulAuditInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -649,7 +651,9 @@ public struct WhenSoulauditFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -680,7 +684,7 @@ public struct WhenSoulauditFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSoulauditFires/root/procedure/4345b33e774478f3827a56c40263b45063c1f510fb377b614cfdc4337edcb8f7") {
             // L1
-            try await runtime.wait(.event("soulAudit", matching: nil))
+            try await runtime.wait(.event("soulAudit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSoulauditFires/root/procedure/4345b33e774478f3827a56c40263b45063c1f510fb377b614cfdc4337edcb8f7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSoulauditFires/root/procedure/ad9f264e3c9f27519c5f939172ed3ec9fba3ae4d4f7b8a5332d5730e0939ad4a") {
@@ -722,7 +726,9 @@ public struct WhenCustomizeagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -753,7 +759,7 @@ public struct WhenCustomizeagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCustomizeagentFires/root/procedure/772fc19d9960aeee9c4be7e56ba33529f53d5d4c7527824969a229176c9f256c") {
             // L1
-            try await runtime.wait(.event("customizeAgent", matching: nil))
+            try await runtime.wait(.event("customizeAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCustomizeagentFires/root/procedure/772fc19d9960aeee9c4be7e56ba33529f53d5d4c7527824969a229176c9f256c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCustomizeagentFires/root/procedure/6086a61801f4a544b05e1690520d906dde19d308d7b6b5115ba416858bd8e3f0") {
@@ -795,7 +801,9 @@ public struct WhenWhoamiFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -826,7 +834,7 @@ public struct WhenWhoamiFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhoamiFires/root/procedure/1dab983e308d3ab6aac807d24b25bdf8027c06b4c0dc10c0c94e3f945e2ec6be") {
             // L1
-            try await runtime.wait(.event("whoAmI", matching: nil))
+            try await runtime.wait(.event("whoAmI", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhoamiFires/root/procedure/1dab983e308d3ab6aac807d24b25bdf8027c06b4c0dc10c0c94e3f945e2ec6be", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhoamiFires/root/procedure/4708994f14b1598db68dc3585b5127b2cf175e2587e89d5aa92e02debf1519cd") {
@@ -868,7 +876,9 @@ public struct WhenSetupidentityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -899,7 +909,7 @@ public struct WhenSetupidentityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSetupidentityFires/root/procedure/a54e5337b4099a5c184b9ebb0f54f5e59f94c378ce895a0d6e8ab46de7fcd9fe") {
             // L1
-            try await runtime.wait(.event("setUpIdentity", matching: nil))
+            try await runtime.wait(.event("setUpIdentity", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSetupidentityFires/root/procedure/a54e5337b4099a5c184b9ebb0f54f5e59f94c378ce895a0d6e8ab46de7fcd9fe", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSetupidentityFires/root/procedure/c5a311d2820de7bf3455b5f4f34e945e6765e57aa9b0c4e2081aceafbe5cd1ac") {
@@ -941,7 +951,9 @@ public struct WhenChangemyagentspersonalityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "soul-audit",
@@ -972,7 +984,7 @@ public struct WhenChangemyagentspersonalityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenChangemyagentspersonalityFires/root/procedure/1935350058064d2788c1b090af9bff5e650b050385189b7d63df86bc68781ce2") {
             // L1
-            try await runtime.wait(.event("changeMyAgentSPersonality", matching: nil))
+            try await runtime.wait(.event("changeMyAgentSPersonality", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenChangemyagentspersonalityFires/root/procedure/1935350058064d2788c1b090af9bff5e650b050385189b7d63df86bc68781ce2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenChangemyagentspersonalityFires/root/procedure/b450ff17df9b54b19b8d3437bd364fa68a1484a070ecb5d1796e056a1d07f2ab") {

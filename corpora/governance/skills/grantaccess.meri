@@ -41,6 +41,7 @@ parameters: user, resource
 A user with clearance "denied" must not access classified resources.
 A user with role admin may access classified resources.
 An access request for a classified resource must be approved by a security officer before the grant.
+A denied user must not invoke access.grant for classified resources.
 
 ## Workflow
 

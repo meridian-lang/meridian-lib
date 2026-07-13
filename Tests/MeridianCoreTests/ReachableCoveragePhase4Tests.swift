@@ -45,10 +45,10 @@ struct ReachableCoveragePhase4Tests {
     // MARK: RuleAnalyzer.classify
 
     @Test("RuleAnalyzer classifies all five rule shapes and rejects others")
-    func ruleClassification() {
+    func ruleClassification() throws {
         let a = RuleAnalyzer(trace: .silent(), symbols: nil)
-        func kindOf(_ text: String) -> String {
-            guard let r = a.classify(RuleAST(text: text, sourceLine: 1)) else { return "nil" }
+        func kindOf(_ text: String) throws -> String {
+            guard let r = try a.classify(RuleAST(text: text, sourceLine: 1)) else { return "nil" }
             switch r {
             case .invariant:       return "invariant"
             case .parameterGuard:  return "parameterGuard"
@@ -56,17 +56,20 @@ struct ReachableCoveragePhase4Tests {
             case .trigger:         return "trigger"
             case .unsupportedTriggerCondition: return "unsupportedTriggerCondition"
             case .permission:      return "permission"
+            case .deonticProhibition: return "deonticProhibition"
+            case .deonticObligation: return "deonticObligation"
+            case .deonticPermission: return "deonticPermission"
             }
         }
-        #expect(kindOf("When a refund is requested, process the refund.") == "trigger")
-        #expect(kindOf("An order must be approved by an account manager before it ships.") == "precondition")
-        #expect(kindOf("An order must not be cancelled.") == "invariant")
-        #expect(kindOf("A customer must not place an order whose total is more than their limit.") == "parameterGuard")
-        #expect(kindOf("An account manager may approve any order.") == "permission")
+        #expect(try kindOf("When a refund is requested, process the refund.") == "trigger")
+        #expect(try kindOf("An order must be approved by an account manager before it ships.") == "precondition")
+        #expect(try kindOf("An order must not be cancelled.") == "invariant")
+        #expect(try kindOf("A customer must not place an order whose total is more than their limit.") == "parameterGuard")
+        #expect(try kindOf("An account manager may approve any order.") == "permission")
         // Unclassified shapes return nil.
-        #expect(kindOf("This is just narrative prose.") == "nil")
+        #expect(try kindOf("This is just narrative prose.") == "nil")
         // Trigger prefix without a comma fails the inner guard → nil.
-        #expect(kindOf("When something happens") == "nil")
+        #expect(try kindOf("When something happens") == "nil")
     }
 
     // MARK: SkillMigrator.deterministicTransform

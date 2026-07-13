@@ -414,7 +414,7 @@ public struct GrantAccessUserResource: MeridianWorkflow {
         "parameters": "user, resource",
     ]
 
-    public static let skillVersionHash = "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+    public static let skillVersionHash = "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -427,11 +427,13 @@ public struct GrantAccessUserResource: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "grant access",
-            versionHash: "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+            versionHash: "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -463,7 +465,7 @@ public struct GrantAccessUserResource: MeridianWorkflow {
 
         if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/b42750b436d783bf1662c5570df1a553bb6090b700c7d4cce711d8453be1825c") {
             // L43
-            try await runtime.wait(.approval(of: state.get("user") ?? .null, by: RoleRef(identifier: "security officer")))
+            try await runtime.wait(.approval(of: state.get("user") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
             try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/b42750b436d783bf1662c5570df1a553bb6090b700c7d4cce711d8453be1825c", state: state.snapshot())
         }
         if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076") {
@@ -471,13 +473,13 @@ public struct GrantAccessUserResource: MeridianWorkflow {
             try await runtime.assert((!(MeridianComparison.eq(state.get("user.clearance"), .string("denied")))) || (MeridianComparison.eq(state.get("user.role"), state.get("admin"))), message: "A user with clearance \"denied\" must not access classified resources")
             try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076", state: state.snapshot())
         }
-        // L49
+        // L50
         if meridianDef_User_authorized(state.get("user")) {
             try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
-            // L51
+            // L52
             do {
                 if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.body/f3fd1e43e9ecf268a3db28fa99ce5b8ddd3968598e58a7964d27604b7b195c96") {
-                    // L50
+                    // L51
                     let access = try await runtime.invoke(
                         tool: "access.grant",
                         args: [
@@ -494,7 +496,7 @@ public struct GrantAccessUserResource: MeridianWorkflow {
             } catch let _recoveredError where meridianMatches(_recoveredError, named: "access.denied") {
                 try await runtime.recordRecoverEngaged(pattern: "access.denied", step: "/GrantAccessUserResource/workflow-steps/procedure/branch.then/cde085f366546cf5dadbf16682f938f6a45103dbd34639c63f0e067a2a7209c3")
                 if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.handler/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52") {
-                    // L52
+                    // L53
                     try await runtime.emit(
                         event: "governance.note",
                         payload: [
@@ -505,10 +507,12 @@ public struct GrantAccessUserResource: MeridianWorkflow {
                     try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/recover.handler/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52", state: state.snapshot())
                 }
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
         } else {
             try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
+
             if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/branch.else/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35") {
-                // L54
+                // L55
                 try await runtime.emit(
                     event: "governance.note",
                     payload: [
@@ -518,10 +522,11 @@ public struct GrantAccessUserResource: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/branch.else/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
         }
 
         if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/04c2732d34f8491de523ba46110f72401b13cf24b233d3d89d02a3f949e87007") {
-            // L55
+            // L56
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
@@ -545,7 +550,7 @@ public struct GrantAccessUserResource: MeridianWorkflow {
 public struct WhenGrantaccessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+    public static let skillVersionHash = "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -558,11 +563,13 @@ public struct WhenGrantaccessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "grant access",
-            versionHash: "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+            versionHash: "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -590,7 +597,7 @@ public struct WhenGrantaccessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/72f6c82d026ff8f15a52b5aec40ba7ab6c7c002517c45c4ddf9cd301937ac848") {
             // L1
-            try await runtime.wait(.event("grantAccess", matching: nil))
+            try await runtime.wait(.event("grantAccess", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGrantaccessFires/root/procedure/72f6c82d026ff8f15a52b5aec40ba7ab6c7c002517c45c4ddf9cd301937ac848", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61") {
@@ -619,7 +626,7 @@ public struct WhenGrantaccessFires: MeridianWorkflow {
 public struct WhenGrantresourceaccessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+    public static let skillVersionHash = "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -632,11 +639,13 @@ public struct WhenGrantresourceaccessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "grant access",
-            versionHash: "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+            versionHash: "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -664,7 +673,7 @@ public struct WhenGrantresourceaccessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/e407b65796bf01753c4787c3a0cbe2daa1a24d50e9acb606a0d4599b828dfce8") {
             // L1
-            try await runtime.wait(.event("grantResourceAccess", matching: nil))
+            try await runtime.wait(.event("grantResourceAccess", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGrantresourceaccessFires/root/procedure/e407b65796bf01753c4787c3a0cbe2daa1a24d50e9acb606a0d4599b828dfce8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791") {
@@ -693,7 +702,7 @@ public struct WhenGrantresourceaccessFires: MeridianWorkflow {
 public struct WhenAuthorizeresourceaccessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+    public static let skillVersionHash = "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -706,11 +715,13 @@ public struct WhenAuthorizeresourceaccessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "grant access",
-            versionHash: "316f84b3888407ceb722853c8f6f7466958ea39e68e21ed3431d5251176dafac"
+            versionHash: "d1dd0b2783d5f2437a25d5511b1d99e287fe3cfb4a2cd50281a56d14094c5ad7"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -738,7 +749,7 @@ public struct WhenAuthorizeresourceaccessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df") {
             // L1
-            try await runtime.wait(.event("authorizeResourceAccess", matching: nil))
+            try await runtime.wait(.event("authorizeResourceAccess", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAuthorizeresourceaccessFires/root/procedure/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/b38ccd91ad43e21933f42f1b7d0d416c548fdc83d88368b606f218d1dd2e57f1") {

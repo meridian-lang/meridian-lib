@@ -17,6 +17,9 @@ struct TraceTemporalGrammar {
             return diagnostic
         }
         if let scoped = parseScoped(text) { return scoped }
+        if let future = parseBoundedFutureMonitor(text) {
+            return .traceTemporal(TraceTemporalAST(kind: future))
+        }
         if let since = parseSince(text) { return since }
         if let count = parseCountInWindow(text) { return count }
         if let inARow = parseInARow(text) { return inARow }
@@ -33,11 +36,65 @@ struct TraceTemporalGrammar {
     }
 
     private func parseScoped(_ text: String) -> ExpressionAST? {
+        let acrossSkills = lexicon.grammar.traceAcrossSkillsMarker
+        if text.lowercased().hasPrefix(acrossSkills) {
+            let remainder = String(text.dropFirst(acrossSkills.count)).trimmingCharacters(in: .whitespaces)
+            let parts = remainder.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count >= 2 else { return nil }
+            for split in stride(from: parts.count - 1, through: 1, by: -1) {
+                let skills = Array(parts[0..<split]).filter { !$0.isEmpty }
+                let body = parts[split...].joined(separator: ", ").trimmingCharacters(in: .whitespaces)
+                guard !skills.isEmpty, !body.isEmpty, let inner = parseUnscopedTemporal(body) else { continue }
+                return .traceTemporal(TraceTemporalAST(scope: .acrossSkills(skills), kind: inner))
+            }
+            return nil
+        }
         let marker = lexicon.grammar.traceAcrossAllRunsMarker
         guard text.lowercased().hasPrefix(marker) else { return nil }
         let remainder = String(text.dropFirst(marker.count)).trimmingCharacters(in: .whitespaces)
-        guard case .traceTemporal(let temporal)? = parse(remainder) else { return nil }
-        return .traceTemporal(TraceTemporalAST(scope: .acrossAllRuns, kind: temporal.kind))
+        guard let inner = parseUnscopedTemporal(remainder) else { return nil }
+        return .traceTemporal(TraceTemporalAST(scope: .acrossAllRuns, kind: inner))
+    }
+
+    private func parseUnscopedTemporal(_ text: String) -> TraceTemporalKindAST? {
+        if let since = parseSince(text) {
+            if case .traceTemporal(let temporal) = since { return temporal.kind }
+        }
+        if let count = parseCountInWindow(text) {
+            if case .traceTemporal(let temporal) = count { return temporal.kind }
+        }
+        if let inARow = parseInARow(text) {
+            if case .traceTemporal(let temporal) = inARow { return temporal.kind }
+        }
+        if let window = parseWithinWindow(text) {
+            if case .traceTemporal(let temporal) = window { return temporal.kind }
+        }
+        if let ever = parseEver(text) {
+            if case .traceTemporal(let temporal) = ever { return temporal.kind }
+        }
+        if let future = parseBoundedFutureMonitor(text) { return future }
+        return nil
+    }
+
+    private func parseBoundedFutureMonitor(_ text: String) -> TraceTemporalKindAST? {
+        let lower = text.lowercased()
+        if lower.hasPrefix(lexicon.grammar.traceEventuallyWithinMarker) {
+            let remainder = String(text.dropFirst(lexicon.grammar.traceEventuallyWithinMarker.count))
+            guard let comma = remainder.firstIndex(of: ",") else { return nil }
+            let durationText = String(remainder[..<comma]).trimmingCharacters(in: .whitespaces)
+            let conditionText = String(remainder[remainder.index(after: comma)...]).trimmingCharacters(in: .whitespaces)
+            guard let duration = parseLeadingDuration(durationText), !conditionText.isEmpty else { return nil }
+            return .boundedFutureMonitor(condition: recurse(conditionText), horizon: duration, mode: .eventuallyWithin)
+        }
+        if lower.hasPrefix(lexicon.grammar.traceAlwaysForMarker) {
+            let remainder = String(text.dropFirst(lexicon.grammar.traceAlwaysForMarker.count))
+            guard let comma = remainder.firstIndex(of: ",") else { return nil }
+            let durationText = String(remainder[..<comma]).trimmingCharacters(in: .whitespaces)
+            let conditionText = String(remainder[remainder.index(after: comma)...]).trimmingCharacters(in: .whitespaces)
+            guard let duration = parseLeadingDuration(durationText), !conditionText.isEmpty else { return nil }
+            return .boundedFutureMonitor(condition: recurse(conditionText), horizon: duration, mode: .alwaysFor)
+        }
+        return nil
     }
 
     private func parseEver(_ text: String) -> ExpressionAST? {

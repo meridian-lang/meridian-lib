@@ -590,7 +590,9 @@ public struct BriefingInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "briefing",
@@ -674,7 +676,9 @@ public struct WhenDailybriefingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "briefing",
@@ -705,7 +709,7 @@ public struct WhenDailybriefingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1") {
             // L1
-            try await runtime.wait(.event("dailyBriefing", matching: nil))
+            try await runtime.wait(.event("dailyBriefing", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDailybriefingFires/root/procedure/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547") {
@@ -747,7 +751,9 @@ public struct WhenMorningbriefingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "briefing",
@@ -778,7 +784,7 @@ public struct WhenMorningbriefingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb") {
             // L1
-            try await runtime.wait(.event("morningBriefing", matching: nil))
+            try await runtime.wait(.event("morningBriefing", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMorningbriefingFires/root/procedure/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51") {
@@ -820,7 +826,9 @@ public struct WhenWhatshappeningtodayFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "briefing",
@@ -851,7 +859,7 @@ public struct WhenWhatshappeningtodayFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8") {
             // L1
-            try await runtime.wait(.event("whatSHappeningToday", matching: nil))
+            try await runtime.wait(.event("whatSHappeningToday", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatshappeningtodayFires/root/procedure/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0") {

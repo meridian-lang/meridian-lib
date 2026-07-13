@@ -387,7 +387,9 @@ public struct OncallHandoff: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
@@ -512,7 +514,9 @@ public struct WhenRunoncallhandoffFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
@@ -544,7 +548,7 @@ public struct WhenRunoncallhandoffFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunoncallhandoffFires/root/procedure/aa7ac04ccbeeb168e4627f738d17823678feef3510181e217d02d276a70472b5") {
             // L1
-            try await runtime.wait(.event("runOncallHandoff", matching: nil))
+            try await runtime.wait(.event("runOncallHandoff", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunoncallhandoffFires/root/procedure/aa7ac04ccbeeb168e4627f738d17823678feef3510181e217d02d276a70472b5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunoncallhandoffFires/root/procedure/b47c7d40fba97ab0cdf84b96e667ebe49dc0dedbb3418f36d1a76f025cf5c9e3") {
@@ -586,7 +590,9 @@ public struct WhenPrepareshifthandoffFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
@@ -618,7 +624,7 @@ public struct WhenPrepareshifthandoffFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPrepareshifthandoffFires/root/procedure/b0d1cbcc3f4bab8e9e0e0c36b6ac724fba52b1a84e646475e4679d3bc06858a0") {
             // L1
-            try await runtime.wait(.event("prepareShiftHandoff", matching: nil))
+            try await runtime.wait(.event("prepareShiftHandoff", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPrepareshifthandoffFires/root/procedure/b0d1cbcc3f4bab8e9e0e0c36b6ac724fba52b1a84e646475e4679d3bc06858a0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPrepareshifthandoffFires/root/procedure/4d5369d180f5e3f04a85d74bcd0aea6a8e3b8774408e41df0ad5cb4833a45387") {
@@ -660,7 +666,9 @@ public struct WhenRunshifthandoffpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
@@ -692,7 +700,7 @@ public struct WhenRunshifthandoffpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunshifthandoffpassFires/root/procedure/487aa6d6101cd0319badd76f26cd1914dd969dcd8387ae284af5861b2c97efd1") {
             // L1
-            try await runtime.wait(.event("runShiftHandoffPass", matching: nil))
+            try await runtime.wait(.event("runShiftHandoffPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunshifthandoffpassFires/root/procedure/487aa6d6101cd0319badd76f26cd1914dd969dcd8387ae284af5861b2c97efd1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunshifthandoffpassFires/root/procedure/e5a71ee8e28b07082295a681d0f3de6509ba239d9aeac230b618e41cf58f4c76") {

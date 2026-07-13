@@ -1,0 +1,154 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.captureThis.fired with kind = \"keyword\", spec = \"capture this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCapturethisFires\/root\/procedure\/42725775ea1e6bb90eb2fdc12888dcb0b2fa236d591a501f1c1dbbfd63ba3a0f",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event captureThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCapturethisFires\/root\/procedure\/49a74f7a6d6f45a428abb0b576bd3c347af24f4e79e00731fa36ffd82cb7ac60",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event dropThisInInbox.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDropthisininboxFires\/root\/procedure\/13d9caad6d1946be8eeddf5ee511dd5c0c0b94fa6e370cb2d908f15fdf082254",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "emit trigger.dropThisInInbox.fired with kind = \"keyword\", spec = \"drop this in the inbox\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDropthisininboxFires\/root\/procedure\/6725479209a0b0354c8eb62a8ca896dc118b7896ceafe45f8c451878d0af4c09",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event ingestThisMyBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenIngestthismybrainFires\/root\/procedure\/3340fdeefd99dd8a7b7b363489140681e093f0df4cb59a9e77b2d94750b28167",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "emit trigger.ingestThisMyBrain.fired with kind = \"keyword\", spec = \"ingest this into my brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenIngestthismybrainFires\/root\/procedure\/36026a777504d920f6880d2963293442ac72527b5c77bcfffe85c579451ee952",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event rememberThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRememberthisFires\/root\/procedure\/edd15a893d4025e47c891472af35cd05d0a19b098bc95a265f190c4cbf8bfa80",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "emit trigger.rememberThis.fired with kind = \"keyword\", spec = \"remember this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRememberthisFires\/root\/procedure\/ffa2d669dd6718a1d25e46e2d6cd35848b5c249592a4141c54c27ead1862056d",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event saveBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSavebrainFires\/root\/procedure\/2d6caa924b5fa268dc0c4d9103feb1b3494758369e37c2c47d7b56d1833f09ef",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "emit trigger.saveBrain.fired with kind = \"keyword\", spec = \"save to brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSavebrainFires\/root\/procedure\/3747f3d09181caa443945f1c342c2e35ff38e122658a998eacfacfc6b2852240",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "wait for event saveThisThought.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSavethisthoughtFires\/root\/procedure\/36aa57236423faa942748f32bb9528120cf01df275c5ad72c34e63a9b2bda679",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "emit trigger.saveThisThought.fired with kind = \"keyword\", spec = \"save this thought\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSavethisthoughtFires\/root\/procedure\/794f8e46bd24039a551e487a5402c0055c89d82b9416599616c97321a2a4f7a4",
+      "swift_line" : 1174
+    },
+    {
+      "canonical" : "`gbrain capture \"the thought I want to remember\"`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/2fbc06055a6c3e7d886757e26bd411c249147c8d37cd915327d0284d165da63a",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`gbrain capture \"...\" --slug daily\/2026-05-21`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/67aa203386b250f5e67e936f2b83a3bdb0169338718173a00ee90d91e674b2f1",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`gbrain capture \"...\" --type idea --source voice-whisper`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/7b4758c66a23f8c936e096bef97423bef41db3d1302154bc3728b31d52233e35",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`gbrain capture \"...\" --quiet          # script-friendly: prints just the slug`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/98862db9187a2b4ae6c5a4a8f583f312dfa130c497aa3ce3611a89961be14b4d",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`gbrain capture --file .\/notes\/today.md`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/a59086d0a238b003d305ff0af776ba4a4a586356675b924015687b0a6ad721bb",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`echo \"from a pipe\" | gbrain capture --stdin`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/ce7d687dd55e36246e89bf54ff37127f1c7efaccf0e5f12da72264bd1cfa9892",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "`gbrain capture \"...\" --json           # structured output for agents`.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/how-to-use\/procedure\/ee36b4526b53370671f183caaec13008d9ba1602fec6cf8d9eef01beb2c7e6e0",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "assert not (Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts).",
+      "meridian_line" : 97,
+      "primitive" : "assert",
+      "stable_step_path" : "\/CaptureInput\/anti-patterns-steps\/prohibitions\/42404dec768f372b8e35382f6adb7989a200f3dc80aff6a3a88c72d22fa3a745",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "`skills\/meeting-ingestion\/SKILL.md` -- Meeting transcripts →  (attendee enrichment).",
+      "meridian_line" : 112,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CaptureInput\/when-not-to-use-this-skill-steps\/procedure\/e82e7ccd8c8d2211b20d84043e946de94d40d685e88c0f90276dd78e5eab12fa",
+      "swift_line" : 722
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "capture.meri",
+  "swift_file" : "capture.swift"
+}

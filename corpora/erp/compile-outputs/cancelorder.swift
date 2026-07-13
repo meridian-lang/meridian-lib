@@ -544,7 +544,9 @@ public struct CancelOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
@@ -609,6 +611,7 @@ public struct CancelOrder: MeridianWorkflow {
                         _ = try await CancelOrder(runtime: runtime).run()
                         try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/branch.then/1027eb6ca41ff4e59032a179e1a66bac52cefbf73f91884908bc9084b6d467c5", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/CancelOrder/workflow/procedure/iterate.body/a96c6b385a5f5d99daee95aeba636d2e9c4d3e883db949194fc6bbad29b777c6")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
@@ -654,7 +657,9 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
@@ -686,7 +691,7 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6") {
             // L1
-            try await runtime.wait(.event("cancelBlockedOrders", matching: nil))
+            try await runtime.wait(.event("cancelBlockedOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCancelblockedordersFires/root/procedure/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce") {
@@ -728,7 +733,9 @@ public struct WhenVoiderpordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
@@ -760,7 +767,7 @@ public struct WhenVoiderpordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a") {
             // L1
-            try await runtime.wait(.event("voidErpOrders", matching: nil))
+            try await runtime.wait(.event("voidErpOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVoiderpordersFires/root/procedure/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9") {

@@ -154,6 +154,8 @@ public struct MerconfigDocsRenderer {
         switch t {
         case .defaulted:                  return "<inferred>"
         case .explicit(let name):         return name
+        case .listOf(let element):        return "list of \(propTypeText(element))"
+        case .optional(let inner):        return "optional \(propTypeText(inner))"
         case .enumeration(let cases, let defaultCase):
             let suffix = defaultCase.map { " (default: \($0))" } ?? ""
             return "enum {\(cases.joined(separator: ", "))}\(suffix)"
@@ -168,6 +170,7 @@ public struct MerconfigDocsRenderer {
         case .boolean(let b):     return b ? "true" : "false"
         case .money(let v, let c): return "\(v) \(c)"
         case .duration(let v, _):  return "\(v) seconds"
+        case .calendarAmount(let v, let u): return "\(v) \(u)"
         }
     }
 

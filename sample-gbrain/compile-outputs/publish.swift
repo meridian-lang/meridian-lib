@@ -590,7 +590,9 @@ public struct PublishInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "publish",
@@ -791,7 +793,9 @@ public struct WhenSharethispageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "publish",
@@ -822,7 +826,7 @@ public struct WhenSharethispageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSharethispageFires/root/procedure/26e83cf5b86263d39eabf480d17b3b7b08f1a2e00fe137589ef8df39a1ecd528") {
             // L1
-            try await runtime.wait(.event("shareThisPage", matching: nil))
+            try await runtime.wait(.event("shareThisPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSharethispageFires/root/procedure/26e83cf5b86263d39eabf480d17b3b7b08f1a2e00fe137589ef8df39a1ecd528", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSharethispageFires/root/procedure/7409b5c225a0a479b8b7e3431b92fdfe5f785fdd3ff3627fbb300d9b3ac79c6c") {
@@ -864,7 +868,9 @@ public struct WhenPublishpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "publish",
@@ -895,7 +901,7 @@ public struct WhenPublishpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPublishpageFires/root/procedure/8c1a56515537f6749bd41176ebd566a18ac1bbd9e54ec550e6d915bb841f9e46") {
             // L1
-            try await runtime.wait(.event("publishPage", matching: nil))
+            try await runtime.wait(.event("publishPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPublishpageFires/root/procedure/8c1a56515537f6749bd41176ebd566a18ac1bbd9e54ec550e6d915bb841f9e46", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPublishpageFires/root/procedure/af26c344e75edd627e813982cb01cbb0cb4908c99a43f663ced13f88ff39dde9") {
@@ -937,7 +943,9 @@ public struct WhenCreateshareablelinkFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "publish",
@@ -968,7 +976,7 @@ public struct WhenCreateshareablelinkFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreateshareablelinkFires/root/procedure/9e61a242957e1153ea2757437f1952af034ba09076ed12462e4845b4ec02b7c6") {
             // L1
-            try await runtime.wait(.event("createShareableLink", matching: nil))
+            try await runtime.wait(.event("createShareableLink", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreateshareablelinkFires/root/procedure/9e61a242957e1153ea2757437f1952af034ba09076ed12462e4845b4ec02b7c6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreateshareablelinkFires/root/procedure/c7a7339b39fb449a41ba3902f2f28af5db1953f8e827475877184d831c7120b3") {

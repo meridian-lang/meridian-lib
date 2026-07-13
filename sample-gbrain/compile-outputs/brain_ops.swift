@@ -593,7 +593,9 @@ public struct BrainOpsInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-ops",
@@ -700,7 +702,9 @@ public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-ops",
@@ -731,7 +735,7 @@ public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/adb44fcde8900800b8df962d9e569ce8e839001e3e0adadc537cab792a9e4a53") {
             // L1
-            try await runtime.wait(.event("anyBrainReadWriteLookup", matching: nil))
+            try await runtime.wait(.event("anyBrainReadWriteLookup", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAnybrainreadwritelookupFires/root/procedure/adb44fcde8900800b8df962d9e569ce8e839001e3e0adadc537cab792a9e4a53", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/e39b2b58e30e8a41077508ace38575981adbb2a2fdba31a46f06a07bbacb0db0") {

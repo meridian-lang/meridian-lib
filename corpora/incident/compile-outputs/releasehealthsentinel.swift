@@ -389,7 +389,9 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
@@ -422,8 +424,8 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "ReleaseHealthSentinelService", parameters: [:])
 
         // L40
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .ever(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .ever(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/a66cad2a4664a07342fe722cc64e7161e47ca0e2b66b7e49b5303bc279c4d043")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/a66cad2a4664a07342fe722cc64e7161e47ca0e2b66b7e49b5303bc279c4d043")
             if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/8725cae94698ebd7d8fed2aaa8773c00a0af30adc8ff3b3ddee8d1f3a4989a80") {
                 // L41
                 try await runtime.emit(
@@ -435,11 +437,12 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/8725cae94698ebd7d8fed2aaa8773c00a0af30adc8ff3b3ddee8d1f3a4989a80", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/a66cad2a4664a07342fe722cc64e7161e47ca0e2b66b7e49b5303bc279c4d043")
         }
 
         // L42
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .withinWindow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/77f4be022cf08f6ac6e8418cb1f824b0cb23d8cee1bd20dffd4fe1056ea8bd69")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .withinWindow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/77f4be022cf08f6ac6e8418cb1f824b0cb23d8cee1bd20dffd4fe1056ea8bd69")
             if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/a621626a7d2c26180092613b88530eeb8914f144ecf19640c3e04fa97f40c912") {
                 // L43
                 try await runtime.emit(
@@ -451,11 +454,12 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/a621626a7d2c26180092613b88530eeb8914f144ecf19640c3e04fa97f40c912", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/77f4be022cf08f6ac6e8418cb1f824b0cb23d8cee1bd20dffd4fe1056ea8bd69")
         }
 
         // L44
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .countInWindow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), comparator: .atLeast(2), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .countInWindow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), comparator: .atLeast(2), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/99d73e2cd39f5c5a36f91b6379dcb31d0f8e7d713318463e9c46273be2ba2718")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .countInWindow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), comparator: .atLeast(2), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .countInWindow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), comparator: .atLeast(2), duration: .seconds(604800))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/99d73e2cd39f5c5a36f91b6379dcb31d0f8e7d713318463e9c46273be2ba2718")
             if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/af20d61858db2c49c4e96690d2c2f5ef3b58a383ca657c346dec5c4ffbc473aa") {
                 // L45
                 try await runtime.emit(
@@ -467,11 +471,12 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/af20d61858db2c49c4e96690d2c2f5ef3b58a383ca657c346dec5c4ffbc473aa", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/99d73e2cd39f5c5a36f91b6379dcb31d0f8e7d713318463e9c46273be2ba2718")
         }
 
         // L46
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .inARow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 2)), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .inARow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 2)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/d5dcaab4a203848fd7cb6a76bd2563acc6805bc9f9c9908157fc12949dc00332")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 2)), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 2)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/d5dcaab4a203848fd7cb6a76bd2563acc6805bc9f9c9908157fc12949dc00332")
             if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/49746a92b99116c089fff2ec8571f1ef100a79ac6c583b3d5131b987ef554d8f") {
                 // L47
                 try await runtime.emit(
@@ -483,11 +488,12 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/49746a92b99116c089fff2ec8571f1ef100a79ac6c583b3d5131b987ef554d8f", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/d5dcaab4a203848fd7cb6a76bd2563acc6805bc9f9c9908157fc12949dc00332")
         }
 
         // L48
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, kind: .ever(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, kind: .ever(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/2e1c111d4704853da710bb171aa81bf8f071a97dd79e09a7febb681eacff6ccc")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step("deploy"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step(\"deploy\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/2e1c111d4704853da710bb171aa81bf8f071a97dd79e09a7febb681eacff6ccc")
             if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/0c070a42ab112288055e58d62bfd2cf48839b81a1aa8bd3a2aad43f88b475e0f") {
                 // L49
                 try await runtime.emit(
@@ -499,11 +505,12 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps/procedure/branch.then/0c070a42ab112288055e58d62bfd2cf48839b81a1aa8bd3a2aad43f88b475e0f", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReleaseHealthSentinelService/workflow-steps/procedure/2e1c111d4704853da710bb171aa81bf8f071a97dd79e09a7febb681eacff6ccc")
         }
 
-        if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps-3/procedure/9e4d22fe7e2266e8282f44581757778791d5ab65789c12950d76d9968f95e20f") {
+        if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps-3/procedure/9c6e52d1eb1d62d83652d85f2c6068c0e39618af1b1b24631873f34c0bafaee5") {
             // L58
-            let __meridianAssertTruth_0_5 = try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .sinceLast(anchor: TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), holds: TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate())
+            let __meridianAssertTruth_0_5 = try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .sinceLast(anchor: TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), holds: TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)), evaluationInstant: await runtime.currentDate())
             if __meridianAssertTruth_0_5 != .true {
                 try await runtime.assert(__meridianAssertTruth_0_5, message: "Expected the service is recovered since the last deploy step succeeded")
                 if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps-3/procedure/assert.otherwise/23a502cf4f4aff4dd1f8dc50d768d8d63c4b66f4d124e92deb2aa93e752bc053") {
@@ -520,7 +527,7 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
             } else {
                 try await runtime.assert(TruthValue.true, message: "Expected the service is recovered since the last deploy step succeeded")
             }
-            try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps-3/procedure/9e4d22fe7e2266e8282f44581757778791d5ab65789c12950d76d9968f95e20f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReleaseHealthSentinelService/workflow-steps-3/procedure/9c6e52d1eb1d62d83652d85f2c6068c0e39618af1b1b24631873f34c0bafaee5", state: state.snapshot())
         }
         if __meridianShouldRun("/ReleaseHealthSentinelService/workflow-steps-3/procedure/e166d2e7c47034bc2d2d49c4e30fd667d5cec3e1e82c83e94a68e7fd209ca856") {
             // L60
@@ -560,7 +567,9 @@ public struct WhenRunreleasehealthsentinelFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
@@ -592,7 +601,7 @@ public struct WhenRunreleasehealthsentinelFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunreleasehealthsentinelFires/root/procedure/77e2c8fa5a836c4e875842a662b30b051897265150238dc401b3501d2661956d") {
             // L1
-            try await runtime.wait(.event("runReleaseHealthSentinel", matching: nil))
+            try await runtime.wait(.event("runReleaseHealthSentinel", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunreleasehealthsentinelFires/root/procedure/77e2c8fa5a836c4e875842a662b30b051897265150238dc401b3501d2661956d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunreleasehealthsentinelFires/root/procedure/e3fd67141b9f1f803997f6cf681458cd11fe114898837e8ee8dbc547cbb94df5") {
@@ -634,7 +643,9 @@ public struct WhenCheckreleasehealthFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
@@ -666,7 +677,7 @@ public struct WhenCheckreleasehealthFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckreleasehealthFires/root/procedure/1f386bd5eef9c8396f042d5e951e30dad139d87c75f66e141c57da99cff1b15a") {
             // L1
-            try await runtime.wait(.event("checkReleaseHealth", matching: nil))
+            try await runtime.wait(.event("checkReleaseHealth", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckreleasehealthFires/root/procedure/1f386bd5eef9c8396f042d5e951e30dad139d87c75f66e141c57da99cff1b15a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckreleasehealthFires/root/procedure/bf644aaeab63e8667ef54aab02d1cec770a0250d23bab529b8a14d663c10a0ae") {
@@ -708,7 +719,9 @@ public struct WhenInspectdeployfailurehistoryFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
@@ -740,7 +753,7 @@ public struct WhenInspectdeployfailurehistoryFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenInspectdeployfailurehistoryFires/root/procedure/7ad7541f745402ff5fe13cd45701d638c4c66159c4acd87d2c9dfd0d47a93e3f") {
             // L1
-            try await runtime.wait(.event("inspectDeployFailureHistory", matching: nil))
+            try await runtime.wait(.event("inspectDeployFailureHistory", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenInspectdeployfailurehistoryFires/root/procedure/7ad7541f745402ff5fe13cd45701d638c4c66159c4acd87d2c9dfd0d47a93e3f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenInspectdeployfailurehistoryFires/root/procedure/f33a96a5a88095984b98f6843aba4a8f0a8259ba5b796fa7a0217f451c4ecf86") {

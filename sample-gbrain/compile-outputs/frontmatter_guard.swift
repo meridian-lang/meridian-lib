@@ -591,7 +591,9 @@ public struct FrontmatterGuardInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -730,7 +732,9 @@ public struct WhenValidatefrontmatterFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -761,7 +765,7 @@ public struct WhenValidatefrontmatterFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenValidatefrontmatterFires/root/procedure/1b37016da4fdfa4f9bcbedfbfa461505e07655cf02de2dc3b9830066f466c8d2") {
             // L1
-            try await runtime.wait(.event("validateFrontmatter", matching: nil))
+            try await runtime.wait(.event("validateFrontmatter", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenValidatefrontmatterFires/root/procedure/1b37016da4fdfa4f9bcbedfbfa461505e07655cf02de2dc3b9830066f466c8d2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenValidatefrontmatterFires/root/procedure/b994b4ec6cb808f622d7da02e60bd0efa5e06fb43966146b8c9f4c3d95c2985c") {
@@ -803,7 +807,9 @@ public struct WhenCheckfrontmatterFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -834,7 +840,7 @@ public struct WhenCheckfrontmatterFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckfrontmatterFires/root/procedure/c249e022dc37acfb3797fcffe8cb8a223db9cde21cbfa9502c43e2aee03ef1f4") {
             // L1
-            try await runtime.wait(.event("checkFrontmatter", matching: nil))
+            try await runtime.wait(.event("checkFrontmatter", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckfrontmatterFires/root/procedure/c249e022dc37acfb3797fcffe8cb8a223db9cde21cbfa9502c43e2aee03ef1f4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckfrontmatterFires/root/procedure/2c708a147a3817d19502daaab736a6b3b9553090b015b96d3afdd51cff05ec89") {
@@ -876,7 +882,9 @@ public struct WhenFixfrontmatterFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -907,7 +915,7 @@ public struct WhenFixfrontmatterFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFixfrontmatterFires/root/procedure/5aae9fa6dd0ab071d4c7bf31fc23fc4f84cd726cb6b4792c42f06f260c53c493") {
             // L1
-            try await runtime.wait(.event("fixFrontmatter", matching: nil))
+            try await runtime.wait(.event("fixFrontmatter", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFixfrontmatterFires/root/procedure/5aae9fa6dd0ab071d4c7bf31fc23fc4f84cd726cb6b4792c42f06f260c53c493", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFixfrontmatterFires/root/procedure/437e5d24817cd61de2636175f7e0562d9ae2fe096b469dc31f7e73a1df11735e") {
@@ -949,7 +957,9 @@ public struct WhenFrontmatterauditFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -980,7 +990,7 @@ public struct WhenFrontmatterauditFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFrontmatterauditFires/root/procedure/91f7d254f14e2c03d4b65d99624ae8dd6be9fcfca1730708dc2d5deb9366e2a2") {
             // L1
-            try await runtime.wait(.event("frontmatterAudit", matching: nil))
+            try await runtime.wait(.event("frontmatterAudit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFrontmatterauditFires/root/procedure/91f7d254f14e2c03d4b65d99624ae8dd6be9fcfca1730708dc2d5deb9366e2a2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFrontmatterauditFires/root/procedure/c2c13fa9dd8eb20779ddf71d3e8c67a3dfd0570d8d104e196fcd984634f027d0") {
@@ -1022,7 +1032,9 @@ public struct WhenBrainlintFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "frontmatter-guard",
@@ -1053,7 +1065,7 @@ public struct WhenBrainlintFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBrainlintFires/root/procedure/7721a9cc74a7ed6aede33e46cc35cf4a945333992ef542b7bf159896e32934c6") {
             // L1
-            try await runtime.wait(.event("brainLint", matching: nil))
+            try await runtime.wait(.event("brainLint", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBrainlintFires/root/procedure/7721a9cc74a7ed6aede33e46cc35cf4a945333992ef542b7bf159896e32934c6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBrainlintFires/root/procedure/ed84822edf3689e52b059fd180b53995e7d4cd338616f06ee528d49ec8809269") {

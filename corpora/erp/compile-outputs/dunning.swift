@@ -544,7 +544,9 @@ public struct Dunning: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
@@ -691,7 +693,9 @@ public struct WhenRundunningFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
@@ -723,7 +727,7 @@ public struct WhenRundunningFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundunningFires/root/procedure/3081beda02f692814404f0ca7e57587928af92d50189e40178bdcb617366b096") {
             // L1
-            try await runtime.wait(.event("runDunning", matching: nil))
+            try await runtime.wait(.event("runDunning", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundunningFires/root/procedure/3081beda02f692814404f0ca7e57587928af92d50189e40178bdcb617366b096", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundunningFires/root/procedure/8a9220f77d924ca53503d3fe28c34d6d83b78705831c0e0a78225ff0a796a7fa") {
@@ -765,7 +769,9 @@ public struct WhenCollectoverdueinvoicesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
@@ -797,7 +803,7 @@ public struct WhenCollectoverdueinvoicesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCollectoverdueinvoicesFires/root/procedure/2dacd9103e994477a60bc628668ba199177e722241fc3086cb182a833d392e84") {
             // L1
-            try await runtime.wait(.event("collectOverdueInvoices", matching: nil))
+            try await runtime.wait(.event("collectOverdueInvoices", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCollectoverdueinvoicesFires/root/procedure/2dacd9103e994477a60bc628668ba199177e722241fc3086cb182a833d392e84", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCollectoverdueinvoicesFires/root/procedure/8500e2d72626513efd2bfbe1585f3f194eecbef6ae017062e87ff933a11c36c8") {

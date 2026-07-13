@@ -266,14 +266,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
             let source = try String(contentsOf: url, encoding: .utf8)
             merged = try merged.merging(try parser.parse(source, file: url.lastPathComponent))
         }
-        return EnglishLexicon.default.merging(
-            comparisonSynonyms: merged.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: merged.languageSynonyms.durationSynonyms,
-            assertionSynonyms: merged.languageSynonyms.assertionSynonyms,
-            normativeCueSynonyms: merged.languageSynonyms.normativeCueSynonyms,
-            inferenceCueSynonyms: merged.languageSynonyms.inferenceCueSynonyms,
-            referenceHeadingSynonyms: merged.languageSynonyms.referenceHeadingSynonyms
-        )
+        return EnglishLexicon.default.merging(from: merged.languageSynonyms)
     }
 
     // MARK: - Index

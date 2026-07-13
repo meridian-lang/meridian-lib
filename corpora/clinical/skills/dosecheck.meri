@@ -33,8 +33,12 @@ parameters: nurse, medication order
 ### Rules — steps
 
 A nurse may administer medication orders whose dose count is at most 2.
+A nurse must not invoke medication.administer when the dose count is more than the dose limit.
 
 ## Workflow
+
+### Workflow — steps
+
 if the nurse's dose count is at most the dose limit,
   administer the medication order.
   Emit: "dose check cleared".

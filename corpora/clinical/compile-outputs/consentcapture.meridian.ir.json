@@ -1,0 +1,84 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event capturePatientConsent.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCapturepatientconsentFires\/root\/procedure\/aa7b2048db6e800940fc835badf0eed500fb7ebc7fd45ae52705335d98c2602f",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "emit trigger.capturePatientConsent.fired with kind = \"keyword\", spec = \"capture patient consent\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCapturepatientconsentFires\/root\/procedure\/d97abcf5d2a98099aa602928e630ac61246dfa180e250afbebd7ccdb637773a2",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "wait for event recordConsent.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRecordconsentFires\/root\/procedure\/525b52c794bdc8b145c3132d7964b86ce5c7846c134b9eb4a970523806454a92",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "emit trigger.recordConsent.fired with kind = \"keyword\", spec = \"record consent\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRecordconsentFires\/root\/procedure\/634adb8c09c7fa256f5dd75df5f1b562d7aa9b2e628e424914e5ae8e5ef55f25",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "bind consent = invoke consent.record with patient = patient.",
+      "meridian_line" : 30,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a",
+      "swift_line" : 443
+    },
+    {
+      "canonical" : "if consent is granted,\n  emit clinical.report with message = \"consent captured\".",
+      "meridian_line" : 31,
+      "primitive" : "branch",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/fda9fba934a73fc827ae1cbad28be99d75e629f0646311cd0e432fbfb5b8a24e",
+      "swift_line" : 456
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"consent captured\".",
+      "meridian_line" : 32,
+      "primitive" : "emit",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/branch.then\/956e24fa222a8c4087832d9bf71be49d521b4bdac90eb43fe3e8d2969e686563",
+      "swift_line" : 460
+    },
+    {
+      "canonical" : "if not consent is granted,\n  wait for signal \"consent_follow_up\".\n  bind consent = invoke consent.record with patient = patient.",
+      "meridian_line" : 33,
+      "primitive" : "branch",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/8821e557c04c15e78a02bc1d342a951e3303adbdfe541b4555b4fb2c2397d9f7",
+      "swift_line" : 473
+    },
+    {
+      "canonical" : "wait for signal \"consent_follow_up\".",
+      "meridian_line" : 34,
+      "primitive" : "wait",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/branch.then\/20ea19025110b67f3701a9480c63509f8fce0350cd86101f10cb8f2263ea8e95",
+      "swift_line" : 477
+    },
+    {
+      "canonical" : "bind consent = invoke consent.record with patient = patient.",
+      "meridian_line" : 35,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/branch.then\/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a",
+      "swift_line" : 482
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"consent capture pass complete\".",
+      "meridian_line" : 36,
+      "primitive" : "emit",
+      "stable_step_path" : "\/ConsentCapturePatient\/workflow\/procedure\/bea0691c5b9689cc8bb71f8b1837669fe1e2e39b3d70a909595915c7eb338e4b",
+      "swift_line" : 499
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "consentcapture.meri",
+  "swift_file" : "consentcapture.swift"
+}

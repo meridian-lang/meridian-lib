@@ -1,0 +1,105 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event dedupeRecords.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDeduperecordsFires\/root\/procedure\/539e1a804259f27d093c4c8e47db1871098d9ea8be52d9d82bb9b685bd777ca8",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "emit trigger.dedupeRecords.fired with kind = \"keyword\", spec = \"dedupe records\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDeduperecordsFires\/root\/procedure\/75888e77696bd57d70716a5c59a716723490e9421750855cb404dd875e0d3bf7",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "wait for event duplicateRowsDetected.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDuplicaterowsdetectedFires\/root\/procedure\/a1b3bfb1a6e8ddde7b79c3b84ae17140a37a72a6294f38889aeed44f95e29fb7",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "emit trigger.duplicateRowsDetected.fired with kind = \"keyword\", spec = \"duplicate rows detected\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDuplicaterowsdetectedFires\/root\/procedure\/d0f5e23b21491f7286e74b0aa6afdab5ce5e92e0848d5f7db9efe455369d8a73",
+      "swift_line" : 709
+    },
+    {
+      "canonical" : "bind records = invoke record.list with status = \"duplicate\".",
+      "meridian_line" : 19,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/46c092e5dae7a860b5ec10bd57af9cbe4bcab59fb4943ed3bf1e86d45536ab36",
+      "swift_line" : 463
+    },
+    {
+      "canonical" : "assert any duplicate records.",
+      "meridian_line" : 20,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/245e1d0cd7ca988825adef2972469b26894f94b7efbab817bca26d24d819586b",
+      "swift_line" : 477
+    },
+    {
+      "canonical" : "for each records whose status equals \"duplicate\",\n  bind checksum = invoke record.checksum with record = record.\n  if record is duplicate and either record is stale or record is drifted,\n    bind recordCanonical = invoke record.mark_canonical with record = record.\n    bind record = invoke record.purge with record = record.\n  otherwise,\n    emit procedure.note with message = \"record retained pending manual review\".",
+      "meridian_line" : 21,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/2bb27dbee6ab5ccc4f903f595f86a9442473634dfee01838d7e6da8dd3e87848",
+      "swift_line" : 481
+    },
+    {
+      "canonical" : "bind checksum = invoke record.checksum with record = record.",
+      "meridian_line" : 22,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/iterate.body\/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf",
+      "swift_line" : 490
+    },
+    {
+      "canonical" : "if record is duplicate and either record is stale or record is drifted,\n  bind recordCanonical = invoke record.mark_canonical with record = record.\n  bind record = invoke record.purge with record = record.\notherwise,\n  emit procedure.note with message = \"record retained pending manual review\".",
+      "meridian_line" : 23,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/iterate.body\/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5",
+      "swift_line" : 503
+    },
+    {
+      "canonical" : "bind recordCanonical = invoke record.mark_canonical with record = record.",
+      "meridian_line" : 24,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/branch.then\/7240b8445ad934ea3dbd75658aaf6dcd0764e9d49a6f8fbed3bbcb361a4fe982",
+      "swift_line" : 507
+    },
+    {
+      "canonical" : "bind record = invoke record.purge with record = record.",
+      "meridian_line" : 25,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/branch.then\/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd",
+      "swift_line" : 521
+    },
+    {
+      "canonical" : "emit procedure.note with message = \"record retained pending manual review\".",
+      "meridian_line" : 27,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/branch.else\/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856",
+      "swift_line" : 539
+    },
+    {
+      "canonical" : "emit procedure.report with message = \"duplicate record pass complete\".",
+      "meridian_line" : 28,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DedupeRecords\/procedure-steps\/procedure\/1613bab6af8b4d69e0477354ee9c939be5382a86016a00b2b5388736eafb01dd",
+      "swift_line" : 558
+    },
+    {
+      "canonical" : "assert no records whose status equals \"duplicate\".",
+      "meridian_line" : 31,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeRecords\/postconditions\/invariants\/f915495cd6dd3177414e6ac45caceda8f966be3a73e7b07ec0c83b36db050ac1",
+      "swift_line" : 458
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "deduperecords.meri",
+  "swift_file" : "deduperecords.swift"
+}

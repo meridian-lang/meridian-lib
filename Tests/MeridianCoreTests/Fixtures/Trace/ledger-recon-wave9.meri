@@ -1,0 +1,15 @@
+---
+name: ledger recon wave9
+description: Trimmed Wave 8 statistical workflow fixture kept for bundle regression; deontic obligation tests use inline mer in Wave9NorthStarFixtureTests.
+triggers:
+  - "run ledger recon wave9"
+parameters: ledger
+---
+
+To run ledger recon wave9 for a ledger:
+  let the parity receipt be "parity watch opened".
+  assert the parity step succeeds in at least 99% of occurrences within the last 30 days.
+  recover from any:
+    complete with reason "ledger parity check deferred".
+  proceed, and note "; parity watch pass complete" in the parity receipt.
+  complete with reason "ledger recon wave9 pass complete".

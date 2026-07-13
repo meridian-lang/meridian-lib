@@ -544,7 +544,9 @@ public struct PaymentRetry: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
@@ -644,7 +646,9 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
@@ -676,7 +680,7 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/0f64521e0753c7cdf9b502c85ffd90d3a9d0fc98995d8aa73a401db01ab90758") {
             // L1
-            try await runtime.wait(.event("retryDeclinedPayments", matching: nil))
+            try await runtime.wait(.event("retryDeclinedPayments", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRetrydeclinedpaymentsFires/root/procedure/0f64521e0753c7cdf9b502c85ffd90d3a9d0fc98995d8aa73a401db01ab90758", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/87d992e07115f8b224e8c158919cadc53da00a12af5b0fd0547b76bce42d426f") {
@@ -718,7 +722,9 @@ public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
@@ -750,7 +756,7 @@ public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/2b7e9ac3722d281a740335c473481a932b4b3bcaf66f56c7dfe8b560af9e864b") {
             // L1
-            try await runtime.wait(.event("reattemptInvoiceCollection", matching: nil))
+            try await runtime.wait(.event("reattemptInvoiceCollection", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReattemptinvoicecollectionFires/root/procedure/2b7e9ac3722d281a740335c473481a932b4b3bcaf66f56c7dfe8b560af9e864b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/3506ea73bdca38426aa297b78c057eb7a5f39219844e8881741719163ca54982") {

@@ -2,29 +2,60 @@
 
 import Foundation
 
+struct CorpusRecord: Decodable {
+    let id: String
+    let root: String
+    let originals: String
+    let vocab: String
+    let rulebook: String
+    let skillsOut: String
+    let resolverOriginal: String
+    let resolverOut: String
+    let migrationDeviations: String
+    let modulePath: String?
+}
+
+struct CorpusCatalogFile: Decodable {
+    let corpora: [CorpusRecord]
+}
+
+func loadCorpusCatalog() throws -> CorpusCatalogFile {
+    let url = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("corpus-catalog.json")
+    return try JSONDecoder().decode(CorpusCatalogFile.self, from: Data(contentsOf: url))
+}
+
+func selectCorpus(id: String, catalog: CorpusCatalogFile) throws -> CorpusRecord {
+    let matches = catalog.corpora.filter { $0.id == id }
+    guard let record = matches.first else {
+        let available = catalog.corpora.map(\.id).sorted().joined(separator: ", ")
+        throw NSError(domain: "CorpusCatalog", code: 1,
+                      userInfo: [NSLocalizedDescriptionKey: "unknown corpus: \(id) (available: \(available))"])
+    }
+    return record
+}
+
 struct Options {
-    var root = "sample-gbrain"
-    var skills = "sample-gbrain/skills"
+    var corpus = "gbrain"
+    var root: String?
+    var skills: String?
     var vocab: String?
     var rulebook: String?
     var out = "/tmp/inert-yield-report.md"
 }
 
-func usage() -> String {
-    """
-    usage: swift scripts/inert-yield-report.swift [--root DIR] [--skills DIR] [--vocab FILE] [--rulebook FILE] [--out FILE]
+func usage(catalog: CorpusCatalogFile) -> String {
+    let ids = catalog.corpora.map(\.id).sorted().joined(separator: "|")
+    return """
+    usage: swift scripts/inert-yield-report.swift [--corpus \(ids)] [--root DIR] [--skills DIR] [--vocab FILE] [--rulebook FILE] [--out FILE]
 
-    Defaults to sample-gbrain:
-      --root sample-gbrain
-      --skills sample-gbrain/skills
-      --vocab sample-gbrain/brain.merconfig
-      --rulebook sample-gbrain/brain.merrules
-      --out /tmp/inert-yield-report.md
+    Defaults to gbrain from scripts/corpus-catalog.json when --corpus is omitted.
+    Explicit --root/--vocab/--rulebook override catalog defaults.
 
-    Phase 0 measurement spike (see the "Deterministic lowering for gbrain"
-    plan): runs `meridian inert-yield --batch` over every ported .meri in
-    <skills> and prints the corpus-wide yield summary + ranked needs-phrase
-    worklist to stdout, writing the full per-line report to <out>.
+    Runs `meridian inert-yield --batch` over every ported .meri in <skills> and
+    prints the corpus-wide yield summary + ranked needs-phrase worklist to stdout,
+    writing the full per-line report to <out>.
     """
 }
 
@@ -33,10 +64,12 @@ func parseArgs() -> Options {
     var iterator = CommandLine.arguments.dropFirst().makeIterator()
     while let arg = iterator.next() {
         switch arg {
+        case "--corpus":
+            if let value = iterator.next() { options.corpus = value }
         case "--root":
-            if let value = iterator.next() { options.root = value }
+            options.root = iterator.next()
         case "--skills":
-            if let value = iterator.next() { options.skills = value }
+            options.skills = iterator.next()
         case "--vocab":
             options.vocab = iterator.next()
         case "--rulebook":
@@ -44,10 +77,9 @@ func parseArgs() -> Options {
         case "--out":
             if let value = iterator.next() { options.out = value }
         case "-h", "--help":
-            print(usage())
-            exit(0)
+            return options
         default:
-            FileHandle.standardError.write(Data("unknown argument: \(arg)\n\(usage())\n".utf8))
+            FileHandle.standardError.write(Data("unknown argument: \(arg)\n".utf8))
             exit(2)
         }
     }
@@ -71,12 +103,35 @@ func run(_ executable: String, _ arguments: [String]) -> (status: Int32, output:
     return (process.terminationStatus, String(decoding: data, as: UTF8.self))
 }
 
+let catalog: CorpusCatalogFile
+do {
+    catalog = try loadCorpusCatalog()
+} catch {
+    FileHandle.standardError.write(Data("\(error)\n".utf8))
+    exit(1)
+}
+
 let options = parseArgs()
-let vocab = options.vocab ?? "\(options.root)/brain.merconfig"
-let rulebook = options.rulebook ?? "\(options.root)/brain.merrules"
+if CommandLine.arguments.contains("-h") || CommandLine.arguments.contains("--help") {
+    print(usage(catalog: catalog))
+    exit(0)
+}
+
+let record: CorpusRecord
+do {
+    record = try selectCorpus(id: options.corpus, catalog: catalog)
+} catch {
+    FileHandle.standardError.write(Data("\(error.localizedDescription)\n\(usage(catalog: catalog))\n".utf8))
+    exit(2)
+}
+
+let root = options.root ?? record.root
+let skills = options.skills ?? record.skillsOut
+let vocab = options.vocab ?? record.vocab
+let rulebook = options.rulebook ?? record.rulebook
 
 var args = [
-    "swift", "run", "meridian", "inert-yield", options.skills,
+    "swift", "run", "meridian", "inert-yield", skills,
     "--batch", "--out", options.out,
 ]
 if FileManager.default.fileExists(atPath: vocab) {

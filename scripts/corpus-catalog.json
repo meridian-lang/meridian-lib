@@ -1,0 +1,88 @@
+{
+  "corpora": [
+    {
+      "id": "gbrain",
+      "root": "sample-gbrain",
+      "originals": "sample-gbrain/original-skills",
+      "vocab": "sample-gbrain/brain.merconfig",
+      "rulebook": "sample-gbrain/brain.merrules",
+      "skillsOut": "sample-gbrain/skills",
+      "resolverOriginal": "sample-gbrain/original-skills/RESOLVER.md",
+      "resolverOut": "sample-gbrain/RESOLVER.meri",
+      "migrationDeviations": "sample-gbrain/migration-deviations",
+      "modulePath": null
+    },
+    {
+      "id": "erp",
+      "root": "corpora/erp",
+      "originals": "corpora/erp/original-skills",
+      "vocab": "corpora/erp/erp.merconfig",
+      "rulebook": "corpora/erp/erp.merrules",
+      "skillsOut": "corpora/erp/skills",
+      "resolverOriginal": "corpora/erp/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/erp/RESOLVER.meri",
+      "migrationDeviations": "corpora/erp/migration-deviations",
+      "modulePath": null
+    },
+    {
+      "id": "procedures",
+      "root": "corpora/procedures",
+      "originals": "corpora/procedures/original-skills",
+      "vocab": "corpora/procedures/procedures.merconfig",
+      "rulebook": "corpora/procedures/procedures.merrules",
+      "skillsOut": "corpora/procedures/skills",
+      "resolverOriginal": "corpora/procedures/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/procedures/RESOLVER.meri",
+      "migrationDeviations": "corpora/procedures/migration-deviations",
+      "modulePath": null
+    },
+    {
+      "id": "incident",
+      "root": "corpora/incident",
+      "originals": "corpora/incident/original-skills",
+      "vocab": "corpora/incident/incident.merconfig",
+      "rulebook": "corpora/incident/incident.merrules",
+      "skillsOut": "corpora/incident/skills",
+      "resolverOriginal": "corpora/incident/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/incident/RESOLVER.meri",
+      "migrationDeviations": "corpora/incident/migration-deviations",
+      "modulePath": null
+    },
+    {
+      "id": "etl",
+      "root": "corpora/etl",
+      "originals": "corpora/etl/original-skills",
+      "vocab": "corpora/etl/etl.merconfig",
+      "rulebook": "corpora/etl/etl.merrules",
+      "skillsOut": "corpora/etl/skills",
+      "resolverOriginal": "corpora/etl/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/etl/RESOLVER.meri",
+      "migrationDeviations": "corpora/etl/migration-deviations",
+      "modulePath": null
+    },
+    {
+      "id": "governance",
+      "root": "corpora/governance",
+      "originals": "corpora/governance/original-skills",
+      "vocab": "corpora/governance/governance.merconfig",
+      "rulebook": "corpora/governance/governance.merrules",
+      "skillsOut": "corpora/governance/skills",
+      "resolverOriginal": "corpora/governance/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/governance/RESOLVER.meri",
+      "migrationDeviations": "corpora/governance/migration-deviations",
+      "modulePath": "corpora/governance/modules"
+    },
+    {
+      "id": "clinical",
+      "root": "corpora/clinical",
+      "originals": "corpora/clinical/original-skills",
+      "vocab": "corpora/clinical/clinical.merconfig",
+      "rulebook": "corpora/clinical/clinical.merrules",
+      "skillsOut": "corpora/clinical/skills",
+      "resolverOriginal": "corpora/clinical/original-skills/RESOLVER.md",
+      "resolverOut": "corpora/clinical/RESOLVER.meri",
+      "migrationDeviations": "corpora/clinical/migration-deviations",
+      "modulePath": null
+    }
+  ]
+}

@@ -182,7 +182,9 @@ public struct CustomerSupportPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "customer support",
@@ -269,7 +271,9 @@ public struct ReviewComment: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "customer support",
@@ -314,6 +318,7 @@ public struct ReviewComment: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/ReviewComment/gather-context/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReviewComment/gather-context/procedure/3c09fcb1199ceac439d60d866ca93f140dd1ddac64dcfa965bf1659ed98f63bf")
         }
 
 
@@ -344,7 +349,9 @@ public struct DraftSupportResponse: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "customer support",

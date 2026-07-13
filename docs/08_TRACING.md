@@ -44,6 +44,10 @@ meridian compile src.meridian --trace phrase.match,lowering
 MERIDIAN_TRACE=phrase,lowering meridian compile src.meridian
 MERIDIAN_TRACE=all swift test
 
+# MERIDIAN_TRACE alone activates tracing — no --trace flag required.
+# The CLI still prints the correlation-id banner on stderr (see below).
+MERIDIAN_TRACE=lowering meridian check src.meridian
+
 # Programmatic
 ParserTrace.shared.enable([.phraseMatch, .lowering])
 ```
@@ -84,15 +88,20 @@ Enable `all` to get everything.
 ### Timing & the compile profile
 
 `Compiler.compileWithManifest` wraps the whole pipeline in a top-level `compile`
-span and times each phase (`symbols`, `parse`, `lower`, `codegen`) via
-`trace.phase(_:)`. At end-of-compile it emits a profile under `.timing`:
+span and times each phase via `trace.phase(_:)`. At end-of-compile it emits a
+profile under `.timing`:
 
 ```
 [timing] ── compile profile ──
 [timing]   symbols                  1.20 ms  ( 8.0%)
 [timing]   parse                    6.40 ms  (42.7%)
 [timing]   lower                    4.10 ms  (27.3%)
+[timing]   domainDecl               0.40 ms  ( 2.7%)
+[timing]   traceIdentity.annotate     0.30 ms  ( 2.0%)
+[timing]   obligationStamp            0.20 ms  ( 1.3%)
 [timing]   codegen                  3.30 ms  (22.0%)
+[timing]   manifestRules              0.15 ms  ( 1.0%)
+[timing]   obligationDocument         0.10 ms  ( 0.7%)
 [timing]   total                   15.00 ms
 [timing]   diagnostics emitted: 0
 ```
@@ -100,6 +109,29 @@ span and times each phase (`symbols`, `parse`, `lower`, `codegen`) via
 `.timing` is **off by default** and is excluded from `capturing()` assertions so
 trace tests remain deterministic. Enable it explicitly with `--trace timing`
 (or `all`).
+
+### Compile phase map
+
+The table below is the authoritative list of `trace.phase(_:)` labels and the
+categories that carry detail lines. Group prefixes (`phrase`, `all`) still apply.
+
+| Stage | `trace.phase` label(s) | Primary categories | Notes |
+|---|---|---|---|
+| **Bootstrap** | `bootstrap.rulebook`, `bootstrap.merconfig`, `bootstrap.modules`, `bootstrap.inlineDomain`, `bootstrap.lexiconMerge` | `rulebook`, `merconfig`, `symbols` | Module resolution and inline `## Domain` harvest run here. |
+| **Symbols** | `symbols` | `symbols` | `SymbolTable.build(from:)` — kinds, properties, phrases, tools. |
+| **Parse** | `parse` (single file) or `parse <file>` (skillpack) | `parse`, `statement`, `expression`, `phrase.parse`, `skill` | Per-statement dispatch and expression production decisions. |
+| **Lower** | `lower` | `lowering`, `rulebook`, `skill` | AST → IR, rule classification, deontic norms, fallback warnings. |
+| **Post-lower** | `domainDecl`, `traceIdentity.hash`, `traceIdentity.annotate`, `obligationStamp` | `codegen`, `timing` | Domain inline decl harvest; trace-capture policy annotation; `OBL-…` contract stamping. Summary lines: `domain decl:`, `trace identity: annotated`, `obligation stamp:`. |
+| **Codegen** | `codegen`, `codegen-multi` | `codegen`, `validation` | Swift + optional multi-file emit (`multi-file emit:` summary). |
+| **Manifest** | `manifestRules`, `obligationDocument` | `codegen`, `timing` | Rule manifest entries + versioned obligation JSON (`obligation document:` summary). |
+| **Sidecar** | `irSidecar` | `codegen`, `timing` | `IRSidecarEmitter` canonical IR sidecar (`emit IR sidecar` span). |
+| **Skillpack** | `compileSkillpack (N file(s))` + per-file `parse <file>` | `timing`, `parse`, `lower` | Batch compile shares one profile; each input file gets its own parse phase. |
+| **Verbalizer** | (no `trace.phase` — workflow/primitive spans) | `verbalizer`, `validation` | `meridian explain`, `DriftEngine`, `IRSidecarEmitter` callers. Per-workflow `▶`/`◀` + cheap per-primitive labels. |
+| **Lint** | (no `trace.phase` — `lint <file>` span) | `diagnostics`, `tokenize` | `meridian lint` threads trace through `IndentTokenizer`; lint findings mirror under `.diagnostics`. |
+| **Drift** | (hunk classification spans) | `drift`, `verbalizer` | `meridian drift`, `skill-deviation`. |
+
+Post-lower phases run inside `annotateAndStampObligations` and are shared by
+`compileWithManifest`, `compileToModel`, and `compileSkillpack`.
 
 ### Diagnostics mirroring
 
@@ -120,10 +152,13 @@ compile-time pipeline with `--trace` and no silent gaps:
 | Tokenize | `tokenize` | Line/fence/table/checklist/heading decisions are visible. |
 | Parse | `parse`, `statement`, `expression`, `phrase.parse` | Top-level parse spans, statement dispatch, expression production decisions, and phrase-pattern tokenization are visible. |
 | Phrase resolution | `phrase.match`, `phrase.args`, `phrase.inline` | Candidate scoring, argument extraction, and phrase body expansion are visible. |
-| Lower | `lowering`, `rulebook`, `skill` | AST-to-IR decisions, rule classification, section-role routing, and fallback warnings are visible. |
-| Validate | `diagnostics` | Structured diagnostics, including recovery summaries, are mirrored with codes. |
-| Emit | `codegen` | Swift, manifest, and domain emission decisions are visible. Trace text is redacted before it is written. |
-| Verbalize | `verbalizer` | `meridian explain` and any API caller using `Verbalizer.verbalize()` can trace canonical source generation. |
+| Lower | `lowering`, `rulebook`, `skill` | AST-to-IR decisions, rule classification, section-role routing, deontic norms, and opt-in fallback warnings are visible. |
+| Post-lower | `timing`, `codegen` | `domainDecl`, `traceIdentity.*`, `obligationStamp`, `manifestRules`, `obligationDocument` phases and summary lines are visible when `.timing` or `.codegen` is enabled. |
+| Validate | `validation`, `diagnostics` | Structured diagnostics (including recovery summaries) are mirrored with codes; `IRValidator` spans appear before emission. |
+| Emit | `codegen` | Swift, manifest, domain, multi-file, and IR-sidecar emission decisions are visible. Trace text is redacted before it is written. |
+| Verbalize | `verbalizer` | `meridian explain` and any API caller using `Verbalizer.verbalize()` can trace per-workflow and per-primitive canonical source generation. |
+| Lint | `diagnostics`, `tokenize` | `meridian lint` opens a `lint <file>` span, threads tokenizer decisions, and mirrors lint findings. |
+| Skillpack | `timing`, `parse` | `compileSkillpack (N file(s))` top-level span and per-file `parse <file>` phases appear under `.timing`. |
 | Drift | `drift` | `meridian drift` and `skill-deviation` can trace authored-vs-canonical hunk classification. |
 
 ---
@@ -262,8 +297,9 @@ Every subcommand that runs the compiler or migration pipeline creates a fresh
 `ParserTrace()` per invocation (via the shared `makeCLITrace(spec:file:)`
 bootstrap in `CLISupport.swift`), configures it, then passes it down.
 `compile`, `check`, `verify`, `run`, `migrate-skill`, `preview-skill`,
-`explain`, `drift`, `inert-yield`, and `skill-deviation` ALL accept both
-`--trace` and `--trace-file` (full parity — none of them are `--trace`-only).
+`explain`, `drift`, `inert-yield`, `skill-deviation`, and `lint` ALL accept
+`--trace`, `--trace-file`, and `--trace-format` (full parity — none are
+`--trace`-only).
 `meridian trace categories` lists the valid category tokens:
 
 ```swift
@@ -292,14 +328,29 @@ meridian drift skill.meri --trace verbalizer,drift
 meridian inert-yield sample-gbrain/skills --batch --trace skill,lowering
 meridian skill-deviation original/SKILL.md ported.meri --trace drift
 
+# Lint: tokenizer + lint findings under diagnostics/tokenize
+meridian lint examples/dx/fixtures/lint_polite_uncertainty.meridian --trace diagnostics,tokenize
+
 # --trace-file redirects to a file instead of stderr, on every one of the above
 meridian check examples/order_processing.meridian --trace all --trace-file /tmp/check.log
 meridian compile order.meridian --trace validation --trace-format jsonl
+
+# MERIDIAN_TRACE env alone is enough — correlation id still announced on stderr
+MERIDIAN_TRACE=lowering meridian check order.meridian
 ```
 
-`--trace-format` accepts `text` (default) or `jsonl`. When tracing is active,
-the CLI prints one stderr line with the trace **correlation id**; JSONL records
-carry the same value in `"corr"`.
+`--trace-format` accepts `text` (default) or `jsonl`. When tracing is active —
+whether from `--trace` **or** from `MERIDIAN_TRACE` read at `ParserTrace()`
+init — the CLI prints one stderr line with the trace **correlation id**; JSONL
+records carry the same value in `"corr"`.
+
+```
+trace correlation id: 6F2E4A1B-… (JSONL records include "corr")
+```
+
+`makeCLITrace` calls `announceCLITrace` whenever at least one category is
+enabled after init, so env-only activation gets the same banner as an explicit
+`--trace` flag.
 
 ---
 
@@ -381,11 +432,16 @@ defer { trace.closeSpan(span, outcome: .success) }
   per-workflow validation scopes and failure summaries.
 
 Each `ParserTrace` instance gets a stable **`correlationID`** (UUID) for the
-whole command. CLI commands print it once to stderr when `--trace` is active:
+whole command. CLI commands print it once to stderr when tracing is active
+(`--trace` or `MERIDIAN_TRACE`):
 
 ```
 trace correlation id: 6F2E4A1B-… (JSONL records include "corr")
 ```
+
+Use the correlation id to join stderr diagnostics, a `--trace-file` text log,
+and a `--trace-format jsonl` stream from the same invocation. Filter JSONL with
+`jq 'select(.corr == "<uuid>")'`.
 
 ### JSONL (`--trace-format jsonl`)
 
@@ -398,16 +454,171 @@ per record. Keys (sorted in output):
 | `corr` | Correlation id (matches `ParserTrace.correlationID` / stderr banner) |
 | `span` | Span id (uint64) |
 | `parent` | Parent span id, when nested |
-| `cat` | Category raw value (e.g. `validation`, `lowering`) |
+| `cat` | Category raw value (e.g. `validation`, `lowering`, `verbalizer`) |
 | `kind` | `open`, `event`, or `close` |
-| `op` | Operation label on `open` records |
+| `op` | Operation label on `open` records (e.g. `validate workflows`, `workflow AuditOrder`) |
 | `outcome` | `success` or `failure` on `close` records |
 | `msg` | Human message (redacted; text format uses `▶`/`◀` prefixes here) |
-| `range` | Optional `SourceRange` object (`file`, `startLine`, …) |
+| `range` | Optional `SourceRange` object (`file`, `startLine`, `startColumn`, `endLine`, `endColumn`) |
+
+Record kinds:
+
+- **`open`** — span start; has `op`, optional `range`, optional `parent`.
+- **`event`** — `log`/`detail` line inside a span; `msg` carries the payload.
+- **`close`** — span end; has `outcome` and optional result `msg`.
 
 ```bash
-meridian check order.meridian --trace validation,lowering --trace-format jsonl
+meridian check order.meridian --trace validation,lowering --trace-format jsonl 2>/dev/null \
+  | jq -c 'select(.kind == "open" and .cat == "validation")'
 ```
+
+---
+
+## Strict-by-default fallback policy
+
+Meridian's compile-time default is **strict**: unresolved phrases, unparseable
+rules, unattached rules, unresolved trigger actions, and unknown tools all
+surface as hard errors — never silent placeholders. Deontic norms (`must` /
+`must not` / `may`) and obligation/trace-identity stamping are also strict; an
+unlowerable deontic condition is `MER-DEO-007`, not a dropped guard.
+
+**Opt-in escape hatches** (every use is visible):
+
+| Mechanism | Scope | Effect |
+|---|---|---|
+| Frontmatter `allow-fallbacks: <kinds>` | Per `.meridian` / `.meri` file | Enables named `FallbackKind` values only for that file. Unknown tokens → `MER2009`. |
+| `Compiler.Options.fallbackPolicy = .lenient` | Process-wide (hosts/tests) | Allows all `FallbackKind` cases. |
+| `migrate-skill --route-fuzzy` | Migration only | Downgrades some operational sections to `(( role: reference ))` with `MER6003` warning — not a compile fallback. |
+
+`FallbackKind` tokens (comma-separated in frontmatter):
+
+- `unresolved-phrases` — emit `_unresolved` bind instead of `MER2001`
+- `unparseable-rules` — drop unclassified rules from IR (still in manifest)
+- `unattached-rules` — drop rules that don't attach to any workflow surface
+- `unresolved-trigger-actions` — document trigger body instead of executing
+- `unknown-tools` — emit unrecognized tool id for host-provided runtime tools
+
+Shorthand: `all`, `*`, or `lenient` in frontmatter enables every kind.
+
+When a fallback fires, the compiler emits a **warning diagnostic** at the site
+and a `.lowering` trace line naming the kind — never a silent substitution.
+See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) §6 for the full
+no-silent-fallback table and [coverage/SILENT_FALLBACK_ALLOWLIST.md](coverage/SILENT_FALLBACK_ALLOWLIST.md)
+for the machine-checked allowlist of intentional silent paths.
+
+---
+
+## Troubleshooting: "I got MERxxxx — how do I debug with trace?"
+
+Use this cookbook to pick categories and commands. Fixtures live under
+`examples/dx/fixtures/` (see `examples/dx/README.md`).
+
+### Parse / structural (`MER1001`–`MER1012`, `MER3018`)
+
+```bash
+CFG=examples/dx/dx.merconfig
+meridian check examples/dx/fixtures/match_branch_missing_colon.meridian \
+  --merconfig "$CFG" --trace statement,parse,diagnostics
+```
+
+Expect `[diagnostics]` lines mirroring `MER1012` with the source range, plus
+`[statement]` dispatch showing which production handled (or rejected) the line.
+
+### Phrase match / name resolution (`MER2001`, `MER2002`, `MER2004`)
+
+```bash
+meridian check examples/dx/fixtures/misspelled_tool.meridian \
+  --merconfig examples/dx/dx.merconfig \
+  --trace phrase.match,phrase.args,lowering,diagnostics
+```
+
+`phrase.match` shows candidate scoring; `diagnostics` mirrors `MER2002` with
+did-you-mean notes. For property typos use `misspelled_property.meridian` with
+the same flags — lowering may also log symbol lookup under `.lowering`.
+
+### Lowering / rules / deontic (`MER1004`, `MER-DEO-*`, `MER3016`)
+
+```bash
+meridian check skill.meri --trace lowering,rulebook,diagnostics --trace-format jsonl \
+  2>trace-banner.txt | jq -c 'select(.cat == "lowering")'
+```
+
+`MER-DEO-007` (`deontic unlowerable condition`) means a `must hold` or
+`only where` clause could not lower to checkable IR — there is no opt-in
+fallback; reword the condition or use an assertion/adjective the lowering
+pipeline supports.
+
+### Temporal / trace surface (`MER-TMP-*`)
+
+```bash
+meridian check workflow.meridian --trace expression,lowering,diagnostics
+```
+
+Expression parsing for `has ever`, `since the last`, `usually`, and statistical
+forms logs under `.expression`; lowering failures for unsupported `since` state
+predicates surface as `MER-TMP-019` before codegen.
+
+### Obligations / post-lower (`MER-DEO-006`, `MER-TMP-020`)
+
+```bash
+meridian compile skill.meri --trace timing,codegen,diagnostics 2>&1 | rg 'obligation|traceIdentity'
+```
+
+Post-lower phases stamp `OBL-…` ids and annotate trace-capture policy.
+`MER-DEO-006` is a strict collision on obligation id prefixes;
+`MER-TMP-020` means a production trace capture policy is missing from
+`.merconfig`.
+
+### Codegen / validation (`MER4002`, `MER-TMP-019`)
+
+```bash
+meridian compile skill.meri --trace validation,codegen,diagnostics
+```
+
+`IRValidator` opens per-workflow `.validation` spans before `SwiftEmitter` /
+`Verbalizer`; malformed IR never reaches best-effort output.
+
+### Verbalizer / explain (`MER4002`, `MER5010`)
+
+```bash
+meridian explain examples/dx/fixtures/match_branch_valid.meridian \
+  --merconfig examples/dx/dx.merconfig \
+  --trace verbalizer,validation,diagnostics --trace-file /tmp/explain-trace.log
+```
+
+Per-workflow `▶ workflow …` spans and per-primitive labels show which IR node
+failed verbalization.
+
+### Lint-only (`MER6001`–`MER6003`, `MER3014`)
+
+```bash
+meridian lint examples/dx/fixtures/lint_polite_uncertainty.meridian \
+  --trace diagnostics,tokenize
+meridian lint examples/dx/fixtures/anaphora_ambiguous.meridian \
+  --trace diagnostics
+```
+
+Lint does not run lowering; trace stays in tokenizer + lint span + diagnostic
+mirror.
+
+### Batch recovery (`MER6004`)
+
+```bash
+meridian check examples/dx/fixtures/recovery_multi_error.meridian \
+  --merconfig examples/dx/dx.merconfig --trace diagnostics,statement
+```
+
+After multiple errors, `[diagnostics]` includes a `MER6004` recovery summary
+with skipped construct ranges.
+
+### Joining streams
+
+1. Note the `trace correlation id:` line on stderr.
+2. Filter JSONL: `jq 'select(.corr == "<uuid>" and .kind == "event")' trace.jsonl`
+3. Cross-reference `diagnostics` category lines — every rendered diagnostic is
+   mirrored with `severity code @range: message`.
+
+Full matrix: [coverage/DX_TRACE_DIAGNOSTIC_MATRIX.md](coverage/DX_TRACE_DIAGNOSTIC_MATRIX.md).
 
 ---
 

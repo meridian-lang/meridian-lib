@@ -1,0 +1,937 @@
+{
+  "version": 1,
+  "generated": "2026-07-12T15:30:00Z",
+  "authority": "Observability DX plan step 1 — explicit DX inventories",
+  "summary": {
+    "rowCount": 55,
+    "done": 55,
+    "pending": 0
+  },
+  "rows": [
+    {
+      "id": "DX-TOK-001",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/IndentTokenizer.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/SentenceBreakerTests.swift",
+        "Tests/MeridianCoreTests/ParserTraceTests.swift"
+      ],
+      "traceCategories": ["tokenize"],
+      "diagnosticFamilies": ["MER1011"],
+      "fallback": "none",
+      "suggestions": "structural help on invalid table/checklist markers",
+      "redaction": "ParserTrace.redactSecrets on all sink output",
+      "status": "done"
+    },
+    {
+      "id": "DX-TOK-002",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/SentenceBreaker.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/SentenceBreakerTests.swift"],
+      "traceCategories": ["tokenize"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "none",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-PARSE-001",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/MeridianParser.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/Phase3ForcingFunction.swift",
+        "Tests/MeridianCoreTests/MeridianParserTests.swift"
+      ],
+      "traceCategories": ["parse"],
+      "diagnosticFamilies": ["MER1001", "MER1006", "MER1008", "MER3010"],
+      "fallback": "none",
+      "suggestions": "structural help strings",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-PARSE-002",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Skill/SkillSectionBuilder.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/SkillSectionBuilderTests.swift"],
+      "traceCategories": ["parse", "skill"],
+      "diagnosticFamilies": ["MER1009", "MER1010"],
+      "fallback": "none",
+      "suggestions": "structural help; role rewrite guidance",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-MERCFG-001",
+      "phase": "bootstrap",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/MerConfigParser.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/MerConfigParserTests.swift"],
+      "traceCategories": ["merconfig"],
+      "diagnosticFamilies": ["MER5001", "MER5002", "MER5005", "MER-TMP-020"],
+      "fallback": "none",
+      "suggestions": "among declared section names / property keys",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-RULEBK-001",
+      "phase": "bootstrap",
+      "implementationFiles": [
+        "Sources/MeridianCore/Rulebook/RulebookParser.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/RulebookParserTests.swift"],
+      "traceCategories": ["rulebook"],
+      "diagnosticFamilies": ["MER5003", "MER5004"],
+      "fallback": "none",
+      "suggestions": "structural help on malformed entries",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-MOD-001",
+      "phase": "bootstrap",
+      "implementationFiles": [
+        "Sources/MeridianCore/Modules/ModuleResolver.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/ModuleResolverTests.swift"],
+      "traceCategories": ["symbols"],
+      "diagnosticFamilies": ["MER-MOD"],
+      "fallback": "none",
+      "suggestions": "among module names / exports",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-SYM-001",
+      "phase": "bootstrap",
+      "implementationFiles": [
+        "Sources/MeridianCore/Symbols/SymbolTable.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/SymbolTableTests.swift",
+        "Tests/MeridianCoreTests/TraceAcceptanceMatrixTests.swift"
+      ],
+      "traceCategories": ["symbols"],
+      "diagnosticFamilies": ["MER2003", "MER2007", "MER2008", "MER2011"],
+      "fallback": "opt-in unknown-tools at lower time",
+      "suggestions": "Suggester among phrase/kind/tool candidates",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-SYM-002",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Symbols/SymbolTable.swift",
+        "Sources/MeridianCore/Parser/Lexical/Productions/PhrasePatternParser.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/PhrasePatternTests.swift",
+        "Tests/MeridianCoreTests/ParserTraceTests.swift"
+      ],
+      "traceCategories": ["phrase.parse", "phrase.match", "phrase.args", "phrase.inline"],
+      "diagnosticFamilies": ["MER3001", "MER2001"],
+      "fallback": "opt-in unresolved-phrases",
+      "suggestions": "among registered phrase patterns",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-EXPR-001",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/ExpressionParser.swift",
+        "Sources/MeridianCore/Grammar/PegexSurfaceGrammar.swift",
+        "Sources/MeridianCore/Parser/Lexical/NonterminalScreen.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/ExpressionParserGoldenTests.swift",
+        "Tests/MeridianCoreTests/ExpressionParserCoverageTests.swift",
+        "Tests/MeridianCoreTests/NonterminalScreeningTests.swift"
+      ],
+      "traceCategories": ["expression"],
+      "diagnosticFamilies": ["MER1005", "MER3012", "MER3013"],
+      "fallback": "none",
+      "suggestions": "malformed-expression help; among comparators where applicable",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-EXPR-TMP",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/Productions/TraceTemporalGrammar.swift",
+        "Sources/MeridianCore/Parser/Lexical/Productions/TraceEventPatternGrammar.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/Inform7/TraceTemporalInform7Tests.swift"],
+      "traceCategories": ["expression"],
+      "diagnosticFamilies": ["MER-TMP"],
+      "fallback": "none",
+      "suggestions": "structural help; among declared step names at lower time",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-EXPR-STA",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/Productions/TraceStatisticalGrammar.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/Inform7/TraceStatisticalInform7Tests.swift"],
+      "traceCategories": ["expression"],
+      "diagnosticFamilies": ["MER-STA", "MER-TMP"],
+      "fallback": "none",
+      "suggestions": "structural help on vague frequency",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-EXPR-DSC",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Lexical/Productions/DescriptionGrammar.swift",
+        "Sources/MeridianCore/Parser/Lexical/Productions/SuperlativeGrammar.swift",
+        "Sources/MeridianCore/Parser/Lexical/Productions/QuantifierGrammar.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/Inform7/Inform7Wave3Tests.swift",
+        "Tests/MeridianCoreTests/Inform7/Inform7Wave4Tests.swift"
+      ],
+      "traceCategories": ["expression"],
+      "diagnosticFamilies": ["MER-DSC", "MER3013"],
+      "fallback": "none",
+      "suggestions": "among gradable properties / relation names",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-STMT-001",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/StatementParser.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/StatementParserTests.swift",
+        "Tests/MeridianCoreTests/ReachableCoverageParsersTests.swift"
+      ],
+      "traceCategories": ["statement"],
+      "diagnosticFamilies": ["MER1002", "MER1003", "MER1010", "MER1011", "MER-JDG", "MER-CND"],
+      "fallback": "none",
+      "suggestions": "Diagnostic.problem read/as/but/expected/rewrite",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-STMT-002",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/StatementParser.swift:parseMatchBranch"
+      ],
+      "tests": [
+        "Tests/MeridianSlowIntegrationTests/DXCorpusFixtureSlowTests.swift",
+        "Tests/MeridianCoreTests/Inform7/MatchBranchTests.swift"
+      ],
+      "traceCategories": ["statement"],
+      "diagnosticFamilies": ["MER1012", "MER3018"],
+      "fallback": "none",
+      "suggestions": "Suggester closest wildcard label + auto-applicable colon rewrite",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-STMT-003",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/StatementParser.swift:parseRecover"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/StatementParserCoverageTests.swift"
+      ],
+      "traceCategories": ["statement"],
+      "diagnosticFamilies": ["MER1003"],
+      "fallback": "none",
+      "suggestions": "structural help with colon rewrite hint",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-STMT-004",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Parser/Productions/StatementParser.swift",
+        "Sources/MeridianCore/Diagnostics/DiagnosticEngine.swift"
+      ],
+      "tests": [
+        "Tests/MeridianSlowIntegrationTests/DXCorpusFixtureSlowTests.swift",
+        "Tests/MeridianCoreTests/ObservabilityFaultInjectionTests.swift"
+      ],
+      "traceCategories": ["statement", "diagnostics"],
+      "diagnosticFamilies": ["MER6004"],
+      "fallback": "batch recovery via DiagnosticEngine.recovering",
+      "suggestions": "recovery summary note after aggregate throw",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-STMT-005",
+      "phase": "parse",
+      "implementationFiles": [
+        "Sources/MeridianCore/Language/AnaphoraResolver.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/AnaphoraResolverTests.swift"],
+      "traceCategories": ["statement"],
+      "diagnosticFamilies": ["MER3014"],
+      "fallback": "none",
+      "suggestions": "spell-out target noun help",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-RULE-001",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/RuleLowering.swift",
+        "Sources/MeridianCore/Lowering/RuleAnalyzer.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/RuleLoweringTests.swift"],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER1004", "MER-DEO"],
+      "fallback": "opt-in unparseable-rules",
+      "suggestions": "structural help on unsupported shapes",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-RULE-002",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/RuleInjector.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/RuleInjectorTests.swift"],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER3006", "MER3007", "MER3019", "MER3020"],
+      "fallback": "opt-in unattached-rules / unresolved-trigger-actions",
+      "suggestions": "among workflow actions / formatter names",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-RULE-003",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/RuleLowering.swift:classifyDeonticObligation",
+        "Sources/MeridianCore/Lowering/RuleLowering.swift:classifyDeonticPermission"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/SilentCompileBehaviorTests.swift",
+        "Tests/MeridianCoreTests/RuleLoweringTests.swift"
+      ],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER-DEO-007"],
+      "fallback": "none",
+      "suggestions": "structural help on unsupported condition shapes",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-LOWER-001",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/ASTToIR.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/Phase3ForcingFunction.swift",
+        "Tests/MeridianCoreTests/ASTToIRTests.swift"
+      ],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER2xxx", "MER3xxx", "MER-REF", "MER-TYP"],
+      "fallback": "opt-in unresolved-phrases emits _unresolved bind",
+      "suggestions": "Suggester among phrases/tools/kinds",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-LOWER-002",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/ASTToIR.swift:validateDefinitionProperties"
+      ],
+      "tests": ["Tests/MeridianCoreTests/DefinitionLoweringTests.swift"],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER2004"],
+      "fallback": "strict",
+      "suggestions": "among declared kind properties via Diagnostic.unresolved",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-LOWER-003",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/FallbackPolicy.swift",
+        "Sources/MeridianCore/Lowering/ASTToIR.swift:reportFallbackWarning"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/ObservabilityFaultInjectionTests.swift",
+        "Tests/MeridianCoreTests/FallbackPolicyTests.swift"
+      ],
+      "traceCategories": ["lowering", "diagnostics"],
+      "diagnosticFamilies": ["MER2xxx", "MER3xxx"],
+      "fallback": "opt-in per FallbackKind via allow-fallbacks frontmatter",
+      "suggestions": "warning text names the opt-in kind to remove",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-DEO-001",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/DeonticLowering.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/Inform7/DeonticInform7Tests.swift",
+        "Tests/MeridianCoreTests/Inform7/DeonticBrokenTwinTests.swift"
+      ],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER-DEO"],
+      "fallback": "strict",
+      "suggestions": "structural help on conflicts / non-norm modals",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-DEO-002",
+      "phase": "lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Lowering/DeonticLowering.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DXMutationGateTests.swift",
+        "Tests/MeridianCoreTests/Inform7/DeonticBrokenTwinTests.swift",
+        "Tests/MeridianCoreTests/Inform7/DeonticInform7Tests.swift"
+      ],
+      "traceCategories": ["lowering"],
+      "diagnosticFamilies": ["MER-DEO"],
+      "fallback": "strict",
+      "suggestions": "structural help on conflicts / sticky deny / tool outside permissions",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-OBL-001",
+      "phase": "post-lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Obligations/ObligationDocument.swift",
+        "Sources/MeridianCore/Obligations/ObligationArtifact.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/Inform7/ObligationArtifactTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": ["MER-DEO-006"],
+      "fallback": "strict",
+      "suggestions": "n/a",
+      "redaction": "artifact JSON excludes secrets by construction",
+      "status": "done"
+    },
+    {
+      "id": "DX-OBL-002",
+      "phase": "post-lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Obligations/ObligationId.swift:ObligationIdStamper"
+      ],
+      "tests": ["Tests/MeridianCoreTests/Inform7/ObligationArtifactTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": ["MER-DEO-006"],
+      "fallback": "strict",
+      "suggestions": "n/a",
+      "redaction": "n/a",
+      "status": "done"
+    },
+    {
+      "id": "DX-OBL-003",
+      "phase": "post-lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/Obligations/ObligationId.swift:ObligationIdStamper",
+        "Sources/MeridianCore/Compiler.swift:compileWithManifest"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DXTraceExpansionTests.swift",
+        "Tests/MeridianCoreTests/TraceEnabledCompileTests.swift"
+      ],
+      "traceCategories": ["timing", "codegen"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "n/a",
+      "status": "done"
+    },
+    {
+      "id": "DX-TRACEID-001",
+      "phase": "post-lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/IR/TraceIdentityPlanner.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/TraceIdentityPlannerTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": ["MER-TMP-020"],
+      "fallback": "strict",
+      "suggestions": "structural help on missing capture policies",
+      "redaction": "n/a",
+      "status": "done"
+    },
+    {
+      "id": "DX-TRACEID-002",
+      "phase": "post-lower",
+      "implementationFiles": [
+        "Sources/MeridianCore/IR/TraceIdentityPlanner.swift",
+        "Sources/MeridianCore/Compiler.swift:compileWithManifest"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DXTraceExpansionTests.swift",
+        "Tests/MeridianCoreTests/TraceEnabledCompileTests.swift"
+      ],
+      "traceCategories": ["timing", "codegen"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "n/a",
+      "status": "done"
+    },
+    {
+      "id": "DX-VAL-001",
+      "phase": "validation",
+      "implementationFiles": [
+        "Sources/MeridianCore/IR/IRValidator.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/IRValidatorTests.swift",
+        "Tests/MeridianCoreTests/ObservabilityFaultInjectionTests.swift"
+      ],
+      "traceCategories": ["validation"],
+      "diagnosticFamilies": ["MER4002", "MER3018"],
+      "fallback": "none",
+      "suggestions": "actionable help + phase: validation",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-CG-001",
+      "phase": "codegen",
+      "implementationFiles": [
+        "Sources/MeridianCore/Codegen/SwiftEmitter.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/SwiftEmitterTests.swift",
+        "Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift"
+      ],
+      "traceCategories": ["codegen", "validation"],
+      "diagnosticFamilies": ["MER4002", "MER-TMP-019"],
+      "fallback": "none",
+      "suggestions": "IR validation help before emit",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-CG-002",
+      "phase": "codegen",
+      "implementationFiles": [
+        "Sources/MeridianCore/Codegen/DomainEmitter.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/DomainEmitterTests.swift"],
+      "traceCategories": ["codegen"],
+      "diagnosticFamilies": ["MER-DOM"],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-CG-003",
+      "phase": "codegen",
+      "implementationFiles": [
+        "Sources/MeridianCore/Codegen/IRSidecarEmitter.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DXTraceExpansionTests.swift",
+        "Tests/MeridianCoreTests/IRSidecarTests.swift"
+      ],
+      "traceCategories": ["codegen", "timing"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-MAN-001",
+      "phase": "manifest",
+      "implementationFiles": [
+        "Sources/MeridianCore/Codegen/ManifestEmitter.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/ManifestEmitterTests.swift"],
+      "traceCategories": ["codegen"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-MAN-002",
+      "phase": "manifest",
+      "implementationFiles": [
+        "Sources/MeridianCore/Compiler.swift:compileWithManifest",
+        "Sources/MeridianCore/Codegen/ManifestEmitter.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/CompileWithManifestTests.swift",
+        "Tests/MeridianCoreTests/Phase3ForcingFunction.swift"
+      ],
+      "traceCategories": ["codegen"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-VERB-001",
+      "phase": "verbalizer",
+      "implementationFiles": [
+        "Sources/MeridianCore/Verbalizer/Verbalizer.swift",
+        "Sources/MeridianCore/Verbalizer/CanonicalForms.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/VerbalizerTotalityTests.swift",
+        "Tests/MeridianCoreTests/VerbalizerTests.swift"
+      ],
+      "traceCategories": ["verbalizer", "validation"],
+      "diagnosticFamilies": ["MER5010", "MER4002"],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-VERB-002",
+      "phase": "verbalizer",
+      "implementationFiles": [
+        "Sources/MeridianCore/Verbalizer/DriftEngine.swift"
+      ],
+      "tests": ["Tests/MeridianCoreTests/DriftEngineTests.swift"],
+      "traceCategories": ["drift"],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-LINT-001",
+      "phase": "lint",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/MeridianLinter.swift"
+      ],
+      "tests": [
+        "Tests/MeridianSlowIntegrationTests/DXCorpusFixtureSlowTests.swift",
+        "Tests/MeridianCoreTests/MeridianLinterTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": ["MER6001", "MER6002", "MER6003", "MER6005"],
+      "fallback": "none",
+      "suggestions": "marker-scoped help text",
+      "redaction": "diagnostic text is authored source; no secret redaction",
+      "status": "done"
+    },
+    {
+      "id": "DX-LINT-002",
+      "phase": "lint",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/MeridianLinter.swift:containsAnaphora",
+        "Sources/MeridianCore/Language/AnaphoraResolver.swift"
+      ],
+      "tests": [
+        "Tests/MeridianSlowIntegrationTests/DXCorpusFixtureSlowTests.swift",
+        "Tests/MeridianCoreTests/AnaphoraResolverTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": ["MER3014"],
+      "fallback": "none",
+      "suggestions": "spell-out target noun; lint uses marker heuristic then resolver null-check",
+      "redaction": "diagnostic text is authored source",
+      "status": "done"
+    },
+    {
+      "id": "DX-LINT-003",
+      "phase": "lint",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/MeridianLinter.swift",
+        "Sources/MeridianCLIKit/Commands/LintCommand.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DXTraceExpansionTests.swift",
+        "Tests/MeridianCoreTests/MeridianLinterTests.swift"
+      ],
+      "traceCategories": ["diagnostics", "tokenize"],
+      "diagnosticFamilies": ["MER6xxx"],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-CLI-001",
+      "phase": "cli",
+      "implementationFiles": [
+        "Sources/MeridianCLIKit/CLISupport.swift",
+        "Sources/MeridianCLIKit/Commands/CompileCommand.swift",
+        "Sources/MeridianCLIKit/Commands/CheckCommand.swift",
+        "Sources/MeridianCLIKit/Commands/VerifyCommand.swift",
+        "Sources/MeridianCLIKit/Commands/RunCommand.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/TraceAcceptanceMatrixTests.swift",
+        "Tests/MeridianCLITests/CLISupportTests.swift"
+      ],
+      "traceCategories": ["timing", "diagnostics"],
+      "diagnosticFamilies": ["MER5011", "MER5012", "MER5013", "MER5014", "MER2010"],
+      "fallback": "none",
+      "suggestions": "among trace categories when unknown",
+      "redaction": "ParserTrace.redactSecrets; MER5011 on trace file write failure",
+      "status": "done"
+    },
+    {
+      "id": "DX-CLI-002",
+      "phase": "cli",
+      "implementationFiles": [
+        "Sources/MeridianCLIKit/Commands/ExplainCommand.swift",
+        "Sources/MeridianCLIKit/Commands/ExplainDiagCommand.swift",
+        "Sources/MeridianCLIKit/Commands/DecisionsCommand.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCLITests/VerbalizerCLIE2ETests.swift",
+        "Tests/MeridianCoreTests/DiagnosticCodeCatalogTests.swift"
+      ],
+      "traceCategories": ["verbalizer", "diagnostics"],
+      "diagnosticFamilies": ["catalog-wide"],
+      "fallback": "none",
+      "suggestions": "catalog explanation + DecisionCatalog rationale",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-CLI-003",
+      "phase": "cli",
+      "implementationFiles": [
+        "Sources/MeridianCLIKit/Commands/TraceRenderCommand.swift",
+        "Sources/MeridianCLIKit/Commands/TraceEvalCommand.swift",
+        "Sources/MeridianCLIKit/Commands/TraceVerifyCommand.swift",
+        "Sources/MeridianCLIKit/Commands/TraceDriftCommand.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCLITests/TraceEvalCLITests.swift",
+        "Tests/MeridianRuntimeTests/TraceTreeRendererTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "runtime trace payload policies apply at capture time",
+      "status": "done"
+    },
+    {
+      "id": "DX-CLI-004",
+      "phase": "cli",
+      "implementationFiles": [
+        "Sources/MeridianCLIKit/Commands/MigrateSkillCommand.swift",
+        "Sources/MeridianCLIKit/Commands/PreviewSkillCommand.swift",
+        "Sources/MeridianCLIKit/Commands/SkillDeviationCommand.swift",
+        "Sources/MeridianCore/Migration/SkillMigrator.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/SkillMigratorMarkingTests.swift",
+        "Tests/MeridianCoreTests/MigrateSkillCommandTests.swift"
+      ],
+      "traceCategories": ["skill", "parse", "lowering"],
+      "diagnosticFamilies": ["MER6003", "MER2xxx", "MER3xxx"],
+      "fallback": "opt-in route-fuzzy downgrade",
+      "suggestions": "migration hard-error leaves precise compiler codes",
+      "redaction": "ParserTrace.redactSecrets",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-STORE-001",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianRuntime/Trace/TraceStore.swift",
+        "Sources/MeridianRuntime/Trace/InMemoryTraceStore.swift",
+        "Sources/MeridianRuntime/Trace/JSONLTraceStore.swift",
+        "Sources/MeridianRuntime/Trace/SQLiteTraceStore.swift"
+      ],
+      "tests": [
+        "Tests/MeridianRuntimeTests/Trace/TraceStoreTests.swift",
+        "Tests/MeridianRuntimeTests/RuntimeObservabilityFaultInjectionTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": ["runtime.artifact", "trace-store.read"],
+      "fallback": "RuntimeTraceConfiguration.failClosed default",
+      "suggestions": "n/a",
+      "redaction": "capture policy full|hash-only|redacted(fields); ShellHoleRedaction",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-STORE-002",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianRuntime/Runtime.swift",
+        "Sources/MeridianRuntime/State/State.swift"
+      ],
+      "tests": [
+        "Tests/MeridianRuntimeTests/RuntimeTests.swift",
+        "Tests/MeridianRuntimeTests/ObserverTests.swift",
+        "Tests/MeridianRuntimeTests/ObservabilityRuntimeCoverageTests.swift",
+        "Tests/MeridianRuntimeTests/RuntimeObservabilityFaultInjectionTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": ["runtime.operational"],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "tool payload capture policies + RuntimeSecretRedaction on operational diagnostics",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-TOOL-001",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianRuntime/Tools/ToolRegistry.swift",
+        "Sources/MeridianTools/MeridianTools.swift"
+      ],
+      "tests": ["Tests/MeridianRuntimeTests/ToolRegistryTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "opt-in unknown-tools at compile time",
+      "suggestions": "n/a",
+      "redaction": "authorization headers and secrets redacted in trace export",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-TOOL-002",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianTools/LLM/LLMTools.swift",
+        "Sources/MeridianTools/LLM/HTTPLLMProvider.swift"
+      ],
+      "tests": ["Tests/MeridianRuntimeTests/PhaseHLLMProviderTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "fail-closed llm.not_configured when provider absent",
+      "suggestions": "n/a",
+      "redaction": "API keys via environment; not echoed in traces",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-EVAL-001",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianRuntime/Trace/TraceEvaluator.swift",
+        "Sources/MeridianCore/Obligations/ObligationEvaluator.swift"
+      ],
+      "tests": [
+        "Tests/MeridianRuntimeTests/TraceEvaluatorTests.swift",
+        "Tests/MeridianCoreTests/Inform7/CoherenceHarnessTests.swift"
+      ],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "evaluator reads stored trace records only",
+      "status": "done"
+    },
+    {
+      "id": "DX-RT-EVAL-002",
+      "phase": "runtime",
+      "implementationFiles": [
+        "Sources/MeridianRuntime/Tracing/TraceTreeRenderer.swift",
+        "Sources/MeridianCLIKit/Commands/TraceRenderCommand.swift"
+      ],
+      "tests": ["Tests/MeridianRuntimeTests/TraceTreeRendererTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "none",
+      "suggestions": "n/a",
+      "redaction": "renderer displays stored events; no re-redaction layer",
+      "status": "done"
+    },
+    {
+      "id": "DX-X-001",
+      "phase": "cross-cutting",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/DiagnosticEngine.swift",
+        "Sources/MeridianCore/Diagnostics/Diagnostic.swift",
+        "Sources/MeridianCore/Diagnostics/Suggester.swift",
+        "Sources/MeridianCore/Diagnostics/DiagnosticRenderer.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/DiagnosticTests.swift",
+        "Tests/MeridianCoreTests/DiagnosticQualityAuditTests.swift",
+        "Tests/MeridianCoreTests/SuggesterTests.swift"
+      ],
+      "traceCategories": ["diagnostics"],
+      "diagnosticFamilies": ["all active families"],
+      "fallback": "batch recovery summary MER6004",
+      "suggestions": "Suggester did-you-mean or candidate-list notes for nameResolution",
+      "redaction": "trace mirror redacts secrets; diagnostic body is source text",
+      "status": "done"
+    },
+    {
+      "id": "DX-X-002",
+      "phase": "cross-cutting",
+      "implementationFiles": [
+        "docs/coverage/SILENT_FALLBACK_ALLOWLIST.md"
+      ],
+      "tests": ["Tests/MeridianCoreTests/SilentFallbackAuditTests.swift"],
+      "traceCategories": [],
+      "diagnosticFamilies": [],
+      "fallback": "machine-enumerated opt-in silent paths only",
+      "suggestions": "n/a",
+      "redaction": "n/a",
+      "status": "done"
+    },
+    {
+      "id": "DX-X-003",
+      "phase": "cross-cutting",
+      "implementationFiles": [
+        "Sources/MeridianCore/Diagnostics/ParserTrace.swift"
+      ],
+      "tests": [
+        "Tests/MeridianCoreTests/ParserTraceTests.swift",
+        "Tests/MeridianCoreTests/ParserTraceSpanConcurrencyTests.swift"
+      ],
+      "traceCategories": ["all"],
+      "diagnosticFamilies": ["MER2010"],
+      "fallback": "none",
+      "suggestions": "among ParserTrace.Category cases",
+      "redaction": "Authorization/Bearer/password/api_key/secret= patterns → <redacted>",
+      "status": "done"
+    }
+  ],
+  "followUpFiles": [
+    "Tests/MeridianCoreTests/SilentFallbackAuditTests.swift",
+    "Sources/MeridianCore/Lowering/DeonticLowering.swift",
+    "Sources/MeridianCore/Lowering/ASTToIR.swift:validateDefinitionProperties",
+    "Sources/MeridianCore/Diagnostics/MeridianLinter.swift",
+    "Sources/MeridianCore/Compiler.swift:compileWithManifest",
+    "Sources/MeridianCore/IR/TraceIdentityPlanner.swift",
+    "Sources/MeridianCore/Obligations/ObligationId.swift"
+  ]
+}

@@ -2,15 +2,13 @@
 //
 // Meridian — controlled natural language compiler and runtime.
 //
-// Five products:
+// Products:
 //   MeridianCore     — compiler (parser, IR, codegen)
 //   MeridianRuntime  — runtime library consumed by emitted Swift
 //   MeridianTools    — built-in tool implementations (opt-in)
 //   MeridianTestKit  — test helpers
 //   meridian         — CLI executable
-//
-// A future MeridianMCP executable target will sit alongside MeridianCLI,
-// sharing MeridianCore + MeridianRuntime + MeridianTools unchanged.
+//   MeridianMCP      — MCP server executable (stdio JSON-RPC)
 //
 // See docs/02_ARCHITECTURE.md and AGENTS.md for the full layout.
 
@@ -27,25 +25,26 @@ let package = Package(
         .library(name: "MeridianTools", targets: ["MeridianTools"]),
         .library(name: "MeridianTestKit", targets: ["MeridianTestKit"]),
         .executable(name: "meridian", targets: ["MeridianCLI"]),
+        .executable(name: "MeridianMCP", targets: ["MeridianMCP"]),
         .executable(name: "order-processing-handwritten", targets: ["OrderProcessingDemo"])
     ],
     dependencies: [
-        // Parser combinators — foundation for PegexBuilder (needed from Week 3)
+        // Parser combinators — foundation for PegexBuilder
         .package(url: "https://github.com/pointfreeco/swift-parsing", from: "0.14.1"),
 
-        // PegexBuilder — custom DSL on top of swift-parsing (needed from Week 3)
+        // PegexBuilder — custom DSL on top of swift-parsing
         .package(url: "https://github.com/modelhike/pegex.git", branch: "main"),
 
         // CLI argument parsing
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
 
-        // Subprocess management (needed from Week 5)
+        // Subprocess management for CLI run/test and integration drivers
         .package(url: "https://github.com/swiftlang/swift-subprocess", branch: "main"),
 
-        // Code formatting for emitted Swift (needed from Week 3)
+        // Code formatting for emitted Swift
         .package(url: "https://github.com/apple/swift-format", from: "601.0.0"),
 
-        // Ordered collections for symbol tables (needed from Week 3)
+        // Ordered collections for symbol tables
         .package(url: "https://github.com/apple/swift-collections", from: "1.1.0"),
 
         // DocC plugin so `swift package generate-documentation
@@ -55,14 +54,15 @@ let package = Package(
     ],
     targets: [
 
-        // MARK: - MeridianRuntime — runtime library (Week 1+)
+        // MARK: - MeridianRuntime — runtime library
         .target(
             name: "MeridianRuntime",
             dependencies: [],
-            path: "Sources/MeridianRuntime"
+            path: "Sources/MeridianRuntime",
+            linkerSettings: [.linkedLibrary("sqlite3")]
         ),
 
-        // MARK: - MeridianCore — compiler (Week 2+; parser/PegexBuilder wired Week 3)
+        // MARK: - MeridianCore — compiler (parser, IR, lowering, codegen)
         .target(
             name: "MeridianCore",
             dependencies: [
@@ -74,14 +74,14 @@ let package = Package(
             path: "Sources/MeridianCore"
         ),
 
-        // MARK: - MeridianTools — built-in tools (Week 6)
+        // MARK: - MeridianTools — built-in tool implementations
         .target(
             name: "MeridianTools",
             dependencies: ["MeridianRuntime"],
             path: "Sources/MeridianTools"
         ),
 
-        // MARK: - MeridianCLIKit — CLI command library (Week 3+)
+        // MARK: - MeridianCLIKit — CLI command library
         // Holds every subcommand body + shared CLI support so the logic is
         // unit-testable in-process (an executable target's symbols can't be
         // imported by a test target). `MeridianCLI` is a thin @main shell.
@@ -97,7 +97,7 @@ let package = Package(
             path: "Sources/MeridianCLIKit"
         ),
 
-        // MARK: - MeridianCLI — meridian executable (Week 3+)
+        // MARK: - MeridianCLI — meridian executable
         .executableTarget(
             name: "MeridianCLI",
             dependencies: [
@@ -107,39 +107,38 @@ let package = Package(
             path: "Sources/MeridianCLI"
         ),
 
-        // MARK: - MeridianTestKit — test helpers (Week 1+)
+        // MARK: - MeridianMCP — standalone MCP server executable
+        .executableTarget(
+            name: "MeridianMCP",
+            dependencies: ["MeridianCLIKit"],
+            path: "Sources/MeridianMCP"
+        ),
+
+        // MARK: - MeridianTestKit — test helpers
         .target(
             name: "MeridianTestKit",
             dependencies: ["MeridianRuntime"],
             path: "Sources/MeridianTestKit"
         ),
 
-        // MARK: - SampleDemoFlows — Phase 1 hand-written reference workflows
-        // All sample/demo targets live under Sources/SampleDemoFlows/.
+        // MARK: - SampleDemoFlows — hand-written reference workflows
         // EcommerceWorkflows: domain types + workflow structs (library).
-        // OrderProcessingDemo: driver executable for the Phase 1 forcing function.
-        // Both targets will be replaced by compiler-generated output in Phase 3.
+        // OrderProcessingDemo: driver executable for the order-processing forcing function.
+        // GeneratedOrderProcessing: committed compiler-generated Swift for golden round-trip tests.
         .target(
             name: "EcommerceWorkflows",
             dependencies: ["MeridianRuntime"],
             path: "Sources/SampleDemoFlows/EcommerceWorkflows"
         ),
 
-        // MARK: - OrderProcessingDemo — Week 1 forcing function executable
+        // MARK: - OrderProcessingDemo — order-processing forcing-function executable
         .executableTarget(
             name: "OrderProcessingDemo",
             dependencies: ["MeridianRuntime", "MeridianTestKit", "EcommerceWorkflows"],
             path: "Sources/SampleDemoFlows/OrderProcessingDemo"
         ),
 
-        // MARK: - GeneratedOrderProcessing — Phase 4 round-trip target.
-        // Holds the *committed* compiler-generated Swift for the example
-        // pair (examples/order_processing.meridian + examples/ecommerce.merconfig).
-        // The Phase 4 round-trip test imports this target, runs the workflow
-        // against canned tools, and diffs the resulting event JSONL against
-        // a checked-in golden. Re-baseline by copying:
-        //   examples/golden/order_processing_expected.swift
-        //   → Sources/SampleDemoFlows/GeneratedOrderProcessing/OrderProcessing.swift
+        // MARK: - GeneratedOrderProcessing — committed compiler output for round-trip tests
         .target(
             name: "GeneratedOrderProcessing",
             dependencies: ["MeridianRuntime"],
@@ -168,15 +167,16 @@ let package = Package(
         ),
         .testTarget(
             name: "MeridianCLITests",
-            dependencies: ["MeridianCLIKit", "MeridianCore", "MeridianRuntime"],
+            dependencies: ["MeridianCLIKit", "MeridianCore", "MeridianRuntime", "MeridianTools"],
             path: "Tests/MeridianCLITests"
         ),
-        // MeridianCLI is exercised end-to-end via integration tests
-        // (`Tests/MeridianIntegrationTests`) and the `examples/*.meridian.test`
-        // suite run via `swift run meridian test examples/`. The dedicated
-        // `Tests/MeridianCLITests` unit target was removed to silence
-        // SwiftPM's empty-test-target warning until we have CLI-only unit
-        // tests that are awkward to express integration-style.
+        .testTarget(
+            name: "MeridianMCPTests",
+            dependencies: ["MeridianCLIKit"],
+            path: "Tests/MeridianMCPTests"
+        ),
+        // End-to-end CLI coverage also lives in MeridianIntegrationTests,
+        // MeridianSlowIntegrationTests, and `meridian test` over examples/.
         .testTarget(
             name: "MeridianIntegrationTests",
             dependencies: [

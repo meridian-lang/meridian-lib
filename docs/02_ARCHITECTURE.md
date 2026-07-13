@@ -46,9 +46,21 @@ Sources/MeridianCore/
 │   │   │                              (BlockKind / TableMode / ChecklistMode)
 │   │   └── ExpressionParser.swift  ← Parses single-line expressions
 │   ├── Productions/
-│   │   ├── MerConfigParser.swift    ← Parses .merconfig files
+│   │   ├── MerConfigParser.swift    ← Parses .merconfig files (orchestrator)
+│   │   ├── MerConfigParser+Language.swift ← `=== language ===` synonym blocks
+│   │   ├── MerConfigParser+Trace.swift    ← `=== trace ===` settings
+│   │   ├── MerConfigParser+Tools.swift    ← `=== tools ===` declarations
+│   │   ├── MerConfigParser+Vocabulary.swift ← `=== vocabulary ===` decls
+│   │   ├── PhrasePatternParser.swift ← Phrase pattern `a/an` slot parsing
 │   │   ├── MeridianParser.swift     ← Parses .meridian files
 │   │   ├── StatementParser.swift    ← Parses statements; expands table/checklist
+│   │   ├── StatementParser+ControlFlow.swift ← if/unless/for-each/wait/recover
+│   │   ├── StatementParser+Bindings.swift ← bind/invoke/emit/match/assert
+│   │   ├── StatementParser+Idioms.swift ← English idioms / iteration helpers
+│   │   ├── StatementParser+Decisions.swift ← judgment / choice / autonomy
+│   │   ├── StatementParser+Blocks.swift ← shell fences / data tables / backtick
+│   │   ├── StatementParser+Checklists.swift ← checklist / anaphora / append
+│   │   ├── StatementParser+Collector.swift ← multi-line phrase folding
 │   │   ├── TableParser.swift        ← Decodes table sentinels → branches /
 │   │   │                              recordList / AI-decision prose
 │   │                                  (phrase/workflow headers parse inline)
@@ -76,8 +88,20 @@ Sources/MeridianCore/
 │                                      every InvokeIR.toolID
 │
 ├── Lowering/
-│   └── ASTToIR.swift               ← AST → IR primitives + phrase inlining
-│                                      (+ trace temporal/statistical lowering)
+│   ├── ASTToIR.swift               ← Orchestrator: entry / tool-ID / block /
+│   │                                  parameters / sourceRange
+│   ├── ASTToIR+PhraseInvocation.swift ← Phrase / shell / invoke / AI dispatch
+│   ├── ASTToIR+PhraseInlining.swift ← Phrase body inlining / arg substitution
+│   ├── ASTToIR+Statements.swift    ← Statement / recover lowering
+│   ├── ASTToIR+Bind.swift          ← Bind / rebind / note validation
+│   ├── ASTToIR+Commands.swift      ← Shell command hole lowering
+│   ├── ASTToIR+Expression.swift    ← Expression / trace-temporal / comparison lowering
+│   ├── ASTToIR+Relations.swift     ← Relations, verbs, descriptions / scalar nav
+│   ├── ASTToIR+Definitions.swift   ← Checkable-adjective registration / subject keys
+│   ├── ASTToIR+Quantifier.swift    ← Quantifier / iteration refinement / wait helpers
+│   ├── DeonticLowering.swift       ← Deontic norm attachment / deny wrapping
+│   ├── RuleLowering.swift          ← Rulebook rule → IR norms
+│   └── RuleInjector.swift          ← Inject conventions + synthesize triggers
 │
 ├── Rulebook/
 │   ├── Rulebook.swift              ← 4 families: desugar / sections / conventions
@@ -94,6 +118,11 @@ Sources/MeridianCore/
 ├── Codegen/
 │   ├── SwiftEmitter.swift          ← IR → Swift source (StringTemplate)
 │   │                                  Replay-safe resume guards generated here
+│   ├── SwiftEmitter+Expressions.swift ← expr / comparison / trace emission
+│   ├── SwiftEmitter+Iterate.swift  ← for-each / element-context helpers
+│   ├── SwiftEmitter+Primitives.swift ← invoke / bind / emit / AI judgment
+│   ├── SwiftEmitter+ControlFlow.swift ← branch / assert / recover / wait
+│   ├── SwiftEmitter+FileTail.swift ← Constants / Instances / header / helpers
 │   ├── DomainEmitter.swift         ← Vocabulary → typealiases / protocol+struct
 │   │                                  pairs (Meridian<Base> hierarchy)
 │   └── ManifestEmitter.swift       ← IR → JSON manifest + source-map entries
@@ -103,6 +132,7 @@ Sources/MeridianCore/
 │
 ├── Verbalizer/
 │   ├── Verbalizer.swift            ← Lowered model → Canonical English
+│   ├── Verbalizer+IRExpression.swift ← IRExpression / interpolation surfaces
 │   ├── VerbalizerModel.swift       ← Public semantic model from compileToModel
 │   └── DriftEngine.swift           ← Authored vs canonical line audit
 │
@@ -142,6 +172,26 @@ The diagnostics subsystem is the backbone of the debugging experience — see
 [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for how these pieces fit
 together (codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/
 `--fix`).
+
+## MeridianRuntime — execution actor
+
+```
+Sources/MeridianRuntime/
+├── Runtime.swift                 ← Orchestrator: properties / wait queues / init
+├── Runtime+Planning.swift        ← Prose plan / judgment / autonomy loops
+├── Runtime+Assert.swift          ← Assert / branch / iterate / violation /
+│                                    statistical monitors
+├── Runtime+Wait.swift            ← wait / deliverSignal|Choice|Approval|Event
+├── Runtime+Tools.swift           ← invoke + capture/redaction helpers
+├── Runtime+Events.swift          ← emit / emitLenient domain events
+├── Runtime+Checkpoints.swift     ← checkpoint / resume / state snapshots
+├── Runtime+Lifecycle.swift       ← complete / cancel / instances /
+│                                    workflow started|failed / recordEvent
+├── Runtime+Diagnostics.swift     ← elapsedMS / eventCount / evaluateTrace
+├── Runtime+Emit.swift            ← emit core / observer / trace-store plumbing
+├── RuntimeBuilder.swift          ← Fluent Runtime construction
+├── Value/ · State/ · Wait/ · Events/ · Trace/ · Planning/ · Tools/ …
+```
 
 ## Compilation pipeline
 

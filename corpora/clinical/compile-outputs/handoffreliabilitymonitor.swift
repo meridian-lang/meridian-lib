@@ -404,7 +404,9 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "handoff reliability monitor",
@@ -439,10 +441,12 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("handoff"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.9),
     denominator: .runs,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ),
                 cadence: .seconds(14400),
                 message: "Expected the handoff step succeeds in at least 90% of runs within the last 30 days, checked every 4 hours",
@@ -510,6 +514,7 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ed69c60d558a751217ec5c5e94a338f19e0a314ad6462ab3ba2a12c499b8d")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
@@ -556,7 +561,9 @@ public struct WhenRunhandoffreliabilitymonitorFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "handoff reliability monitor",
@@ -588,7 +595,7 @@ public struct WhenRunhandoffreliabilitymonitorFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be") {
             // L1
-            try await runtime.wait(.event("runHandoffReliabilityMonitor", matching: nil))
+            try await runtime.wait(.event("runHandoffReliabilityMonitor", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2") {
@@ -630,7 +637,9 @@ public struct WhenCheckhandoffreliabilityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "handoff reliability monitor",
@@ -662,7 +671,7 @@ public struct WhenCheckhandoffreliabilityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735") {
             // L1
-            try await runtime.wait(.event("checkHandoffReliability", matching: nil))
+            try await runtime.wait(.event("checkHandoffReliability", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckhandoffreliabilityFires/root/procedure/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee") {
@@ -704,7 +713,9 @@ public struct WhenMonitorshifthandoffqualityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "handoff reliability monitor",
@@ -736,7 +747,7 @@ public struct WhenMonitorshifthandoffqualityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230") {
             // L1
-            try await runtime.wait(.event("monitorShiftHandoffQuality", matching: nil))
+            try await runtime.wait(.event("monitorShiftHandoffQuality", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonitorshifthandoffqualityFires/root/procedure/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb") {

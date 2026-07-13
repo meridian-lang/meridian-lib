@@ -422,7 +422,9 @@ public struct ReconcileLedger: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
@@ -522,8 +524,10 @@ public struct ReconcileLedger: MeridianWorkflow {
                         )
                         try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/branch.then/1a7af9050ef9b98315bb27002c1b47e4f039a2b4fd2fe490528bdb2ab49aa315", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
                 } else {
                     try await runtime.recordBranchTaken(condition: "meridianDef_Batch_finalized(state.get(\"batch\"))", into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
+
                     // L32
                     do {
                         if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/recover.body/4e9048b38d7ff142112ea3383493c85180b952c465c8f6a011e82c0ed2ce3180") {
@@ -554,6 +558,7 @@ public struct ReconcileLedger: MeridianWorkflow {
                             try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/recover.handler/05dcbfeb9c9728f8af02d890801a11c721a315b04608fea1597398d86e7e2607", state: state.snapshot())
                         }
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_6, state: state.snapshot())
@@ -599,7 +604,9 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
@@ -631,7 +638,7 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/dcf74d2566263dfbd0ffe7a864497592b348558cebdf2e8045191d6589c1ff7b") {
             // L1
-            try await runtime.wait(.event("reconcileLedger", matching: nil))
+            try await runtime.wait(.event("reconcileLedger", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReconcileledgerFires/root/procedure/dcf74d2566263dfbd0ffe7a864497592b348558cebdf2e8045191d6589c1ff7b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/ece0d38361b58228d42667cec0b4f6ab845f35a7004cf3f5023476644f81615e") {
@@ -673,7 +680,9 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
@@ -705,7 +714,7 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/8e7415832252a95ef6f588e814875903e24e76195c5519f32fdaaee8c9d1216c") {
             // L1
-            try await runtime.wait(.event("settleLedgerBatches", matching: nil))
+            try await runtime.wait(.event("settleLedgerBatches", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSettleledgerbatchesFires/root/procedure/8e7415832252a95ef6f588e814875903e24e76195c5519f32fdaaee8c9d1216c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/87ab5c2ce4a8de558114e11cb4422bedd06aee23180263afba320eeb133a1693") {

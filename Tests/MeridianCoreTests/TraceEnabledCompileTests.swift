@@ -222,6 +222,26 @@ struct TraceEnabledCompileTests {
         #expect(lhsPaths.isSubset(of: rhsPaths))
     }
 
+    @Test("post-lower trace identity and obligation phases appear under .timing")
+    func postLowerPhasesTraced() throws {
+        let mer = try load("order_processing.meridian")
+        let cfg = try load("ecommerce.merconfig")
+        let cap = ParserTrace.capturing(categories: [.timing, .codegen])
+
+        _ = try Compiler(options: .init(
+            emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
+            trace: cap.trace
+        )).compileWithManifest(
+            meridianSource: mer, meridianFile: "order_processing.meridian",
+            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
+        )
+
+        let joined = cap.lines().joined(separator: "\n")
+        #expect(joined.contains("traceIdentity.annotate:"))
+        #expect(joined.contains("obligationStamp:"))
+        #expect(joined.contains("trace identity: annotated"))
+    }
+
     @Test("skill fingerprint ignores whitespace-only edits but changes on meaning edits")
     func skillFingerprintStability() throws {
         let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"

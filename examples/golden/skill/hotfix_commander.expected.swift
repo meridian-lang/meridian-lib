@@ -744,7 +744,9 @@ public struct HotfixCommanderPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "hotfix commander",
@@ -797,11 +799,11 @@ public struct HotfixCommanderPullRequest: MeridianWorkflow {
             try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/capture-intent/procedure/aff4d2c0cbbe9fd5507ec912d047ff9afa453a38a51215d56632ad083a0e4a2c", state: state.snapshot())
         }
         if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/c566390bf48c0d227ec5575c01cc962ab82866fa9dece317e7a1fcc94ff507e7") {
-            try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "incident commander")))
+            try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "incident commander")), sourceRange: nil)
             try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/c566390bf48c0d227ec5575c01cc962ab82866fa9dece317e7a1fcc94ff507e7", state: state.snapshot())
         }
         if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/59b3d5a31369ade3f814e67c07db5aeb711006d5b553b515c9d7fa051ef4c0e6") {
-            try await runtime.wait(.signal("hotfix.green-light"))
+            try await runtime.wait(.signal("hotfix.green-light"), sourceRange: nil)
             try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/59b3d5a31369ade3f814e67c07db5aeb711006d5b553b515c9d7fa051ef4c0e6", state: state.snapshot())
         }
         if __meridianShouldRun("/HotfixCommanderPullRequest/inspect-rollout-health/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39") {
@@ -832,6 +834,7 @@ public struct HotfixCommanderPullRequest: MeridianWorkflow {
             }
             await runtime.complete(reason: "deployment_unhealthy", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/0a072d61990582206301bcd5cbbdad06b749b8fcd4612a43e2032d92f49947ff")
             return WorkflowResult(reason: "deployment_unhealthy", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/dc4815b09397b0877298ac124803d78755f67ddde5cccb02250552db42ad24af")
         }
 
         do {
@@ -901,7 +904,9 @@ public struct AutonomouslyLandHotfix: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "hotfix commander",

@@ -17,6 +17,9 @@ import Foundation
 struct RuntimeExecutor {
 
     let verbose: Bool
+    /// Test-only fault injection (instance-scoped — never process env vars).
+    var forceTempdirFailure: Bool = false
+    var forceScaffoldFailure: Bool = false
 
     /// Prefix for the sentinel stdout line carrying the final `reason`
     /// payload string (never a real event-kind line, so it can be filtered
@@ -56,7 +59,10 @@ struct RuntimeExecutor {
 
         let package: SwiftPMPackageRunner
         do {
-            package = try SwiftPMPackageRunner.temporary(prefix: "meridian-test")
+            package = try SwiftPMPackageRunner.temporary(
+                prefix: "meridian-test",
+                forceTempdirFailure: forceTempdirFailure
+            )
         } catch {
             return ["failed to create tempdir: \(error)"]
         }
@@ -64,11 +70,15 @@ struct RuntimeExecutor {
 
         do {
             try package.writePackage(
-                manifest: packageManifest(repoRoot: repoRoot),
+                manifest: PackageManifestBuilder.meridianRunDriverPackageManifest(
+                    repoRoot: repoRoot,
+                    includeMeridianTools: false
+                ),
                 files: [
                     .init(relativePath: "Sources/GeneratedWorkflow/Generated.swift", contents: swiftSource),
                     .init(relativePath: "Sources/Driver/Driver.swift", contents: driverSource(workflow: workflow, spec: spec))
-                ]
+                ],
+                forceScaffoldFailure: forceScaffoldFailure
             )
         } catch {
             return ["failed to scaffold package: \(error)"]
@@ -111,42 +121,6 @@ struct RuntimeExecutor {
             }
 
         return evaluateRuntimeAssertions(spec: spec, eventKinds: eventKinds, finalReason: finalReason, finalBinding: finalBinding)
-    }
-
-    // MARK: - Package scaffolding
-
-    private func packageManifest(repoRoot: URL) -> String {
-        let packageIdentity = repoRoot.lastPathComponent
-        return """
-        // swift-tools-version: 6.0
-        import PackageDescription
-
-        let package = Package(
-            name: "MeridianTestDriver",
-            platforms: [.macOS(.v14)],
-            dependencies: [
-                .package(path: \"\(repoRoot.path)\")
-            ],
-            targets: [
-                .target(
-                    name: "GeneratedWorkflow",
-                    dependencies: [
-                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
-                    ],
-                    path: "Sources/GeneratedWorkflow"
-                ),
-                .executableTarget(
-                    name: "Driver",
-                    dependencies: [
-                        "GeneratedWorkflow",
-                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
-                    ],
-                    path: "Sources/Driver"
-                )
-            ],
-            swiftLanguageModes: [.v5]
-        )
-        """
     }
 
     /// Generate the driver Swift source that runs `workflow` with the given stubs/inputs.

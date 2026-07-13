@@ -405,7 +405,9 @@ public struct VitalsMonitorPatient: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vitals monitor",
@@ -452,7 +454,7 @@ public struct VitalsMonitorPatient: MeridianWorkflow {
                 try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1 - 1, step: "/VitalsMonitorPatient/workflow/procedure/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5")
                 if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94") {
                     // L38
-                    try await runtime.wait(.duration(.seconds(900)))
+                    try await runtime.wait(.duration(.seconds(900)), sourceRange: nil)
                     try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/iterate.body/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94", state: state.snapshot())
                 }
                 if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3") {
@@ -523,7 +525,9 @@ public struct WhenMonitorpatientvitalsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vitals monitor",
@@ -555,7 +559,7 @@ public struct WhenMonitorpatientvitalsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715") {
             // L1
-            try await runtime.wait(.event("monitorPatientVitals", matching: nil))
+            try await runtime.wait(.event("monitorPatientVitals", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonitorpatientvitalsFires/root/procedure/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe") {
@@ -597,7 +601,9 @@ public struct WhenRunvitalswatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vitals monitor",
@@ -629,7 +635,7 @@ public struct WhenRunvitalswatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9") {
             // L1
-            try await runtime.wait(.event("runVitalsWatch", matching: nil))
+            try await runtime.wait(.event("runVitalsWatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunvitalswatchFires/root/procedure/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7") {

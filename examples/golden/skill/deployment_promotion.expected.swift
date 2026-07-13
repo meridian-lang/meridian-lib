@@ -744,7 +744,9 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "deployment promotion",
@@ -800,7 +802,7 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
             try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39", state: state.snapshot())
         }
         if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/83c2fa964cd047470c8e4835957d7bc6571fe3619b26c7499f4b3209e2fd6c99") {
-            try await runtime.wait(.signal("release.captain.green-light"))
+            try await runtime.wait(.signal("release.captain.green-light"), sourceRange: nil)
             try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/83c2fa964cd047470c8e4835957d7bc6571fe3619b26c7499f4b3209e2fd6c99", state: state.snapshot())
         }
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -839,7 +841,7 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
         }
 
         if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/2725f1426931a8cf5214a89f5fdad3cc5ee8c7dfa96680e7c075ba250090ea1d") {
-            try await runtime.wait(.duration(.seconds(120)))
+            try await runtime.wait(.duration(.seconds(120)), sourceRange: nil)
             try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/2725f1426931a8cf5214a89f5fdad3cc5ee8c7dfa96680e7c075ba250090ea1d", state: state.snapshot())
         }
         do {
@@ -859,8 +861,10 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
 
                     try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/8e1f9c2a5a4725376c40b8d63b03cd887beed70a3f0c8255505b6c65b5388aec", state: state.snapshot())
                 }
+                try await runtime.recordBranchEnded(into: "then", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
             } else {
                 try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the canary is healthy\", snapshot: state.snapshot()))", into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
+
                 if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1347d0daeaba82559165b711b9a020e1d87d09aa720e45a783d3036173a9ceec") {
                     let rollback = try await runtime.invoke(
                         tool: "rollbackDeployment",
@@ -875,6 +879,7 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
 
                     try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1347d0daeaba82559165b711b9a020e1d87d09aa720e45a783d3036173a9ceec", state: state.snapshot())
                 }
+                try await runtime.recordBranchEnded(into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
             }
 
         } catch let _recoveredError {

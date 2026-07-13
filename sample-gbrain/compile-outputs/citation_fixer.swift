@@ -591,7 +591,9 @@ public struct CitationFixerInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -795,7 +797,9 @@ public struct WhenFixcitationsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -826,7 +830,7 @@ public struct WhenFixcitationsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f") {
             // L1
-            try await runtime.wait(.event("fixCitations", matching: nil))
+            try await runtime.wait(.event("fixCitations", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFixcitationsFires/root/procedure/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80") {
@@ -868,7 +872,9 @@ public struct WhenFixbrokencitationsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -899,7 +905,7 @@ public struct WhenFixbrokencitationsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f") {
             // L1
-            try await runtime.wait(.event("fixBrokenCitations", matching: nil))
+            try await runtime.wait(.event("fixBrokenCitations", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFixbrokencitationsFires/root/procedure/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6") {
@@ -941,7 +947,9 @@ public struct WhenCitationauditFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -972,7 +980,7 @@ public struct WhenCitationauditFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCitationauditFires/root/procedure/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412") {
             // L1
-            try await runtime.wait(.event("citationAudit", matching: nil))
+            try await runtime.wait(.event("citationAudit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCitationauditFires/root/procedure/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCitationauditFires/root/procedure/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0") {
@@ -1014,7 +1022,9 @@ public struct WhenCheckcitationsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -1045,7 +1055,7 @@ public struct WhenCheckcitationsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21") {
             // L1
-            try await runtime.wait(.event("checkCitations", matching: nil))
+            try await runtime.wait(.event("checkCitations", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckcitationsFires/root/procedure/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16") {
@@ -1087,7 +1097,9 @@ public struct WhenCitationfixerFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "citation-fixer",
@@ -1118,7 +1130,7 @@ public struct WhenCitationfixerFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b") {
             // L1
-            try await runtime.wait(.event("citationFixer", matching: nil))
+            try await runtime.wait(.event("citationFixer", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCitationfixerFires/root/procedure/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d") {

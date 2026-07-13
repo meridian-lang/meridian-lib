@@ -6,34 +6,12 @@ import MeridianCLIKit
 
 @main
 struct MeridianCLI: AsyncParsableCommand {
+    // Leaf paths and registration order are validated against `MeridianCommandCatalog`
+    // in `CLICommandCatalogTests`.
     static let configuration = CommandConfiguration(
         commandName: "meridian",
         abstract: "Compiler and runtime tools for the Meridian language.",
         version: "0.1.0-alpha",
-        subcommands: [
-            CompileCommand.self,
-            ExplainCommand.self,
-            DriftCommand.self,
-            GrammarDocCommand.self,
-            LintCommand.self,
-            PreviewSkillCommand.self,
-            MigrateSkillCommand.self,
-            SkillDeviationCommand.self,
-            InertYieldCommand.self,
-            CheckCommand.self,
-            FormatCommand.self,
-            DocsCommand.self,
-            TestCommand.self,
-            TraceRenderCommand.self,
-            TraceEvalCommand.self,
-            TraceVerifyCommand.self,
-            RunCommand.self,
-            VerifyCommand.self,
-            ResumeCommand.self,
-            ExplainDiagCommand.self,
-            DecisionsCommand.self,
-            BenchParseCommand.self,
-            BenchTraceCommand.self
-        ]
+        subcommands: MeridianCLIRegistration.topLevelCommands
     )
 }

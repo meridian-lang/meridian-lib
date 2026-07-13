@@ -1,0 +1,7 @@
+=== vocabulary ===
+A policy is a kind of thing.
+A policy has a text called the title.
+
+=== tools ===
+policy.validate:
+  capture: hash-only

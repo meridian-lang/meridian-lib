@@ -34,6 +34,8 @@ public struct ManifestEmitter {
         /// 3B: Verbs + conjugation + bound relation. `meridian_verbs`.
         public let verbs: [VerbManifestEntry]
         public let skillVersionHash: String?
+        /// Wave 9B: Prover-ready obligation artifacts for `meridian_obligations`.
+        public let obligations: [ObligationArtifact]
 
         public init(
             sourceFiles: [String] = [],
@@ -50,7 +52,8 @@ public struct ManifestEmitter {
             definitions: [DefinitionManifestEntry] = [],
             relations: [RelationManifestEntry] = [],
             verbs: [VerbManifestEntry] = [],
-            skillVersionHash: String? = nil
+            skillVersionHash: String? = nil,
+            obligations: [ObligationArtifact] = []
         ) {
             self.sourceFiles = sourceFiles
             self.workflows = workflows
@@ -67,6 +70,7 @@ public struct ManifestEmitter {
             self.relations = relations
             self.verbs = verbs
             self.skillVersionHash = skillVersionHash
+            self.obligations = obligations
         }
     }
 
@@ -282,6 +286,9 @@ public struct ManifestEmitter {
         if let skillVersionHash = input.skillVersionHash {
             dict["skill_version_hash"] = skillVersionHash
         }
+        if !input.obligations.isEmpty {
+            dict["meridian_obligations"] = input.obligations.map(obligationEntry)
+        }
         dict["workflows"] = input.workflows.map { wf -> [String: Any] in
             var d: [String: Any] = [
                 "swift_struct": wf.structName,
@@ -349,6 +356,40 @@ public struct ManifestEmitter {
         return d
     }
 
+    private func obligationEntry(_ artifact: ObligationArtifact) -> [String: Any] {
+        var entry: [String: Any] = [
+            "id": artifact.id,
+            "source_span": [
+                "file": artifact.sourceSpan.file,
+                "line": artifact.sourceSpan.line,
+                "column": artifact.sourceSpan.column,
+            ],
+            "scope": [
+                "kind": artifact.scope.kind,
+                "name": artifact.scope.name as Any,
+                "stable_path": artifact.scope.stablePath as Any,
+            ],
+            "kind": artifact.kind.rawValue,
+            "status": artifact.status.rawValue,
+            "blocking": artifact.blocking,
+            "canonical_english": artifact.canonicalEnglish,
+            "canonical_ir_hash": artifact.canonicalIRHash,
+            "trace_event_tags": artifact.traceEventTags,
+            "discharge": [
+                "status": artifact.discharge.status.rawValue,
+                "witness_schema": artifact.discharge.witnessSchema,
+                "counterexample_schema": artifact.discharge.counterexampleSchema,
+            ],
+        ]
+        if let condition = artifact.conditionProofIR {
+            entry["condition_proof_ir"] = condition
+        }
+        if let action = artifact.actionProofIR {
+            entry["action_proof_ir"] = action
+        }
+        return entry
+    }
+
     private func outlineEntry(_ entry: HeadingEntry, roleByLine: [Int: String]) -> [String: Any] {
         ["level": entry.level, "text": entry.text, "line": entry.line,
          "kind": roleByLine[entry.line] ?? entry.kind]
@@ -361,6 +402,7 @@ public struct ManifestEmitter {
         case .boolean(let b): return b
         case .money(let amount, let currency): return ["amount": (amount as NSDecimalNumber).doubleValue, "currency": currency]
         case .duration(let d): return d.components.seconds
+        case .calendarAmount(let amount): return ["magnitude": amount.magnitude, "unit": amount.unit.rawValue]
         case .date(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
         case .dateTime(let d): return ISO8601DateFormatter.meridianFormatter.string(from: d)
         case .enumValue(let v, let kind): return ["value": v, "kind": kind]

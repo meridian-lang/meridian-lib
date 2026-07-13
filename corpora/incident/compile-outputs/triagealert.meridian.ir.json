@@ -1,0 +1,105 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event runAlertTriage.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunalerttriageFires\/root\/procedure\/15049bdc8992835ae973850811a9427fd77c6b7232743e53bdef36857aa1e26b",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "emit trigger.runAlertTriage.fired with kind = \"keyword\", spec = \"run alert triage\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunalerttriageFires\/root\/procedure\/54d39bc3fe1db37cbd54f59defcabccd297b7cfaef386d180b0cfe8b1a8c68ec",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "emit trigger.triageAlerts.fired with kind = \"keyword\", spec = \"triage alerts\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenTriagealertsFires\/root\/procedure\/4c14b71b7c77bb52ff3aeed2b9384b2d51c7acde14e8ad2d78be28111c111599",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "wait for event triageAlerts.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTriagealertsFires\/root\/procedure\/b1f22409aebcf9dec49357aadc1882d2da1a49af6d0929b4b59bc97332807c73",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "emit trigger.triageFiringAlerts.fired with kind = \"keyword\", spec = \"triage firing alerts\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenTriagefiringalertsFires\/root\/procedure\/850f7c88cfebf44bdfd4579fcbb2b1f71220d0421816dc45ea15c35bb5492bf0",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "wait for event triageFiringAlerts.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTriagefiringalertsFires\/root\/procedure\/e023b2777c265364b0f21f0489ce2c2e11d4e2f0e4a529ffdf1bd07e7ccbc9d2",
+      "swift_line" : 722
+    },
+    {
+      "canonical" : "bind alerts = invoke alert.list with status = \"firing\".",
+      "meridian_line" : 29,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5",
+      "swift_line" : 428
+    },
+    {
+      "canonical" : "for each alert in alerts,\n  if alert is critical,\n    bind oncallEngineer = invoke page.send with alert = alert.\n    wait for signal \"alert.acknowledged\".\n  otherwise,\n    use judgment to classify the alert and recommend a response, weighing its severity and service name before escalating:",
+      "meridian_line" : 30,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/6b357e7f5fbcb16490243317c9839efae95b09ad9ec481778d5367f0fe596c69",
+      "swift_line" : 441
+    },
+    {
+      "canonical" : "if alert is critical,\n  bind oncallEngineer = invoke page.send with alert = alert.\n  wait for signal \"alert.acknowledged\".\notherwise,\n  use judgment to classify the alert and recommend a response, weighing its severity and service name before escalating:",
+      "meridian_line" : 31,
+      "primitive" : "branch",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/iterate.body\/94825c4e272083347442cca72929ebf7b5aba72dc6ec4f57886bb452e7723563",
+      "swift_line" : 449
+    },
+    {
+      "canonical" : "bind oncallEngineer = invoke page.send with alert = alert.",
+      "meridian_line" : 32,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/branch.then\/24ddf3af73626f6585d6f943afe6e60c516dac09e16e87239f70fd1792a7bbd2",
+      "swift_line" : 453
+    },
+    {
+      "canonical" : "wait for signal \"alert.acknowledged\".",
+      "meridian_line" : 33,
+      "primitive" : "wait",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/branch.then\/00abbcc0000a2b9b57e660816430d5470b33d763c6482f3305b81e339b3dc219",
+      "swift_line" : 467
+    },
+    {
+      "canonical" : "use judgment to classify the alert and recommend a response, weighing its severity and service name before escalating:",
+      "meridian_line" : 35,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/branch.else\/83c9cdad620ff07386f288f7b1a4421f8420b949cb5349ae3ee87845abdd0f8d",
+      "swift_line" : 475
+    },
+    {
+      "canonical" : "emit incident.report with message = \"alert triage pass complete\".",
+      "meridian_line" : 36,
+      "primitive" : "emit",
+      "stable_step_path" : "\/TriageAlert\/workflow-steps\/procedure\/b86e27aa978ceff912e4a2145c70e28af72a8af73fdd609930996f1ec3b1f7c7",
+      "swift_line" : 495
+    },
+    {
+      "canonical" : "assert any alerts whose status equals \"firing\".",
+      "meridian_line" : 47,
+      "primitive" : "assert",
+      "stable_step_path" : "\/TriageAlert\/guarantees\/invariants\/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219",
+      "swift_line" : 423
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "triagealert.meri",
+  "swift_file" : "triagealert.swift"
+}

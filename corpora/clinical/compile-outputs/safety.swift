@@ -404,7 +404,9 @@ public struct LetNurseAdministerMedicationOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "safety",
@@ -440,7 +442,7 @@ public struct LetNurseAdministerMedicationOrder: MeridianWorkflow {
 
         if __meridianShouldRun("/LetNurseAdministerMedicationOrder/root/procedure/a33027f751586c3ffa21a30c2bf832e68ae53d7aa92078ab88409ce515d5d09f") {
             // L20
-            try await runtime.wait(.approval(of: state.get("nurseAdminister") ?? .null, by: RoleRef(identifier: "attending")))
+            try await runtime.wait(.approval(of: state.get("nurseAdminister") ?? .null, by: RoleRef(identifier: "attending")), sourceRange: nil)
             try await runtime.checkpoint(label: "/LetNurseAdministerMedicationOrder/root/procedure/a33027f751586c3ffa21a30c2bf832e68ae53d7aa92078ab88409ce515d5d09f", state: state.snapshot())
         }
         if __meridianShouldRun("/LetNurseAdministerMedicationOrder/root/procedure/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4") {
@@ -495,7 +497,9 @@ public struct HaveAttendingApproveAdministration: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "safety",
@@ -531,7 +535,7 @@ public struct HaveAttendingApproveAdministration: MeridianWorkflow {
 
         if __meridianShouldRun("/HaveAttendingApproveAdministration/root/procedure/bd97e454cbde92c38d41052871bc6fdf7ac1b1107024553aa1f2ee9d4f4ddd30") {
             // L20
-            try await runtime.wait(.approval(of: state.get("attendingApprove") ?? .null, by: RoleRef(identifier: "attending")))
+            try await runtime.wait(.approval(of: state.get("attendingApprove") ?? .null, by: RoleRef(identifier: "attending")), sourceRange: nil)
             try await runtime.checkpoint(label: "/HaveAttendingApproveAdministration/root/procedure/bd97e454cbde92c38d41052871bc6fdf7ac1b1107024553aa1f2ee9d4f4ddd30", state: state.snapshot())
         }
         if __meridianShouldRun("/HaveAttendingApproveAdministration/root/procedure/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4") {
@@ -580,7 +584,9 @@ public struct EscalateUnmonitoredPatient: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "safety",
@@ -652,7 +658,9 @@ public struct WhenPatientIs: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "safety",
@@ -684,7 +692,7 @@ public struct WhenPatientIs: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPatientIs/root/procedure/253c5050ee8bded3201066d03b065e4684b5cd3305851809cd1a4198c277430f") {
             // L22
-            try await runtime.wait(.event("patientIsFlaggedAsUnmonitored", matching: nil))
+            try await runtime.wait(.event("patientIsFlaggedAsUnmonitored", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPatientIs/root/procedure/253c5050ee8bded3201066d03b065e4684b5cd3305851809cd1a4198c277430f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPatientIs/root/procedure/a8e86a99b5998adf00d6691e1660b325d76056bad8625e87caa3a27f99f21506") {

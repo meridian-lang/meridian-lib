@@ -10,12 +10,21 @@ internal struct PlanExecutor: Sendable {
     internal func validate(
         _ action: ProposedAction,
         scopedTools: Set<String>,
+        permissionRegistry: PermissionRegistry = .empty,
         sourceRange: SourceRange? = nil
     ) async throws {
         guard scopedTools.contains(action.toolID) else {
             throw MeridianRuntimeError.planningFailure(
                 .toolOutOfScope,
                 message: "planner proposed out-of-scope tool `\(action.toolID)`",
+                sourceRange: sourceRange
+            )
+        }
+        if await permissionRegistry.hasToolPatterns,
+           !(await permissionRegistry.permitsPlannedAction(action)) {
+            throw MeridianRuntimeError.planningFailure(
+                .toolOutOfScope,
+                message: "planner proposed action `\(action.toolID)` outside permission argument constraints",
                 sourceRange: sourceRange
             )
         }

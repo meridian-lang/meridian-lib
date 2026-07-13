@@ -67,10 +67,16 @@ struct CLIModelInput {
     var meridianSource: String
     var vocabularies: [Compiler.VocabularyInput]
     var rulebooks: [RulebookInput]
+    var moduleSearchPaths: [URL]
     var diagnosticSources: [String: String]
 }
 
-func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) throws -> CLIModelInput {
+func loadCLIModelInput(
+    input: String,
+    merconfig: [String],
+    rulebook: [String] = [],
+    modulePath: [String] = []
+) throws -> CLIModelInput {
     let meridianURL = URL(fileURLWithPath: input).standardized
     guard FileManager.default.fileExists(atPath: meridianURL.path) else {
         throw cliInputNotFound(input)
@@ -81,6 +87,13 @@ func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) t
     let vocabularies = try DependencyDiscovery.loadVocabularies(merconfigURLs)
     let rulebookURLs = try DependencyDiscovery.resolveRulebooks(explicit: rulebook, beside: meridianURL)
     let rulebooks = try DependencyDiscovery.loadRulebooks(rulebookURLs)
+    let moduleSearchPaths = try modulePath.map { path in
+        let url = URL(fileURLWithPath: path).standardized
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            throw cliInputNotFound(path, label: "module-path")
+        }
+        return url
+    }
 
     var diagnosticSources: [String: String] = [meridianURL.lastPathComponent: meridianSource]
     for vocabulary in vocabularies {
@@ -95,7 +108,21 @@ func loadCLIModelInput(input: String, merconfig: [String], rulebook: [String]) t
         meridianSource: meridianSource,
         vocabularies: vocabularies,
         rulebooks: rulebooks,
+        moduleSearchPaths: moduleSearchPaths,
         diagnosticSources: diagnosticSources
+    )
+}
+
+func compilerOptions(
+    for loaded: CLIModelInput,
+    trace: ParserTrace,
+    emitterOptions: SwiftEmitter.Options = .init()
+) -> Compiler.Options {
+    Compiler.Options(
+        emitterOptions: emitterOptions,
+        trace: trace,
+        moduleSearchPaths: loaded.moduleSearchPaths,
+        anchorDirectory: loaded.meridianURL.deletingLastPathComponent()
     )
 }
 
@@ -146,7 +173,7 @@ func makeCLITrace(spec: String?, file: String? = nil, format: TraceFormat = .tex
     let trace = ParserTrace()
     trace.outputFormat = format == .jsonl ? .jsonl : .text
     if let spec { trace.enable(parsing: spec) }
-    if let spec {
+    if spec != nil || ParserTrace.Category.allCases.contains(where: { trace.isEnabled($0) }) {
         announceCLITrace(trace)
     }
     if let file {
@@ -418,36 +445,34 @@ func stderrIsTTY() -> Bool {
 /// Run the shared parse + lower diagnostics pass used by both `check` and
 /// `verify`: load vocab + rulebooks, compile (discarding emitted Swift), and
 /// report with source snippets. Throws `ExitCode(1)` on a compiler error.
-func runDiagnosticsCheck(input: String, merconfig: [String], trace: String?,
+func runDiagnosticsCheck(input: String, merconfig: [String], modulePath: [String] = [],
+                         trace: String?,
                          traceFile: String? = nil,
                          traceFormat: TraceFormat = .text,
                          format: DiagnosticsFormat = .human,
                          fix: Bool = false, write: Bool = false) async throws {
-    let meridianURL = URL(fileURLWithPath: input).standardized
-    guard FileManager.default.fileExists(atPath: meridianURL.path) else {
-        throw cliInputNotFound(input)
-    }
-    let meridianSource = try String(contentsOf: meridianURL, encoding: .utf8)
-    let merconfigURLs = try DependencyDiscovery.resolveMerconfigs(explicit: merconfig, beside: meridianURL)
-    let vocabularies = try DependencyDiscovery.loadVocabularies(merconfigURLs)
+    let loaded = try loadCLIModelInput(
+        input: input, merconfig: merconfig, rulebook: [], modulePath: modulePath)
+    let meridianURL = loaded.meridianURL
+    let meridianSource = loaded.meridianSource
+    let vocabularies = loaded.vocabularies
     let rulebookURLs = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: meridianURL)
     let rulebooks: [RulebookInput] = try rulebookURLs.map {
         .init(name: $0.deletingPathExtension().lastPathComponent,
               file: $0.lastPathComponent, source: try String(contentsOf: $0, encoding: .utf8))
     }
 
-    var diagSources: [String: String] = [meridianURL.lastPathComponent: meridianSource]
+    var diagSources = loaded.diagnosticSources
     var diagPaths: [String: URL] = [meridianURL.lastPathComponent: meridianURL]
-    for (i, url) in merconfigURLs.enumerated() {
-        diagSources[url.lastPathComponent] = vocabularies[i].source
-        diagPaths[url.lastPathComponent] = url
+    for vocabulary in vocabularies {
+        diagPaths[vocabulary.file] = meridianURL.deletingLastPathComponent().appendingPathComponent(vocabulary.file)
     }
-    for (i, url) in rulebookURLs.enumerated() {
-        diagSources[url.lastPathComponent] = rulebooks[i].source
-        diagPaths[url.lastPathComponent] = url
+    for rulebook in rulebooks {
+        diagSources[rulebook.file] = rulebook.source
     }
 
-    let compiler = Compiler(options: .init(trace: try makeCLITrace(spec: trace, file: traceFile, format: traceFormat)))
+    let compiler = Compiler(options: compilerOptions(
+        for: loaded, trace: try makeCLITrace(spec: trace, file: traceFile, format: traceFormat)))
     do {
         _ = try compiler.compileWithManifest(
             meridianSource: meridianSource,

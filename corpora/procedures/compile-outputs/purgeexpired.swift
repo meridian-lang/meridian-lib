@@ -422,7 +422,9 @@ public struct PurgeExpired: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
@@ -558,7 +560,9 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
@@ -590,7 +594,7 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/1b0c806591ba4b0123a4bd695fcba2aad4c81b816e95682020a39714798b5d9b") {
             // L1
-            try await runtime.wait(.event("purgeExpiredRecords", matching: nil))
+            try await runtime.wait(.event("purgeExpiredRecords", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPurgeexpiredrecordsFires/root/procedure/1b0c806591ba4b0123a4bd695fcba2aad4c81b816e95682020a39714798b5d9b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/2a6dac93e00ae15b73720f0e32ef7a03bf3e56d00b490ac6d8605d1d56387fb3") {
@@ -632,7 +636,9 @@ public struct WhenRetentioncleanupFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
@@ -664,7 +670,7 @@ public struct WhenRetentioncleanupFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/f4a72123048bcf0da7a4cc654e09b7143c9d6d611bc91d2f23c37377141bcdeb") {
             // L1
-            try await runtime.wait(.event("retentionCleanup", matching: nil))
+            try await runtime.wait(.event("retentionCleanup", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRetentioncleanupFires/root/procedure/f4a72123048bcf0da7a4cc654e09b7143c9d6d611bc91d2f23c37377141bcdeb", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/361196238cefd448112923cb2d3076adf3544a24ae0d3a1a0aa2214d79815a37") {

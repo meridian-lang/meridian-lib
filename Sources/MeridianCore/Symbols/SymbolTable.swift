@@ -121,6 +121,13 @@ public final class SymbolTable: @unchecked Sendable {
         Set((properties[kind.lowercased()] ?? []).map { $0.name.lowercased() })
     }
 
+    /// Declared property type for a kind/property pair (case-insensitive).
+    public func propertyType(of kind: String, property: String) -> PropertyTypeAST? {
+        (properties[kind.lowercased()] ?? []).first {
+            $0.name.caseInsensitiveCompare(property) == .orderedSame
+        }?.type
+    }
+
     public func keyProperty(of kind: String) -> String? {
         keyProperties[kind.lowercased()]
     }

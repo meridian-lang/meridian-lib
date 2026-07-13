@@ -44,7 +44,7 @@ Tool stubs passed via `--tool-stub` in the CLI override built-ins for that run.
 | `regex.replace` | Regex | `.closure` | Replace matches in text |
 | `shell.run` | Shell | `.subprocess` | Run a shell command via `/bin/sh -c` |
 | `mcp.call` | MCP | `.mcp` | Call an MCP method (replaceable transport) |
-| `llm.chat` | LLM | `.closure` | **Intentionally not implemented** — see below |
+| `llm.chat` | LLM | `.closure` | OpenAI-compatible chat; requires `LLMProviderRegistry` configuration (fail-closed without provider) |
 | `llm.decide` | LLM | `.closure` | Deterministic decision stub; hosts override |
 | `llm.judge` | LLM | `.closure` | Deterministic judge stub; hosts override |
 | `validate.json_schema` | Validation | `.closure` | Validate a record against a simple JSON Schema |
@@ -312,37 +312,61 @@ The default `MCPSpec()` with no transport configured throws
 
 ## LLM tools
 
+Meridian ships a pluggable `LLMProvider` protocol in `MeridianRuntime` and
+default adapters in `MeridianTools`:
+
+| Component | Role |
+|---|---|
+| `DeterministicLLMProvider` | Test-safe stand-in; no network I/O |
+| `HTTPLLMProvider` | OpenAI-compatible chat-completions HTTP client |
+| `LLMProviderRegistry` | Resolves override → env → deterministic/fail-closed |
+
+### Environment variables
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `MERIDIAN_LLM_API_URL` | For live LLM use | Chat-completions endpoint (must be `http`/`https`) |
+| `MERIDIAN_LLM_API_KEY` | Optional | Bearer token sent as `Authorization: Bearer …` |
+| `MERIDIAN_LLM_MODEL` | Optional | Model name (default: `gpt-4o-mini`) |
+
+When `MERIDIAN_LLM_API_URL` is unset:
+
+- `llm.chat` throws `llm.not_configured` (fail-closed).
+- `llm.decide` / `llm.judge` use `DeterministicLLMProvider` (test-safe).
+- `migrate-skill --repair` and `canonicalize --propose` exit with a CLI error.
+
+Hosts can inject a provider without env vars via `LLMProviderRegistry.setOverride(_:)`
+(tests) or `Runtime.Builder.wireLLMJudgmentTools(from:)` / `ToolRegistry.registerLLMJudgmentTools(provider:)`.
+
 ### `llm.chat`
 
-`llm.chat` is **intentionally not implemented** in v1. Calling it throws:
+Requires a configured provider (`MERIDIAN_LLM_API_URL` or an override). Calling
+it without configuration throws:
 
 ```
 ToolError.implementation(
-    code: "llm.not_implemented",
-    message: "llm.chat is intentionally not implemented yet"
+    code: "llm.not_configured",
+    message: "LLM provider is not configured — set MERIDIAN_LLM_API_URL …"
 )
 ```
 
-This is a deliberate user-approved design decision — the tool ID is reserved
-so workflows can reference `llm.chat` today and the provider can be wired up
-later without changing any source. When implementing, register a closure or
-replace the built-in with your provider:
-
-```swift
-await registry.register(tool: "llm.chat", .closure { args in
-    // Connect to your LLM provider here.
-    let messages = args["messages"]?.asList ?? []
-    let response = try await myLLMClient.chat(messages: messages)
-    return .record(["content": .string(response), "role": .string("assistant")])
-})
-```
+Args: `prompt` (string) or `messages` (list of `{role, content}` records).
+Returns a record `{ content, role, model, input_tokens, output_tokens }`.
 
 ### `llm.decide` / `llm.judge`
 
-`llm.decide` and `llm.judge` are deterministic test-safe stubs that return
-`.boolean(false)` by default. They exist so `decide whether …` surfaces and
-legacy judge-style workflows have stable tool IDs; production hosts should
-override them with provider-backed policy.
+When no HTTP provider is configured, these use `DeterministicLLMProvider`:
+affirmative questions containing `yes`/`true` return `.boolean(true)`, others
+return `.boolean(false)`. With `MERIDIAN_LLM_API_URL` set, they delegate to the
+HTTP provider with a true/false system prompt.
+
+Override example:
+
+```swift
+await registry.register(tool: "llm.decide", .closure { args in
+    try await MeridianTools.invoke("llm.decide", args: args)
+})
+```
 
 ---
 

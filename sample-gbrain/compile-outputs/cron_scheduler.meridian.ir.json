@@ -1,0 +1,63 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.cron.fired with kind = \"schedule\", spec = \"cron\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/105edb16e9443dd9765aa545627db230d5e102c4d3472cdac4fa1d24e3b14eea",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "wait for event cron.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/63f185774800a248696f0940d16b8c8dcf56c5a115de9a4d06d746be29484e6e",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "emit trigger.quietHours.fired with kind = \"keyword\", spec = \"quiet hours\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/570457738fecf9c901786e5b5a804631bf9cdeb45d1c5f743829518b11a4988d",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "wait for event quietHours.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/de70e112340efee5acbb8e8506528ac88635709b59751dca58c9ecda9bcecf64",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "emit trigger.scheduleJob.fired with kind = \"schedule\", spec = \"schedule a job\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/3156d4dcf80b7cdf828dd6397dd2fd813096ca46f7530c7c651de85f481eb4a4",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "wait for event scheduleJob.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/c44523024f748b35f5a286105b3c529d1071bf032f32cc66c5d0a21dfad40424",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "emit trigger.whatJobsAreRunning.fired with kind = \"keyword\", spec = \"what jobs are running\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/db93b869f3b512d3f6571d76bee75b0c20a86e3cc2f122d8628829fb354a7f8b",
+      "swift_line" : 916
+    },
+    {
+      "canonical" : "wait for event whatJobsAreRunning.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/f790344aee08b158e0209386a5b6096188af8375a8c1bfebbee2b7b2d1349226",
+      "swift_line" : 916
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "cron_scheduler.meri",
+  "swift_file" : "cron_scheduler.swift"
+}

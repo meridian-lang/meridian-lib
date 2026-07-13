@@ -1,0 +1,126 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event checkPipelineReliability.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/23826838d041224389668447b72a651091c0990a943774793439d88a40e955ee",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "emit trigger.checkPipelineReliability.fired with kind = \"keyword\", spec = \"check pipeline reliability\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/d3cd4f52dc9bd0661687f0d669549803b0f065f785305f896fa962012e3570e0",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "wait for event monitorExtractLoadReliability.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/4bd0523b0b913b2a002cac193a7e3e19f5f7b8688bbd1839d08abeefcd10ffd1",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "emit trigger.monitorExtractLoadReliability.fired with kind = \"keyword\", spec = \"monitor extract load reliability\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/ee5dab199a1b25881869856cc0932e76ed1f4def758389d5fe390f4888c6cecc",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "wait for event runPipelineReliabilityWatch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/8492b5adc05b2301f238e724ee0500432ec616dd72a3e3f0c7c975916cae34f6",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "emit trigger.runPipelineReliabilityWatch.fired with kind = \"ambient\", spec = \"run pipeline reliability watch\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/dea4bc3d83e623e12ddd914d871ef308c3d2a1938ae9002410e1f0f6d3f86086",
+      "swift_line" : 774
+    },
+    {
+      "canonical" : "assert the extract step succeeds in at least 90% of runs, checked every 86400 seconds.",
+      "meridian_line" : 20,
+      "primitive" : "assert",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/b5eb9b467faf192e404bc18d8b7049c0ebd3d9b50fbc209b1387ca7efd75f0fc",
+      "swift_line" : 387
+    },
+    {
+      "canonical" : "assert the load step fails in at most 10% of runs, checked every 86400 seconds.",
+      "meridian_line" : 21,
+      "primitive" : "assert",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/9199922282fa65f0a88780facb36c3e97104316572e87ef8d8e52c5c3052afbc",
+      "swift_line" : 407
+    },
+    {
+      "canonical" : "if the extract step succeeds in at least 90% of runs within the last 2592000 seconds,\n  emit etl.report with message = \"pipeline reliability saw healthy run frequency\".\nif it is unknown whether:\n  emit etl.report with message = \"pipeline reliability run frequency is indeterminate below the sample floor\".",
+      "meridian_line" : 36,
+      "primitive" : "branch",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e",
+      "swift_line" : 466
+    },
+    {
+      "canonical" : "emit etl.report with message = \"pipeline reliability saw healthy run frequency\".",
+      "meridian_line" : 37,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.then\/1d359d9dbb8061460c7f85126f6265962289045e38238c38768d7e02e2843868",
+      "swift_line" : 479
+    },
+    {
+      "canonical" : "emit etl.report with message = \"pipeline reliability run frequency is indeterminate below the sample floor\".",
+      "meridian_line" : 39,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.unknown\/1ef6dfe7269518e1d57adea01649c498de35510832247c17fe8d020ee926add4",
+      "swift_line" : 493
+    },
+    {
+      "canonical" : "if the load step fails in at most 5% of occurrences within the last 2592000 seconds,\n  emit etl.report with message = \"pipeline reliability saw healthy occurrence frequency\".\nif it is unknown whether:\n  emit etl.report with message = \"pipeline reliability occurrence frequency is indeterminate below the sample floor\".",
+      "meridian_line" : 43,
+      "primitive" : "branch",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195",
+      "swift_line" : 506
+    },
+    {
+      "canonical" : "emit etl.report with message = \"pipeline reliability saw healthy occurrence frequency\".",
+      "meridian_line" : 44,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.then\/31b7063368fb6760dc3b0ad35d752562b5fde14e909025db24e2110607fa594c",
+      "swift_line" : 519
+    },
+    {
+      "canonical" : "emit etl.report with message = \"pipeline reliability occurrence frequency is indeterminate below the sample floor\".",
+      "meridian_line" : 46,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.unknown\/a641f78aa3d450c8b098adea7b6dcfeee33a59b04047466e049b0401ef70e00d",
+      "swift_line" : 533
+    },
+    {
+      "canonical" : "emit etl.report with message = \"pipeline reliability watch pass complete\".",
+      "meridian_line" : 50,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-3\/procedure\/57d436791e4233eccc6c92e120ed7f636357ca861092528e0a5f4fe65bbc5d8f",
+      "swift_line" : 547
+    },
+    {
+      "canonical" : "assert the extract step succeeds in at least 90% of runs within the last 2592000 seconds.",
+      "meridian_line" : 67,
+      "primitive" : "assert",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps\/invariants\/1f02cefe3742b29c9c1269cd4dc4ab5e953f8643f4ce8e14900e14607f9e728e",
+      "swift_line" : 427
+    },
+    {
+      "canonical" : "assert the load step fails in at most 5% of occurrences within the last 2592000 seconds.",
+      "meridian_line" : 71,
+      "primitive" : "assert",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps-2\/invariants\/793dd0e3f38ab87493f5484c63d24a9bcfbdb61a04666247409ab611fe003061",
+      "swift_line" : 447
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "pipelinereliabilitywatch.meri",
+  "swift_file" : "pipelinereliabilitywatch.swift"
+}

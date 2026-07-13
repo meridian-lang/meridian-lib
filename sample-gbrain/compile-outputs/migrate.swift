@@ -590,7 +590,9 @@ public struct MigrateInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migrate",
@@ -668,7 +670,9 @@ public struct WhenMigrateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migrate",
@@ -699,7 +703,7 @@ public struct WhenMigrateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMigrateFires/root/procedure/78078f829f73267ff97719f5e3dc962636aabe3c248e55d50d43243329c3038a") {
             // L1
-            try await runtime.wait(.event("migrate", matching: nil))
+            try await runtime.wait(.event("migrate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMigrateFires/root/procedure/78078f829f73267ff97719f5e3dc962636aabe3c248e55d50d43243329c3038a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMigrateFires/root/procedure/fd1780b808564153980d9963579cc99d9b4e03c37be25d47badb9d6285a803ee") {
@@ -741,7 +745,9 @@ public struct WhenImportobsidianFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migrate",
@@ -772,7 +778,7 @@ public struct WhenImportobsidianFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenImportobsidianFires/root/procedure/4070e3a1691fb8b704bb3d51bfede2075b5313ca9423f01052132c1810d61580") {
             // L1
-            try await runtime.wait(.event("importObsidian", matching: nil))
+            try await runtime.wait(.event("importObsidian", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenImportobsidianFires/root/procedure/4070e3a1691fb8b704bb3d51bfede2075b5313ca9423f01052132c1810d61580", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenImportobsidianFires/root/procedure/3e842608038e4f4654a5100730eb5ea97bdb43c06b5b1fd8be75a51ef304e1bf") {
@@ -814,7 +820,9 @@ public struct WhenImportnotionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migrate",
@@ -845,7 +853,7 @@ public struct WhenImportnotionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenImportnotionFires/root/procedure/ceabc7195cb50612b353019188ac86b8d344562fff1cb59d330cb3a979dc1820") {
             // L1
-            try await runtime.wait(.event("importNotion", matching: nil))
+            try await runtime.wait(.event("importNotion", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenImportnotionFires/root/procedure/ceabc7195cb50612b353019188ac86b8d344562fff1cb59d330cb3a979dc1820", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenImportnotionFires/root/procedure/be797a3595bb8e2d61f84c8fd20ff0c918a0dd71bc3c3dba03da9bbadf1bfdfa") {

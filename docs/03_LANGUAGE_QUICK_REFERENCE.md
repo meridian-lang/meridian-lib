@@ -740,7 +740,13 @@ table-header sets (`Condition header synonyms:` / `Action header synonyms:` /
 `Wildcard synonyms:`), `Shell fence synonyms:` (extra fenced-code info-string
 tags treated as deterministic `shell.run` blocks — e.g. `fish`, `pwsh`, `nu` —
 on top of the default `bash`/`sh`/`shell`/`console`/`zsh`), `Fence tool
-mapping:` (`<fence-tag> = <tool-id>` pairs for non-shell fenced blocks), and
+mapping:` (`<fence-tag> = <tool-id>` pairs for non-shell fenced blocks),
+`Vague-hedge synonyms:` / `Effectful-judgment synonyms:` (condition/judgment
+cue vocabulary), `Article synonyms:` / `Parameter-article synonyms:` /
+`Preposition synonyms:` / `Copula synonyms:` / `Participle synonyms:` /
+`Tool-stopword synonyms:` (surface stop-word tables), `Irregular-plural
+mapping:` (`singular = plural` pairs), `Contract-reference synonyms:`
+(documentary contract-guard body phrases), and
 `Trace-auxiliary synonyms:` (extra outcome verbs after a trace subject, e.g.
 `occurred`).
 
@@ -812,10 +818,16 @@ Reference-heading synonyms:
   judgment.
 - **`Reference-heading synonyms:`** extends
   `EnglishLexicon.referenceHeadingWords` — heading words (`overview`,
-  `rationale`, `background`, `example`, …) that mark a section as documentary
-  when its body has neither a lowerable statement nor an inference/normative
-  cue. Such a section gets `(( role: reference ))`, never `(( inert ))` — the
-  migrator does not emit that keyword.
+  `rationale`, `background`, `example`, `example:`, `for reference`, …) that
+  mark a section as documentary when its body has neither a lowerable
+  statement nor an inference/normative cue. Such a section gets
+  `(( role: reference ))`, never `(( inert ))` — the migrator does not emit
+  that keyword.
+- **`Contract-reference synonyms:`** extends
+  `EnglishLexicon.contractReferencePhrases` (default: `already enforced`,
+  `enforced above`, `workflow's own`, …) — body substrings that mark a
+  documentary note that the executable workflow already carries the referenced
+  guard.
 
 **Where the line is — extensible vs. fixed.** Synonym categories above are
 *domain-renamable* and live in `EnglishLexicon`. The closed **grammar skeleton**

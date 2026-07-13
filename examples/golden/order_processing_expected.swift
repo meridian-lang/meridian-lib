@@ -390,7 +390,9 @@ public struct ProcessOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order_processing",
@@ -472,6 +474,7 @@ public struct ProcessOrder: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ProcessOrder/root/procedure/branch.then/93ce59d8d0dc9de43c0a35b13034e774ad89fcc4f47b8fb2b5bc75750b5c2995", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/0f689b1a69658530aed107371596c4384ede25141a473add42f0f3fc48a904da")
         }
 
         if __meridianShouldRun("/ProcessOrder/root/procedure/2078ff10b5674cf4568d8232551a676bc4a7cd43de5389021acf98e07e4c34dd") {
@@ -514,6 +517,7 @@ public struct ProcessOrder: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ProcessOrder/root/procedure/branch.then/5f24061fd61857cbc6a76156663765b8c3286f82aff015a628b170077a48f4aa", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/1cfafa25dd92da366fdbd25ab78fe7873bd51b26a6a854534e8d179ff3cccbde")
         }
 
         if MeridianComparison.isWithin(state.get("customer.signupDate"), constants.newCustomerThreshold) {
@@ -576,8 +580,10 @@ public struct ProcessOrder: MeridianWorkflow {
                 }
                 await runtime.complete(reason: "fraud_review_required", step: "/ProcessOrder/root/procedure/branch.then/014f4d0e33dac10c5c7208e074ab4a7d4bf8132531ca43483e5c608636bbd5f4")
                 return WorkflowResult(reason: "fraud_review_required", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+                try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/branch.then/dd0a7ae3ca8f529ac01de20a94c14706fe8a9036dfacb95121103a7792a9c064")
             }
 
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/8330c88c87d99080405877e4e3807d4255ab54cdf81e14ea95b2f8032254c851")
         }
 
         if MeridianComparison.gt(state.get("order.totalAmount"), Value.from(constants.highValueThreshold)) {
@@ -641,8 +647,10 @@ public struct ProcessOrder: MeridianWorkflow {
                 }
                 await runtime.complete(reason: "approval_denied", step: "/ProcessOrder/root/procedure/branch.then/4f46498d15f10bc24474ee107f7cb902e5efd2e67e74db1b11d79d7efcf1b92f")
                 return WorkflowResult(reason: "approval_denied", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+                try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/branch.then/14cbb97f0a75c4994512ff2e9c3f110b827836daa4868cf97b955753701a58ac")
             }
 
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/8aa56c51eaa08788a68eafd935ea989bcc2b136266d2bb0fd3052e1412420850")
         }
 
         if __meridianShouldRun("/ProcessOrder/root/procedure/bf3e1d4cd400ad60243073c449a637bc5b0da25b2996579e34273c9fc313d2e2") {
@@ -705,6 +713,7 @@ public struct ProcessOrder: MeridianWorkflow {
             }
             await runtime.complete(reason: nil, step: "/ProcessOrder/root/procedure/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/f9682eb5644c0a08b191b3f3b7ee5473a602ad310231df7669221352c1181496")
         }
 
         if __meridianShouldRun("/ProcessOrder/root/procedure/29cea0221e15d0cfb4273990c70e94e152dbf29078f5e43e8ca32d14a839641e") {
@@ -748,7 +757,7 @@ public struct ProcessOrder: MeridianWorkflow {
         if MeridianComparison.lt(state.get("retryCount"), Value.from(constants.maximumRetryCount)) {
             try await runtime.recordBranchTaken(condition: "MeridianComparison.lt(state.get(\"retryCount\"), Value.from(constants.maximumRetryCount))", into: "then", step: "/ProcessOrder/root/procedure/e57d9ae381dff067be0368f07e15fe05a4785c8e80f56bfb6bf3bf658d5c48db")
             if __meridianShouldRun("/ProcessOrder/root/procedure/branch.then/823faf31574e3ad3d137403db23c18f558d21c863d138bcf5023d73c67726e68") {
-                try await runtime.wait(.duration(.seconds(3600)))
+                try await runtime.wait(.duration(.seconds(3600)), sourceRange: nil)
                 try await runtime.checkpoint(label: "/ProcessOrder/root/procedure/branch.then/823faf31574e3ad3d137403db23c18f558d21c863d138bcf5023d73c67726e68", state: state.snapshot())
             }
             if __meridianShouldRun("/ProcessOrder/root/procedure/branch.then/ebbc7393f786d638b6c2fe1ab39c5da2bcaa64a64955673639e197ad730e0d59") {
@@ -757,6 +766,7 @@ public struct ProcessOrder: MeridianWorkflow {
             }
             await runtime.complete(reason: nil, step: "/ProcessOrder/root/procedure/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1~2")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/ProcessOrder/root/procedure/e57d9ae381dff067be0368f07e15fe05a4785c8e80f56bfb6bf3bf658d5c48db")
         }
 
         if __meridianShouldRun("/ProcessOrder/root/procedure/349dbeeb604bf6714a021c6281f7535852895ae4ee0738ef943fa2b8b320b110") {
@@ -828,7 +838,9 @@ public struct LenientlySyncAnalytics: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order_processing",
@@ -865,9 +877,10 @@ public struct LenientlySyncAnalytics: MeridianWorkflow {
         if MeridianComparison.gt(state.get("order.totalAmount"), Value.from(constants.highValueThreshold)) {
             try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "then", step: "/LenientlySyncAnalytics/root/procedure/9034c467bd4372347f5870a10d4822d675a863bba33b647d8ca02f17ffc6ba0b")
             if __meridianShouldRun("/LenientlySyncAnalytics/root/procedure/branch.then/92ee546b74ef66f5e7eb8a231901bab29ce25c09bc1c2ec9b724c345a9ede105") {
-                try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "account manager")))
+                try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "account manager")), sourceRange: nil)
                 try await runtime.checkpoint(label: "/LenientlySyncAnalytics/root/procedure/branch.then/92ee546b74ef66f5e7eb8a231901bab29ce25c09bc1c2ec9b724c345a9ede105", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/LenientlySyncAnalytics/root/procedure/9034c467bd4372347f5870a10d4822d675a863bba33b647d8ca02f17ffc6ba0b")
         }
 
         if __meridianShouldRun("/LenientlySyncAnalytics/root/procedure/83d60561aa6a7423185ea8aebe5a4a6f9362373ad6744222601f3b6acb1f63bd") {
@@ -921,7 +934,9 @@ public struct EscalateOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order_processing",
@@ -960,9 +975,10 @@ public struct EscalateOrder: MeridianWorkflow {
         if MeridianComparison.gt(state.get("order.totalAmount"), Value.from(constants.highValueThreshold)) {
             try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "then", step: "/EscalateOrder/root/procedure/9034c467bd4372347f5870a10d4822d675a863bba33b647d8ca02f17ffc6ba0b")
             if __meridianShouldRun("/EscalateOrder/root/procedure/branch.then/92ee546b74ef66f5e7eb8a231901bab29ce25c09bc1c2ec9b724c345a9ede105") {
-                try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "account manager")))
+                try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "account manager")), sourceRange: nil)
                 try await runtime.checkpoint(label: "/EscalateOrder/root/procedure/branch.then/92ee546b74ef66f5e7eb8a231901bab29ce25c09bc1c2ec9b724c345a9ede105", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EscalateOrder/root/procedure/9034c467bd4372347f5870a10d4822d675a863bba33b647d8ca02f17ffc6ba0b")
         }
 
         if __meridianShouldRun("/EscalateOrder/root/procedure/83d60561aa6a7423185ea8aebe5a4a6f9362373ad6744222601f3b6acb1f63bd") {
@@ -1003,7 +1019,9 @@ public struct WhenOrderIs: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order_processing",
@@ -1034,7 +1052,7 @@ public struct WhenOrderIs: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "WhenOrderIs", parameters: [:])
 
         if __meridianShouldRun("/WhenOrderIs/root/procedure/a9d0760c0ad3a3bbaee6a9a26db263cecaa221c2d8431cb39d3c6a3253a49c1f") {
-            try await runtime.wait(.event("orderIsFlaggedAsStale", matching: nil))
+            try await runtime.wait(.event("orderIsFlaggedAsStale", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenOrderIs/root/procedure/a9d0760c0ad3a3bbaee6a9a26db263cecaa221c2d8431cb39d3c6a3253a49c1f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenOrderIs/root/procedure/54b764d722e39c67ed94b4f82130da0782528decbcdee5032ce2f291f6a96ff9") {

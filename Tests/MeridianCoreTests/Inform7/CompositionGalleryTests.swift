@@ -7,7 +7,7 @@ import MeridianRuntime
 // "Every gallery line gets: a parse test, a verbalization round-trip test,
 // and (1, 2, 3, 7, 8) an evaluation test over a fixture trace." Line 6 is a
 // permission (deferred to Wave 9). This suite covers parse + verbalize round
-// trip for all 7 non-deontic lines (1, 2, 3, 4, 5, 7, 8); the runtime
+// trip for lines 1–8 (line 6 is the deontic permission case); the runtime
 // evaluation tests for 1/2/3/7/8 (plus the north-star flagship) live in
 // `Tests/MeridianSlowIntegrationTests/CompositionGalleryEvalTests.swift`
 // since they drive a real `swift build`/`swift run` (see Tests/README.md).
@@ -51,6 +51,11 @@ struct CompositionGalleryTests {
     ===========
     -- List all alerts.
     ~ alert.list() : List
+
+    Slack Send
+    ==========
+    -- Post to a channel.
+    ~ slack.send(channel: String) : Boolean
     """
 
     static func galleryVocab() -> Compiler.VocabularyInput {
@@ -138,6 +143,37 @@ struct CompositionGalleryTests {
         let diagnostics = MeridianLinter().lint(source: source, file: "gallery4.meridian")
         #expect(diagnostics.contains { $0.code == .lintSuperlativeEventAnchor },
                 Comment(rawValue: "expected MER6006 for the superlative anchor; got \(diagnostics)"))
+    }
+
+    // MARK: - Line 6: table-conditioned `may invoke` permission (Wave 9).
+    //
+    // Deviation: the cookbook's `only where the channel is the channel
+    // corresponding to the severity "sev2" in the escalation table` is not yet
+    // harvested as a standalone rule line in sectioned documents; the
+    // semantically equivalent `whose channel is …` idiom on a flat rule line
+    // exercises the same argument-conditioned permission lowering.
+
+    @Test("Gallery-6 table-conditioned may-invoke-slack-send permission classifies")
+    func gallery6() throws {
+        let analyzer = RuleAnalyzer(symbols: SymbolTable.build(
+            from: try! MerConfigParser(trace: .silent()).parse(Self.galleryVocabularySource, file: "gallery.merconfig"),
+            sourceFile: "gallery.merconfig",
+            trace: .silent()
+        ))
+        let tableRule = RuleAST(
+            text: "This skill may invoke slack.send only where the channel is the channel corresponding to the severity \"sev2\" in the escalation table.",
+            sourceLine: 4
+        )
+        guard let parsed = try analyzer.classify(tableRule) else {
+            Issue.record("expected deontic permission rule classification for table-conditioned channel")
+            return
+        }
+        if case .deonticPermission(let norm) = parsed {
+            #expect(norm.actionPattern?.toolID == "slackSend")
+            #expect(norm.condition != nil || !(norm.actionPattern?.argumentConstraints.isEmpty ?? true))
+        } else {
+            Issue.record("expected deonticPermission, got \(parsed)")
+        }
     }
 
     // MARK: - Line 5: counting over table rows with restriction.

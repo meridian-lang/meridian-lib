@@ -22,6 +22,8 @@ extension ExpressionAST {
             return detail == .verbose ? "$\(a)\(c)" : "lit"
         case .literal(.duration(let v, let u)):
             return detail == .verbose ? "\(v) \(u)" : "lit"
+        case .literal(.calendarAmount(let v, let u)):
+            return detail == .verbose ? "\(v) \(u)" : "lit"
         case .identifierRef(let n):             return "id(\(n))"
         case .instanceRef(let n):               return "inst(\(n))"
         case .constantRef(let n):               return "const(\(n))"

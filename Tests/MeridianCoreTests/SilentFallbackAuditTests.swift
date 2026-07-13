@@ -79,6 +79,29 @@ struct SilentFallbackAuditTests {
         #expect(failures.isEmpty, Comment(rawValue: failures.joined(separator: "\n")))
     }
 
+    @Test("Lowering and Parser try? uses are allowlisted or registered fix-target gaps")
+    func loweringAndParserTryQuestionMarkAudit() throws {
+        let root = repositoryRoot()
+        let allowlist = try parseAllowlist(
+            root.appendingPathComponent("docs/coverage/SILENT_FALLBACK_ALLOWLIST.md")
+        )
+        let hits = try scanDirectory(at: root.appendingPathComponent("Sources"), root: root, scope: "Sources")
+            .filter { $0.pattern == "try?" }
+        let failures = hits.compactMap { hit -> String? in
+            let matches = allowlist.filter { entry in
+                entry.path == hit.path && entryMatches(entry, hit: hit)
+            }
+            guard let match = matches.first else {
+                return "\(hit.path):\(hit.line): unallowlisted \(hit.pattern): \(hit.text)"
+            }
+            guard Self.approvedClassifications.contains(match.classification) else {
+                return "\(hit.path):\(hit.line): \(hit.pattern) is classified as `\(match.classification)`, not an approved silent-path classification"
+            }
+            return nil
+        }
+        #expect(failures.isEmpty, Comment(rawValue: failures.joined(separator: "\n")))
+    }
+
     @Test("production code does not construct legacy CompilerError syntax/semantic errors")
     func legacyCompilerErrorConstructorsAreAbsent() throws {
         let root = repositoryRoot()
@@ -185,6 +208,12 @@ struct SilentFallbackAuditTests {
                     hits.append(Hit(path: relativePath, line: line, pattern: "traceCapture silent default",
                                     allowlistKey: "traceCapture", text: trimmed))
                 }
+                if isLoweringOrParserPath(relativePath),
+                   rawLine.range(of: #"\btry\?"#, options: .regularExpression) != nil,
+                   !trimmed.hasPrefix("//"), !trimmed.hasPrefix("///") {
+                    hits.append(Hit(path: relativePath, line: line, pattern: "try?",
+                                    allowlistKey: "try?", text: trimmed))
+                }
                 hits.append(contentsOf: catchSwallowHits(in: lines, at: offset, relativePath: relativePath))
             }
 
@@ -206,6 +235,8 @@ struct SilentFallbackAuditTests {
             (#"catch\s*\{\s*return\s*\}"#, "catch return swallow", "catch return"),
             (#"catch\s*\{\s*return\s*nil(\s|\})"#, "catch return nil swallow", "catch return"),
             (#"catch\s*\{\s*return\s*\[\s*\](\s|\})"#, "catch return empty array swallow", "catch return"),
+            (#"catch\s*\{\s*return\s*false(\s|\}|$)"#, "catch return false swallow", "catch return"),
+            (#"catch\s*\{\s*return\s*true(\s|\}|$)"#, "catch return true swallow", "catch return"),
             (#"catch\s*\{\s*continue(\s|\}|$)"#, "catch continue swallow", "catch continue"),
             (#"catch\s*\{\s*_\s*in"#, "catch wildcard swallow", "catch wildcard"),
         ]
@@ -233,7 +264,14 @@ struct SilentFallbackAuditTests {
         if body == "return" { return true }
         if body == "return nil" || body.hasPrefix("return nil ") { return true }
         if body == "return []" || body.hasPrefix("return []") { return true }
+        if body == "return false" || body.hasPrefix("return false ") { return true }
+        if body == "return true" || body.hasPrefix("return true ") { return true }
         return false
+    }
+
+    private func isLoweringOrParserPath(_ relativePath: String) -> Bool {
+        relativePath.hasPrefix("Sources/MeridianCore/Lowering/")
+            || relativePath.hasPrefix("Sources/MeridianCore/Parser/")
     }
 
     private func nextCatchBodyLine(in lines: [String], startingAt index: Int) -> String {

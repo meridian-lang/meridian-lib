@@ -593,7 +593,9 @@ public struct SignalDetectorInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "signal-detector",
@@ -697,7 +699,9 @@ public struct WhenEveryinboundmessagealwaysFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "signal-detector",
@@ -728,7 +732,7 @@ public struct WhenEveryinboundmessagealwaysFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/d5fcf05dec6c41df35243b277fdd32c7aa01ce86ce0824d5fb552f95ad8304ab") {
             // L1
-            try await runtime.wait(.event("everyInboundMessageAlways", matching: nil))
+            try await runtime.wait(.event("everyInboundMessageAlways", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEveryinboundmessagealwaysFires/root/procedure/d5fcf05dec6c41df35243b277fdd32c7aa01ce86ce0824d5fb552f95ad8304ab", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/b41c1a149acde013b7b86d5edd88c78fc6a62383e43a741e0db0f5699c7cdc9f") {

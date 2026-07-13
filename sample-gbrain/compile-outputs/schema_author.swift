@@ -591,7 +591,9 @@ public struct SchemaAuthorInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -691,7 +693,9 @@ public struct WhenAddpagetypeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -722,7 +726,7 @@ public struct WhenAddpagetypeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAddpagetypeFires/root/procedure/546f371cefa3b3a3ed22fc4796b6c5edc9a393c965a20145acee32f06d667eeb") {
             // L1
-            try await runtime.wait(.event("addPageType", matching: nil))
+            try await runtime.wait(.event("addPageType", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAddpagetypeFires/root/procedure/546f371cefa3b3a3ed22fc4796b6c5edc9a393c965a20145acee32f06d667eeb", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAddpagetypeFires/root/procedure/0777e961c6c9d620880d583bf7a8835d1abe57f58c59a54349b8745c35b09403") {
@@ -764,7 +768,9 @@ public struct WhenAddtypemyschemaFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -795,7 +801,7 @@ public struct WhenAddtypemyschemaFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAddtypemyschemaFires/root/procedure/ce3de1cdcd8275686407010238cc093e5b0fd21ffdf3ec1ed52463b0fb0646d8") {
             // L1
-            try await runtime.wait(.event("addTypeMySchema", matching: nil))
+            try await runtime.wait(.event("addTypeMySchema", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAddtypemyschemaFires/root/procedure/ce3de1cdcd8275686407010238cc093e5b0fd21ffdf3ec1ed52463b0fb0646d8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAddtypemyschemaFires/root/procedure/68bcb874dc768cdebf3f3f893ce4b9fe3370a458aa3f046e7dd163cd5a44bac7") {
@@ -837,7 +843,9 @@ public struct WhenMybrainhasuntypedpagesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -868,7 +876,7 @@ public struct WhenMybrainhasuntypedpagesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMybrainhasuntypedpagesFires/root/procedure/77e2e0f900633a42474ea9e201b404c6f582fc54b89c9eaf5afc05d326ea0637") {
             // L1
-            try await runtime.wait(.event("myBrainHasUntypedPages", matching: nil))
+            try await runtime.wait(.event("myBrainHasUntypedPages", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMybrainhasuntypedpagesFires/root/procedure/77e2e0f900633a42474ea9e201b404c6f582fc54b89c9eaf5afc05d326ea0637", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMybrainhasuntypedpagesFires/root/procedure/23b417bc8277320cab75bd2da6ad0cd21107a9955dbe68272c75f0f81d72de11") {
@@ -910,7 +918,9 @@ public struct WhenSchemaisntmatchingmyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -941,7 +951,7 @@ public struct WhenSchemaisntmatchingmyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchemaisntmatchingmyFires/root/procedure/c76c5118a681a0d0c4855440073df602b458fc3516dc8c7a98ca352095fd6113") {
             // L1
-            try await runtime.wait(.event("schemaIsnTMatchingMy", matching: nil))
+            try await runtime.wait(.event("schemaIsnTMatchingMy", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchemaisntmatchingmyFires/root/procedure/c76c5118a681a0d0c4855440073df602b458fc3516dc8c7a98ca352095fd6113", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchemaisntmatchingmyFires/root/procedure/3564b9f57448f7c2daf3e78d5af995dc217de61b852400922dd00dd616c078b6") {
@@ -983,7 +993,9 @@ public struct WhenProposenewtypesmycorpusFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1014,7 +1026,7 @@ public struct WhenProposenewtypesmycorpusFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProposenewtypesmycorpusFires/root/procedure/95db2aff307faae816f069039e5fe86ae584ae09010aa714bd656c7473caf85a") {
             // L1
-            try await runtime.wait(.event("proposeNewTypesMyCorpus", matching: nil))
+            try await runtime.wait(.event("proposeNewTypesMyCorpus", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProposenewtypesmycorpusFires/root/procedure/95db2aff307faae816f069039e5fe86ae584ae09010aa714bd656c7473caf85a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProposenewtypesmycorpusFires/root/procedure/4bb498fad4881114e8b83e3286dcf81fce6ca6d1a73fbbae92f794885306887a") {
@@ -1056,7 +1068,9 @@ public struct WhenBackfillpagetypesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1087,7 +1101,7 @@ public struct WhenBackfillpagetypesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBackfillpagetypesFires/root/procedure/cf02a02e6ca1aa8104f56e6dc820284153879625f1426f0b37816b1413f3048b") {
             // L1
-            try await runtime.wait(.event("backfillPageTypes", matching: nil))
+            try await runtime.wait(.event("backfillPageTypes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBackfillpagetypesFires/root/procedure/cf02a02e6ca1aa8104f56e6dc820284153879625f1426f0b37816b1413f3048b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBackfillpagetypesFires/root/procedure/f933bc4b9acaa51188be7694ce86129fe8f3a8f643cfd4ea874d456ed4923937") {
@@ -1129,7 +1143,9 @@ public struct WhenEvolvemyschemaFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1160,7 +1176,7 @@ public struct WhenEvolvemyschemaFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEvolvemyschemaFires/root/procedure/f87bf9c168ec4ff9100f87c0d94312bf51627c1e5c4ea354f39ebdbccb0a2460") {
             // L1
-            try await runtime.wait(.event("evolveMySchema", matching: nil))
+            try await runtime.wait(.event("evolveMySchema", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEvolvemyschemaFires/root/procedure/f87bf9c168ec4ff9100f87c0d94312bf51627c1e5c4ea354f39ebdbccb0a2460", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEvolvemyschemaFires/root/procedure/e388a796bed9fa0b29f62e1193261b1d78bb7a124a4e71a98851d4cf88e81e42") {
@@ -1202,7 +1218,9 @@ public struct WhenExtendschemapackFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1233,7 +1251,7 @@ public struct WhenExtendschemapackFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenExtendschemapackFires/root/procedure/7f4fc2f4aa722cfc422b9b1b7d1705cd54253e154157d4448e3155fc3f55d3ba") {
             // L1
-            try await runtime.wait(.event("extendSchemaPack", matching: nil))
+            try await runtime.wait(.event("extendSchemaPack", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenExtendschemapackFires/root/procedure/7f4fc2f4aa722cfc422b9b1b7d1705cd54253e154157d4448e3155fc3f55d3ba", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenExtendschemapackFires/root/procedure/224f71bfb081fb6bb37309ee5e9947a1f28d9dd4f460894a893cf2fc76eb489b") {
@@ -1275,7 +1293,9 @@ public struct WhenCreatecustomtypeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1306,7 +1326,7 @@ public struct WhenCreatecustomtypeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreatecustomtypeFires/root/procedure/b67e22706244b62d2413a4d7dfa94b4325169d71e8f044984dff8e44ced4239d") {
             // L1
-            try await runtime.wait(.event("createCustomType", matching: nil))
+            try await runtime.wait(.event("createCustomType", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreatecustomtypeFires/root/procedure/b67e22706244b62d2413a4d7dfa94b4325169d71e8f044984dff8e44ced4239d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreatecustomtypeFires/root/procedure/f335fbd7e31b10c9abf7e3c2b2cfb7e6e56d305ec110ca522172af2ca562e6f5") {
@@ -1348,7 +1368,9 @@ public struct WhenResearchertypeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1379,7 +1401,7 @@ public struct WhenResearchertypeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenResearchertypeFires/root/procedure/c8b5d0c2d88eeba5609bf10d399f44695dadc6f4be9f663ee7b8c7e577147135") {
             // L1
-            try await runtime.wait(.event("researcherType", matching: nil))
+            try await runtime.wait(.event("researcherType", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenResearchertypeFires/root/procedure/c8b5d0c2d88eeba5609bf10d399f44695dadc6f4be9f663ee7b8c7e577147135", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenResearchertypeFires/root/procedure/3fece2ff74872f16c23ac23a8732821b89b950fec72c7f387714e63ad6964917") {
@@ -1421,7 +1443,9 @@ public struct WhenMakexexperttypeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1452,7 +1476,7 @@ public struct WhenMakexexperttypeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMakexexperttypeFires/root/procedure/bba03018c06399f03218d2129d1eb31156d4ee4a7226f4b4ec6475cd6173346e") {
             // L1
-            try await runtime.wait(.event("makeXExpertType", matching: nil))
+            try await runtime.wait(.event("makeXExpertType", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMakexexperttypeFires/root/procedure/bba03018c06399f03218d2129d1eb31156d4ee4a7226f4b4ec6475cd6173346e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMakexexperttypeFires/root/procedure/15881eef3458abb2718fc449813ae36ccc5562cba36065f21ab7606f71bdb008") {
@@ -1494,7 +1518,9 @@ public struct WhenSchemapackaddFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1525,7 +1551,7 @@ public struct WhenSchemapackaddFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchemapackaddFires/root/procedure/c1071f6c2e583df75711cf91c615cb84a85a1767c513f42edc0ca49cf7f2a7b1") {
             // L1
-            try await runtime.wait(.event("schemaPackAdd", matching: nil))
+            try await runtime.wait(.event("schemaPackAdd", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchemapackaddFires/root/procedure/c1071f6c2e583df75711cf91c615cb84a85a1767c513f42edc0ca49cf7f2a7b1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchemapackaddFires/root/procedure/682db467fb4066b8f84536b570cfea4698641f2a1e8f79e1d27331e27b3b6347") {
@@ -1567,7 +1593,9 @@ public struct WhenSchemamutateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1598,7 +1626,7 @@ public struct WhenSchemamutateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchemamutateFires/root/procedure/7bde963aa48998f57ee27c7ec05a89ec30afef8281883a4a462139d34a58b02b") {
             // L1
-            try await runtime.wait(.event("schemaMutate", matching: nil))
+            try await runtime.wait(.event("schemaMutate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchemamutateFires/root/procedure/7bde963aa48998f57ee27c7ec05a89ec30afef8281883a4a462139d34a58b02b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchemamutateFires/root/procedure/015528e7f4dd9a93a7d22d122d49375b6be95568b6d1b522ee4d04e706700890") {
@@ -1640,7 +1668,9 @@ public struct WhenSchemasyncFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1671,7 +1701,7 @@ public struct WhenSchemasyncFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchemasyncFires/root/procedure/20ce9dc81071772cfa286e4431ce02ab1ce9e5ee953b08a2773f466cc7513062") {
             // L1
-            try await runtime.wait(.event("schemaSync", matching: nil))
+            try await runtime.wait(.event("schemaSync", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchemasyncFires/root/procedure/20ce9dc81071772cfa286e4431ce02ab1ce9e5ee953b08a2773f466cc7513062", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchemasyncFires/root/procedure/6c0cd11b8927a368456982a9f49efba2db8e2f660af329b6bb8441c1ac49a90a") {
@@ -1713,7 +1743,9 @@ public struct WhenSchemaauthorFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-author",
@@ -1744,7 +1776,7 @@ public struct WhenSchemaauthorFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchemaauthorFires/root/procedure/625af7a075a5e68937f3d61a6044e91ded3477d67c974f229f5f8666f9670798") {
             // L1
-            try await runtime.wait(.event("schemaAuthor", matching: nil))
+            try await runtime.wait(.event("schemaAuthor", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchemaauthorFires/root/procedure/625af7a075a5e68937f3d61a6044e91ded3477d67c974f229f5f8666f9670798", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchemaauthorFires/root/procedure/7e0da19bc9c55390e566a81a6645e79ecb9b33809803d12e156822f901cfff97") {

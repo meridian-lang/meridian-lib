@@ -592,7 +592,9 @@ public struct AcademicVerifyInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -662,7 +664,9 @@ public struct WhenVerifythisacademicclaimFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -693,7 +697,7 @@ public struct WhenVerifythisacademicclaimFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/3a2c27693ea5ed50b289749f99090352faac007de60dc860892550bcffade442") {
             // L1
-            try await runtime.wait(.event("verifyThisAcademicClaim", matching: nil))
+            try await runtime.wait(.event("verifyThisAcademicClaim", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVerifythisacademicclaimFires/root/procedure/3a2c27693ea5ed50b289749f99090352faac007de60dc860892550bcffade442", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/3afbf8da7e2992e3c8e962fe414f06b09e6f4768a5b80c1a03c1a489b4ce85e5") {
@@ -735,7 +739,9 @@ public struct WhenCheckthisstudyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -766,7 +772,7 @@ public struct WhenCheckthisstudyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/cdf914fe45aabc75bf6ff01bdcef1772171448db875ffa007aad27853b05c1dc") {
             // L1
-            try await runtime.wait(.event("checkThisStudy", matching: nil))
+            try await runtime.wait(.event("checkThisStudy", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckthisstudyFires/root/procedure/cdf914fe45aabc75bf6ff01bdcef1772171448db875ffa007aad27853b05c1dc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/d352b3ae267bfd3d7019764e9cc28755edc32484fa36bb2535b4c1878735bbd3") {
@@ -808,7 +814,9 @@ public struct WhenAcademicverifyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -839,7 +847,7 @@ public struct WhenAcademicverifyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/06dfb4d1987c781139548783a59d703b9ef82a87138f4d22dcde80ad4de94e1a") {
             // L1
-            try await runtime.wait(.event("academicVerify", matching: nil))
+            try await runtime.wait(.event("academicVerify", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAcademicverifyFires/root/procedure/06dfb4d1987c781139548783a59d703b9ef82a87138f4d22dcde80ad4de94e1a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/49df541b0ce1a9518295d68c23394018e7ab88f41c436c70b1b215f74c5119af") {
@@ -881,7 +889,9 @@ public struct WhenValidatecitationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -912,7 +922,7 @@ public struct WhenValidatecitationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/356413618b7fda70b00316d281f5a116dce897c3a60d7cf9993746e5262f00d5") {
             // L1
-            try await runtime.wait(.event("validateCitation", matching: nil))
+            try await runtime.wait(.event("validateCitation", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenValidatecitationFires/root/procedure/356413618b7fda70b00316d281f5a116dce897c3a60d7cf9993746e5262f00d5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/f9c1787ecd1b0cfafc28ac61b143642893c4090b5fe9db67c4c6b4fa2fac9fe4") {
@@ -954,7 +964,9 @@ public struct WhenIsthisstudyrealFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -985,7 +997,7 @@ public struct WhenIsthisstudyrealFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/04dd15078bf3189eeb44d6dd11ff001b67c05bbf4839ef10c68b5f6916951e55") {
             // L1
-            try await runtime.wait(.event("isThisStudyReal", matching: nil))
+            try await runtime.wait(.event("isThisStudyReal", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIsthisstudyrealFires/root/procedure/04dd15078bf3189eeb44d6dd11ff001b67c05bbf4839ef10c68b5f6916951e55", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/4668c1bdddcde98b781be608c3abca0e5dc124d036521991550f16638f65be55") {
@@ -1027,7 +1039,9 @@ public struct WhenRetractionwatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "academic-verify",
@@ -1058,7 +1072,7 @@ public struct WhenRetractionwatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/ced5a07a41b7e7b0d003ae633b178d2a015c152d2992fd5503eeda6f3103538f") {
             // L1
-            try await runtime.wait(.event("retractionWatch", matching: nil))
+            try await runtime.wait(.event("retractionWatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRetractionwatchFires/root/procedure/ced5a07a41b7e7b0d003ae633b178d2a015c152d2992fd5503eeda6f3103538f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/7a1e9b829006f14543096ef7cf12b6bfc846aae440a94f4dd49cfd7c33bbdbc4") {

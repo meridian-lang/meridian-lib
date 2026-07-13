@@ -422,7 +422,9 @@ public struct DedupeRecords: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
@@ -529,8 +531,10 @@ public struct DedupeRecords: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.then/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
                 } else {
                     try await runtime.recordBranchTaken(condition: "(meridianDef_Record_duplicate(state.get(\"record\"))) && ((meridianDef_Record_stale(state.get(\"record\"))) || (meridianDef_Record_drifted(state.get(\"record\"))))", into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
+
                     if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.else/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856") {
                         // L27
                         try await runtime.emit(
@@ -542,6 +546,7 @@ public struct DedupeRecords: MeridianWorkflow {
                         )
                         try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.else/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
@@ -587,7 +592,9 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
@@ -619,7 +626,7 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/539e1a804259f27d093c4c8e47db1871098d9ea8be52d9d82bb9b685bd777ca8") {
             // L1
-            try await runtime.wait(.event("dedupeRecords", matching: nil))
+            try await runtime.wait(.event("dedupeRecords", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDeduperecordsFires/root/procedure/539e1a804259f27d093c4c8e47db1871098d9ea8be52d9d82bb9b685bd777ca8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/75888e77696bd57d70716a5c59a716723490e9421750855cb404dd875e0d3bf7") {
@@ -661,7 +668,9 @@ public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
@@ -693,7 +702,7 @@ public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/a1b3bfb1a6e8ddde7b79c3b84ae17140a37a72a6294f38889aeed44f95e29fb7") {
             // L1
-            try await runtime.wait(.event("duplicateRowsDetected", matching: nil))
+            try await runtime.wait(.event("duplicateRowsDetected", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDuplicaterowsdetectedFires/root/procedure/a1b3bfb1a6e8ddde7b79c3b84ae17140a37a72a6294f38889aeed44f95e29fb7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/d0f5e23b21491f7286e74b0aa6afdab5ce5e92e0848d5f7db9efe455369d8a73") {

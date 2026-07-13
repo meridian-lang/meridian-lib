@@ -1,0 +1,539 @@
+{
+  "entries" : [
+    {
+      "canonical" : "if trigger equals \"Every inbound message (spawn parallel, don't block)\",\n  `skills\/signal-detector\/SKILL.md`.",
+      "meridian_line" : 10,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/always-on-every-message-steps\/procedure\/94a6c49273c24080152b2ef46797fbbd69c73db5cc1b84e692f7c05c599d16d1",
+      "swift_line" : 641
+    },
+    {
+      "canonical" : "`skills\/brain-ops\/SKILL.md`.",
+      "meridian_line" : 10,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/always-on-every-message-steps\/procedure\/branch.then\/065b076c2350113bd6f67c3848a2450cc2d0cc0deb20259e42c2887397014004",
+      "swift_line" : 641
+    },
+    {
+      "canonical" : "`skills\/signal-detector\/SKILL.md`.",
+      "meridian_line" : 10,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/always-on-every-message-steps\/procedure\/branch.then\/342ef698f8e27728894fea857c50546b0ba259194b55a2933e180ea94a0b8be4",
+      "swift_line" : 641
+    },
+    {
+      "canonical" : "if trigger equals \"Any brain read\/write\/lookup\/citation\",\n  `skills\/brain-ops\/SKILL.md`.",
+      "meridian_line" : 10,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/always-on-every-message-steps\/procedure\/cd57b5eb55dfcba825d7932c250fd3f0e4f848e3e79bf175b389c8d4900ce5db",
+      "swift_line" : 641
+    },
+    {
+      "canonical" : "if trigger equals \"Spawn agent\",\n  `skills\/minion-orchestrator\/SKILL.md` -- \"background task\", \"parallel tasks\", \"steer agent\", \"pause\/resume agent\", \"gbrain jobs submit\", \"submit a gbrain job\", \"submit a shell job\", \"shell job\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/09700ec57b8a26fec4c7cf403c19334713943a189657b052067dabc72d44a186",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Create a skill\",\n  `skills\/skill-creator\/SKILL.md` -- \"improve this skill\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/1db82403fe8355ed8f5c3366808ec150161b3865850caffb59170f0c322c387c",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Task add\/remove\/complete\/defer\/review\",\n  `skills\/daily-task-manager\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/3f336a9254ce0aced173082b57f234afd2fa695ddf5ffa3595cc0650098650c5",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Skillify this\",\n  `skills\/skillify\/SKILL.md` -- \"is this a skill?\", \"make this proper\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/44a88f5d0bcac10e9606c9b10eef27311cf582458f82a3bd1df8756ee0c9aeba",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"\\\"Is gbrain healthy?\\\", morning health check, skillpack-check\",\n  `skills\/skillpack-check\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/691918a41303896607c589ab96fc59be6ccbe5f7d6852cc1009ccdb18693e786",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Save or load reports\",\n  `skills\/reports\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/8aa195c3cd79109e398089682d044f8f2e4e2a9425bfdc4a0870e9a79900de7a",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Cron scheduling, quiet hours, job staggering\",\n  `skills\/cron-scheduler\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/a5e1e70cab02d66d0b64cf4256c3405d77b0491e5e439034b34c33f39f629751",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Post-restart health + auto-fix, \\\"did the container restart break anything\\\", smoke test\",\n  `skills\/smoke-test\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/b65bd2a6dbbe857cf11a4f9c6ef50f9ff97a543b7bef7587ce9c1b07e1ea617c",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/skill-creator\/SKILL.md` -- \"improve this skill\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/0b83a30949dd6bbfcbff1f29404ea8f0aa309d1b39ebb95a0ebe389cbdeefd31",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/reports\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/0ffa45e7d2cc967b6dd7293b2a09f24a5aca83f916075fe7653b7833ede861dc",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/skillpack-check\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/1f73a9487f971b9a5353150e2be00dfbcfbd7c137f86395b2cb2244d3f56112e",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/functional-area-resolver\/SKILL.md` -- \"AGENTS.md too large\", \"RESOLVER.md too big\", \"functional area dispatcher\", \"shrink routing table\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/27c8124dbddcd5eec4811cdeefe698cb59974b79ef8a0924d6b67faa9e50b524",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/cross-modal-review\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/326a727fe3b0446b7d542c0a5f5097e088881ea860e8d952e2403fe1b7c5b948",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/cron-scheduler\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/393cef8e4012896f4868640050b07f6d27d14ce0d53a5ab255e920c8f47851e6",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/testing\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/41a1e6789ed1fdc7923c2b59b1d08837c617c8022092a6415d2536990bc1fda1",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/smoke-test\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/4614714fc2f483a63ca41d7e414f3875728fb8416c95f339577533d61445a5c0",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/daily-task-prep\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/4697cf0768674d1f698faf6a835a74271c435af8ec3a073a8484d08f3e777841",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/skillify\/SKILL.md` -- \"is this a skill?\", \"make this proper\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/4cdd6c0a0f7b25f0481af7176def7f1249873eb4dc58123cddc8145d080a9ac5",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/daily-task-manager\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/56013a466ae4d39ef514e902680344c33585c0e08c229951f2160e556e36be3a",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/minion-orchestrator\/SKILL.md` -- \"background task\", \"parallel tasks\", \"steer agent\", \"pause\/resume agent\", \"gbrain jobs submit\", \"submit a gbrain job\", \"submit a shell job\", \"shell job\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/78ca53131d9a1d33bbc80230eec0bb9f6d63da9629ee681288b7cd2fb2ca1bc3",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/skillpack-harvest\/SKILL.md` -- \"publish this skill to gbrain\", \"lift this skill upstream\", \"share this skill with other gbrain clients\", \"promote my skill to gbrain\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/89da7d5b224db2271596e1911819ac20a133454bcca58dca64682e0e7121c75a",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/ask-user\/SKILL.md` -- \"ask before proceeding\", \"choice gate\", \"user decision\",",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/a49b597230444db88493ac9540810ce851ccd49fc1586c7f55a733a21eaa6c8b",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/webhook-transforms\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/b41dce5f449fab0b8deb1e117655ef1d34a1d845da048339db818e1b56a0f352",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "`skills\/briefing\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/branch.then\/ccadddd18f775c3a23cd985f0b4ffcf8fd1541682e2617ee9d621978b442737f",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Cross-modal review, second opinion\",\n  `skills\/cross-modal-review\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/c384e592e7df5f2b49e6ce5821f28d5065431f59fa64d5677e1ccf627acb6c2a",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Daily briefing, \\\"what's happening today\\\"\",\n  `skills\/briefing\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/c90e764d9536e10f088c5b718aa6e9b790abaa46acc97e6f854be3b56415c66b",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Morning prep, meeting context, day planning\",\n  `skills\/daily-task-prep\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/dd0e4c73bd765ccccca9d7f27fd991cabdb910ff5a454a569da2ea60a4f612df",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"present options\",\n  `skills\/ask-user\/SKILL.md` -- \"ask before proceeding\", \"choice gate\", \"user decision\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/debef5610440b63c795a9d70be9bf9c922411bf531c7f27989a8fe4c544bee93",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Compress my resolver\",\n  `skills\/functional-area-resolver\/SKILL.md` -- \"AGENTS.md too large\", \"RESOLVER.md too big\", \"functional area dispatcher\", \"shrink routing table\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/e9e97ec09664c11bbc424965a6f4f1e4c7df26a731d17187d181047cc9157efc",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"harvest this skill into gbrain\",\n  `skills\/skillpack-harvest\/SKILL.md` -- \"publish this skill to gbrain\", \"lift this skill upstream\", \"share this skill with other gbrain clients\", \"promote my skill to gbrain\",",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/f249ba54da0537ebfad243ad2290f2ee6fc6124dcb79be0e09382bcfd85872e9",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"Webhook setup, external event processing\",\n  `skills\/webhook-transforms\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/f5e4447c5c1d9a9c93dca5a7176ba8df54715734f9d4206dc7268619822abc16",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "if trigger equals \"\\\"Validate skills\\\", skill health check\",\n  `skills\/testing\/SKILL.md`.",
+      "meridian_line" : 69,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/operational-steps\/procedure\/f713f7826184181e822862696c61bfaf3fef73422f2f980cd556aa0ba362669e",
+      "swift_line" : 950
+    },
+    {
+      "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when \"Set up GBrain\", first boot, `skills\/setup\/SKILL.md`\n  when \"Now what?\", \"fill my brain\", \"cold start\", \"bootstrap\", \"import my data\", \"what should I import first\", `skills\/cold-start\/SKILL.md`\n  when \"Migrate from Obsidian\/Notion\/Logseq\", `skills\/migrate\/SKILL.md`\n  when Brain health check, maintenance run, `skills\/maintain\/SKILL.md`\n  when \"Extract links\", \"build link graph\", \"populate timeline\", `skills\/maintain\/SKILL.md` (extraction sections)\n  when \"Run dream\", \"process today's session\", \"synthesize my conversations\", \"consolidate yesterday's conversations\", \"what patterns did you see\", \"did the dream cycle run\", `skills\/maintain\/SKILL.md` (dream cycle section)\n  when \"Brain health\", \"what features am I missing\", \"brain score\", Run `gbrain features --json`\n  when \"Set up autopilot\", \"run brain maintenance\", \"keep brain updated\", Run `gbrain autopilot --install --repo ~\/brain`\n  when \"Upgrade gbrain\", \"update gbrain\", \"gbrain update available\", `UPGRADE_AVAILABLE`, \"is gbrain up to date\", `skills\/gbrain-upgrade\/SKILL.md`\n  when Agent identity, \"who am I\", customize agent, `skills\/soul-audit\/SKILL.md`\n  when \"Populate links\", \"extract links\", \"backfill graph\", `skills\/maintain\/SKILL.md` (graph population phase)\n  when \"Populate timeline\", \"extract timeline entries\", `skills\/maintain\/SKILL.md` (graph population phase)",
+      "meridian_line" : 94,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/EntryInput\/setup-migration-steps\/procedure\/debc06bccc0c07a1bfda86d7a3523eb58e0a00dea04e04c7df6b2ab5a4ef08c6",
+      "swift_line" : 966
+    },
+    {
+      "canonical" : "if trigger equals \"Agent needs to know its identity\/vibe\",\n  `SOUL.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/139d4c5b287f16f8d49d44145286898f26e0ee8477b0016b5bfa21193ccc0851",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "if trigger equals \"Non-owner sends a message\",\n  `ACCESS_POLICY.md` -- Check  before responding.",
+      "meridian_line" : 114,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/25a47253634abf08526e2f2e9b88eceab823dd6f3ec60002f38fed10503a8180",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "`ACCESS_POLICY.md` -- Check  before responding.",
+      "meridian_line" : 114,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/branch.then\/17fd419494c251af12e9b58601fbf8693d4e0672d3e03520309f4fadee033d94",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "`SOUL.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/branch.then\/24a8f49ef3fbea2c00f5adb08de7c6722111f5f7c2a181c9d742b7ca4578833d",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "`HEARTBEAT.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/branch.then\/b564ea0c1fd7ebb699fe64e3b284855705386d190cd0c14fdc076df4537e8819",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "`USER.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/branch.then\/bb7482f56a1e2264a61b5200b02ea6f387f3d5bf8a7921f9b42f8a4f39839a30",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "if trigger equals \"Agent needs user context\",\n  `USER.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/dff09737643ee20998654d8785e2df996b71a5e460771db73ca66e4ff56facee",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "if trigger equals \"Operational cadence (what to check and when)\",\n  `HEARTBEAT.md` -- Read.",
+      "meridian_line" : 114,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/identity-access-always-on-steps\/procedure\/fe48edcc30ddd245ccf764214a40ed571a4c6391193f0048817267bfd9fb12c9",
+      "swift_line" : 1041
+    },
+    {
+      "canonical" : "`skills\/conventions\/quality.md` -- — citations, back-links, notability gate.",
+      "meridian_line" : 140,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps\/procedure\/e5180d82d951c867080d94d5723ad8887084a4fbe0f4408985183b6472fa2d18",
+      "swift_line" : 1058
+    },
+    {
+      "canonical" : "`skills\/conventions\/brain-first.md` -- — check brain before external APIs.",
+      "meridian_line" : 141,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps\/procedure\/7491a2c0a312985186d724e25bfd8423796d6319814818e8aff94c52c783e44e",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "`skills\/conventions\/brain-routing.md` -- — which brain (DB) and which source (repo) to target; cross-brain federation is latent-space only.",
+      "meridian_line" : 142,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps\/procedure\/cd776a52afe8c6e64bfb9f8caa9b9d3e57b093e04b9089d9d96d2e334ccee9ac",
+      "swift_line" : 1086
+    },
+    {
+      "canonical" : "`skills\/conventions\/subagent-routing.md` -- — when to use Minions vs inline work.",
+      "meridian_line" : 146,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps-2\/procedure\/8a5e6375d270ce37a5bf11a96e9b847caa88a76e0d5438a5cf28389f68ee11c7",
+      "swift_line" : 1100
+    },
+    {
+      "canonical" : "`skills\/ask-user\/SKILL.md` -- — choice-gate pattern for human input at decision points.",
+      "meridian_line" : 147,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps-2\/procedure\/a49b597230444db88493ac9540810ce851ccd49fc1586c7f55a733a21eaa6c8b",
+      "swift_line" : 1114
+    },
+    {
+      "canonical" : "`skills\/_brain-filing-rules.md` -- — where files go.",
+      "meridian_line" : 148,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps-2\/procedure\/835ef9e4db0c71b7e9d40877b5db7a36b0e2ff2110765967f1f1c43552fc2cda",
+      "swift_line" : 1128
+    },
+    {
+      "canonical" : "`skills\/_output-rules.md` -- — output quality standards.",
+      "meridian_line" : 149,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/conventions-cross-cutting-steps-2\/procedure\/ba5665e664244ef57d58722dcabb2f5915c7c97b0aceede9d7ce6f18f6e709f1",
+      "swift_line" : 1142
+    },
+    {
+      "canonical" : "if trigger equals \"\\\"add a page type\\\", \\\"add a type to my schema\\\", \\\"schema author\\\", \\\"schema mutate\\\", \\\"schema pack add\\\", \\\"my brain has untyped pages\\\", \\\"propose new types from my corpus\\\", \\\"backfill page types\\\", \\\"evolve my schema\\\", \\\"researcher type\\\", \\\"make X an expert type\\\" (dispatcher for: gbrain schema active\/list\/show\/validate\/graph\/lint\/stats\/explain\/use\/downgrade\/reload\/init\/fork\/edit\/diff\/add-type\/remove-type\/update-type\/add-alias\/remove-alias\/add-prefix\/remove-prefix\/add-link-type\/remove-link-type\/set-extractable\/set-expert-routing\/detect\/suggest\/review-candidates\/review-orphans\/sync)\",\n  `skills\/schema-author\/SKILL.md`.",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/169e73bbb2ef86b7db9c649a30277523b916d3bdd14ab2a6213e7452ecc98c21",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"enrich this article\",\n  `skills\/article-enrichment\/SKILL.md` -- \"enrich brain pages\", \"batch enrich\", \"make brain pages useful\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/261b95bdb0da3b71158189e2d1f888b79fd2d32e3a42cc430ba25591d585a32c",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"concept synthesis\",\n  `skills\/concept-synthesis\/SKILL.md` -- \"synthesize my concepts\", \"find patterns across my notes\", \"build my intellectual map\", \"trace idea evolution\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/3952c1c871ef941353792ffbd55ba2e9213a305e1118b7ebd74c258869f8b15e",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"verify this academic claim\",\n  `skills\/academic-verify\/SKILL.md` -- \"check this study\", \"academic verify\", \"validate citation\", \"is this study real\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/488be1f4ac70eed3a61e853415b7aa295d694dc54f24ea81519661ed5cca9712",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"make pdf from brain\",\n  `skills\/brain-pdf\/SKILL.md` -- \"brain pdf\", \"convert brain page to pdf\", \"publish this page as pdf\", \"export brain page\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/887d4d752ef0b3a18a91679c042ce9fe4f0f051187a0e00482484648b8ff75af",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"personalized version of this book\",\n  `skills\/book-mirror\/SKILL.md` -- \"mirror this book\", \"two-column book analysis\", \"apply this book to my life\", \"how does this book apply to me\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/91e70e603cea92a8cad507fbadcfb2746c1603a30a75c408791f7d8a29448e72",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"perplexity research\",\n  `skills\/perplexity-research\/SKILL.md` -- \"what's new about\", \"current state of\", \"web research\", \"what changed about\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/bde22743bee6bd92fef9fdb7699187ac9f0938e40b4fbccb95f4d5de0531cbf6",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/schema-unify\/SKILL.md`.",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/1773e837f666946908d3f97a759e19fd1f4843e6400d157d381a462e7bf86347",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/academic-verify\/SKILL.md` -- \"check this study\", \"academic verify\", \"validate citation\", \"is this study real\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/17b6e37ba7c18d71e685b6454fc1f43ab10cab3fd3572cb27384830dc20aaf50",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/concept-synthesis\/SKILL.md` -- \"synthesize my concepts\", \"find patterns across my notes\", \"build my intellectual map\", \"trace idea evolution\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/1cce35d98524445a61cba92d7501600c7b82c79218983e3123edb2d4ada8d057",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/perplexity-research\/SKILL.md` -- \"what's new about\", \"current state of\", \"web research\", \"what changed about\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/4cc350893c817dd75aa507b475362a318b3f9ff29ddc2ef6ffb63fe7c9127bfb",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/book-mirror\/SKILL.md` -- \"mirror this book\", \"two-column book analysis\", \"apply this book to my life\", \"how does this book apply to me\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/58de1ac2c771591d5f34db1283f67d8aae6002fb79fbf0b874a1382d55055484",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/voice-note-ingest\/SKILL.md` -- \"ingest this voice memo\", \"transcribe and file\", \"voice note ingest\", \"save this audio note\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/60dd6244958273bd65d1062885dfbbb45d2119194905fb911aebe979b6b7f0aa",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/strategic-reading\/SKILL.md` -- \"read this through the lens of\", \"apply this to my problem\", \"what can I learn from this about\", \"extract a playbook from\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/707eec20a8ecdca787454ecfe0f102a51d9b80aca497f1f44dcee8ecf4cc81f9",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/schema-author\/SKILL.md`.",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/7ee8a65a56f702236e0b96b389f969c69e94ec65d473494914f99bdfd0dc4798",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/brain-pdf\/SKILL.md` -- \"brain pdf\", \"convert brain page to pdf\", \"publish this page as pdf\", \"export brain page\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/b3562a6ecd703dc77d2a2aa801cda4c29b149dbb39c1631c2169de0dd3e298bb",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/article-enrichment\/SKILL.md` -- \"enrich brain pages\", \"batch enrich\", \"make brain pages useful\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/b6152b037a32f95227c0d48f73d0dc517885f4f53d3c06bbe1021f370034cf75",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/archive-crawler\/SKILL.md` -- \"find gold in my archive\", \"archive crawler\", \"scan my dropbox for\", \"mine my old files for\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/e521dfc99c8f92e9da426806c93131cb06beb94e59a2a6eda03129a02a0f6da4",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "`skills\/idea-lineage\/SKILL.md` -- \"trace the lineage of this idea\", \"how my thinking about\", \"how has my thinking about\", \"what is my current version of\", \"show reversals in my thinking about\", \"where did this idea come from\",",
+      "meridian_line" : 156,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/branch.then\/fb91f4961baf0f98c80f610bbdc8773f97cfbecc55500b61c9754f8950090511",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"strategic reading\",\n  `skills\/strategic-reading\/SKILL.md` -- \"read this through the lens of\", \"apply this to my problem\", \"what can I learn from this about\", \"extract a playbook from\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/c56e466f8dde1706eb6dca4267d916b09698c6630bd57bcf23cab3f0b3b0d3e8",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"idea lineage\",\n  `skills\/idea-lineage\/SKILL.md` -- \"trace the lineage of this idea\", \"how my thinking about\", \"how has my thinking about\", \"what is my current version of\", \"show reversals in my thinking about\", \"where did this idea come from\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/c934408837975ae2a393aef328d4951cbccfa1f755eee9f9d5a5eec79863485d",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"crawl my archive\",\n  `skills\/archive-crawler\/SKILL.md` -- \"find gold in my archive\", \"archive crawler\", \"scan my dropbox for\", \"mine my old files for\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/cdbd99fb2a6ffb57bac98229cb15f8a0328e958e5d854874bfe2ce00a1d91662",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"\\\"unify my types\\\", \\\"migrate to gbrain-base-v2\\\", \\\"94 types to 14\\\", \\\"apply canonical taxonomy\\\", \\\"clean up my page types\\\", \\\"pack upgrade\\\", \\\"shrink type proliferation\\\", \\\"consolidate page types\\\", \\\"retype pages to canonical\\\" (dispatcher for: gbrain onboard --check, gbrain onboard --check --explain, gbrain jobs submit unify-types, gbrain pages restore)\",\n  `skills\/schema-unify\/SKILL.md`.",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/ddba5dda4e0dbab4e272c6363c13f941591a661c363c09a3145d7df9f17f3323",
+      "swift_line" : 1378
+    },
+    {
+      "canonical" : "if trigger equals \"voice note\",\n  `skills\/voice-note-ingest\/SKILL.md` -- \"ingest this voice memo\", \"transcribe and file\", \"voice note ingest\", \"save this audio note\",",
+      "meridian_line" : 156,
+      "primitive" : "branch",
+      "stable_step_path" : "\/EntryInput\/uncategorized-steps\/procedure\/ed86443653e3977083ad43f6705b0953ab81bcdc75de5e65ceb27893016d0fc8",
+      "swift_line" : 1378
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "RESOLVER.meri",
+  "swift_file" : "RESOLVER.swift"
+}

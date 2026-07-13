@@ -544,7 +544,9 @@ public struct BackorderReplenish: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
@@ -662,7 +664,9 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
@@ -694,7 +698,7 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/06d5f1045144d6f7e3b8eb4148aa0c662ddc12ca105ba06becc803f70456eafc") {
             // L1
-            try await runtime.wait(.event("replenishBackorders", matching: nil))
+            try await runtime.wait(.event("replenishBackorders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReplenishbackordersFires/root/procedure/06d5f1045144d6f7e3b8eb4148aa0c662ddc12ca105ba06becc803f70456eafc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/f40ee7df4b194375b40d25f472940c9fa391343af8321ebba4cd359232fc1bc7") {
@@ -736,7 +740,9 @@ public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
@@ -768,7 +774,7 @@ public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/08a674e40b99ea091b841956d6ef66bea8d1f1241ce6f05035ebb28e53a7e4a2") {
             // L1
-            try await runtime.wait(.event("prioritizeShortInventory", matching: nil))
+            try await runtime.wait(.event("prioritizeShortInventory", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPrioritizeshortinventoryFires/root/procedure/08a674e40b99ea091b841956d6ef66bea8d1f1241ce6f05035ebb28e53a7e4a2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/17fc1ed879bf01532a400b66488f3c30970f0d6de8b9878818d3b05c90a972b8") {

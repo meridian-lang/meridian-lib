@@ -1,0 +1,105 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.publishIncidentPostmortem.fired with kind = \"keyword\", spec = \"publish incident postmortem\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPublishincidentpostmortemFires\/root\/procedure\/d23d5273233cdd6f1c067e5c3d6c791d61b6c7bfd6225eefd90ce58aa93c78c4",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "wait for event publishIncidentPostmortem.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPublishincidentpostmortemFires\/root\/procedure\/f344cc497427edc4a1e56f1e921493dba0f3eb45c780947aeba7da0a17967db8",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "wait for event renderPostmortem.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRenderpostmortemFires\/root\/procedure\/3228d10ed1bf7522c418f729cbef647917a2021d948037613b8bc0b60fe5a138",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "emit trigger.renderPostmortem.fired with kind = \"keyword\", spec = \"render postmortem\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRenderpostmortemFires\/root\/procedure\/c86054fb9aab2c72b3c867d091dbd38a998293a0fc771200d559115f6586ef61",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "wait for event runPostmortemRenderPass.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunpostmortemrenderpassFires\/root\/procedure\/c2545bc330a76769379c529702f6de381966f10652c67c9992cac26f80b0c996",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "emit trigger.runPostmortemRenderPass.fired with kind = \"keyword\", spec = \"run the postmortem render pass\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunpostmortemrenderpassFires\/root\/procedure\/c6f30cd202a2a0cb159379aa78040e8c9d2dcb47111fb85c4edd79d7ff59a082",
+      "swift_line" : 711
+    },
+    {
+      "canonical" : "!!! table (( data: tiers ))\n| name | floor |\n| ---- | ----- |\n| \"high\" | 2 |\n| \"low\" | 0 |",
+      "meridian_line" : 26,
+      "primitive" : "bind",
+      "stable_step_path" : "\/PostmortemRender\/tables\/tables\/ea863336d4d147b152c7f3b669c4ddd6f63bdb0594c0e260c6050d84f5b23cec",
+      "swift_line" : 427
+    },
+    {
+      "canonical" : "bind incidents = invoke incident.list with status = \"open\".",
+      "meridian_line" : 41,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+      "swift_line" : 430
+    },
+    {
+      "canonical" : "for each incident in incidents,\n  bind postmortem = invoke postmortem.publish with incident = incident.",
+      "meridian_line" : 42,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps\/procedure\/19ba06d0b21885d7c45f346cb13834547968323fd1bb1d839726a19a5e7bc7aa",
+      "swift_line" : 443
+    },
+    {
+      "canonical" : "bind postmortem = invoke postmortem.publish with incident = incident.",
+      "meridian_line" : 43,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps\/procedure\/iterate.body\/ae339becd08c1ff53d64d8b111ba128fabcfd4971119e6528811355f7d56ca42",
+      "swift_line" : 452
+    },
+    {
+      "canonical" : "bind sev1Count = the number of incidents whose severity equals \"sev1\".",
+      "meridian_line" : 44,
+      "primitive" : "bind",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps\/procedure\/c9f4fc0aeaa3e873c8f47373bdd39a65df6be7e5a71de0881676b63a379ce6c7",
+      "swift_line" : 470
+    },
+    {
+      "canonical" : "emit incident.postmortem_report with body = postmortem report.",
+      "meridian_line" : 48,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps-2\/procedure\/923c576ff6c8cc3c64cd70b032362f45027c98c80a68a80de340fbcf9114ae00",
+      "swift_line" : 473
+    },
+    {
+      "canonical" : "emit incident.report with message = \"postmortem render pass complete\".",
+      "meridian_line" : 49,
+      "primitive" : "emit",
+      "stable_step_path" : "\/PostmortemRender\/workflow-steps-2\/procedure\/32551e2f487db2fc39e7cc990124b0af5e7e1ea30a80218ace23d1bc7610e8b0",
+      "swift_line" : 484
+    },
+    {
+      "canonical" : "assert postmortem report contains \"postmortem-summary\".",
+      "meridian_line" : 60,
+      "primitive" : "assert",
+      "stable_step_path" : "\/PostmortemRender\/guarantees\/invariants\/122eaa45954357ee4197fe709dfcf6d6902e5b229929c7556c8f3e3f597cb186",
+      "swift_line" : 423
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "postmortemrender.meri",
+  "swift_file" : "postmortemrender.swift"
+}

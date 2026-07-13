@@ -217,18 +217,21 @@ struct TraceTreeRendererCoverageTests {
         #expect(out.contains("complete"))
     }
 
-    @Test("branch.taken still renders flat, as a sibling of its body, not a nested parent")
-    func branchStaysFlat() {
+    @Test("branch.taken/end nest the arm body under the decision")
+    func branchNestsBody() {
         let events: [RE] = [
             ev("workflow.started", ["workflowName": "W"]),
             ev("branch.taken", ["into": "then", "condition": "valid"], seq: 1),
             ev("invoke.start", ["tool": "charge"], seq: 2),
-            ev("workflow.completed", ["reason": "ok"], seq: 3),
+            ev("branch.end", ["into": "then"], seq: 3),
+            ev("workflow.completed", ["reason": "ok"], seq: 4),
         ]
         let out = TraceTreeRenderer().render(events: events)
         let lines = out.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         #expect(lines.contains { $0.contains("branch") && !$0.contains("│") })
-        #expect(lines.contains { $0.contains("invoke") && !$0.contains("│") })
+        #expect(lines.contains { $0.contains("invoke") && $0.contains("│") })
+        #expect(lines.contains { $0.contains("↳ end") })
+        #expect(lines.contains { $0.contains("complete") && !$0.contains("│") })
     }
 
     @Test("ASCII glyph mode draws the ancestor guide with `|` instead of `│`")
@@ -243,5 +246,75 @@ struct TraceTreeRendererCoverageTests {
         let out = TraceTreeRenderer(options: .init(unicodeGlyphs: false)).render(events: events)
         #expect(!out.contains("│"))
         #expect(out.contains("|  |-") || out.contains("|  \\-"))
+    }
+
+    @Test("semanticTag labels cover TraceTag surface forms and header fallbacks")
+    func semanticTagLabelMatrix() {
+        func sem(
+            _ tag: String,
+            payload: [String: Any] = [:],
+            seq: Int
+        ) -> RE {
+            RE(
+                runID: "r1",
+                sequence: seq,
+                kind: "ignored.kind",
+                payload: payload,
+                semanticTag: tag
+            )
+        }
+        let events: [RE] = [
+            sem("invoked", payload: ["skillName": "OnlySkill", "tool": "http.get", "subject": "workflow"], seq: 0),
+            sem("emitted", payload: ["event": "order.placed"], seq: 1),
+            sem("asserted", payload: ["message": "ok"], seq: 2),
+            sem("assert-failed", payload: ["message": "nope"], seq: 3),
+            sem("branched", payload: ["into": "then"], seq: 4),
+            sem("iterated", payload: ["index": 2], seq: 5),
+            sem("iterated", payload: ["over": "items"], seq: 6),
+            sem("judged", payload: ["subject": "risk"], seq: 7),
+            sem("committed", payload: ["label": "cp"], seq: 8),
+            sem("recovered", payload: ["pattern": "any"], seq: 9),
+            sem("violated", payload: ["subject": "charge"], seq: 10),
+            sem("failed", payload: ["subject": "tool"], seq: 11),
+            sem("completed", payload: ["subject": "workflow", "duration_ms": 12], seq: 12),
+            RE(
+                runID: "r1",
+                sequence: 13,
+                kind: "ignored",
+                payload: ["subject": ["nested": true] as [String: Any]],
+                semanticTag: "emitted"
+            ),
+        ]
+        let out = TraceTreeRenderer(options: .init(showSourceRanges: false, showTimings: true)).render(events: events)
+        for needle in [
+            "OnlySkill", "invoked", "workflow", "emitted", "order.placed",
+            "asserted", "branched", "iterated", "judged",
+            "committed", "recovered", "violated", "failed", "completed",
+        ] {
+            #expect(out.contains(needle), Comment(rawValue: "missing \(needle) in:\n\(out)"))
+        }
+    }
+
+    @Test("semantic JSONL promotes ingestOrder string and skill-only header")
+    func semanticJSONLFieldPromotion() {
+        let jsonl = """
+        {"record":{"schemaVersion":1,"id":"01","at":"2026-07-11T00:00:00.000Z","ingestOrder":"1","run":"run-1","step":"root","skillName":"SkillOnly","skillVersionHash":"h","tag":"invoked","subject":"tool","payload":{"tool":"t1","outcome":"success","witness":"w","operationalDetail":"d","legacyKind":"invoke.start"},"payloadHash":"ph","outcome":"success"},"checksum":"x"}
+        {"record":{"schemaVersion":1,"id":"02","at":"2026-07-11T00:00:01.000Z","ingestOrder":2,"run":"run-1","step":"root","skillName":"SkillOnly","skillVersionHash":"h","tag":"completed","subject":"workflow","payloadHash":"ph2","outcome":"success"},"checksum":"x"}
+        """
+        let out = TraceTreeRenderer().render(jsonl: jsonl)
+        #expect(out.contains("SkillOnly"))
+        #expect(out.contains("invoked") || out.contains("t1"))
+        #expect(out.contains("completed"))
+    }
+
+    @Test("workflow-only tree with no body still renders header and complete")
+    func workflowOnlyHeader() {
+        let events: [RE] = [
+            ev("workflow.started", ["workflowName": "Solo"]),
+            ev("workflow.completed", ["reason": "ok", "duration_ms": 3], seq: 1),
+        ]
+        let out = TraceTreeRenderer().render(events: events)
+        #expect(out.contains("Solo"))
+        #expect(out.contains("complete"))
     }
 }

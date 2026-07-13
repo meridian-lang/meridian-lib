@@ -593,7 +593,9 @@ public struct MeetingIngestionInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "meeting-ingestion",
@@ -678,7 +680,9 @@ public struct WhenMeetingtranscriptFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "meeting-ingestion",
@@ -709,7 +713,7 @@ public struct WhenMeetingtranscriptFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMeetingtranscriptFires/root/procedure/30e2b856ace05da5f3259f6848fc638c087707fcdac084100380ad32e09fc9a1") {
             // L1
-            try await runtime.wait(.event("meetingTranscript", matching: nil))
+            try await runtime.wait(.event("meetingTranscript", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMeetingtranscriptFires/root/procedure/30e2b856ace05da5f3259f6848fc638c087707fcdac084100380ad32e09fc9a1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMeetingtranscriptFires/root/procedure/f6008236b4f26b90f8395255c255607abea92075dd79f19fa76665c0a723c0b9") {
@@ -751,7 +755,9 @@ public struct WhenProcessthismeetingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "meeting-ingestion",
@@ -782,7 +788,7 @@ public struct WhenProcessthismeetingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessthismeetingFires/root/procedure/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a") {
             // L1
-            try await runtime.wait(.event("processThisMeeting", matching: nil))
+            try await runtime.wait(.event("processThisMeeting", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessthismeetingFires/root/procedure/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessthismeetingFires/root/procedure/e483ecd4e3b85d83c94b15caf2a90bc911484ced741034cb163428f6c1a94953") {
@@ -824,7 +830,9 @@ public struct WhenMeetingnotesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "meeting-ingestion",
@@ -855,7 +863,7 @@ public struct WhenMeetingnotesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMeetingnotesFires/root/procedure/da0c9ad0650361793bd2860d9bbd3843356df508ce0e54c07af84df7040b4a9f") {
             // L1
-            try await runtime.wait(.event("meetingNotes", matching: nil))
+            try await runtime.wait(.event("meetingNotes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMeetingnotesFires/root/procedure/da0c9ad0650361793bd2860d9bbd3843356df508ce0e54c07af84df7040b4a9f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMeetingnotesFires/root/procedure/1a72febd7f872cde796ecfa5a4caebdbba508635f889a9b683876dac3fd08b7f") {
@@ -897,7 +905,9 @@ public struct WhenMeetingtranscriptreceivedFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "meeting-ingestion",
@@ -928,7 +938,7 @@ public struct WhenMeetingtranscriptreceivedFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMeetingtranscriptreceivedFires/root/procedure/a947d1b3c6494ea934dadc405f29f21ff6bd2ba18b7000c3050d04e3f3072910") {
             // L1
-            try await runtime.wait(.event("meetingTranscriptReceived", matching: nil))
+            try await runtime.wait(.event("meetingTranscriptReceived", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMeetingtranscriptreceivedFires/root/procedure/a947d1b3c6494ea934dadc405f29f21ff6bd2ba18b7000c3050d04e3f3072910", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMeetingtranscriptreceivedFires/root/procedure/09215d1b1851d9653bd165b7b54bc0ae5a90a30665bcc2e5ee5d7072e76475aa") {

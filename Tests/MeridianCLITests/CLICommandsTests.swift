@@ -44,6 +44,7 @@ struct CompileCommandTests {
         try await cmd.run()
         #expect(FileManager.default.fileExists(atPath: t.path("order_processing.swift")))
         #expect(FileManager.default.fileExists(atPath: t.path("order_processing.meridian.manifest.json")))
+        #expect(FileManager.default.fileExists(atPath: t.path("order_processing.meridian.ir.json")))
     }
 
     @Test("namespace auto + timestamp + no-line-comments all run")
@@ -226,6 +227,64 @@ struct CompileCommandTests {
         ])
         try await cmd.run()
         #expect(FileManager.default.fileExists(atPath: t.path("order_processing.swift")))
+    }
+
+    @Test("multi-file emit writes Domain.swift, Workflows.swift, and IR sidecar")
+    func multiFileEmit() async throws {
+        let t = TempDir()
+        let cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--no-format", "--namespace", "none",
+            "--multi-file",
+        ])
+        try await cmd.run()
+        #expect(FileManager.default.fileExists(atPath: t.path("Domain.swift")))
+        #expect(FileManager.default.fileExists(atPath: t.path("Workflows.swift")))
+        #expect(FileManager.default.fileExists(atPath: t.path("order_processing.meridian.ir.json")))
+    }
+
+    @Test("swift-format success path reformats generated Swift")
+    func swiftFormatSuccess() async throws {
+        let t = TempDir()
+        let cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--namespace", "none",
+        ])
+        try await cmd.run()
+        let swift = try String(contentsOfFile: t.path("order_processing.swift"), encoding: .utf8)
+        #expect(swift.contains("import MeridianRuntime"))
+    }
+
+    @Test("module-path accepts an existing search directory during compile")
+    func modulePathCompile() async throws {
+        let t = TempDir()
+        let moduleRoot = ex("Tests/MeridianCoreTests/Fixtures/modules")
+        let cmd = try CompileCommand.parse([
+            ex("examples/order_processing.meridian"),
+            "--merconfig", ex("examples/ecommerce.merconfig"),
+            "--output", t.url.path,
+            "--no-format", "--namespace", "none",
+            "--module-path", moduleRoot,
+        ])
+        try await cmd.run()
+        #expect(FileManager.default.fileExists(atPath: t.path("order_processing.meridian.ir.json")))
+    }
+
+    @Test("missing module-path throws before compile")
+    func missingModulePath() async throws {
+        let t = TempDir()
+        t.write("greet.meridian", "To greet a customer:\n  complete.\n")
+        let cmd = try CompileCommand.parse([
+            t.path("greet.meridian"),
+            "--output", t.url.path,
+            "--no-format",
+            "--module-path", t.path("missing-modules"),
+        ])
+        await #expect(throws: (any Error).self) { try await cmd.run() }
     }
 }
 

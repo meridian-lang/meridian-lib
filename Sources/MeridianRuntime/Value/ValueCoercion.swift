@@ -65,10 +65,16 @@ public extension Value {
             }
 
         case .list(let items):
-            // Coerce to [T] if T is an array element
             if T.self == [Value].self, let v = items as? T { return v }
+            if T.self == [String].self {
+                let strings = try items.map { try $0.coerce(to: String.self) }
+                if let v = strings as? T { return v }
+            }
 
         case .null:
+            if let witness = T.self as? any ValueOptionalCoercionWitness.Type {
+                if let v = witness.coerceNil() as? T { return v }
+            }
             break
         }
 
@@ -151,4 +157,14 @@ public struct AnyCodable: Codable, Sendable {
         case .opaque(let box): try c.encode(String(describing: box))
         }
     }
+}
+
+// MARK: - Optional / typed-list coercion witnesses
+
+private protocol ValueOptionalCoercionWitness {
+    static func coerceNil() -> Any
+}
+
+extension Optional: ValueOptionalCoercionWitness {
+    static func coerceNil() -> Any { Self.none as Any }
 }

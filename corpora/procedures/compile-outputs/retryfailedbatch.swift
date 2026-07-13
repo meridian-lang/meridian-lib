@@ -422,7 +422,9 @@ public struct Retry: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
@@ -541,7 +543,9 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
@@ -573,7 +577,7 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/10326fbb630d26a3974562ac739a829854c70f5c564a887efdce3e875772a87c") {
             // L1
-            try await runtime.wait(.event("retryFailedBatches", matching: nil))
+            try await runtime.wait(.event("retryFailedBatches", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRetryfailedbatchesFires/root/procedure/10326fbb630d26a3974562ac739a829854c70f5c564a887efdce3e875772a87c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/1caabc23c181c074a15ab9b2ee1c6296a848fd723abc9ddb9a47cc8523b2a4a4") {
@@ -615,7 +619,9 @@ public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
@@ -647,7 +653,7 @@ public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/88a6b983eb54a5f00bce0e8fbade85c860efd0f1b6453816f3e2bc06d5b4f332") {
             // L1
-            try await runtime.wait(.event("reattemptBatchSettlement", matching: nil))
+            try await runtime.wait(.event("reattemptBatchSettlement", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReattemptbatchsettlementFires/root/procedure/88a6b983eb54a5f00bce0e8fbade85c860efd0f1b6453816f3e2bc06d5b4f332", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/f54fcc5d24dd16756288c884c52ce23169372e30e81547c9e14816326754f048") {

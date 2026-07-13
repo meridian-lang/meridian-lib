@@ -41,6 +41,7 @@ Publish: "open order queue processed".
 
 ## Checks (( role: reference ))
 No blocked order may pass reservation or shipment release.
+Blocked orders must not invoke shipment.create.
 
 ## Output (( role: template ))
 The operator expects a queue receipt with processed order numbers and shipment

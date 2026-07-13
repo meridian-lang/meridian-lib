@@ -251,8 +251,9 @@ public struct SkillMigrator {
     /// marker. `addedKeys` is always empty — the pass adds no frontmatter.
     func deterministicTransform(_ markdown: String) throws
         -> (source: String, addedKeys: [String], aliases: [SectionAlias], unminedContracts: [String]) {
+        let knowledge = try knowledgeContext()
         let (marked, aliases, unminedContracts) = try markSections(markdown)
-        return (rewriteCommandPlaceholders(marked), [], aliases, unminedContracts)
+        return (rewriteCommandPlaceholders(marked, lexicon: knowledge.lexicon), [], aliases, unminedContracts)
     }
 
     /// Real `SymbolTable` + merged `EnglishLexicon` + rulebook `RewriteEngine`,

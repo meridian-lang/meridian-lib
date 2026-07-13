@@ -13,6 +13,7 @@ public enum IREquality {
             && structurallyEqual(a.body, b.body)
             && a.mode == b.mode
             && a.allowsDiscretion == b.allowsDiscretion
+            && equalArrays(a.norms, b.norms, by: structurallyEqual)
     }
 
     public static func structurallyEqual(_ a: IRBlock, _ b: IRBlock) -> Bool {
@@ -45,6 +46,9 @@ public enum IREquality {
                 && structurallyEqual(lhs.thenBlock, rhs.thenBlock)
                 && structurallyEqual(lhs.unknownBlock, rhs.unknownBlock)
                 && structurallyEqual(lhs.elseBlock, rhs.elseBlock)
+                && lhs.unknownPolicy == rhs.unknownPolicy
+                && lhs.authoredForm == rhs.authoredForm
+                && structurallyEqual(lhs.deonticGuard, rhs.deonticGuard)
         case .iterate(let lhs):
             guard case .iterate(let rhs) = b else { return false }
             return structurallyEqual(lhs.mode, rhs.mode)
@@ -57,6 +61,8 @@ public enum IREquality {
                 && lhs.monitored == rhs.monitored
                 && lhs.cadence == rhs.cadence
                 && lhs.blocking == rhs.blocking
+                && lhs.obligationId == rhs.obligationId
+                && lhs.violationDisposition == rhs.violationDisposition
         case .emit(let lhs):
             guard case .emit(let rhs) = b else { return false }
             return lhs.eventID == rhs.eventID
@@ -211,6 +217,17 @@ public enum IREquality {
             && structurallyEqual(a.payloadPredicate, b.payloadPredicate)
     }
 
+    public static func structurallyEqual(_ a: EventPatternIR?, _ b: EventPatternIR?) -> Bool {
+        switch (a, b) {
+        case (.none, .none):
+            return true
+        case (.some(let lhs), .some(let rhs)):
+            return structurallyEqual(lhs, rhs)
+        case (.none, .some), (.some, .none):
+            return false
+        }
+    }
+
     public static func structurallyEqual(_ a: EventPatternIR.Subject, _ b: EventPatternIR.Subject) -> Bool {
         switch (a, b) {
         case (.step(let lhs), .step(let rhs)),
@@ -259,12 +276,16 @@ public enum IREquality {
         case (.inARow(let lhsPattern, let lhsCount),
               .inARow(let rhsPattern, let rhsCount)):
             return structurallyEqual(lhsPattern, rhsPattern) && lhsCount == rhsCount
-        case (.sinceLast(let lhsAnchor, let lhsHolds, let lhsHoldsPattern),
-              .sinceLast(let rhsAnchor, let rhsHolds, let rhsHoldsPattern)):
+        case (.sinceLast(let lhsAnchor, let lhsHolds, let lhsHoldsPattern, let lhsUsesState),
+              .sinceLast(let rhsAnchor, let rhsHolds, let rhsHoldsPattern, let rhsUsesState)):
             return structurallyEqual(lhsAnchor, rhsAnchor)
                 && structurallyEqual(lhsHolds, rhsHolds)
                 && structurallyEqual(lhsHoldsPattern, rhsHoldsPattern)
-        case (.ever, _), (.withinWindow, _), (.countInWindow, _), (.inARow, _), (.sinceLast, _):
+                && lhsUsesState == rhsUsesState
+        case (.boundedFutureMonitor(let lhsCond, let lhsHorizon, let lhsMode),
+              .boundedFutureMonitor(let rhsCond, let rhsHorizon, let rhsMode)):
+            return structurallyEqual(lhsCond, rhsCond) && lhsHorizon == rhsHorizon && lhsMode == rhsMode
+        case (.ever, _), (.withinWindow, _), (.countInWindow, _), (.inARow, _), (.sinceLast, _), (.boundedFutureMonitor, _):
             return false
         }
     }
@@ -347,6 +368,7 @@ public enum IREquality {
         equalArrays(a.filters, b.filters, by: structurallyEqual)
             && equalSort(a.sort, b.sort)
             && a.take == b.take
+            && a.takeFromEnd == b.takeFromEnd
     }
 
     public static func structurallyEqual(_ a: WaitConditionIR, _ b: WaitConditionIR) -> Bool {
@@ -439,6 +461,7 @@ public enum IREquality {
             && equalArrays(a.filters, b.filters, by: structurallyEqual)
             && equalSort(a.sort, b.sort)
             && a.take == b.take
+            && a.takeFromEnd == b.takeFromEnd
     }
 
     public static func structurallyEqual(_ a: SuperlativeIR, _ b: SuperlativeIR) -> Bool {
@@ -465,8 +488,10 @@ public enum IREquality {
             return lhs == rhs
         case (.enumValue(let lhsValue, let lhsKind), .enumValue(let rhsValue, let rhsKind)):
             return lhsValue == rhsValue && lhsKind == rhsKind
+        case (.calendarAmount(let lhs), .calendarAmount(let rhs)):
+            return lhs == rhs
         case (.string, _), (.number, _), (.boolean, _), (.money, _),
-             (.duration, _), (.date, _), (.dateTime, _), (.enumValue, _):
+             (.duration, _), (.calendarAmount, _), (.date, _), (.dateTime, _), (.enumValue, _):
             return false
         }
     }
@@ -613,6 +638,50 @@ public enum IREquality {
 
     private static func aiTextEqual(_ a: String, _ b: String) -> Bool {
         normalizeAIText(a) == normalizeAIText(b)
+    }
+
+    public static func structurallyEqual(_ a: DeonticGuardIR?, _ b: DeonticGuardIR?) -> Bool {
+        switch (a, b) {
+        case (.none, .none): return true
+        case (.some(let lhs), .some(let rhs)): return structurallyEqual(lhs, rhs)
+        case (.none, .some), (.some, .none): return false
+        }
+    }
+
+    public static func structurallyEqual(_ a: DeonticGuardIR, _ b: DeonticGuardIR) -> Bool {
+        a.obligationId == b.obligationId
+            && a.disposition == b.disposition
+            && a.blocking == b.blocking
+            && structurallyEqual(a.actionPattern, b.actionPattern)
+    }
+
+    public static func structurallyEqual(_ a: ActionPatternIR, _ b: ActionPatternIR) -> Bool {
+        a.toolID == b.toolID
+            && equalArrays(a.argumentConstraints, b.argumentConstraints, by: structurallyEqual)
+    }
+
+    public static func structurallyEqual(_ a: ActionArgumentConstraint, _ b: ActionArgumentConstraint) -> Bool {
+        identifierEqual(a.path, b.path)
+            && a.op == b.op
+            && structurallyEqual(a.value, b.value)
+    }
+
+    public static func structurallyEqual(_ a: NormIR, _ b: NormIR) -> Bool {
+        a.id == b.id
+            && a.kind == b.kind
+            && a.scope == b.scope
+            && structurallyEqual(a.actionPattern, b.actionPattern)
+            && structurallyEqual(a.condition, b.condition)
+            && a.blocking == b.blocking
+            && a.originalText == b.originalText
+    }
+
+    public static func structurallyEqual(_ a: ActionPatternIR?, _ b: ActionPatternIR?) -> Bool {
+        switch (a, b) {
+        case (.none, .none): return true
+        case (.some(let lhs), .some(let rhs)): return structurallyEqual(lhs, rhs)
+        case (.none, .some), (.some, .none): return false
+        }
     }
 
     private static func normalizeAIText(_ text: String) -> String {

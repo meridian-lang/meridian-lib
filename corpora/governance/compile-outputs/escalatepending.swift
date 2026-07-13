@@ -411,7 +411,7 @@ public struct EscalatePending: MeridianWorkflow {
         "triggers": "\"escalate pending requests\"\n\"escalate overdue requests\"",
     ]
 
-    public static let skillVersionHash = "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+    public static let skillVersionHash = "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct EscalatePending: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate pending",
-            versionHash: "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+            versionHash: "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -470,7 +472,7 @@ public struct EscalatePending: MeridianWorkflow {
         }
         if __meridianShouldRun("/EscalatePending/workflow/procedure/222cfae249eeb01da4045549b241b15289de97856c0ad0c489ebec6fb9f04831") {
             // L30
-            try await runtime.wait(.event("access.reviewed", matching: { _event in MeridianComparison.eq(state.get("status"), .string("granted")) }))
+            try await runtime.wait(.event("access.reviewed", matching: { _event in MeridianComparison.eq(state.get("status"), .string("granted")) }), sourceRange: nil)
             try await runtime.checkpoint(label: "/EscalatePending/workflow/procedure/222cfae249eeb01da4045549b241b15289de97856c0ad0c489ebec6fb9f04831", state: state.snapshot())
         }
         if __meridianShouldRun("/EscalatePending/workflow/procedure/69f541afc255cf4ca58c1da1ec60db21f27769f9d222b3843d91ddda0205cf29") {
@@ -498,7 +500,7 @@ public struct EscalatePending: MeridianWorkflow {
 public struct WhenEscalatependingrequestsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+    public static let skillVersionHash = "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -511,11 +513,13 @@ public struct WhenEscalatependingrequestsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate pending",
-            versionHash: "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+            versionHash: "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -543,7 +547,7 @@ public struct WhenEscalatependingrequestsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEscalatependingrequestsFires/root/procedure/42c3adeffdbd249c7452b071503d9afa255965584fdf9123ce965384f7dda345") {
             // L1
-            try await runtime.wait(.event("escalatePendingRequests", matching: nil))
+            try await runtime.wait(.event("escalatePendingRequests", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEscalatependingrequestsFires/root/procedure/42c3adeffdbd249c7452b071503d9afa255965584fdf9123ce965384f7dda345", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEscalatependingrequestsFires/root/procedure/d6acca7d02eaaf8acfd97eba516409ebc2122401c004b7e40ab782d2c45dac57") {
@@ -572,7 +576,7 @@ public struct WhenEscalatependingrequestsFires: MeridianWorkflow {
 public struct WhenEscalateoverduerequestsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+    public static let skillVersionHash = "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -585,11 +589,13 @@ public struct WhenEscalateoverduerequestsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate pending",
-            versionHash: "7d2856db473422736eec473b5f66a7c224a806378e020b9a3a13e6e361da92c2"
+            versionHash: "5d083cb998c08087489d96995171eec5130a19127d41ee97dc05ace66ca36360"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -617,7 +623,7 @@ public struct WhenEscalateoverduerequestsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEscalateoverduerequestsFires/root/procedure/ad2c2064148e28341f75f4dbf079bd21f5668a602f9c8822349883a878f70b95") {
             // L1
-            try await runtime.wait(.event("escalateOverdueRequests", matching: nil))
+            try await runtime.wait(.event("escalateOverdueRequests", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEscalateoverduerequestsFires/root/procedure/ad2c2064148e28341f75f4dbf079bd21f5668a602f9c8822349883a878f70b95", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEscalateoverduerequestsFires/root/procedure/a989008b49c6510b730b4bf8ae14f0fe66c0279e89f41dbe299bd54250bdab66") {

@@ -145,10 +145,20 @@ paths rather than verbalized output.
 
 | Item | Status |
 |---|---|
-| Deontic / obligation operators (Wave 9) | out-of-scope |
-| LLM canonicalize propose tool | out-of-scope |
+| Localization / alternate canonical languages | out-of-scope (`docs/21_OUT_OF_SCOPE.md` §2) |
+| Formal prover discharge | out-of-scope (`docs/21_OUT_OF_SCOPE.md` §1) |
 | Verbalizing generated Swift | out-of-scope |
-| Localization | out-of-scope |
+
+## Wave 9 / Final Wave deontic surfaces
+
+| Construct | Canonical template | Tests | Status |
+|---|---|---|---|
+| prohibition (`must not invoke`) | deontic guard + `recordViolation` | `DeonticInform7Tests`, `CoherenceHarnessTests` | covered |
+| obligation (`must hold`) | `AssertIR` + obligation id | `DeonticInform7Tests`, `ObligationArtifactTests` | covered |
+| permission (`may invoke`) | deontic permission norm | `DeonticInform7Tests` | covered |
+| obligation JSON artifact | schema-versioned document | `ObligationArtifactTests`, `obligations` CLI | covered |
+| D12 witness envelope | hash-only / full / redacted | `PhaseGTraceInfrastructureTests` | covered |
+| D11 suffix `unless` | authored unless surface | `FinalWaveClosureTests` | covered |
 
 ## Automated coverage assertion
 

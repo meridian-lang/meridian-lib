@@ -1,0 +1,98 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.processReturns.fired with kind = \"keyword\", spec = \"process returns\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenProcessreturnsFires\/root\/procedure\/9042bfb15652aefa764495263d508009d8109a686a46a6c69b116b98d33fa94c",
+      "swift_line" : 818
+    },
+    {
+      "canonical" : "wait for event processReturns.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenProcessreturnsFires\/root\/procedure\/eba10ccaba5fa1a0fe17404ff0b7831bde10ba20bf49abf0bd4950d305a4f784",
+      "swift_line" : 818
+    },
+    {
+      "canonical" : "wait for event routeReturnedOrders.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRoutereturnedordersFires\/root\/procedure\/26461a16cdf6eae63d323972eb72312e92af62ec3b9c4536a915f4cd9e7e40f2",
+      "swift_line" : 818
+    },
+    {
+      "canonical" : "emit trigger.routeReturnedOrders.fired with kind = \"keyword\", spec = \"route returned orders\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRoutereturnedordersFires\/root\/procedure\/baeee9a775e8f3b0de234607f1e2a7febb45f6a82b948afcfef897091c435af8",
+      "swift_line" : 818
+    },
+    {
+      "canonical" : "bind orders = invoke order.list with status = \"open\".",
+      "meridian_line" : 16,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+      "swift_line" : 580
+    },
+    {
+      "canonical" : "bind invoices = invoke invoice.list with status = \"unpaid\".",
+      "meridian_line" : 17,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
+      "swift_line" : 594
+    },
+    {
+      "canonical" : "assert any invoices whose due date is within the last 604800 seconds.",
+      "meridian_line" : 18,
+      "primitive" : "assert",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/45bf271eafd7bc3cdf133d8cb0b0b09890c988eb9493494f499aa702faac82ab",
+      "swift_line" : 608
+    },
+    {
+      "canonical" : "if lifecycle is blocked,\n  bind dunningNotice = invoke dunning.notify with invoice = invoice.",
+      "meridian_line" : 21,
+      "primitive" : "branch",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/4d96aeb15fce54ee8efd9c11318a23f75f5767a141cbe8e9ef5d541438f55da8",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "if lifecycle equals \"cancelled\",\n  bind dunningNotice = invoke dunning.notify with invoice = invoice.",
+      "meridian_line" : 21,
+      "primitive" : "branch",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/b9964351dde7ce64f0b91ef302bbdd67dc10ce8c7a4a9cb46f44d4229d7bbb2a",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "bind dunningNotice = invoke dunning.notify with invoice = invoice.",
+      "meridian_line" : 21,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/branch.then\/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "bind dunningNotice = invoke dunning.notify with invoice = invoice.",
+      "meridian_line" : 21,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/branch.then\/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5~2",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "bind shipment = invoke shipment.create with order = order.",
+      "meridian_line" : 21,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "emit erp.report with message = \"returns processing pass complete\".",
+      "meridian_line" : 27,
+      "primitive" : "emit",
+      "stable_step_path" : "\/ReturnsProcessing\/workflow\/procedure\/d0766418bfc1a60dfad36f974e22f47555e8fdf5f7e0d9f513fb72b43fca66e7",
+      "swift_line" : 667
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "returnsprocessing.meri",
+  "swift_file" : "returnsprocessing.swift"
+}

@@ -406,7 +406,9 @@ public struct DischargeReviewPatientClinician: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "discharge review",
@@ -473,6 +475,7 @@ public struct DischargeReviewPatientClinician: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/c6628fa43732ceb5dfa620197eb49fb19c0b5111d2fe9a8b946497b332fb45e1")
         }
 
         // L42
@@ -489,6 +492,7 @@ public struct DischargeReviewPatientClinician: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/4c90a9201e885bdbcf09809f34858dbfdc06d1ae710cb2155d287401d1234aaa")
         }
 
         if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db") {
@@ -529,7 +533,9 @@ public struct WhenReviewdischargeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "discharge review",
@@ -561,7 +567,7 @@ public struct WhenReviewdischargeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c") {
             // L1
-            try await runtime.wait(.event("reviewDischarge", matching: nil))
+            try await runtime.wait(.event("reviewDischarge", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReviewdischargeFires/root/procedure/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4") {
@@ -603,7 +609,9 @@ public struct WhenDischargepatientFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "discharge review",
@@ -635,7 +643,7 @@ public struct WhenDischargepatientFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d") {
             // L1
-            try await runtime.wait(.event("dischargePatient", matching: nil))
+            try await runtime.wait(.event("dischargePatient", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDischargepatientFires/root/procedure/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2") {

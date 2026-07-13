@@ -185,7 +185,14 @@ public struct MeridianParser {
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                     .trimmingCharacters(in: .init(charactersIn: "\"'"))
                 guard !token.isEmpty else { continue }
-                imports.append(ImportStatementAST(path: token, sourceLine: line))
+                imports.append(ImportStatementAST(path: token, kind: .vocabulary, sourceLine: line))
+            }
+        }
+        if let raw = metadata?["imports"] {
+            let line = metadata?.sourceLine ?? 1
+            for spec in ModuleResolver.parseImportList(raw, file: file, line: line) {
+                imports.append(ImportStatementAST(
+                    path: spec.name, alias: spec.alias, kind: .module, sourceLine: spec.sourceLine))
             }
         }
 
@@ -294,7 +301,7 @@ public struct MeridianParser {
                     if l.indent > line.indent { bodyLines.append(l); j += 1 }
                     else { break }
                 }
-                let body = try makeStatementParser().parseBlock(bodyLines, file: file)
+                let body = try makeStatementParser().parseBlock(bodyLines, sourceFile: file)
                 trace.log(.merconfig, "workflow @L\(line.number): \(pattern.segments.count) segs, \(body.statements.count) stmts")
                 workflows.append(WorkflowAST(
                     pattern: pattern, body: body,
@@ -440,7 +447,7 @@ public struct MeridianParser {
             effectiveBody = bodyLines
         }
 
-        let body = try makeStatementParser().parseBlock(effectiveBody, file: file)
+        let body = try makeStatementParser().parseBlock(effectiveBody, sourceFile: file)
         let workflow = WorkflowAST(
             pattern: PhrasePattern(segments: segments),
             body: body,

@@ -591,7 +591,9 @@ public struct BrainTaxonomistInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -661,7 +663,9 @@ public struct WhenWheredoesthisbrainpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -692,7 +696,7 @@ public struct WhenWheredoesthisbrainpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076") {
             // L1
-            try await runtime.wait(.event("whereDoesThisBrainPage", matching: nil))
+            try await runtime.wait(.event("whereDoesThisBrainPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWheredoesthisbrainpageFires/root/procedure/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5") {
@@ -734,7 +738,9 @@ public struct WhenFilethisinbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -765,7 +771,7 @@ public struct WhenFilethisinbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c") {
             // L1
-            try await runtime.wait(.event("fileThisInBrain", matching: nil))
+            try await runtime.wait(.event("fileThisInBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFilethisinbrainFires/root/procedure/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40") {
@@ -807,7 +813,9 @@ public struct WhenBraintaxonomistFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -838,7 +846,7 @@ public struct WhenBraintaxonomistFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183") {
             // L1
-            try await runtime.wait(.event("brainTaxonomist", matching: nil))
+            try await runtime.wait(.event("brainTaxonomist", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBraintaxonomistFires/root/procedure/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2") {
@@ -880,7 +888,9 @@ public struct WhenTaxonomycheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -911,7 +921,7 @@ public struct WhenTaxonomycheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6") {
             // L1
-            try await runtime.wait(.event("taxonomyCheck", matching: nil))
+            try await runtime.wait(.event("taxonomyCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTaxonomycheckFires/root/procedure/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3") {
@@ -953,7 +963,9 @@ public struct WhenRefilebrainpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -984,7 +996,7 @@ public struct WhenRefilebrainpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0") {
             // L1
-            try await runtime.wait(.event("refileBrainPage", matching: nil))
+            try await runtime.wait(.event("refileBrainPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRefilebrainpageFires/root/procedure/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e") {
@@ -1026,7 +1038,9 @@ public struct WhenCreatebrainpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -1057,7 +1071,7 @@ public struct WhenCreatebrainpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013") {
             // L1
-            try await runtime.wait(.event("createBrainPage", matching: nil))
+            try await runtime.wait(.event("createBrainPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreatebrainpageFires/root/procedure/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad") {
@@ -1099,7 +1113,9 @@ public struct WhenWhichdirectorydoesthisgoFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -1130,7 +1146,7 @@ public struct WhenWhichdirectorydoesthisgoFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf") {
             // L1
-            try await runtime.wait(.event("whichDirectoryDoesThisGo", matching: nil))
+            try await runtime.wait(.event("whichDirectoryDoesThisGo", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthisgoFires/root/procedure/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a") {
@@ -1172,7 +1188,9 @@ public struct WhenWhichdirectorydoesthispageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-taxonomist",
@@ -1203,7 +1221,7 @@ public struct WhenWhichdirectorydoesthispageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329") {
             // L1
-            try await runtime.wait(.event("whichDirectoryDoesThisPage", matching: nil))
+            try await runtime.wait(.event("whichDirectoryDoesThisPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthispageFires/root/procedure/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19") {

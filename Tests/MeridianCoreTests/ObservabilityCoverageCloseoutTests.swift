@@ -205,6 +205,114 @@ struct ObservabilityCoverageCloseoutTests {
         #expect(fractional.contains("91.25"), Comment(rawValue: fractional))
     }
 
+    @Test("Verbalizer synthesizes deontic norms and obligation-ID annotations")
+    func verbalizerSynthesizedDeonticNorms() {
+        let range = SourceRange(file: "t.meridian", line: 1, column: 1)
+        let symbols = SymbolTable.build(from: MerConfigFile(tools: [
+            ToolDeclaration(
+                displayName: "Time Now",
+                methodName: "time.now",
+                parameters: [ToolParameterAST(name: "channel", type: "String")],
+                returnType: "String"
+            ),
+        ]), trace: .silent())
+        let v = Verbalizer(model: VerbalizerModel(
+            workflows: [],
+            loweredDefinitions: [],
+            inlineDefinitions: [],
+            symbols: symbols,
+            lexicon: .default,
+            sourceFileName: "t.meridian",
+            authoredSource: ""
+        ))
+
+        let prohibition = NormIR(
+            id: "OBL-P1",
+            kind: .prohibition,
+            scope: .kind("Customer"),
+            actionPattern: ActionPatternIR(
+                toolID: "time.now",
+                argumentConstraints: [
+                    ActionArgumentConstraint(path: "channel", op: .equal, value: .literal(.string("#alerts"))),
+                ]
+            ),
+            blocking: true,
+            sourceRange: range,
+            originalText: ""
+        )
+        let prohibitionText = v.verbalize(prohibition, annotateObligationID: true)
+        #expect(prohibitionText.contains("must not"))
+        #expect(prohibitionText.contains("[OBL-P1]"))
+
+        let obligation = NormIR(
+            kind: .obligation,
+            scope: .workflow("NotifyCustomer"),
+            condition: .literal(.boolean(true)),
+            blocking: true,
+            sourceRange: range,
+            originalText: ""
+        )
+        #expect(v.verbalize(obligation).contains("must hold"))
+
+        let permission = NormIR(
+            kind: .permission,
+            scope: .section(stablePath: "deploy.step"),
+            actionPattern: ActionPatternIR(toolID: "time.now"),
+            sourceRange: range,
+            originalText: ""
+        )
+        #expect(v.verbalize(permission).contains("may invoke"))
+    }
+
+    @Test("Verbalizer covers branch unknown-policy and trace scope variants")
+    func verbalizerBranchAndTraceScopes() {
+        let v = Verbalizer(model: VerbalizerModel(
+            workflows: [],
+            loweredDefinitions: [],
+            inlineDefinitions: [],
+            symbols: SymbolTable(trace: .silent()),
+            lexicon: .default,
+            sourceFileName: "t.meridian",
+            authoredSource: ""
+        ))
+        let inner = IRBlock(statements: [.complete(CompleteIR())])
+        let unlessBranch = BranchIR(
+            condition: .predicate(.logical(.not, [.identifierRef(name: "ready")])),
+            thenBlock: inner,
+            unknownPolicy: .asTrue,
+            authoredForm: .unlessHeader,
+            sourceRange: SourceRange(file: "t.meridian", line: 1, column: 1)
+        )
+        let unlessText = v.verbalize(.branch(unlessBranch))
+        #expect(unlessText.contains("treating unknown as true"))
+
+        let pattern = EventPatternIR(subject: .step("deploy"), outcome: .failed)
+        let acrossSkills = v.verbalize(.traceTemporal(TraceTemporalIR(
+            scope: .acrossSkills(["skill-a", "skill-b"]),
+            kind: .ever(pattern)
+        )))
+        #expect(acrossSkills.contains("skill-a"))
+
+        let bounded = v.verbalize(.traceTemporal(TraceTemporalIR(
+            scope: .currentRun,
+            kind: .boundedFutureMonitor(
+                condition: .literal(.boolean(true)),
+                horizon: .seconds(60),
+                mode: .eventuallyWithin
+            )
+        )))
+        #expect(bounded.contains("eventually within"))
+
+        let confidence = v.verbalize(.traceStatistical(TraceStatisticalIR(
+            pattern: TraceStatisticalPatternIR(subject: .step("deploy")),
+            outcome: .succeeds,
+            bound: .atLeast(0.9),
+            denominator: .occurrences,
+            confidencePercent: 0.95
+        )))
+        #expect(confidence.contains("95%"))
+    }
+
     // MARK: - TrialLowering.ProbeTally
 
     @Test("ProbeTally records probe outcomes and renders a summary line")

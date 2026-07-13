@@ -422,7 +422,9 @@ public struct SettleBatch: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
@@ -492,6 +494,7 @@ public struct SettleBatch: MeridianWorkflow {
                         _ = try await SettleBatch(runtime: runtime).run()
                         try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/branch.then/dc4678ed66a134410ad34b0af6447612ec72ec98e4538ceffb000ccafeacecba", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/SettleBatch/batch-body-steps/procedure/iterate.body/866d10aec1839980429654c0afd9e59601620f597dbb2052a3212bd7cb5269e1")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
@@ -537,7 +540,9 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
@@ -569,7 +574,7 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/a3480bfa68e51e4af9ba6b4e8a0a55e5b29c8add30d2c8204bfb773f3a61eb48") {
             // L1
-            try await runtime.wait(.event("settleReadyBatches", matching: nil))
+            try await runtime.wait(.event("settleReadyBatches", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSettlereadybatchesFires/root/procedure/a3480bfa68e51e4af9ba6b4e8a0a55e5b29c8add30d2c8204bfb773f3a61eb48", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/6425eb2f15b2ec2224a2344b272e639d54513b0b3475a9e78d5f71aa8a4e8c86") {
@@ -611,7 +616,9 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
@@ -643,7 +650,7 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/cf8e19405f4b1d20bbd2997031b0a8a40507fd730dda7c3a00114ca986a959e0") {
             // L1
-            try await runtime.wait(.event("batchSettlement", matching: nil))
+            try await runtime.wait(.event("batchSettlement", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBatchsettlementFires/root/procedure/cf8e19405f4b1d20bbd2997031b0a8a40507fd730dda7c3a00114ca986a959e0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/f2a2bee69a07f93b4deab6628d1f2bc9155f3973dbf74168f69a04feb355b3c3") {

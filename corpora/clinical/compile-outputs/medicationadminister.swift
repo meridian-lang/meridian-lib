@@ -407,7 +407,9 @@ public struct MedicationAdministerMedicationOrderPatientNurse: MeridianWorkflow 
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "medication administer",
@@ -445,7 +447,7 @@ public struct MedicationAdministerMedicationOrderPatientNurse: MeridianWorkflow 
 
         if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881") {
             // L36
-            try await runtime.wait(.approval(of: state.get("medicationOrder") ?? .null, by: RoleRef(identifier: "attending")))
+            try await runtime.wait(.approval(of: state.get("medicationOrder") ?? .null, by: RoleRef(identifier: "attending")), sourceRange: nil)
             try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881", state: state.snapshot())
         }
         if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/4e5644abb84636bc6bf76718b590ecf3596b9ffd184c9880e931cf2968caaea3") {
@@ -500,8 +502,10 @@ public struct MedicationAdministerMedicationOrderPatientNurse: MeridianWorkflow 
                     try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd", state: state.snapshot())
                 }
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
         } else {
             try await runtime.recordBranchTaken(condition: "meridianDef_MedicationOrder_cleared(state.get(\"medicationOrder\"))", into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
+
             if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b") {
                 // L48
                 try await runtime.emit(
@@ -513,6 +517,7 @@ public struct MedicationAdministerMedicationOrderPatientNurse: MeridianWorkflow 
                 )
                 try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
         }
 
         if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd") {
@@ -567,7 +572,9 @@ public struct WhenAdministermedicationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "medication administer",
@@ -599,7 +606,7 @@ public struct WhenAdministermedicationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5") {
             // L1
-            try await runtime.wait(.event("administerMedication", matching: nil))
+            try await runtime.wait(.event("administerMedication", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAdministermedicationFires/root/procedure/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163") {
@@ -641,7 +648,9 @@ public struct WhenGivemedicationorderFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "medication administer",
@@ -673,7 +682,7 @@ public struct WhenGivemedicationorderFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38") {
             // L1
-            try await runtime.wait(.event("giveMedicationOrder", matching: nil))
+            try await runtime.wait(.event("giveMedicationOrder", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGivemedicationorderFires/root/procedure/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c") {

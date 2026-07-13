@@ -351,7 +351,9 @@ public struct DedupeUpsert: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
@@ -433,13 +435,16 @@ public struct DedupeUpsert: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.then/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
                 } else {
                     try await runtime.recordBranchTaken(condition: "(meridianDef_Dataset_stale(state.get(\"dataset\"))) || (MeridianComparison.eq(state.get(\"dataset.status\"), .string(\"duplicate\")))", into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
+
                     if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/branch.else/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509") {
                         // L37
                         try await runtime.assert(MeridianComparison.neq(state.get("dataset.status"), .string("is-blocked")), message: "Expected the dataset's status is not \"is-blocked\"")
                         try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.else/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
@@ -485,7 +490,9 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
@@ -517,7 +524,7 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936") {
             // L1
-            try await runtime.wait(.event("dedupeDatasets", matching: nil))
+            try await runtime.wait(.event("dedupeDatasets", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDedupedatasetsFires/root/procedure/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1") {
@@ -559,7 +566,9 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
@@ -591,7 +600,7 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd") {
             // L1
-            try await runtime.wait(.event("runDedupeUpsert", matching: nil))
+            try await runtime.wait(.event("runDedupeUpsert", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundedupeupsertFires/root/procedure/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32") {
@@ -633,7 +642,9 @@ public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
@@ -665,7 +676,7 @@ public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe") {
             // L1
-            try await runtime.wait(.event("collapseDuplicateDatasets", matching: nil))
+            try await runtime.wait(.event("collapseDuplicateDatasets", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCollapseduplicatedatasetsFires/root/procedure/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b") {

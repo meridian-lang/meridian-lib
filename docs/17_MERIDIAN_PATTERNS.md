@@ -225,8 +225,8 @@ Policy".
 
 **Where it shows up:** AGENTS.md pitfall #12 ("`Compiles` means Meridian
 emitted Swift *source* — not that it `swiftc`s"); the tiered gate structure
-in `AGENTS.md` §4 (`swift test` vs. the `MERIDIAN_*_TYPECHECK=1`-gated
-re-run vs. `scripts/coverage.swift --gate`); `D-DX-3` ("swift-format failure
+in `AGENTS.md` §4 (`swift test` vs. `GeneratedSwiftTypecheckSlowTests` in
+`MeridianSlowIntegrationTests` vs. `scripts/coverage.swift --gate`); `D-DX-3` ("swift-format failure
 is a recoverable warning, not an error").
 
 **The pattern:** `Compiler.compile(...)` and `SkillMigrator.compiledOK` only
@@ -238,10 +238,10 @@ later when `swift-format` chokes or `swiftc -typecheck` actually runs. This
 is not an oversight to "fix" by making every compile call typecheck its own
 output (that would make every unit test that calls `Compiler.compile` pay
 for a full `swiftc` invocation) — it's a deliberate tiering: fast structural
-tests run on every change, and the two typecheck-gated env vars
-(`MERIDIAN_GOLDEN_TYPECHECK=1`/`MERIDIAN_GBRAIN_TYPECHECK=1`/
-`MERIDIAN_CORPORA_TYPECHECK=1`) plus `scripts/coverage.swift --gate` are the
-*only* real Swift validators, run deliberately less often (once per
+tests run on every change, and generated-Swift typecheck
+(`swift test --filter GeneratedSwiftTypecheckSlowTests` / plain `swift test`)
+plus `scripts/coverage.swift --gate` are the real Swift validators, with the
+slow typecheck suite run on every full gate (once per
 substantive session, per `AGENTS.md` §4) because they're expensive.
 
 Similarly, `swift-format` failing on otherwise-valid generated Swift is

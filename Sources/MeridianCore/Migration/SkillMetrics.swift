@@ -272,7 +272,7 @@ public struct SkillMetrics: Sendable, Equatable {
         } else if looksReferenceLike(clean, body: body, lexicon: lexicon) {
             category = .referenceDocumentation
             reason = "Reference documentation, rationale, examples, or changelog."
-        } else if inertContractDocumentsExistingGuard(body) {
+        } else if inertContractDocumentsExistingGuard(body, lexicon: lexicon) {
             category = .referenceDocumentation
             reason = "Documentary contract note: the executable workflow already carries the referenced guard."
         } else if decision.recordedRole == SkillSectionRole.procedure.rawValue
@@ -302,16 +302,13 @@ public struct SkillMetrics: Sendable, Equatable {
                             category: category, reason: reason, body: body)
     }
 
-    private static func inertContractDocumentsExistingGuard(_ body: [String]) -> Bool {
+    private static func inertContractDocumentsExistingGuard(_ body: [String], lexicon: EnglishLexicon) -> Bool {
         let joined = body
             .map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
             .filter { !$0.isEmpty }
             .joined(separator: " ")
         guard !joined.isEmpty else { return false }
-        return joined.contains("already enforced")
-            || joined.contains("enforced above")
-            || joined.contains("workflow's own")
-            || joined.contains("workflow’s own")
+        return lexicon.contractReferencePhrases.contains { joined.contains($0) }
     }
 
     private static func nextHeadingIndex(after idx: Int, in lines: [String]) -> Int {
@@ -337,7 +334,7 @@ public struct SkillMetrics: Sendable, Equatable {
             if trimmed.hasPrefix("```") {
                 if !inFence {
                     let lang = String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    if isShellFence(lang) { return true }
+                    if lexicon.isShellFence(lang) { return true }
                 }
                 inFence.toggle()
                 continue
@@ -368,11 +365,12 @@ public struct SkillMetrics: Sendable, Equatable {
     private static func looksReferenceLike(_ heading: String, body: [String], lexicon: EnglishLexicon) -> Bool {
         let lower = heading.lowercased()
         if lexicon.referenceHeadingWords.contains(where: { lower.contains($0) }) { return true }
-        if bodyIsOnlyNonShellFence(body) { return true }
+        if bodyIsOnlyNonShellFence(body, lexicon: lexicon) { return true }
         if bodyIsOnlyNonCommandBacktickSpans(body) { return true }
         return body.contains { line in
             let t = line.trimmingCharacters(in: .whitespaces).lowercased()
-            return t.hasPrefix(">") || t.contains("example:") || t.contains("for reference")
+            if t.hasPrefix(">") { return true }
+            return lexicon.referenceHeadingWords.contains { t.contains($0) }
         }
     }
 
@@ -398,7 +396,7 @@ public struct SkillMetrics: Sendable, Equatable {
     /// heading is called, so it is reference-like independent of
     /// `referenceHeadingWords`. Mirrors the migrator's own `SplitBlock`
     /// classification, where a non-shell/non-tool fence is `.documentation`.
-    private static func bodyIsOnlyNonShellFence(_ body: [String]) -> Bool {
+    private static func bodyIsOnlyNonShellFence(_ body: [String], lexicon: EnglishLexicon) -> Bool {
         var inFence = false
         var sawFence = false
         for raw in body {
@@ -406,7 +404,7 @@ public struct SkillMetrics: Sendable, Equatable {
             if trimmed.hasPrefix("```") {
                 if !inFence {
                     let lang = String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    if isShellFence(lang) { return false }
+                    if lexicon.isShellFence(lang) { return false }
                     sawFence = true
                 }
                 inFence.toggle()

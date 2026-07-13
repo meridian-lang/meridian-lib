@@ -31,6 +31,27 @@ struct PermissionTests {
     func emptyRegistry() async {
         #expect(await PermissionRegistry.empty.evaluate(action: "x", scope: PermissionScope()))
     }
+
+    @Test("tool permission patterns gate planned actions on argument constraints")
+    func toolPermissionPatterns() async {
+        let reg = PermissionRegistry()
+        #expect(await reg.hasToolPatterns == false)
+
+        await reg.register(toolPattern: ToolPermissionPattern(
+            toolID: "demo.tool",
+            argumentConstraints: [ToolArgumentConstraint(path: "channel", expected: .string("#alerts"))]
+        ))
+        #expect(await reg.hasToolPatterns == true)
+
+        #expect(await reg.permitsPlannedAction(ProposedAction(toolID: "other.tool")))
+        #expect(await reg.permitsPlannedAction(
+            ProposedAction(toolID: "demo.tool", arguments: ["channel": .string("#alerts")])
+        ))
+        #expect(!(await reg.permitsPlannedAction(
+            ProposedAction(toolID: "demo.tool", arguments: ["channel": .string("#general")])
+        )))
+        #expect(!(await reg.permitsPlannedAction(ProposedAction(toolID: "demo.tool"))))
+    }
 }
 
 @Suite("Clock — SystemClock and TestClock")

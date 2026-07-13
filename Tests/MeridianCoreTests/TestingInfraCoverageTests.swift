@@ -97,4 +97,17 @@ struct SwiftPMPackageRunnerCoverageTests {
         let manifest = try runner.readFile("Package.swift")
         #expect(manifest.contains("package: \"meridian checkout with spaces\""), Comment(rawValue: manifest))
     }
+
+    @Test("PackageManifestBuilder toggles MeridianTools dependency")
+    func packageManifestBuilderToolsToggle() {
+        let root = URL(fileURLWithPath: "/tmp/meridian-lib")
+        let withTools = PackageManifestBuilder.meridianRunDriverPackageManifest(
+            repoRoot: root, includeMeridianTools: true)
+        #expect(withTools.contains("MeridianTools"))
+        let withoutTools = PackageManifestBuilder.meridianRunDriverPackageManifest(
+            repoRoot: root, includeMeridianTools: false)
+        #expect(!withoutTools.contains("MeridianTools"))
+        #expect(withTools.contains("package: \"meridian-lib\""))
+        #expect(withoutTools.contains("package: \"meridian-lib\""))
+    }
 }

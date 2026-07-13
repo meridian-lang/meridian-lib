@@ -744,7 +744,9 @@ public struct IncidentPrResponsePullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incident pr response",
@@ -824,7 +826,7 @@ public struct IncidentPrResponsePullRequest: MeridianWorkflow {
             try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/856dd0005b7368ecbaf7b091b5a1f02d5ede8f612ad091e0a5b0c4600d45ed84", state: state.snapshot())
         }
         if __meridianShouldRun("/IncidentPrResponsePullRequest/page-the-on-call/procedure/5dd1c3aa79dfb960f00ec37bd181082ce3e194dec191fcca78f92d75f1cfc729") {
-            try await runtime.wait(.signal("oncall.acknowledged"))
+            try await runtime.wait(.signal("oncall.acknowledged"), sourceRange: nil)
             try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/5dd1c3aa79dfb960f00ec37bd181082ce3e194dec191fcca78f92d75f1cfc729", state: state.snapshot())
         }
         if __meridianShouldRun("/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/84896ca8db209c8c7f934309cb889464cd5cc55e0607f038067a21c185c8482d") {
@@ -922,7 +924,9 @@ public struct PlanIncidentMitigation: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incident pr response",
@@ -992,7 +996,9 @@ public struct AutonomouslyMitigateIncident: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incident pr response",

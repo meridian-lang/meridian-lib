@@ -405,7 +405,7 @@ private static func meridianDef_User_privileged(_ __subjectValue: Value?) -> Boo
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "980154099d86da5143524bbcff3061eaa4fc8cc76b35a6d14670034523edb3a2"
+    public static let skillVersionHash = "c649a46c3729f96611ea61eed314c4ac7585c78e477aa4d04e691b99a77dbb1b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -418,11 +418,13 @@ public struct Entry: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "980154099d86da5143524bbcff3061eaa4fc8cc76b35a6d14670034523edb3a2"
+            versionHash: "c649a46c3729f96611ea61eed314c4ac7585c78e477aa4d04e691b99a77dbb1b"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )

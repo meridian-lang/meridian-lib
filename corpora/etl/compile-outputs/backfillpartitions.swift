@@ -351,7 +351,9 @@ public struct BackfillPartitions: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
@@ -512,7 +514,9 @@ public struct WhenBackfilldatasetpartitionsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
@@ -544,7 +548,7 @@ public struct WhenBackfilldatasetpartitionsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBackfilldatasetpartitionsFires/root/procedure/bd4b64d1d8f54d01d91bbcb79c0e0307a6334ef8dc0b016738ac29d8503da17b") {
             // L1
-            try await runtime.wait(.event("backfillDatasetPartitions", matching: nil))
+            try await runtime.wait(.event("backfillDatasetPartitions", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBackfilldatasetpartitionsFires/root/procedure/bd4b64d1d8f54d01d91bbcb79c0e0307a6334ef8dc0b016738ac29d8503da17b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBackfilldatasetpartitionsFires/root/procedure/a5edd4dcdee05423273cd664d02d56c3c3f72348d56c22bdfe5d1742aab3b8f7") {
@@ -586,7 +590,9 @@ public struct WhenRunpartitionbackfillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
@@ -618,7 +624,7 @@ public struct WhenRunpartitionbackfillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpartitionbackfillFires/root/procedure/1c7761489d9cb41c77289b730824fdc4129f27de8083856154cd5ae7e375f0e1") {
             // L1
-            try await runtime.wait(.event("runPartitionBackfill", matching: nil))
+            try await runtime.wait(.event("runPartitionBackfill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpartitionbackfillFires/root/procedure/1c7761489d9cb41c77289b730824fdc4129f27de8083856154cd5ae7e375f0e1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpartitionbackfillFires/root/procedure/8e15f3a6cfae747656aedd0ae56a22a3949375325a1e8858feb126444c534021") {
@@ -660,7 +666,9 @@ public struct WhenRunbackfillpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
@@ -692,7 +700,7 @@ public struct WhenRunbackfillpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunbackfillpassFires/root/procedure/dd2e8af1c3f7f0b8c9a06a289c0c6cb0091a4cfd79c58e98ae17109b00a0da10") {
             // L1
-            try await runtime.wait(.event("runBackfillPass", matching: nil))
+            try await runtime.wait(.event("runBackfillPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunbackfillpassFires/root/procedure/dd2e8af1c3f7f0b8c9a06a289c0c6cb0091a4cfd79c58e98ae17109b00a0da10", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunbackfillpassFires/root/procedure/c33f79dbd528ec4f44db2152a2067378268749f537941fb557d96bebcc41d3ad") {

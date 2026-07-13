@@ -135,6 +135,9 @@ struct RuleInjector {
                 case .trigger, .unsupportedTriggerCondition:
                     break  // synthesised (or rejected) separately by synthesizeTriggers
 
+                case .deonticProhibition, .deonticObligation, .deonticPermission:
+                    attached.insert(rIdx)
+
                 case .permission(let kind, _, let allowedAction, let conditions, let isBounded, let sourceLine, let originalText):
                     // Permissions match by either:
                     //   - actor + verb (rule subject is the actor, workflow takes
@@ -195,6 +198,9 @@ struct RuleInjector {
         for (rIdx, rule) in rules.enumerated() where !attached.contains(rIdx) {
             if case .trigger = rule { continue }
             if case .unsupportedTriggerCondition = rule { continue }
+            if case .deonticProhibition = rule { continue }
+            if case .deonticObligation = rule { continue }
+            if case .deonticPermission = rule { continue }
             unattachedRules.append((rule, "no workflow matched the rule's action"))
         }
 
@@ -646,6 +652,9 @@ struct RuleInjector {
         case .trigger(_, _, let line, _): return (line, "trigger")
         case .unsupportedTriggerCondition(_, _, let line, _): return (line, "unsupportedTriggerCondition")
         case .permission(_, _, _, _, _, let line, _): return (line, "permission")
+        case .deonticProhibition(let norm): return (norm.sourceRange.startLine, "deonticProhibition")
+        case .deonticObligation(let norm): return (norm.sourceRange.startLine, "deonticObligation")
+        case .deonticPermission(let norm): return (norm.sourceRange.startLine, "deonticPermission")
         }
     }
 }

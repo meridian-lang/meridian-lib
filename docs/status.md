@@ -32,7 +32,7 @@ Tracks the six-phase build plan (Phases 0–6) and subsequent waves documented i
 ## Phase 0 — Scaffolding + Runtime
 
 **Completed.** `MeridianRuntime` actor, `Value` enum, `State`, `MeridianWorkflow`
-protocol, `WorkflowResult`, `Event` + `EventKind` (29 cases), `RuntimeApprovalVerdict`,
+protocol, `WorkflowResult`, `Event` + `EventKind` (30 cases), `RuntimeApprovalVerdict`,
 `MeridianComparison`, `ValueCoercion`, SwiftPM project layout, example files
 copied into `examples/`.
 
@@ -274,11 +274,12 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
   a temporary SwiftPM package managed by `SwiftPMPackageRunner`; it does not use
   dynamic Swift loading.
 - **`mcp.call` / `llm.chat`** — `mcp.call` uses a replaceable `MCPClient`
-  adapter with HTTP JSON-RPC and subprocess stdio transports. `llm.chat`
-  intentionally throws `llm.not_implemented` until a provider is selected.
-- **`MeridianCLITests` target removed** — was empty, so SwiftPM was
-  printing an unhandled-files warning every build. CLI behaviour is
-  exercised via integration tests and `meridian test examples/`.
+  adapter with HTTP JSON-RPC and subprocess stdio transports. `llm.chat` is
+  provider-backed; without a configured provider it throws `llm.not_configured`
+  (fail-closed). See `docs/10_BUILTIN_TOOLS.md`.
+- **`MeridianCLITests`** — restored CLI unit-test target under
+  `Tests/MeridianCLITests/`; process-level E2E remains in
+  `MeridianSlowIntegrationTests`.
 
 ---
 
@@ -286,7 +287,7 @@ in `IMPLEMENTATION_LOG.md` for the Phase 5/6 100% completion pass.
 
 | Item | Phase | Note |
 |---|---|---|
-| Live LLM provider | 6 | `llm.chat` deliberately throws `llm.not_implemented`; this is the user-approved v1 scope note. |
+| Formal prover discharge / localization | permanent | Only items remaining out of scope; see `docs/21_OUT_OF_SCOPE.md`. |
 
 ---
 
@@ -450,7 +451,8 @@ See `Inform7Wave*Tests` and the "Wave N" entries in `AGENTS.md`.
   `RESOLVER`, vocabulary/rulebook, compile outputs, deviation index.
 - `Tests/CorporaTests/CorporaConformanceTests.swift` — corpus completeness,
   strict compile, mechanism coverage, generated-Swift sanity, and opt-in
-  `MERIDIAN_CORPORA_TYPECHECK=1` generated Swift typechecking.
+  generated-Swift typechecking via `GeneratedSwiftTypecheckSlowTests`
+  (`swift test --filter GeneratedSwiftTypecheckSlowTests`).
 - `docs/16_EXPRESSIVENESS_REPORT.md` — final Wave 6 metrics, worked examples,
   mechanism coverage, and caveats.
 
@@ -470,7 +472,8 @@ behavior this Wave 6 report measured: Phase-8 rule sugar now fires in
 sectioned (heading-bearing) documents too, not just flat files — see
 `docs/15_DECISIONS.md` D-DX-6 and `docs/16_EXPRESSIVENESS_REPORT.md`'s
 "Further update" note. `Tests/CorporaTests/CorporaConformanceTests.swift`
-now covers all six corpora under `MERIDIAN_CORPORA_TYPECHECK=1`. Full
+now covers all six corpora; typecheck lives in
+`GeneratedSwiftTypecheckSlowTests` / plain `swift test`. Full
 writeup in `IMPLEMENTATION_LOG.md`.
 
 ---
@@ -584,16 +587,24 @@ totality gap, the D9 production capture gate, the SEM-5-11 advisory lint,
 corpus residuals, SEM-4-04 scoped-tool payload shape, and — as of the
 2026-07-11 gap-closure pass — the `MER-TMP-014`/`MER-TMP-015` "reserved,
 unemitted" classification (superseded by real near-miss emitters; see above).
-Full test suite (2228 tests), the `MERIDIAN_GOLDEN_TYPECHECK=1
-MERIDIAN_GBRAIN_TYPECHECK=1 MERIDIAN_CORPORA_TYPECHECK=1` typecheck gate, the
-fast and `--full` per-file coverage gates, and `scripts/strict-compile-report.swift`
-across all seven corpora are all green as of this pass.
+Full test suite, generated-Swift typecheck via
+`GeneratedSwiftTypecheckSlowTests` (plain `swift test`; no
+`MERIDIAN_*_TYPECHECK` env vars), the fast and `--full` per-file coverage
+gates, and `scripts/strict-compile-report.swift` across all corpora are green.
 
 Primary docs: `docs/19_TRACES_AND_TIME.md`,
 `docs/coverage/WAVE8_REQUIREMENTS.md`, `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`,
 and the oracle [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md).
 
-**Wave 9 (deontic/obligation surface) not started.**
+**Wave 9 / Final Wave (deontic/obligation surface) — complete.**
+
+Phases 9A–9D shipped: deontic lowering (`must not` / `must hold` / `may`),
+MER-DEO-* diagnostics, stable `OBL-<hash>` obligation artifacts,
+`meridian obligations` CLI, `[OBL-…]` explain annotations, coherence harness
+(SEM-8-01), and corpus/docs. See
+[`docs/coverage/FINAL_WAVE_REQUIREMENTS.md`](coverage/FINAL_WAVE_REQUIREMENTS.md)
+(all matrix rows `done`). Primary docs: [`docs/20_DEONTIC.md`](20_DEONTIC.md),
+[`docs/23_PROVER_READY_OBLIGATIONS.md`](23_PROVER_READY_OBLIGATIONS.md).
 
 ---
 
@@ -673,6 +684,6 @@ debugging experience. See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.m
 ### Gate status
 
 Full gate green as of the Wave 8 gap-closure pass: `swift test`,
-`MERIDIAN_GOLDEN_TYPECHECK=1 MERIDIAN_GBRAIN_TYPECHECK=1
-MERIDIAN_CORPORA_TYPECHECK=1 swift test`, `scripts/coverage.swift --gate`, and
+`swift test --filter GeneratedSwiftTypecheckSlowTests`,
+`scripts/coverage.swift --gate`, and
 `scripts/strict-compile-report.swift` across all corpora.

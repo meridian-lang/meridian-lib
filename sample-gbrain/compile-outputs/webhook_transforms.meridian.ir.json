@@ -1,0 +1,49 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event processWebhookEvent.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenProcesswebhookeventFires\/root\/procedure\/5ea5a1883cd49be5d50c6933045ddf8f85487526d27a2262dac6bddb597303f5",
+      "swift_line" : 841
+    },
+    {
+      "canonical" : "emit trigger.processWebhookEvent.fired with kind = \"event\", spec = \"process webhook event\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenProcesswebhookeventFires\/root\/procedure\/95ed74a9b9b2f1d3b75465e64bad009665571dc6b3967317350f4243cc6f15db",
+      "swift_line" : 841
+    },
+    {
+      "canonical" : "emit trigger.setUpWebhook.fired with kind = \"event\", spec = \"set up webhook\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSetupwebhookFires\/root\/procedure\/98485e0ad4089b363a79652ffe2befc6bad8127b0a633ec99795b85fc83a084a",
+      "swift_line" : 841
+    },
+    {
+      "canonical" : "wait for event setUpWebhook.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSetupwebhookFires\/root\/procedure\/a0ee60ae296a8fd07e8d962128c4beee7e3d432e535bf6560b0d103eeb9e9762",
+      "swift_line" : 841
+    },
+    {
+      "canonical" : "wait for event transformThisEvent.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTransformthiseventFires\/root\/procedure\/396757d77561be88fb9fc6f75f0b249588c436296e8c3588f39e353167e16104",
+      "swift_line" : 841
+    },
+    {
+      "canonical" : "emit trigger.transformThisEvent.fired with kind = \"keyword\", spec = \"transform this event\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenTransformthiseventFires\/root\/procedure\/6c36f83eecd3114bfacb508ff01d7e81758d1b043d347cddd318fe8a6fc2503c",
+      "swift_line" : 841
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "webhook_transforms.meri",
+  "swift_file" : "webhook_transforms.swift"
+}

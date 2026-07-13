@@ -3,27 +3,36 @@ import MeridianRuntime
 
 public struct MeridianLinter {
     private let lexicon: EnglishLexicon
+    private let trace: ParserTrace
 
-    public init(lexicon: EnglishLexicon = .default) {
+    public init(lexicon: EnglishLexicon = .default, trace: ParserTrace = .shared) {
         self.lexicon = lexicon
+        self.trace = trace
     }
 
     public func lint(source: String, file: String = "") -> [Diagnostic] {
-        let lines = IndentTokenizer().tokenize(source, file: file).filter(\.isContent)
+        let label = file.isEmpty ? "<source>" : file
+        let span = trace.push(.diagnostics, "lint \(label)")
+        defer {
+            trace.pop(span)
+        }
+        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace).filter(\.isContent)
         var diagnostics: [Diagnostic] = []
         var referents: [String] = []
         let resolver = AnaphoraResolver(lexicon: lexicon)
 
         for line in lines where line.headingLevel == nil {
             let statement = line.statement
-            if (try? resolver.resolve(statement, referents: referents, file: file, line: line.number)) == nil,
-               containsAnaphora(statement) {
-                diagnostics.append(Diagnostic.error(
-                    .ambiguousAnaphora,
-                    message: "ambiguous reference in `\(statement)`",
-                    range: line.statementRange(file: file),
-                    help: "Spell out the target noun or bind the value immediately before this line."
-                ))
+            if containsAnaphora(statement),
+               (try? resolver.resolve(statement, referents: referents, file: file, line: line.number)) == nil {
+                var diag = resolver.ambiguousDiagnostic(
+                    text: statement, referents: referents, file: file, line: line.number)
+                diag = Diagnostic(
+                    code: diag.code, severity: diag.severity, message: diag.message,
+                    primaryRange: line.statementRange(file: file),
+                    suggestions: [], notes: diag.notes,
+                    help: "Spell out the target noun or bind the value immediately before this line.")
+                diagnostics.append(diag)
             }
             if let hint = paraphraseHint(for: statement) {
                 diagnostics.append(Diagnostic.warning(
@@ -53,11 +62,12 @@ public struct MeridianLinter {
             if statement.lowercased().hasPrefix(bindPrefix) {
                 let rest = String(statement.dropFirst(bindPrefix.count))
                 if let eq = rest.range(of: " = ") {
-                    referents.append(camelize(String(rest[..<eq.lowerBound])))
+                    referents.append(IdentifierNaming.lowerCamel(String(rest[..<eq.lowerBound])))
                     if referents.count > 4 { referents = Array(referents.suffix(4)) }
                 }
             }
         }
+        trace.log(.diagnostics, "lint \(label): \(diagnostics.count) diagnostic(s)")
         return diagnostics
     }
 
@@ -111,6 +121,4 @@ public struct MeridianLinter {
             "The anchor names its subject with a superlative (`\(gradable) …`), ranking a collection inline inside the event pattern's anchor. Consider splitting into two steps: bind the superlative result first (`let the target be the \(gradable) …`), then anchor `since the last` on the bound name."
         )
     }
-
-    private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
 }

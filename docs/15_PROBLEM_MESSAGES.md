@@ -72,7 +72,6 @@ template directly.
 | `MER-TMP-020` | missing production trace capture policy | structural | yes |
 | `MER-TMP-021` | cross-skill trace scope not supported | structural | yes |
 | `MER-STA-001` | missing unknown arm | other | recommended |
-| `MER-STA-002` | statistical confidence reserved | structural | yes |
 | `MER-STA-003` | vague statistical frequency | structural | yes |
 | `MER-REF-004` | note target binding undeclared | structural | yes |
 | `MER-TYP-001` | note target binding is not text | structural | yes |
@@ -94,3 +93,20 @@ template directly.
 | `MER6004` | diagnostic recovery summary | other | recommended |
 | `MER6005` | cross-run in-a-row lint | other | recommended |
 | `MER6006` | superlative event-anchor lint | other | recommended |
+| `MER-DEO-001` | deontic same-scope conflict | structural | yes |
+| `MER-DEO-002` | deontic sticky deny | structural | yes |
+| `MER-DEO-003` | deontic non-norm modal | structural | yes |
+| `MER-DEO-004` | deontic tool outside permissions | structural | yes |
+| `MER-DEO-005` | deontic outcome as action | structural | yes |
+| `MER-DEO-006` | obligation id collision | structural | yes |
+| `MER-DEO-007` | deontic unlowerable condition | structural | yes |
+| `MER-MOD-001` | module not found | nameResolution | guided |
+| `MER-MOD-002` | module import cycle | structural | yes |
+| `MER-MOD-003` | module export collision | structural | yes |
+| `MER-MOD-004` | sealed module export overridden | structural | yes |
+| `MER-MOD-005` | duplicate module import | structural | yes |
+| `MER-JDG-001` | effectful judgment without produced value | structural | yes |
+| `MER-JDG-002` | judgment tool outside permissions | structural | yes |
+| `MER-CND-001` | unknown comparator | structural | yes |
+| `MER-DOM-002` | contradictory domain default | structural | yes |
+| `MER-DSC-001` | superlative needs measurable backing | structural | yes |

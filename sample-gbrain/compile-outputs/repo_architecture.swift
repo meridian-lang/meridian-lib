@@ -591,7 +591,9 @@ public struct RepoArchitectureInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "repo-architecture",
@@ -663,7 +665,9 @@ public struct WhenWheredoesthisgoFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "repo-architecture",
@@ -694,7 +698,7 @@ public struct WhenWheredoesthisgoFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWheredoesthisgoFires/root/procedure/223c5390582f94cda7fef0d28e20cd89e00bedc1e5b72b41c8c60825b0f6a91c") {
             // L1
-            try await runtime.wait(.event("whereDoesThisGo", matching: nil))
+            try await runtime.wait(.event("whereDoesThisGo", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWheredoesthisgoFires/root/procedure/223c5390582f94cda7fef0d28e20cd89e00bedc1e5b72b41c8c60825b0f6a91c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWheredoesthisgoFires/root/procedure/fd30904e13726dbd8ff4196b681faf960ed41547595076a42c6b742fecf82f3f") {
@@ -736,7 +740,9 @@ public struct WhenFilingrulesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "repo-architecture",
@@ -767,7 +773,7 @@ public struct WhenFilingrulesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFilingrulesFires/root/procedure/4cf404f01afe97f7ad3415383452f67b85781331b2efe0eed430084c505ba981") {
             // L1
-            try await runtime.wait(.event("filingRules", matching: nil))
+            try await runtime.wait(.event("filingRules", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFilingrulesFires/root/procedure/4cf404f01afe97f7ad3415383452f67b85781331b2efe0eed430084c505ba981", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFilingrulesFires/root/procedure/7c438e45b1607fd8563d00a25f7a2d0c349c9bfca585737ed89138c02ba7790f") {
@@ -809,7 +815,9 @@ public struct WhenCreatenewpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "repo-architecture",
@@ -840,7 +848,7 @@ public struct WhenCreatenewpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreatenewpageFires/root/procedure/42c170733b38e3fddff76517d44c901ffe0e211c777f935a8f0b08ebf5ab76d0") {
             // L1
-            try await runtime.wait(.event("createNewPage", matching: nil))
+            try await runtime.wait(.event("createNewPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreatenewpageFires/root/procedure/42c170733b38e3fddff76517d44c901ffe0e211c777f935a8f0b08ebf5ab76d0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreatenewpageFires/root/procedure/e62ab93e5db72926e69a2cd8572658a5eab503e73326d9e507bb2779e72a2aa3") {
@@ -882,7 +890,9 @@ public struct WhenWhichdirectoryFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "repo-architecture",
@@ -913,7 +923,7 @@ public struct WhenWhichdirectoryFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhichdirectoryFires/root/procedure/41d1d40d7c8460428f730b904dc7abe59f10a17a101e3247cbae9566a5e2d6ec") {
             // L1
-            try await runtime.wait(.event("whichDirectory", matching: nil))
+            try await runtime.wait(.event("whichDirectory", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhichdirectoryFires/root/procedure/41d1d40d7c8460428f730b904dc7abe59f10a17a101e3247cbae9566a5e2d6ec", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhichdirectoryFires/root/procedure/85e95a2360261a09179f6c919609f1993a245910f1766c8081a992e037bf3014") {

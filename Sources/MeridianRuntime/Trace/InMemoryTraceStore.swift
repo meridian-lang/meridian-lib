@@ -38,6 +38,7 @@ public actor InMemoryTraceStore: TraceStore {
 
     public func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,
@@ -46,6 +47,7 @@ public actor InMemoryTraceStore: TraceStore {
         TraceStoreHelpers.filterAndSort(
             records,
             scope: scope,
+            scopeSkills: scopeSkills,
             runID: runID,
             skillName: skillName,
             window: window,

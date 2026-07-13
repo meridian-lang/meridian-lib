@@ -1,0 +1,119 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event brainLint.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenBrainlintFires\/root\/procedure\/7721a9cc74a7ed6aede33e46cc35cf4a945333992ef542b7bf159896e32934c6",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "emit trigger.brainLint.fired with kind = \"keyword\", spec = \"brain lint\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBrainlintFires\/root\/procedure\/ed84822edf3689e52b059fd180b53995e7d4cd338616f06ee528d49ec8809269",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "emit trigger.checkFrontmatter.fired with kind = \"keyword\", spec = \"check frontmatter\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckfrontmatterFires\/root\/procedure\/2c708a147a3817d19502daaab736a6b3b9553090b015b96d3afdd51cff05ec89",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "wait for event checkFrontmatter.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckfrontmatterFires\/root\/procedure\/c249e022dc37acfb3797fcffe8cb8a223db9cde21cbfa9502c43e2aee03ef1f4",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "emit trigger.fixFrontmatter.fired with kind = \"keyword\", spec = \"fix frontmatter\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFixfrontmatterFires\/root\/procedure\/437e5d24817cd61de2636175f7e0562d9ae2fe096b469dc31f7e73a1df11735e",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "wait for event fixFrontmatter.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFixfrontmatterFires\/root\/procedure\/5aae9fa6dd0ab071d4c7bf31fc23fc4f84cd726cb6b4792c42f06f260c53c493",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "wait for event frontmatterAudit.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFrontmatterauditFires\/root\/procedure\/91f7d254f14e2c03d4b65d99624ae8dd6be9fcfca1730708dc2d5deb9366e2a2",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "emit trigger.frontmatterAudit.fired with kind = \"keyword\", spec = \"frontmatter audit\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFrontmatterauditFires\/root\/procedure\/c2c13fa9dd8eb20779ddf71d3e8c67a3dfd0570d8d104e196fcd984634f027d0",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "wait for event validateFrontmatter.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenValidatefrontmatterFires\/root\/procedure\/1b37016da4fdfa4f9bcbedfbfa461505e07655cf02de2dc3b9830066f466c8d2",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "emit trigger.validateFrontmatter.fired with kind = \"keyword\", spec = \"validate frontmatter\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenValidatefrontmatterFires\/root\/procedure\/b994b4ec6cb808f622d7da02e60bd0efa5e06fb43966146b8c9f4c3d95c2985c",
+      "swift_line" : 1072
+    },
+    {
+      "canonical" : "`---` -- Missing closing  (entity detector bugs).",
+      "meridian_line" : 44,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FrontmatterGuardInput\/why-this-exists-steps\/procedure\/e7a97cdb067d2576df179d62859a7911a31c5ea37d8dd61ab4a853498b4b8586",
+      "swift_line" : 628
+    },
+    {
+      "canonical" : "`title: \"Phil \"Nick\" Last\"` -- Nested double quotes in titles ().",
+      "meridian_line" : 48,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FrontmatterGuardInput\/why-this-exists-steps-2\/procedure\/3715923f3f225ad39c8cf0d1339dc7a9240e8823224c746211eb0d0114862447",
+      "swift_line" : 642
+    },
+    {
+      "canonical" : "`gbrain sync` -- Without a guard, these accumulate silently until  chokes or search returns garbage. The guard makes the failure visible at audit time and trivially fixable.",
+      "meridian_line" : 50,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FrontmatterGuardInput\/why-this-exists-steps-2\/procedure\/348fbaec8c046f667084c2ec1916bceee86d0867e8427cec1f6861b0ff7a3954",
+      "swift_line" : 656
+    },
+    {
+      "canonical" : "`--source <id>` -- Run a read-only scan across all registered sources (or one with ).",
+      "meridian_line" : 80,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FrontmatterGuardInput\/phase-1-audit-steps\/procedure\/db590058d3b4858a7b28f4c63c1a38f79ab4e09d40c156199fca222caab3ee4c",
+      "swift_line" : 670
+    },
+    {
+      "canonical" : "`gbrain frontmatter audit --json`.",
+      "meridian_line" : 82,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FrontmatterGuardInput\/phase-1-audit-steps\/procedure\/f766bb281f210f8b85911fc8647cfd71dbaf4293d73c0f402f69e16b69a6a802",
+      "swift_line" : 684
+    },
+    {
+      "canonical" : "use judgment to follow the Phase 1: Audit — steps 3 guidance:\n  Output is JSON; agents parse `errors_by_code` and `per_source` to decide next steps\n  Validate a single file or directory (does not require source registration):\n  codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWpzb24=\n  codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIHZhbGlkYXRlIDxwYXRoPiAtLWZpeA==\n  `--dry-run` previews without writing. Use this before applying fixes in batch\n  codeblock:bash:Z2JyYWluIGZyb250bWF0dGVyIGluc3RhbGwtaG9vayBbLS1zb3VyY2UgPGlkPl0=\n  Always run `gbrain frontmatter audit --json` first; never assume a brain is clean\n  For `--fix` operations: state how many files will be modified BEFORE running, then confirm\n  Never auto-fix `MISSING_OPEN` or `EMPTY_FRONTMATTER` without explicit user input — these usually mean a human author started a page and didn't finish\n  `skills\/maintain\/SKILL.md` — broader brain health audit; chain after this skill if other classes of issue are suspected\n  Quote when the value contains `: \" ' # [ ] { } | > & * ! ? ,` or starts with `@`\n  Double quotes only when the value itself contains apostrophes",
+      "meridian_line" : 93,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/FrontmatterGuardInput\/phase-1-audit-steps-3\/procedure\/c0c16b2d8decd0983336e98c308208c56364c7fbc2ce321423aacf70f9d2df6e",
+      "swift_line" : 696
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "frontmatter_guard.meri",
+  "swift_file" : "frontmatter_guard.swift"
+}

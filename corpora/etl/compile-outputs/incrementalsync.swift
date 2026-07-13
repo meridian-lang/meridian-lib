@@ -351,7 +351,9 @@ public struct IncrementalSync: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
@@ -463,7 +465,9 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
@@ -495,7 +499,7 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/c2fc7620ec59cdc6c7d2e7fb11083b850679502a53eaff666dde2ee03d101b8d") {
             // L1
-            try await runtime.wait(.event("runIncrementalSync", matching: nil))
+            try await runtime.wait(.event("runIncrementalSync", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunincrementalsyncFires/root/procedure/c2fc7620ec59cdc6c7d2e7fb11083b850679502a53eaff666dde2ee03d101b8d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/0045a78cb2c767c0baf515f602040900a8a63f6ab116e499ac9b0a2987dea07b") {
@@ -537,7 +541,9 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
@@ -569,7 +575,7 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/231ac4d6d0d66c9e0b822ddc57a110b6f8d77b52462cf361c8b08631cbf1e721") {
             // L1
-            try await runtime.wait(.event("syncDatasetWatermarks", matching: nil))
+            try await runtime.wait(.event("syncDatasetWatermarks", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSyncdatasetwatermarksFires/root/procedure/231ac4d6d0d66c9e0b822ddc57a110b6f8d77b52462cf361c8b08631cbf1e721", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/9a448351204ec9a7b222a19a143172a8aaf8d8f027072ce0c3c58f6b261909ba") {
@@ -611,7 +617,9 @@ public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
@@ -643,7 +651,7 @@ public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/b1985dad8108579e676fe3730620c486dcbcea55fd313712b0f871e0165c7d4a") {
             // L1
-            try await runtime.wait(.event("runWatermarkSyncPass", matching: nil))
+            try await runtime.wait(.event("runWatermarkSyncPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunwatermarksyncpassFires/root/procedure/b1985dad8108579e676fe3730620c486dcbcea55fd313712b0f871e0165c7d4a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/0502e5f06e94e4b9d70051fe59da236a3310c16c233978f03a63943750eb7ea0") {

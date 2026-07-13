@@ -591,7 +591,9 @@ public struct ReportsInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reports",
@@ -649,7 +651,9 @@ public struct WhenSavereportFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reports",
@@ -680,7 +684,7 @@ public struct WhenSavereportFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSavereportFires/root/procedure/148903e5c30ee6af202a0597ee83a7c382f2836981fa4fca0467f207145496f5") {
             // L1
-            try await runtime.wait(.event("saveReport", matching: nil))
+            try await runtime.wait(.event("saveReport", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSavereportFires/root/procedure/148903e5c30ee6af202a0597ee83a7c382f2836981fa4fca0467f207145496f5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSavereportFires/root/procedure/8f5dd98146a521147376cd1517f01eb0f9a39a78174375da1e21d46022cf1bff") {
@@ -722,7 +726,9 @@ public struct WhenLoadlatestreportFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reports",
@@ -753,7 +759,7 @@ public struct WhenLoadlatestreportFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenLoadlatestreportFires/root/procedure/ffdaec1e33d5ffec3f67eeaf75e408a5f706af7a5b064a69eb543236b15978fe") {
             // L1
-            try await runtime.wait(.event("loadLatestReport", matching: nil))
+            try await runtime.wait(.event("loadLatestReport", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenLoadlatestreportFires/root/procedure/ffdaec1e33d5ffec3f67eeaf75e408a5f706af7a5b064a69eb543236b15978fe", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenLoadlatestreportFires/root/procedure/4567f2e33665c9b1a84e36202f99e7811d408640c30d832d9b955b728e42597d") {
@@ -795,7 +801,9 @@ public struct WhenWhatslatestbriefingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reports",
@@ -826,7 +834,7 @@ public struct WhenWhatslatestbriefingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatslatestbriefingFires/root/procedure/2184fe1471b156799c97676f0b104bf89db9607ea1eaa921ea1635b00714f10e") {
             // L1
-            try await runtime.wait(.event("whatSLatestBriefing", matching: nil))
+            try await runtime.wait(.event("whatSLatestBriefing", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatslatestbriefingFires/root/procedure/2184fe1471b156799c97676f0b104bf89db9607ea1eaa921ea1635b00714f10e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatslatestbriefingFires/root/procedure/d4ccc0483dcc37bee295c2c7b3761f6e9fad8c185b57fbb53fae57cf64d15054") {
@@ -868,7 +876,9 @@ public struct WhenShowmepulseFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reports",
@@ -899,7 +909,7 @@ public struct WhenShowmepulseFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShowmepulseFires/root/procedure/2016725b2d6acdb61e144e5a4930590615307d8a6110ace20500b05a829dfe88") {
             // L1
-            try await runtime.wait(.event("showMePulse", matching: nil))
+            try await runtime.wait(.event("showMePulse", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShowmepulseFires/root/procedure/2016725b2d6acdb61e144e5a4930590615307d8a6110ace20500b05a829dfe88", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShowmepulseFires/root/procedure/85a4be877064a81a59ea012e212ec36a8159a8f028b90a8912f905bc20402af0") {

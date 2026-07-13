@@ -42,9 +42,8 @@ public extension SwiftEmitter {
         }
 
         public enum PropertyType {
-            case scalar(String)        // "String", "Decimal", "Money", …
+            case scalar(String)        // "String", "Decimal", "[Order]", "Order?", …
             case enumeration(String, defaultCase: String?)   // top-level enum name, e.g. "ValidationVerdict"
-            case list                  // "[Value]"
         }
 
         public struct Kind {
@@ -303,7 +302,6 @@ public extension SwiftEmitter {
         switch t {
         case .scalar(let s):       return s
         case .enumeration(let e, _):  return e
-        case .list:                return "[String]"
         }
     }
 
@@ -312,6 +310,12 @@ public extension SwiftEmitter {
     private func defaultExpr(_ t: DomainDecl.PropertyType, enumFirstCase: [String: String]) -> String {
         switch t {
         case .scalar(let s):
+            if s.hasSuffix("?") {
+                return "nil"
+            }
+            if s.hasPrefix("["), s.hasSuffix("]") {
+                return "[]"
+            }
             switch s {
             case "String":      return "\"\""
             case "Decimal":     return "Decimal(0)"
@@ -319,7 +323,6 @@ public extension SwiftEmitter {
             case "Date":        return "Date()"
             case "Bool":        return "false"
             case "Duration":    return "Duration.seconds(0)"
-            case "[String]":    return "[]"
             default:            return "\(s)()"
             }
         case .enumeration(let e, let defaultCase):
@@ -338,7 +341,6 @@ public extension SwiftEmitter {
                     "internal: no first case registered for enum \(e) — MER0004 emitDomain firstCase/enumeration desynchronized")
             }
             return ".\(first)"
-        case .list:             return "[]"
         }
     }
 

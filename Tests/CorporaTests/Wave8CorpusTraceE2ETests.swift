@@ -109,11 +109,11 @@ struct Wave8CorpusTraceE2ETests {
         let fixture = try loadFixture(corpus: corpus)
         let file = fixture.root.appendingPathComponent("skills/\(stem).meri")
         let source = try String(contentsOf: file, encoding: .utf8)
-        let opts = Compiler.Options(
+        let opts = CorpusCompileSupport.compilerOptions(
+            moduleSearchPaths: CorpusCompileSupport.moduleSearchPaths(forCorpus: corpus, root: fixture.root),
             emitterOptions: SwiftEmitter.Options(
                 namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(file.deletingPathExtension().lastPathComponent)
-            ),
-            trace: .silent()
+            )
         )
         return try Compiler(options: opts).compile(
             meridianSource: source,

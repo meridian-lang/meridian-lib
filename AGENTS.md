@@ -104,23 +104,43 @@ let out = try Compiler(options: opts).compile(
 
 ### CLI commands
 
-`meridian <subcommand>` (see [`docs/07_CLI.md`](docs/07_CLI.md) for full flags):
+`meridian <subcommand>` (see [`docs/07_CLI.md`](docs/07_CLI.md) for full flags).
+`MeridianCommandCatalog` in `Sources/MeridianCLIKit/` is the source of truth for
+leaf paths and `--module-path` support.
 
 | Command | Purpose |
 |---|---|
-| `compile` | `.meridian`/`.meri` → Swift + `.meridian.manifest.json`. Repeatable `--rulebook`; `--namespace auto\|none`; writes the COMPLETE manifest via `compileWithManifest`. |
-| `run` | Compile then execute the generated workflow through a temp SwiftPM package. |
-| `check` | Parse + lower only; report diagnostics (no codegen). |
-| `verify` | Verify generated output / round-trip. |
-| `resume` | Resume a run from the latest `FilesystemCheckpointer` snapshot. |
-| `test` | Run `.meridian.test` spec fixtures. |
-| `format` | `swift-format` the generated Swift. |
-| `docs` | Emit documentation. |
-| `lint` | Run `MeridianLinter`. |
-| `trace render` | Pretty-print runtime JSONL event streams with `TraceTreeRenderer`; compile-time parser tracing uses `--trace` / `MERIDIAN_TRACE`. |
+| `canonicalize` | Authored vs canonical English drift audit; optional `--propose` LLM rewrites (dry-run). |
+| `mcp serve` | Stdio MCP server (compile/check/explain/obligations tools); `--once` for tests. |
+| `compile` | `.meridian`/`.meri` → Swift + `.meridian.manifest.json`. Repeatable `--rulebook`; `--namespace auto\|none`; `--module-path`. |
+| `explain` | Canonical English verbalization of compiled IR (Wave 7). Not diagnostic codes — use `explain-diag`. |
+| `explain-swift` | Explain generated Swift via `.meridian.ir.json` sidecar. |
+| `obligations` | Emit prover-ready obligation artifact JSON (`--module-path` supported). |
+| `drift` | Compare authored source to canonical verbalized form (no `--module-path`). |
+| `grammar-doc` | Emit live grammar-table Markdown reference. |
+| `lint` | `MeridianLinter` authoring diagnostics without compiling. |
 | `preview-skill` | Preview a `SKILL.md` via `SkillMarkdownImporter`. |
-| `migrate-skill` | Convert a `SKILL.md` → strict `.meri` (deterministic marking pass + `=== sections ===` alias emission appended to the rulebook, then strict-compile). `--batch` for a directory. See `docs/07_CLI.md` / `docs/13_SKILL_MD_PORTING.md`. |
-| `skill-deviation` | Audit a ported `.meri` vs its original `SKILL.md` (frontmatter delta, tier, similarity, categories, `difflib` unified diff). `--batch --index` regenerates `sample-gbrain/migration-deviations/`. |
+| `migrate-skill` | Convert `SKILL.md` → strict `.meri` (`--batch` for directories). See `docs/13_SKILL_MD_PORTING.md`. |
+| `skill-deviation` | Audit ported `.meri` vs original `SKILL.md` (`--batch --index`). |
+| `inert-yield` | Measure inert-section lowering yield with real vocabulary/rulebook. |
+| `check` | Parse + lower only; report diagnostics (no codegen; `--module-path`). |
+| `format` | Canonicalise `.meridian`/`.merconfig` whitespace. |
+| `docs` | Render `.merconfig` files to static HTML. |
+| `test` | Run `.meridian.test` spec fixtures. |
+| `trace categories` | List compile-time `--trace` categories. |
+| `trace render` | Pretty-print runtime JSONL event streams with `TraceTreeRenderer`. |
+| `trace verify` | Verify semantic trace-store JSONL integrity (`--run`). |
+| `trace eval` | Replay-evaluate trace-temporal/statistical expressions (`--at`). |
+| `trace drift` | Compare step-path identities between two manifests. |
+| `trace-eval` | Top-level alias for `trace eval`. |
+| `trace-verify` | Top-level alias for `trace verify`. |
+| `run` | Compile then execute through a temp SwiftPM package. |
+| `verify` | Alias for `check` (diagnostics only; no `--module-path` flag on this alias). |
+| `resume` | Resume a run from the latest `FilesystemCheckpointer` snapshot. |
+| `explain-diag` | Long-form diagnostic/decision explanations (`MERxxxx` / `D-DX-n`). |
+| `decisions` | List, search, or render `DecisionCatalog` (`--render docs/15_DECISIONS.md`). |
+| `bench-parse` | Benchmark unscreened vs screened expression parsing. |
+| `bench-trace` | Benchmark trace replay query latency. |
 
 `migrate-skill` and `skill-deviation` are backed by `SkillMigrator` /
 `SkillDeviation` + `DiffMatcher` in `Sources/MeridianCore/Migration/` (single

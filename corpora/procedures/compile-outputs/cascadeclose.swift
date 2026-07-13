@@ -422,7 +422,9 @@ public struct CascadeClose: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
@@ -528,7 +530,9 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
@@ -560,7 +564,7 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0") {
             // L1
-            try await runtime.wait(.event("cascadeClose", matching: nil))
+            try await runtime.wait(.event("cascadeClose", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCascadecloseFires/root/procedure/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111") {
@@ -602,7 +606,9 @@ public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
@@ -634,7 +640,7 @@ public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f") {
             // L1
-            try await runtime.wait(.event("orphanedAuditRows", matching: nil))
+            try await runtime.wait(.event("orphanedAuditRows", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenOrphanedauditrowsFires/root/procedure/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3") {

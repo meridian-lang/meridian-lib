@@ -1,0 +1,84 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.checkDoseCount.fired with kind = \"keyword\", spec = \"check dose count\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckdosecountFires\/root\/procedure\/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "wait for event checkDoseCount.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckdosecountFires\/root\/procedure\/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "emit trigger.runDoseLimitCheck.fired with kind = \"keyword\", spec = \"run dose limit check\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRundoselimitcheckFires\/root\/procedure\/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "wait for event runDoseLimitCheck.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRundoselimitcheckFires\/root\/procedure\/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "assert either dose count is at most 2 or dose count is at most 2.",
+      "meridian_line" : 35,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/rules-steps\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+      "swift_line" : 446
+    },
+    {
+      "canonical" : "if the nurse's dose count is at most the dose limit,\n  bind medicationOrder = invoke medication.administer with order = medication order.\n  emit clinical.report with message = \"dose check cleared\".",
+      "meridian_line" : 42,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde",
+      "swift_line" : 450
+    },
+    {
+      "canonical" : "bind medicationOrder = invoke medication.administer with order = medication order.",
+      "meridian_line" : 43,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
+      "swift_line" : 454
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"dose check cleared\".",
+      "meridian_line" : 44,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9",
+      "swift_line" : 468
+    },
+    {
+      "canonical" : "if the nurse's dose count is more than the dose limit,\n  emit clinical.note with message = \"dose limit reached for this nurse, hand off to another nurse\".",
+      "meridian_line" : 45,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204",
+      "swift_line" : 481
+    },
+    {
+      "canonical" : "emit clinical.note with message = \"dose limit reached for this nurse, hand off to another nurse\".",
+      "meridian_line" : 46,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c",
+      "swift_line" : 485
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"dose check pass complete\".",
+      "meridian_line" : 47,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038",
+      "swift_line" : 499
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "dosecheck.meri",
+  "swift_file" : "dosecheck.swift"
+}

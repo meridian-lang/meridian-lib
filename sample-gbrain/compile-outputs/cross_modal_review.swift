@@ -591,7 +591,9 @@ public struct CrossModalReviewInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -680,7 +682,9 @@ public struct WhenSecondopinionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -711,7 +715,7 @@ public struct WhenSecondopinionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71") {
             // L1
-            try await runtime.wait(.event("secondOpinion", matching: nil))
+            try await runtime.wait(.event("secondOpinion", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSecondopinionFires/root/procedure/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2") {
@@ -753,7 +757,9 @@ public struct WhenCrossmodalreviewFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -784,7 +790,7 @@ public struct WhenCrossmodalreviewFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a") {
             // L1
-            try await runtime.wait(.event("crossModalReview", matching: nil))
+            try await runtime.wait(.event("crossModalReview", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCrossmodalreviewFires/root/procedure/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080") {
@@ -826,7 +832,9 @@ public struct WhenDoublecheckthisFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -857,7 +865,7 @@ public struct WhenDoublecheckthisFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf") {
             // L1
-            try await runtime.wait(.event("doubleCheckThis", matching: nil))
+            try await runtime.wait(.event("doubleCheckThis", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDoublecheckthisFires/root/procedure/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064") {
@@ -899,7 +907,9 @@ public struct WhenGetanotherperspectiveFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -930,7 +940,7 @@ public struct WhenGetanotherperspectiveFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3") {
             // L1
-            try await runtime.wait(.event("getAnotherPerspective", matching: nil))
+            try await runtime.wait(.event("getAnotherPerspective", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGetanotherperspectiveFires/root/procedure/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04") {
@@ -972,7 +982,9 @@ public struct WhenChallengethiscodeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -1003,7 +1015,7 @@ public struct WhenChallengethiscodeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873") {
             // L1
-            try await runtime.wait(.event("challengeThisCode", matching: nil))
+            try await runtime.wait(.event("challengeThisCode", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenChallengethiscodeFires/root/procedure/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd") {
@@ -1045,7 +1057,9 @@ public struct WhenAdversarialreviewFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cross-modal-review",
@@ -1076,7 +1090,7 @@ public struct WhenAdversarialreviewFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06") {
             // L1
-            try await runtime.wait(.event("adversarialReview", matching: nil))
+            try await runtime.wait(.event("adversarialReview", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAdversarialreviewFires/root/procedure/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3") {

@@ -182,7 +182,9 @@ public struct CiFixerPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ci fixer",
@@ -240,6 +242,7 @@ public struct CiFixerPullRequest: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/CiFixerPullRequest/inspect/procedure/branch.then/313b1bba421dc5aef2427fadf8a7b1ad389ac91264a74021d25d8d5b62ad48e9", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/CiFixerPullRequest/inspect/procedure/5562bc156853af65be90dd95ebfb039d0adc7bc4e73f17a832fa753243e9cd51")
         }
 
 
@@ -271,7 +274,9 @@ public struct PlanCiRepair: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ci fixer",
@@ -341,7 +346,9 @@ public struct AutonomouslyRepairCi: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ci fixer",

@@ -14,6 +14,20 @@ public enum SuperlativeDirection: String, Sendable {
     public var needsBy: Bool { self == .smallest || self == .largest }
 }
 
+/// Declared measurable backing for a checkable adjective (`=== language ===`
+/// `Gradable adjectives:`). Enables `the most <adj> <kind>` without an explicit
+/// `by <property>` when the adjective is listed here.
+public struct GradableAdjectiveMetadata: Sendable, Equatable {
+    public let property: String
+    /// Sort direction for `the most <adj> …`; `the least <adj> …` inverts this.
+    public let ascending: Bool
+
+    public init(property: String, ascending: Bool) {
+        self.property = property
+        self.ascending = ascending
+    }
+}
+
 /// Centralises every English-specific table the compiler uses.
 /// Pass a customised instance through `Compiler.Options.lexicon` to change
 /// comparison vocabulary, duration units, or stop-word sets without
@@ -93,6 +107,20 @@ public struct EnglishLexicon: Sendable {
     /// `Reference-heading synonyms:`.
     public let referenceHeadingWords: Set<String>
 
+    /// Body substrings marking a documentary contract note that the executable
+    /// workflow already enforces the referenced guard (`already enforced`, …).
+    /// Used by `SkillMetrics.inertContractDocumentsExistingGuard`. Extend via
+    /// `=== language ===` `Contract-reference synonyms:`.
+    public let contractReferencePhrases: Set<String>
+
+    /// Vague hedges quarantined from kernel conditions (`looks`, `roughly`, …).
+    /// A `whose`/comparison clause containing one of these triggers MER-CND-001.
+    public let conditionVagueHedges: Set<String>
+
+    /// Phrase cues marking effectful judgment goals that require a `producing`
+    /// binding (MER-JDG-001 when absent).
+    public let effectfulJudgmentCuePhrases: [String]
+
     /// Trailing markers that turn an `if <cond>` header into a **guarded
     /// fence**: `if <cond>, run:` immediately followed by a fenced shell
     /// code-block wraps that block's `shell.run` invokes in a `branch` — no
@@ -150,6 +178,10 @@ public struct EnglishLexicon: Sendable {
     /// Superlative gradables (`oldest`/`largest`/…) → a sort direction bucket.
     /// Extend via `Superlative synonyms:`.
     public let superlativeGradables: [String: SuperlativeDirection]
+
+    /// Checkable adjectives with a declared measurable backing property.
+    /// Extend via `Gradable adjectives:` in `=== language ===`.
+    public let gradableAdjectives: [String: GradableAdjectiveMetadata]
 
     /// Sort-clause introducer markers (`sorted by`). Extend via `Sort-by synonyms:`.
     public let sortByMarkers: [String]
@@ -269,13 +301,24 @@ public struct EnglishLexicon: Sendable {
             "understand", "understands", "understanding",
         ],
         referenceHeadingWords: Set<String> = [
-            "what", "why", "philosophy", "example", "examples", "format",
-            "changelog", "related", "reference", "background", "overview",
+            "what", "why", "philosophy", "example", "examples", "example:", "for reference",
+            "format", "changelog", "related", "reference", "background", "overview",
             "notes", "caveats", "prior work", "methodology", "template",
             "guide", "guidance", "tutorial", "vision", "options", "available",
             "semantics", "invocation patterns", "tracking", "state", "vs",
             "cycle", "patterns", "quality bar", "trust boundary", "idempotency",
             "privacy", "cooldown",
+        ],
+        contractReferencePhrases: Set<String> = [
+            "already enforced", "enforced above",
+            "workflow's own", "workflow’s own",
+        ],
+        conditionVagueHedges: Set<String> = [
+            "looks", "roughly", "about", "maybe", "probably", "seems", "appears",
+        ],
+        effectfulJudgmentCuePhrases: [String] = [
+            "clean up", "cleanup", "update the", "delete", "invoke", "send",
+            "modify", "remove", "create", "insert into", "write to",
         ],
         guardedFenceIntroducers: [String] = [", run:", ", execute:"],
         fallbackChainIntroducers: [String] = [
@@ -300,7 +343,9 @@ public struct EnglishLexicon: Sendable {
             "newest": .newest, "latest": .newest, "most recent": .newest,
             "smallest": .smallest, "lowest": .smallest, "least": .smallest, "fewest": .smallest,
             "largest": .largest, "highest": .largest, "most": .largest, "greatest": .largest, "biggest": .largest,
+            "best": .largest, "worst": .smallest,
         ],
+        gradableAdjectives: [String: GradableAdjectiveMetadata] = [:],
         sortByMarkers: [String] = [" sorted by "],
         ascendingMarkers: [String] = ["ascending", "oldest", "ascend"],
         descendingMarkers: [String] = ["descending", "newest", "descend"],
@@ -342,6 +387,9 @@ public struct EnglishLexicon: Sendable {
         self.normativeCueWords = normativeCueWords
         self.inferenceCueWords = inferenceCueWords
         self.referenceHeadingWords = referenceHeadingWords
+        self.contractReferencePhrases = contractReferencePhrases
+        self.conditionVagueHedges = conditionVagueHedges
+        self.effectfulJudgmentCuePhrases = effectfulJudgmentCuePhrases
         self.guardedFenceIntroducers = guardedFenceIntroducers
         self.fallbackChainIntroducers = fallbackChainIntroducers
         self.approvalToolIDSubstrings = approvalToolIDSubstrings
@@ -353,6 +401,7 @@ public struct EnglishLexicon: Sendable {
         self.timestampAliases = timestampAliases
         self.aggregateIntroducers = aggregateIntroducers
         self.superlativeGradables = superlativeGradables
+        self.gradableAdjectives = gradableAdjectives
         self.sortByMarkers = sortByMarkers
         self.ascendingMarkers = ascendingMarkers
         self.descendingMarkers = descendingMarkers
@@ -470,6 +519,19 @@ public struct EnglishLexicon: Sendable {
         return articles.sorted().first
     }
 
+    /// Indefinite article for a kind-scoped deontic norm subject (`A customer …`).
+    /// Vowel-initial phrases use `an` when present in `parameterArticles`.
+    public func indefiniteArticlePrefix(for phrase: String) -> String {
+        let trimmed = phrase.trimmingCharacters(in: .whitespaces)
+        guard let first = trimmed.lowercased().first else {
+            return parameterArticles.contains("a") ? "a " : "an "
+        }
+        if "aeiou".contains(first), parameterArticles.contains("an") {
+            return "an "
+        }
+        return parameterArticles.contains("a") ? "a " : "an "
+    }
+
     /// Find the earliest article-delimited parameter slot in a phrase pattern.
     /// Returns the text before the article (`intro`) and the text after it
     /// (`rest`), preserving source casing. Prefix matches are preferred over
@@ -522,6 +584,32 @@ public struct EnglishLexicon: Sendable {
             return (amount, unitAST)
         }
         return nil
+    }
+
+    // MARK: - Calendar amount parsing
+
+    /// Parse `N calendar day` / `N business days` / `N months` using grammar-owned
+    /// unit strings. Distinct from physical `parseDuration` (`day` ≠ `calendar day`).
+    public func parseCalendarAmount(_ s: String) -> (Double, CalendarAmountUnitAST)? {
+        let parts = s.components(separatedBy: " ").filter { !$0.isEmpty }
+        guard parts.count >= 2, let amount = Double(parts[0]) else { return nil }
+        let unitPhrase = parts.dropFirst().joined(separator: " ").lowercased()
+        let table = Self.calendarAmountUnitTable(grammar: grammar)
+        if let unit = table[unitPhrase] { return (amount, unit) }
+        let singular = singularize(unitPhrase)
+        if singular != unitPhrase, let unit = table[singular] { return (amount, unit) }
+        return nil
+    }
+
+    private static func calendarAmountUnitTable(grammar: FixedGrammar) -> [String: CalendarAmountUnitAST] {
+        [
+            grammar.calendarBusinessDayUnit.lowercased(): .businessDays,
+            grammar.calendarBusinessDaysUnit.lowercased(): .businessDays,
+            grammar.calendarDayUnit.lowercased(): .calendarDays,
+            grammar.calendarDaysUnit.lowercased(): .calendarDays,
+            grammar.calendarMonthUnit.lowercased(): .months,
+            grammar.calendarMonthsUnit.lowercased(): .months,
+        ]
     }
 
     public func singularize(_ raw: String) -> String {
@@ -638,6 +726,53 @@ public struct EnglishLexicon: Sendable {
 
     // MARK: - Lexicon merging (for synonym support)
 
+    /// Merge every `=== language ===` synonym category from `synonyms` into this
+    /// lexicon. Preferred call site for compile-time and metrics bootstrap.
+    public func merging(from synonyms: LanguageSynonyms) -> EnglishLexicon {
+        merging(
+            comparisonSynonyms: synonyms.comparisonSynonyms,
+            durationSynonyms: synonyms.durationSynonyms,
+            assertionSynonyms: synonyms.assertionSynonyms,
+            normativeCueSynonyms: synonyms.normativeCueSynonyms,
+            inferenceCueSynonyms: synonyms.inferenceCueSynonyms,
+            referenceHeadingSynonyms: synonyms.referenceHeadingSynonyms,
+            conditionVagueHedgeSynonyms: synonyms.conditionVagueHedgeSynonyms,
+            effectfulJudgmentCueSynonyms: synonyms.effectfulJudgmentCueSynonyms,
+            articleSynonyms: synonyms.articleSynonyms,
+            parameterArticleSynonyms: synonyms.parameterArticleSynonyms,
+            prepositionSynonyms: synonyms.prepositionSynonyms,
+            copulaSynonyms: synonyms.copulaSynonyms,
+            participleSynonyms: synonyms.participleSynonyms,
+            toolStopwordSynonyms: synonyms.toolStopwordSynonyms,
+            irregularPluralSynonyms: synonyms.irregularPluralSynonyms,
+            contractReferenceSynonyms: synonyms.contractReferenceSynonyms,
+            timestampProperty: synonyms.timestampProperty,
+            emptySynonyms: synonyms.emptySynonyms,
+            filledSynonyms: synonyms.filledSynonyms,
+            pastWindowSynonyms: synonyms.pastWindowSynonyms,
+            futureWindowSynonyms: synonyms.futureWindowSynonyms,
+            timestampAliasSynonyms: synonyms.timestampAliasSynonyms,
+            aggregateSynonyms: synonyms.aggregateSynonyms,
+            superlativeSynonyms: synonyms.superlativeSynonyms,
+            gradableAdjectiveSynonyms: synonyms.gradableAdjectiveSynonyms,
+            sortBySynonyms: synonyms.sortBySynonyms,
+            ascendingSynonyms: synonyms.ascendingSynonyms,
+            descendingSynonyms: synonyms.descendingSynonyms,
+            possessiveSynonyms: synonyms.possessiveSynonyms,
+            anaphoraSynonyms: synonyms.anaphoraSynonyms,
+            conditionHeaderSynonyms: synonyms.conditionHeaderSynonyms,
+            actionHeaderSynonyms: synonyms.actionHeaderSynonyms,
+            wildcardSynonyms: synonyms.wildcardSynonyms,
+            traceOutcomeSynonyms: synonyms.traceOutcomeSynonyms,
+            traceAuxiliarySynonyms: synonyms.traceAuxiliarySynonyms,
+            shellFenceSynonyms: synonyms.shellFenceSynonyms,
+            fenceToolSynonyms: synonyms.fenceToolMapping,
+            guardedFenceIntroducerSynonyms: synonyms.guardedFenceIntroducerSynonyms,
+            fallbackChainIntroducerSynonyms: synonyms.fallbackChainIntroducerSynonyms,
+            approvalToolSynonyms: synonyms.approvalToolSynonyms
+        )
+    }
+
     /// Return a new lexicon with additional comparison markers prepended
     /// (so vocabulary synonyms take priority over defaults) and additional
     /// duration unit aliases merged in.
@@ -648,6 +783,16 @@ public struct EnglishLexicon: Sendable {
         normativeCueSynonyms: [String] = [],
         inferenceCueSynonyms: [String] = [],
         referenceHeadingSynonyms: [String] = [],
+        conditionVagueHedgeSynonyms: [String] = [],
+        effectfulJudgmentCueSynonyms: [String] = [],
+        articleSynonyms: [String] = [],
+        parameterArticleSynonyms: [String] = [],
+        prepositionSynonyms: [String] = [],
+        copulaSynonyms: [String] = [],
+        participleSynonyms: [String] = [],
+        toolStopwordSynonyms: [String] = [],
+        irregularPluralSynonyms: [String: String] = [:],
+        contractReferenceSynonyms: [String] = [],
         timestampProperty: String? = nil,
         emptySynonyms: [String] = [],
         filledSynonyms: [String] = [],
@@ -656,6 +801,7 @@ public struct EnglishLexicon: Sendable {
         timestampAliasSynonyms: [String] = [],
         aggregateSynonyms: [(String, AggregateKindAST)] = [],
         superlativeSynonyms: [String: SuperlativeDirection] = [:],
+        gradableAdjectiveSynonyms: [String: GradableAdjectiveMetadata] = [:],
         sortBySynonyms: [String] = [],
         ascendingSynonyms: [String] = [],
         descendingSynonyms: [String] = [],
@@ -704,6 +850,9 @@ public struct EnglishLexicon: Sendable {
         var mergedSuperlatives = superlativeGradables
         for (k, v) in superlativeSynonyms { mergedSuperlatives[k.lowercased()] = v }
 
+        var mergedGradableAdjectives = gradableAdjectives
+        for (k, v) in gradableAdjectiveSynonyms { mergedGradableAdjectives[k.lowercased()] = v }
+
         var mergedFenceTools = fenceToolMapping
         for (k, v) in fenceToolSynonyms { mergedFenceTools[k.lowercased()] = v }
 
@@ -713,20 +862,35 @@ public struct EnglishLexicon: Sendable {
             mergedTraceOutcomes[key.lowercased()] = outcome
         }
 
+        var seenEffectful = Set<String>()
+        let mergedEffectfulJudgment = (
+            effectfulJudgmentCueSynonyms.map { $0.lowercased() }.sorted { $0.count > $1.count }
+            + effectfulJudgmentCuePhrases.sorted { $0.count > $1.count }
+        )
+            .filter { seenEffectful.insert($0).inserted }
+
+        var mergedIrregularPlurals = irregularPlurals
+        for (singular, plural) in irregularPluralSynonyms {
+            mergedIrregularPlurals[singular.lowercased()] = plural.lowercased()
+        }
+
         return EnglishLexicon(
-            articles: articles,
-            parameterArticles: parameterArticles,
-            prepositions: prepositions,
-            copulas: copulas,
-            participles: participles,
+            articles: articles.union(articleSynonyms.map { $0.lowercased() }),
+            parameterArticles: parameterArticles.union(parameterArticleSynonyms.map { $0.lowercased() }),
+            prepositions: prepositions.union(prepositionSynonyms.map { $0.lowercased() }),
+            copulas: copulas.union(copulaSynonyms.map { $0.lowercased() }),
+            participles: participles.union(participleSynonyms.map { $0.lowercased() }),
             participleSuffixes: participleSuffixes,
             comparisonMarkers: mergedComparisons,
             durationUnits: mergedDuration,
-            toolStopwords: toolStopwords,
+            toolStopwords: toolStopwords.union(toolStopwordSynonyms.map { $0.lowercased() }),
             assertionMarkers: mergedAssertions,
             normativeCueWords: normativeCueWords.union(normativeCueSynonyms.map { $0.lowercased() }),
             inferenceCueWords: inferenceCueWords.union(inferenceCueSynonyms.map { $0.lowercased() }),
             referenceHeadingWords: referenceHeadingWords.union(referenceHeadingSynonyms.map { $0.lowercased() }),
+            contractReferencePhrases: contractReferencePhrases.union(contractReferenceSynonyms.map { $0.lowercased() }),
+            conditionVagueHedges: conditionVagueHedges.union(conditionVagueHedgeSynonyms.map { $0.lowercased() }),
+            effectfulJudgmentCuePhrases: mergedEffectfulJudgment,
             guardedFenceIntroducers: mergedGuardedFence,
             fallbackChainIntroducers: mergedFallbackChain,
             approvalToolIDSubstrings: approvalToolIDSubstrings.union(approvalToolSynonyms.map { $0.lowercased() }),
@@ -738,6 +902,7 @@ public struct EnglishLexicon: Sendable {
             timestampAliases: timestampAliases.union(timestampAliasSynonyms.map { $0.lowercased() }),
             aggregateIntroducers: aggregateSynonyms + aggregateIntroducers,
             superlativeGradables: mergedSuperlatives,
+            gradableAdjectives: mergedGradableAdjectives,
             sortByMarkers: sortBySynonyms.map { " \($0.lowercased()) " } + sortByMarkers,
             ascendingMarkers: ascendingSynonyms.map { $0.lowercased() } + ascendingMarkers,
             descendingMarkers: descendingSynonyms.map { $0.lowercased() } + descendingMarkers,
@@ -750,7 +915,74 @@ public struct EnglishLexicon: Sendable {
             tableWildcardTokens: tableWildcardTokens.union(wildcardSynonyms.map { $0.lowercased() }),
             shellFenceLanguages: shellFenceLanguages.union(shellFenceSynonyms.map { $0.lowercased() }),
             fenceToolMapping: mergedFenceTools,
-            irregularPlurals: irregularPlurals
+            irregularPlurals: mergedIrregularPlurals
         )
+    }
+
+    /// Canonical English comparison surface for verbalization. Author-supplied
+    /// comparison markers take priority; otherwise falls back to the grammar
+    /// spelling table and the built-in verbalizer defaults.
+    public func canonicalComparisonSurface(_ op: ComparisonOp) -> String {
+        let trimmedMarkers = comparisonMarkers
+            .filter { Self.comparisonOp(from: $0.1) == op }
+            .map { $0.0.trimmingCharacters(in: .whitespaces) }
+        if let preferred = Self.verbalizerComparisonDefaults[op],
+           let marker = trimmedMarkers.first(where: { $0 == preferred }) {
+            return marker
+        }
+        if let marker = trimmedMarkers.first, !marker.isEmpty {
+            return marker
+        }
+        // Dictionary order is not stable across runs; tests accept any spelling
+        // for the same op when markers are empty.
+        if let spelling = grammar.comparisonOpSpellings.first(where: { Self.comparisonOp(from: $0.value) == op })?.key {
+            switch op {
+            case .lessThan, .greaterThan, .lessOrEqual, .greaterOrEqual, .notEqual:
+                if spelling.hasPrefix("is ") || spelling.contains(" or ") { return spelling }
+                return "is \(spelling)"
+            default:
+                return spelling
+            }
+        }
+        return Self.verbalizerComparisonDefaults[op] ?? "equals"
+    }
+
+    private static let verbalizerComparisonDefaults: [ComparisonOp: String] = [
+        .equal: "equals",
+        .notEqual: "is not",
+        .lessThan: "is less than",
+        .lessOrEqual: "is at most",
+        .greaterThan: "is more than",
+        .greaterOrEqual: "is at least",
+        .oneOf: "is one of",
+        .contains: "contains",
+        .startsWith: "starts with",
+        .endsWith: "ends with",
+        .withinDuration: "is within",
+        .withinPast: "is within the last",
+        .withinFuture: "is in the next",
+        .matchesPattern: "matches pattern",
+        .isEmpty: "is empty",
+        .isNotEmpty: "is not empty",
+        .identifies: "identifies",
+    ]
+
+    private static func comparisonOp(from ast: ComparisonOpAST) -> ComparisonOp? {
+        switch ast {
+        case .equal: return .equal
+        case .notEqual: return .notEqual
+        case .lessThan: return .lessThan
+        case .lessOrEqual: return .lessOrEqual
+        case .greaterThan: return .greaterThan
+        case .greaterOrEqual: return .greaterOrEqual
+        case .oneOf: return .oneOf
+        case .contains: return .contains
+        case .within: return .withinDuration
+        case .withinPast: return .withinPast
+        case .withinFuture: return .withinFuture
+        case .matchesPattern: return .matchesPattern
+        case .isEmpty: return .isEmpty
+        case .isNotEmpty: return .isNotEmpty
+        }
     }
 }

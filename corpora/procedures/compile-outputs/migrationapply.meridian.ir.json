@@ -1,0 +1,98 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event applyPendingMigrations.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenApplypendingmigrationsFires\/root\/procedure\/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b",
+      "swift_line" : 681
+    },
+    {
+      "canonical" : "emit trigger.applyPendingMigrations.fired with kind = \"keyword\", spec = \"apply pending migrations\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenApplypendingmigrationsFires\/root\/procedure\/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c",
+      "swift_line" : 681
+    },
+    {
+      "canonical" : "wait for event runSchemaMigration.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunschemamigrationFires\/root\/procedure\/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f",
+      "swift_line" : 681
+    },
+    {
+      "canonical" : "emit trigger.runSchemaMigration.fired with kind = \"keyword\", spec = \"run schema migration\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunschemamigrationFires\/root\/procedure\/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d",
+      "swift_line" : 681
+    },
+    {
+      "canonical" : "bind migrations = invoke migration.list with status = \"failed\".",
+      "meridian_line" : 19,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/06bdc2bdc9d18e1851d38a143b98a60b9371b14004a4501b55a973ef58c9416b",
+      "swift_line" : 463
+    },
+    {
+      "canonical" : "for each migration in migrations,\n  wait for approval of migration from a database administrator.\n  migration apply.\n  recover from \"migration.failed\":\n    bind backMigration = invoke migration.rollback with migration = migration.\n    emit procedure.report with message = \"migration rolled back after failure\".",
+      "meridian_line" : 20,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/a6abd6b136a70d82e01b0419e219c45371682ed75b3d91d747c99ee3cc29d612",
+      "swift_line" : 476
+    },
+    {
+      "canonical" : "wait for approval of migration from a database administrator.",
+      "meridian_line" : 21,
+      "primitive" : "wait",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/iterate.body\/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045",
+      "swift_line" : 485
+    },
+    {
+      "canonical" : "migration apply.",
+      "meridian_line" : 22,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/recover.body\/093081924ea07368476b391816e3f035f807bd198a44ae4f5b8b9d095edd4fbd",
+      "swift_line" : 492
+    },
+    {
+      "canonical" : "migration apply.\nrecover from \"migration.failed\":\n  bind backMigration = invoke migration.rollback with migration = migration.\n  emit procedure.report with message = \"migration rolled back after failure\".",
+      "meridian_line" : 23,
+      "primitive" : "recover",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/iterate.body\/03c69d8a9a6b312981f5cfe3e9e43b3c691e04bd28ecf54c31fa24dcc17e57c4",
+      "swift_line" : 489
+    },
+    {
+      "canonical" : "bind backMigration = invoke migration.rollback with migration = migration.",
+      "meridian_line" : 24,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/recover.handler\/62c6d0b04d72c20ed9e27776bd4754ad266cb7662c7605832bd214287dee38c6",
+      "swift_line" : 499
+    },
+    {
+      "canonical" : "emit procedure.report with message = \"migration rolled back after failure\".",
+      "meridian_line" : 25,
+      "primitive" : "emit",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/recover.handler\/e6da909bf2e224aadb4b5a8e9c3427d895f1a844c218bfce0254f690d0cf7f88",
+      "swift_line" : 513
+    },
+    {
+      "canonical" : "emit procedure.report with message = \"pending migrations applied\".",
+      "meridian_line" : 26,
+      "primitive" : "emit",
+      "stable_step_path" : "\/MigrationApply\/procedure-steps\/procedure\/14d1efb90ffb80dc85fe0e1db6b4c8ae57ae0da3cb86414f8d0d97fcc0d3d092",
+      "swift_line" : 530
+    },
+    {
+      "canonical" : "assert no migrations whose status equals \"failed\".",
+      "meridian_line" : 29,
+      "primitive" : "assert",
+      "stable_step_path" : "\/MigrationApply\/postconditions\/invariants\/969765dfb36cb81887c09123862bd8a00a9facbc3a93948e30c3f0bddbbb1fae",
+      "swift_line" : 458
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "migrationapply.meri",
+  "swift_file" : "migrationapply.swift"
+}

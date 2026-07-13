@@ -1,0 +1,10 @@
+---
+module: shared-domain
+version: 1.0.0
+exports: public
+sealed: policy
+---
+
+=== vocabulary ===
+A policy is a kind of thing.
+A policy has a text called the title.

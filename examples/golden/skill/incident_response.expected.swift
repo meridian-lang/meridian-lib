@@ -182,7 +182,9 @@ public struct IncidentResponsePullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incident response",
@@ -240,6 +242,7 @@ public struct IncidentResponsePullRequest: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/IncidentResponsePullRequest/first-response/procedure/branch.then/3f78f2689e9e0dcefc324d1e6209625ffe4a407a16b2505bf6792297c31d85e6", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/IncidentResponsePullRequest/first-response/procedure/8e87ac7a22ff8810fc451a5434956ef6ab3a54c36514afd1126387c29ec433bb")
         }
 
 
@@ -270,7 +273,9 @@ public struct CoordinateIncidentResponse: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incident response",

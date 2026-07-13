@@ -24,10 +24,16 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             help: "Path to a .merrules file. Repeatable. Autodiscovered beside the input when omitted.")
     var rulebook: [String] = []
 
-    @Option(name: .long, help: "Model identifier for LLM-assisted repair. Repair requires a host-provided LLM provider; not wired in this build.")
+    @Option(name: .long, help: "Model identifier for LLM-assisted repair (requires MERIDIAN_LLM_API_URL).")
     var llm: String?
 
-    @Option(name: .long, help: "Maximum LLM repair rounds when a candidate fails strict compilation.")
+    @Flag(name: .long, help: "Enable LLM-assisted repair for strict-compile failures (requires MERIDIAN_LLM_API_URL).")
+    var repair: Bool = false
+
+    @Flag(name: .long, help: "With --repair, print proposed rewrites without modifying output or originals.")
+    var dryRun: Bool = false
+
+    @Option(name: .long, help: "Maximum LLM repair rounds when --repair is enabled.")
     var maxRepair: Int = 0
 
     @Option(name: .long, help: "Write a migration report to this path (text). With --batch, written as a coverage matrix.")
@@ -62,13 +68,16 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         let (vocabularies, rulebooks) =
             try loadDependencies(beside: batch ? inputURL : inputURL.deletingLastPathComponent())
 
+        let repairEnabled = repair || maxRepair > 0
+        let effectiveMaxRepair = repairEnabled ? (maxRepair > 0 ? maxRepair : 1) : 0
+
         let traceInstance = try cliTrace.makeTrace()
         let migrator = SkillMigrator(
             compiler: Compiler(options: .init(trace: traceInstance)),
             vocabularies: vocabularies,
             rulebooks: rulebooks,
-            options: .init(maxRepair: maxRepair, routeFuzzy: routeFuzzy),
-            repair: repairClosure(),
+            options: .init(maxRepair: effectiveMaxRepair, routeFuzzy: routeFuzzy),
+            repair: repairClosure(enabled: repairEnabled),
             trace: traceInstance
         )
 
@@ -91,10 +100,14 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
         let result = try await migrator.migrate(markdown, file: meriFile)
 
         if let out {
-            let outURL = URL(fileURLWithPath: out).standardized
-            try writeMeri(result.meriSource, to: outURL)
-            print(result.compiledOK ? "✓ \(outURL.path)" : "✗ \(outURL.path) (does not strict-compile)")
-        } else {
+            if dryRun {
+                print("dry-run: not writing \(out)")
+            } else {
+                let outURL = URL(fileURLWithPath: out).standardized
+                try writeMeri(result.meriSource, to: outURL)
+                print(result.compiledOK ? "✓ \(outURL.path)" : "✗ \(outURL.path) (does not strict-compile)")
+            }
+        } else if !dryRun {
             print(result.meriSource)
         }
 
@@ -141,7 +154,7 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             allAliases.append(contentsOf: result.sectionAliases)
             totalUnminedContracts += result.report.unminedContracts.count
             if !result.compiledOK { failures += 1 }
-            if let outDir {
+            if let outDir, !dryRun {
                 try writeMeri(result.meriSource, to: outDir.appendingPathComponent("\(stem).meri"))
             }
             print("\(result.compiledOK ? "✓" : "✗") \(stem)  edits=\(result.report.editCount) repairs=\(result.report.repairAttempts) unmined=\(result.report.unminedContracts.count)")
@@ -161,13 +174,15 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
 
     // MARK: - Repair closure
 
-    /// LLM-assisted repair requires a host-supplied `LLMProvider`. This build
-    /// ships no networked provider (mirroring the deliberately-unimplemented
-    /// `llm.chat` built-in), so repair is not wired here. The deterministic
-    /// transform + strict compile path is fully functional; `--max-repair`/`--llm`
-    /// are reserved for hosts that embed `SkillMigrator` with a real provider.
-    private func repairClosure() -> (@Sendable (SkillMigrator.RepairRequest) async throws -> String)? {
-        nil
+    /// LLM-assisted repair uses `SkillMigratorLLMRepair` with the configured
+    /// provider (`MERIDIAN_LLM_*` env vars). Original SKILL.md inputs are never
+    /// modified; `--dry-run` prints proposals only.
+    private func repairClosure(enabled: Bool) -> (@Sendable (SkillMigrator.RepairRequest) async throws -> String)? {
+        guard enabled else { return nil }
+        return SkillMigratorLLMRepair.makeClosure(options: .init(
+            dryRun: dryRun,
+            model: llm
+        ))
     }
 
     // MARK: - Dependency loading

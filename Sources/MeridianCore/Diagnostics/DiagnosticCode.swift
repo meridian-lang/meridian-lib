@@ -336,7 +336,7 @@ extension DiagnosticCode {
 
     public static let traceStateHistorySince = DiagnosticCode(
         id: "MER-TMP-019", title: "unsupported since-the-last state predicate",
-        explanation: "A `since the last` predicate must reduce to a trace event pattern (or an adjective whose body is a `has ever` event query). Meridian v1 has no state-history retention, so a pure state predicate such as `the service is healthy since the last …` (where `healthy` compares a property) cannot be evaluated over the trace (INFORM7 §5.5 / §12, deferred). Back the predicate with an adjective whose body is a `has ever` event query — `Definition: a service is deploy-clean if the deploy step has ever succeeded.` then `if the service is deploy-clean since the last deploy step succeeded, …` — or drop the `since` form and guard the branch with an ordinary `otherwise`.",
+        explanation: "A `since the last` predicate must reduce to a trace event pattern (or an adjective whose body is a `has ever` event query). A pure property-comparison holds such as `the service is healthy since the last …` has no trace backing even when state-history retention is enabled (SEM-4-12 / SEM-5-13). Back the predicate with an adjective whose body is a `has ever` event query — `Definition: a service is deploy-clean if the deploy step has ever succeeded.` then `if the service is deploy-clean since the last deploy step succeeded, …` — or drop the `since` form and guard the branch with an ordinary `otherwise`.",
         kind: .structural)
 
     public static let traceMissingProductionCapturePolicy = DiagnosticCode(
@@ -346,7 +346,7 @@ extension DiagnosticCode {
 
     public static let traceCrossSkillScope = DiagnosticCode(
         id: "MER-TMP-021", title: "cross-skill trace scope not supported",
-        explanation: "An event pattern named a step scoped to another skill (`the fetch step of the briefing skill`). Meridian v1 trace queries can only reference the current skill's own trace ([DECISION D4], SEM-4-03) — cross-skill trace scope is deferred.",
+        explanation: "An event pattern scoped to another skill requires an explicit `across skills <declared list>` surface and a matching `=== trace ===` allow-list entry (D4a, SEM-4-10). Bare `the fetch step of the briefing skill` without a declared cross-skill scope is rejected.",
         kind: .structural)
 
     public static let traceMissingUnknownArm = DiagnosticCode(
@@ -356,7 +356,7 @@ extension DiagnosticCode {
 
     public static let statisticalConfidenceReserved = DiagnosticCode(
         id: "MER-STA-002", title: "statistical confidence reserved",
-        explanation: "The statistical surface reserves `with <n>% confidence` for a future confidence-interval semantics; raw-ratio evaluation does not accept it today.",
+        explanation: "Deprecated: `with <n>% confidence` is now lowered to Wilson-score intervals (SEM-6-04). This code is retained for catalog stability only.",
         kind: .structural)
 
     public static let statisticalVagueFrequency = DiagnosticCode(
@@ -374,6 +374,95 @@ extension DiagnosticCode {
     public static let noteBindingNonText = DiagnosticCode(
         id: "MER-TYP-001", title: "note target binding is not text",
         explanation: "`proceed, and note \"<text>\" in the <binding>` (INFORM7 §2.9) appends to a `text` binding, but the named binding holds a non-text value (e.g. a number or list). Note only into a binding first declared with a text value.",
+        kind: .structural)
+
+    // MARK: MER-DEO — deontic norms (Wave 9A)
+
+    public static let deonticSameScopeConflict = DiagnosticCode(
+        id: "MER-DEO-001", title: "deontic same-scope conflict",
+        explanation: "A prohibition and a permission match the same action pattern in the same scope. Meridian rejects the overlap at compile time instead of picking a silent winner.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let deonticStickyDeny = DiagnosticCode(
+        id: "MER-DEO-002", title: "deontic sticky deny",
+        explanation: "An inner permission cannot override an outer prohibition. Deny is sticky downward across nested scopes.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let deonticNonNormModal = DiagnosticCode(
+        id: "MER-DEO-003", title: "deontic non-norm modal",
+        explanation: "Deontic norms use must, must not, and may only. Modals such as should, ought to, and probably must are rejected.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let deonticToolOutsidePermissions = DiagnosticCode(
+        id: "MER-DEO-004", title: "deontic tool outside permissions",
+        explanation: "A tool invoke is not covered by any permission in a default-deny scope.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let deonticOutcomeAsAction = DiagnosticCode(
+        id: "MER-DEO-005", title: "deontic outcome as action",
+        explanation: "Outcomes such as fail or succeed are not invokable actions. Prohibit a tool invoke or assert a condition instead.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let obligationIdCollision = DiagnosticCode(
+        id: "MER-DEO-006", title: "obligation id collision",
+        explanation: "Two distinct obligations hashed to the same OBL- prefix. Meridian rejects nondeterministic disambiguation instead of silently renumbering.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    public static let deonticUnlowerableCondition = DiagnosticCode(
+        id: "MER-DEO-007", title: "deontic unlowerable condition",
+        explanation: "A deontic norm names a condition Meridian cannot lower to checkable IR (for example an obligation `must hold` predicate or a permission `only where` clause). The compiler rejects the norm instead of compiling without the condition.",
+        kind: .structural, decision: DecisionRef("D3"))
+
+    // MARK: MER-MOD — shared modules (Final Wave)
+
+    public static let moduleNotFound = DiagnosticCode(
+        id: "MER-MOD-001", title: "module not found",
+        explanation: "An `import <module>` reference did not resolve to a `module.merconfig` / `<name>.merconfig` package on the module search path.",
+        kind: .nameResolution)
+
+    public static let moduleImportCycle = DiagnosticCode(
+        id: "MER-MOD-002", title: "module import cycle",
+        explanation: "Module imports form a cycle. Meridian requires an acyclic dependency graph.",
+        kind: .structural)
+
+    public static let moduleExportCollision = DiagnosticCode(
+        id: "MER-MOD-003", title: "module export collision",
+        explanation: "Two imported modules export the same symbol name. Rename one export or import only one module.",
+        kind: .structural)
+
+    public static let moduleSealedCollision = DiagnosticCode(
+        id: "MER-MOD-004", title: "sealed module export overridden",
+        explanation: "The importer redefines a symbol that an imported module marked `sealed` in its manifest.",
+        kind: .structural)
+
+    public static let duplicateModuleImport = DiagnosticCode(
+        id: "MER-MOD-005", title: "duplicate module import",
+        explanation: "The same module was imported more than once without an `as` alias.",
+        kind: .structural)
+
+    public static let judgmentToolOutsidePermissions = DiagnosticCode(
+        id: "MER-JDG-002", title: "judgment tool outside permissions",
+        explanation: "A tool named in a judgment `using` clause is not listed in the skill's `tools:` / `permissions` scope.",
+        kind: .structural)
+
+    public static let judgmentWithoutProducedValue = DiagnosticCode(
+        id: "MER-JDG-001", title: "effectful judgment without produced value",
+        explanation: "A judgment block must declare `producing a <kind> called <name>` when its purpose phrase names an effectful action. Judgment produces typed values; kernel steps perform effects that consume them.",
+        kind: .structural)
+
+    public static let conditionUnknownComparator = DiagnosticCode(
+        id: "MER-CND-001", title: "unknown comparator",
+        explanation: "A condition used a vague hedge or unknown comparator where the kernel expects a closed, checkable comparison form.",
+        kind: .structural)
+
+    public static let domainContradictoryDefault = DiagnosticCode(
+        id: "MER-DOM-002", title: "contradictory domain default",
+        explanation: "Two domain assertions assign conflicting default cases to the same kind property (`can be` / `is usually`).",
+        kind: .structural)
+
+    public static let descriptionSuperlativeNeedsProperty = DiagnosticCode(
+        id: "MER-DSC-001", title: "superlative needs measurable backing",
+        explanation: "A magnitude superlative (`largest`, `smallest`, …) requires an explicit `by <property>` unless the filtering adjective is declared under `Gradable adjectives:` in `=== language ===`.",
         kind: .structural)
 
     // MARK: MER4xxx — codegen
@@ -499,6 +588,14 @@ extension DiagnosticCode {
         .traceCrossSkillScope, .traceMissingUnknownArm,
         .statisticalConfidenceReserved, .statisticalVagueFrequency,
         .noteBindingUndeclared, .noteBindingNonText,
+        .deonticSameScopeConflict, .deonticStickyDeny, .deonticNonNormModal,
+        .deonticToolOutsidePermissions, .deonticOutcomeAsAction, .obligationIdCollision,
+        .deonticUnlowerableCondition,
+        .moduleNotFound, .moduleImportCycle, .moduleExportCollision,
+        .moduleSealedCollision, .duplicateModuleImport,
+        .judgmentWithoutProducedValue, .judgmentToolOutsidePermissions,
+        .conditionUnknownComparator, .domainContradictoryDefault,
+        .descriptionSuperlativeNeedsProperty,
         .codegenError, .invalidIR,
         .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
         .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,

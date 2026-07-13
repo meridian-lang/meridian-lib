@@ -306,7 +306,7 @@ struct CommandPlaceholderMigrationTests {
         ## Procedure
         - `gbrain open <slug>`.
         """
-        let out = migrator().rewriteCommandPlaceholders(src)
+        let out = migrator().rewriteCommandPlaceholders(src, lexicon: .default)
         #expect(out.contains("`gbrain open {slug}`"))
         #expect(!out.contains("<slug>"))
     }
@@ -320,7 +320,7 @@ struct CommandPlaceholderMigrationTests {
         ## Procedure
         - `gbrain open <attendee name>`.
         """
-        let out = migrator().rewriteCommandPlaceholders(src)
+        let out = migrator().rewriteCommandPlaceholders(src, lexicon: .default)
         #expect(out.contains("<attendee name>"))
     }
 
@@ -333,7 +333,7 @@ struct CommandPlaceholderMigrationTests {
         ## Notes
         Use the <slug> carefully.
         """
-        let out = migrator().rewriteCommandPlaceholders(src)
+        let out = migrator().rewriteCommandPlaceholders(src, lexicon: .default)
         #expect(out.contains("<slug>"))
     }
 

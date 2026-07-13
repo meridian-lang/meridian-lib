@@ -215,9 +215,23 @@ All five variants are implemented end-to-end:
 | `.event` | Blocks until `deliverEvent(_:)` or any `emit(event:)` call fires an event matching the event ID and optional predicate. `nil` predicate = accept any event with matching ID. |
 | `.choice` | Blocks until `deliverChoice(_:)` supplies a selected option for a choice gate. |
 
-**Timeout note:** The `timeout:` parameter is forwarded for all variants;
-for `.signal`, `.approval`, `.event`, and `.choice` it is accepted at the API level but
-not enforced in v1. Only `.duration` actively uses the clock-based timeout.
+**Timeout note:** The `timeout:` parameter is enforced for all wait variants in
+Final Wave Phase F. When the timeout elapses first, `wait` throws
+`MeridianRuntimeError.timeout`, catchable via `recover from wait.timeout:`.
+Duration waits still honour the lesser of the requested sleep and the timeout
+cap (unchanged).
+
+### Commit and recover (honest semantics)
+
+| Surface | Runtime behaviour | Not automatic |
+|---|---|---|
+| `commit.` / `commit with label "…".` | `checkpoint(label:state:)` persists a `StateSnapshot` via the configured `Checkpointer` and emits a `commit` trace event | No distributed transaction rollback |
+| `recover from …:` | Typed `do/catch` around the attached statement; `recordRecoverEngaged` witnesses the handler arm | No compensation/saga unless authored in the handler body |
+| `wait … recovering on timeout:` | Desugars to `recover from wait.timeout:` wrapping the wait | — |
+
+Compensation tokens and external rollback remain author-owned: Meridian records
+checkpoints and typed recovery boundaries in the trace, but does not infer
+multi-resource rollback from `commit` alone.
 
 `RuntimeApprovalVerdict` (2 cases, distinct from the domain `ApprovalVerdict`):
 
@@ -503,6 +517,7 @@ public enum EventKind: String, Codable, Sendable {
     case autonomyStep       = "autonomy.step"
     case autonomyEnd        = "autonomy.end"
     case branchTaken        = "branch.taken"
+    case branchEnded        = "branch.end"
     case iterateStart       = "iterate.start"
     case iterateIteration   = "iterate.iteration"
     case iterateEnd         = "iterate.end"
@@ -514,10 +529,12 @@ public enum EventKind: String, Codable, Sendable {
     case waitResume         = "wait.resume"
     case commit
     case recoverEngaged     = "recover.engaged"
+    case violated
 }
 ```
 
-29 event kinds across all IR primitives, planning/autonomy, and lifecycle events.
+31 event kinds across all IR primitives, planning/autonomy, lifecycle, and
+deontic-violation events.
 
 ---
 
@@ -525,7 +542,7 @@ public enum EventKind: String, Codable, Sendable {
 
 ```swift
 public protocol Observer: Sendable {
-    func record(_ event: Event) async
+    func record(_ event: Event) async throws
 }
 ```
 

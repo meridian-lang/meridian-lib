@@ -88,18 +88,20 @@ struct MeridianToolsCoverageTests {
         if case .string = try await MeridianTools.invoke("time.format", args: [:]) {} else { Issue.record("default time") }
     }
 
-    @Test("uuid.generate, llm.decide/judge, and the unknown-tool default")
+    @Test("llm.decide deterministic provider answers yes/true affirmatively")
     func miscDispatch() async throws {
+        LLMProviderRegistry.setOverride(nil)
         if case .string(let u) = try await MeridianTools.invoke("uuid.generate") { #expect(u.count > 10) }
         #expect(try await MeridianTools.invoke("llm.decide", args: ["question": .string("?")]) == .boolean(false))
-        #expect(try await MeridianTools.invoke("llm.judge") == .boolean(false))
+        #expect(try await MeridianTools.invoke("llm.judge", args: ["question": .string("yes")]) == .boolean(true))
         #expect(try await MeridianTools.invoke("totally.unknown") == .null)
     }
 
     @Test("mcp.call and llm.chat throw their sentinel errors")
     func notImplemented() async {
+        LLMProviderRegistry.setOverride(nil)
         await #expect(throws: (any Error).self) { _ = try await MeridianTools.invoke("mcp.call") }
-        await #expect(throws: (any Error).self) { _ = try await MeridianTools.invoke("llm.chat") }
+        await #expect(throws: (any Error).self) { _ = try await MeridianTools.invoke("llm.chat", args: ["prompt": .string("x")]) }
     }
 
     @Test("file.read / write / append round-trip through a temp file")

@@ -200,6 +200,7 @@ enum TraceEvalRunner {
     }
 
     static func runtimeTemporalQuery(from temporal: TraceTemporalIR) throws -> TraceTemporalQuery {
+        let (scope, scopeSkills) = runtimeScopePair(from: temporal.scope)
         let kind: TraceTemporalQuery.Kind
         switch temporal.kind {
         case .ever(let pattern):
@@ -214,18 +215,39 @@ enum TraceEvalRunner {
             )
         case .inARow(let pattern, let count):
             kind = .inARow(try runtimePattern(from: pattern), count: count)
-        case .sinceLast(let anchor, _, let holdsPattern):
-            kind = .sinceLast(
-                anchor: try runtimePattern(from: anchor),
-                holds: try runtimePattern(from: holdsPattern)
+        case .sinceLast(let anchor, let holds, let holdsPattern, let usesStateHistory):
+            if usesStateHistory, holdsPattern == nil {
+                kind = .sinceLast(
+                    anchor: try runtimePattern(from: anchor),
+                    holds: nil,
+                    holdsStatePredicateJSON: try runtimeStatePredicateJSON(from: holds),
+                    holdsUsesStateHistory: true
+                )
+            } else if let holdsPattern {
+                kind = .sinceLast(
+                    anchor: try runtimePattern(from: anchor),
+                    holds: try runtimePattern(from: holdsPattern),
+                    holdsStatePredicateJSON: nil,
+                    holdsUsesStateHistory: false
+                )
+            } else {
+                throw ValidationError("`since the last` holds did not resolve to an event pattern.")
+            }
+        case .boundedFutureMonitor(let condition, let horizon, let mode):
+            kind = .boundedFutureMonitor(
+                conditionJSON: try runtimeBoundedFutureConditionJSON(from: condition),
+                horizon: horizon,
+                mode: mode == .eventuallyWithin ? .eventuallyWithin : .alwaysFor
             )
         }
-        return TraceTemporalQuery(scope: runtimeScope(from: temporal.scope), kind: kind)
+        return TraceTemporalQuery(scope: scope, scopeSkills: scopeSkills, kind: kind)
     }
 
     static func runtimeStatisticalQuery(from statistical: TraceStatisticalIR) throws -> TraceStatisticalQuery {
+        let (scope, scopeSkills) = runtimeScopePair(from: statistical.scope)
         return TraceStatisticalQuery(
-            scope: runtimeScope(from: statistical.scope),
+            scope: scope,
+            scopeSkills: scopeSkills,
             pattern: TraceEventPatternQuery(
                 subject: runtimeSubject(from: statistical.pattern.subject),
                 outcome: statistical.outcome == .succeeds ? .succeeded : .failed,
@@ -234,8 +256,64 @@ enum TraceEvalRunner {
             ),
             bound: runtimeBound(from: statistical.bound),
             denominator: statistical.denominator == .runs ? .runs : .occurrences,
-            window: statistical.window
+            window: statistical.window,
+            confidencePercent: statistical.confidencePercent
         )
+    }
+
+    static func runtimeBoundedFutureConditionJSON(from expr: IRExpression) throws -> String {
+        if case .traceTemporal(let temporal) = expr,
+           case .ever(let pattern) = temporal.kind,
+           !pattern.negated {
+            let subjectType: String
+            let subjectName: String
+            switch pattern.subject {
+            case .step(let name):
+                subjectType = "step"
+                subjectName = name
+            case .named(let name):
+                subjectType = "named"
+                subjectName = name
+            }
+            let object: [String: Any] = [
+                "kind": "event",
+                "subject": ["type": subjectType, "name": subjectName],
+                "outcome": pattern.outcome.rawValue
+            ]
+            guard let data = try? JSONSerialization.data(withJSONObject: object),
+                  let json = String(data: data, encoding: .utf8) else {
+                throw ValidationError("failed to encode bounded-future event condition JSON.")
+            }
+            return json
+        }
+        guard case .comparison(let lhs, .equal, let rhs) = expr,
+              case .identifierRef(let field) = lhs,
+              case .literal(.string(let value)) = rhs else {
+            throw ValidationError("bounded-future condition must be a simple event pattern or `the <field> is \"<value>\"` comparison.")
+        }
+        let object: [String: Any] = [
+            "kind": "state",
+            "fields": [field: value]
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: object),
+              let json = String(data: data, encoding: .utf8) else {
+            throw ValidationError("failed to encode bounded-future state condition JSON.")
+        }
+        return json
+    }
+
+    static func runtimeStatePredicateJSON(from expr: IRExpression) throws -> String {
+        guard case .comparison(let lhs, .equal, let rhs) = expr,
+              case .identifierRef(let field) = lhs,
+              case .literal(.string(let value)) = rhs else {
+            throw ValidationError("state-history holds must be a simple `the <field> is \"<value>\"` comparison for `trace-eval`.")
+        }
+        let object: [String: Any] = [field: value]
+        guard let data = try? JSONSerialization.data(withJSONObject: object),
+              let json = String(data: data, encoding: .utf8) else {
+            throw ValidationError("failed to encode state predicate JSON.")
+        }
+        return json
     }
 
     static func runtimePattern(from pattern: EventPatternIR) throws -> TraceEventPatternQuery {
@@ -270,6 +348,11 @@ enum TraceEvalRunner {
         case .boolean(let value): return .boolean(value)
         case .money(let amount, let currency): return .money(Money(amount: amount, currency: currency))
         case .duration(let duration): return .duration(duration)
+        case .calendarAmount(let amount):
+            return .record([
+                "magnitude": .number(Decimal(amount.magnitude)),
+                "unit": .string(amount.unit.rawValue),
+            ])
         case .date(let date): return .date(date)
         case .dateTime(let date): return .dateTime(date)
         case .enumValue(let value, let kind): return .enumValue(value, kind: kind)
@@ -330,6 +413,7 @@ enum TraceEvalRunner {
     ) async throws -> ReplayContext {
         let records = try await store.query(
             scope: .acrossAllRuns,
+            scopeSkills: [],
             runID: nil,
             skillName: nil,
             window: nil,
@@ -344,6 +428,8 @@ enum TraceEvalRunner {
         }
         switch scope {
         case .acrossAllRuns:
+            return ReplayContext(runID: nil, skillName: skillName)
+        case .acrossSkills:
             return ReplayContext(runID: nil, skillName: skillName)
         case .currentRun:
             let runIDs = Array(Set(records.map(\.run))).sorted()
@@ -396,6 +482,8 @@ enum TraceEvalRunner {
             return "currentRun"
         case .acrossAllRuns:
             return "acrossAllRuns"
+        case .acrossSkills:
+            return "acrossSkills"
         }
     }
 
@@ -408,11 +496,17 @@ enum TraceEvalRunner {
     }
 
     static func runtimeScope(from scope: MeridianCore.TraceScope) -> MeridianRuntime.TraceScope {
+        runtimeScopePair(from: scope).0
+    }
+
+    static func runtimeScopePair(from scope: MeridianCore.TraceScope) -> (MeridianRuntime.TraceScope, [String]) {
         switch scope {
         case .currentRun:
-            return .currentRun
+            return (.currentRun, [])
         case .acrossAllRuns:
-            return .acrossAllRuns
+            return (.acrossAllRuns, [])
+        case .acrossSkills(let skills):
+            return (.acrossSkills, skills)
         }
     }
 }

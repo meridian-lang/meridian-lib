@@ -1,0 +1,84 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.applyThisMyProblem.fired with kind = \"keyword\", spec = \"apply this to my problem\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenApplythismyproblemFires\/root\/procedure\/2c11a1761a149d76c97ea4139a26018bce3fc367c898bdb112e44011db8130fa",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "wait for event applyThisMyProblem.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenApplythismyproblemFires\/root\/procedure\/e3578a017179e0b2b50dbf64b6d4548af5f91f5a21117c25bceea9f1236827d9",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "wait for event extractPlaybook.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenExtractplaybookFires\/root\/procedure\/234103ecd7219ebf95c2b0c5cd491f3599c983280032c7ef97b126ab846b267d",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "emit trigger.extractPlaybook.fired with kind = \"keyword\", spec = \"extract a playbook from\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenExtractplaybookFires\/root\/procedure\/3c147d47173ea2c57e53463146b181ea77a3dca7b016a4bded017302bee93b5f",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "emit trigger.readThisLens.fired with kind = \"keyword\", spec = \"read this through the lens of\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenReadthislensFires\/root\/procedure\/5c00578cc2da21f445bbe5de33f65f3db3730122e10271a5866bb3e037615f53",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "wait for event readThisLens.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenReadthislensFires\/root\/procedure\/6860f5f204cb64c0d673fd661ea2b545694bd3b596d33535bbeef23775c973c7",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "wait for event strategicReading.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenStrategicreadingFires\/root\/procedure\/1956fc56b65791d9a269b84487682cc652472ecb63ef9fff8914528c752862ab",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "emit trigger.strategicReading.fired with kind = \"keyword\", spec = \"strategic reading\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenStrategicreadingFires\/root\/procedure\/848932458d26e662a889816cf7026dc6a88e97f648ebd128ab220e60c9dd7acc",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "emit trigger.whatCanILearnThis.fired with kind = \"keyword\", spec = \"what can I learn from this about\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatcanilearnthisFires\/root\/procedure\/9c67e6e1df2ee85c980b2777d3aa55a3665b2d11eb0f2324aac6808250716f1f",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "wait for event whatCanILearnThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhatcanilearnthisFires\/root\/procedure\/b522815097d5d33b52d515dac33c8199fddc3959cc01db26c733a402c540c336",
+      "swift_line" : 1005
+    },
+    {
+      "canonical" : "use judgment to follow the What this is — steps 2 guidance:\n  Where `book-mirror` personalizes a book to the reader's whole life,\n  `strategic-reading` personalizes it to ONE current problem. Same shape\n  (extract → analyze → mirror), different lens\n  use judgment to follow the Inputs — steps guidance:\n  **Strategic problem** — the specific situation to analyze through the\n  lens of the text. The user describes this explicitly or it's obvious\n  from context\n  codeblock:plain:UGhhc2UgMTogSW5nZXN0IHRoZSBzb3VyY2UKICDilJzilIDilIAgRVBVQjogZXh0cmFjdCBjaGFwdGVycyB2aWEgQmVhdXRpZnVsU291cCAoc2VlIGJvb2stbWlycm9yIFNLSUxMLm1kCiAg4pSCICAgZm9yIHRoZSBleHRyYWN0aW9uIHBpcGVsaW5lKQogIOKUnOKUgOKUgCBQREY6IHBkZnRvdGV4dCAtbGF5b3V0CiAg4pSc4pSA4pSAIEFydGljbGU6IHdlYl9mZXRjaAogIOKUlOKUgOKUgCBJZGVudGlmeSBUYWJsZSBvZiBDb250ZW50cyBhbmQgdG90YWwgc2l6ZS4KClBoYXNlIDI6IFRyaWFnZSBjaGFwdGVycwogIOKUnOKUgOKUgCBSZWFkIGZpcnN0IDIwMDAgY2hhcnMgb2YgZWFjaCBjaGFwdGVyLgogIOKUnOKUgOKUgCBDbGFzc2lmeSByZWxldmFuY2UgdG8gdGhlIHByb2JsZW0gKEhJR0ggLyBNRURJVU0gLyBMT1cpLgogIOKUlOKUgOKUgCBISUdIIGNoYXB0ZXJzIGdldCBmdWxsIHJlYWRzLiBNRURJVU0gcGFydGlhbC4gTE9XIHNraXBwZWQuCgpQaGFzZSAzOiBEZWVwIHJlYWQgSElHSCBjaGFwdGVycwogIOKUnOKUgOKUgCBUYWN0aWNzIGFuZCBzdHJhdGVnaWVzIHVzZWQuCiAg4pSc4pSA4pSAIFBvd2VyIGR5bmFtaWNzIGFuZCBob3cgdGhleSBzaGlmdGVkLgogIOKUnOKUgOKUgCBTcGVjaWZpYyBxdW90ZXMgdGhhdCBtYXAgdG8gdGhlIHByb2JsZW0uCiAg4pSU4pSA4pSAIE1vbWVudHMgd2hlcmUgdGhlIHByb3RhZ29uaXN0J3MgYXBwcm9hY2ggc3VjY2VlZGVkIG9yIGZhaWxlZC4KClBoYXNlIDQ6IFN5bnRoZXNpemUKICDilJzilIDilIAgTWFwIHNvdXJjZSBpbnNpZ2h0cyBvbnRvIHRoZSBzcGVjaWZpYyBwcm9ibGVtLgogIOKUnOKUgOKUgCBCdWlsZCB0aGUgcGxheWJvb2sgKGRvIC8gYXZvaWQgLyB3YXRjaCBmb3IpLgogIOKUnOKUgOKUgCBHZW5lcmF0ZSBzaG9ydC9tZWRpdW0vbG9uZy10ZXJtIHJlY29tbWVuZGF0aW9ucy4KICDilJTilIDilIAgU2VsZWN0IHRoZSBtb3N0IGRldmFzdGF0aW5nIHF1b3Rlcy4KClBoYXNlIDU6IFdyaXRlIGFuZCBkZWxpdmVyCiAg4pSc4pSA4pSAIFdyaXRlIHRoZSBicmFpbiBwYWdlIGF0IHRoZSByaWdodCBsb2NhdGlvbjoKICDilIIgICAgIOKAoiBJZiBwcm9ibGVtLXNwZWNpZmljOiBwcm9qZWN0cy88c2x1Zz4vcGxheWJvb2subWQKICDilIIgICAgIOKAoiBJZiBnZW5lcmFsIHN0cmF0ZWd5OiBjb25jZXB0cy88c2x1Zz4ubWQKICDilJzilIDilIAgcHV0X3BhZ2UgdmlhIHRoZSBzdGFuZGFyZCBDTEkgZmxvdy4KICDilJTilIDilIAgT3B0aW9uYWw6IHJlbmRlciB0byBQREYgdmlhIHNraWxscy9icmFpbi1wZGYu\n  Don't say \"go direct to\n  the mayor\" — say \"go direct to the mayor, because when the protagonist\n  refused to be intimidated by a resignation threat (Ch 48), the bluff\n  that worked on five mayors finally failed.\"\n  Not a book summary tool. Use a different skill (or `book-mirror` for\n  personalized analysis) for general summaries\n  Not a research tool. Use `perplexity-research` for finding new\n  information about a topic\n  `skills\/book-mirror\/SKILL.md` — book personalized to whole life (vs\n  problem)\n  `skills\/perplexity-research\/SKILL.md` — current-intel cross-reference\n  for fresh data\n  `skills\/conventions\/quality.md` — citation + back-link rules",
+      "meridian_line" : 51,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/StrategicReadingInput\/what-this-is-steps-2\/procedure\/98fa345d2ca5bd9d08c6825abd3945d2f2cb367154129a808d7e41c552bde757",
+      "swift_line" : 629
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "strategic_reading.meri",
+  "swift_file" : "strategic_reading.swift"
+}

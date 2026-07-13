@@ -393,7 +393,7 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
         "parameters": "nurse, medication order",
     ]
 
-    public static let skillVersionHash = "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+    public static let skillVersionHash = "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -406,11 +406,13 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dose check",
-            versionHash: "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+            versionHash: "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )
@@ -445,62 +447,64 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
             try await runtime.assert((MeridianComparison.le(state.get("doseCount"), .number(Decimal(2)))) || (MeridianComparison.le(state.get("doseCount"), .number(Decimal(2)))), message: "Permission required: A nurse may administer medication orders whose dose count is at most 2")
             try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/rules-steps/procedure/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4", state: state.snapshot())
         }
-        // L38
+        // L42
         if MeridianComparison.le(state.get("nurse.doseCount"), Value.from(constants.doseLimit)) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow/procedure/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde")
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5") {
-                // L39
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde")
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5") {
+                // L43
                 let medicationOrder = try await runtime.invoke(
                     tool: "medication.administer",
                     args: [
                         "order": state.get("medicationOrder") ?? .null,
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "medication.administer")
                 )
                 state.bind("medicationOrder", medicationOrder)
 
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5", state: state.snapshot())
             }
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9") {
-                // L40
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9") {
+                // L44
                 try await runtime.emit(
                     event: "clinical.report",
                     payload: [
                         "message": .string("dose check cleared"),
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9"
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9"
                 )
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde")
         }
 
-        // L41
+        // L45
         if MeridianComparison.gt(state.get("nurse.doseCount"), Value.from(constants.doseLimit)) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow/procedure/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204")
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c") {
-                // L42
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204")
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c") {
+                // L46
                 try await runtime.emit(
                     event: "clinical.note",
                     payload: [
                         "message": .string("dose limit reached for this nurse, hand off to another nurse"),
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c"
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c"
                 )
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204")
         }
 
-        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038") {
-            // L43
+        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038") {
+            // L47
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("dose check pass complete"),
                 ],
-                step: "/DoseCheckNurseMedicationOrder/workflow/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038"
+                step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038"
             )
-            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DoseCheckNurseMedicationOrder.complete")
@@ -516,7 +520,7 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
 public struct WhenCheckdosecountFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+    public static let skillVersionHash = "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -529,11 +533,13 @@ public struct WhenCheckdosecountFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dose check",
-            versionHash: "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+            versionHash: "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )
@@ -561,7 +567,7 @@ public struct WhenCheckdosecountFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf") {
             // L1
-            try await runtime.wait(.event("checkDoseCount", matching: nil))
+            try await runtime.wait(.event("checkDoseCount", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckdosecountFires/root/procedure/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498") {
@@ -590,7 +596,7 @@ public struct WhenCheckdosecountFires: MeridianWorkflow {
 public struct WhenRundoselimitcheckFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+    public static let skillVersionHash = "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -603,11 +609,13 @@ public struct WhenRundoselimitcheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dose check",
-            versionHash: "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c"
+            versionHash: "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )
@@ -635,7 +643,7 @@ public struct WhenRundoselimitcheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec") {
             // L1
-            try await runtime.wait(.event("runDoseLimitCheck", matching: nil))
+            try await runtime.wait(.event("runDoseLimitCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundoselimitcheckFires/root/procedure/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6") {

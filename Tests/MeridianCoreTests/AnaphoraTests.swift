@@ -49,13 +49,18 @@ struct AnaphoraTests {
         #expect(resolved == "summarize the report")
     }
 
-    @Test("direct resolver reports ambiguous anaphora")
+    @Test("direct resolver reports ambiguous anaphora with referent notes")
     func directAmbiguousReferentThrows() throws {
-        #expect(throws: CompilerError.self) {
+        do {
             _ = try AnaphoraResolver().resolve(
                 "summarize it",
                 referents: ["first", "second"]
             )
+            Issue.record("expected ambiguous anaphora")
+        } catch let err as CompilerError {
+            let diag = try #require(err.diagnostics.first { $0.code == .ambiguousAnaphora })
+            #expect(diag.notes.first?.message.contains("first") == true)
+            #expect(diag.notes.first?.message.contains("second") == true)
         }
     }
 

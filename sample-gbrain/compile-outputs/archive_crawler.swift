@@ -592,7 +592,9 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -681,7 +683,9 @@ public struct WhenCrawlmyarchiveFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -712,7 +716,7 @@ public struct WhenCrawlmyarchiveFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/76ff20733fe0dbc864d0119e3437c4b62059645b5d2878146f3fd9db055366ff") {
             // L1
-            try await runtime.wait(.event("crawlMyArchive", matching: nil))
+            try await runtime.wait(.event("crawlMyArchive", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCrawlmyarchiveFires/root/procedure/76ff20733fe0dbc864d0119e3437c4b62059645b5d2878146f3fd9db055366ff", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/5dfb7530f295005afab7a85f94be693b527044364312ceb06c4d9bef72ef1aee") {
@@ -754,7 +758,9 @@ public struct WhenFindgoldinmyarchiveFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -785,7 +791,7 @@ public struct WhenFindgoldinmyarchiveFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/79cc1b74a92da57e447432a167ed72748cbf87f118c4ced7131ec0585ac2ff19") {
             // L1
-            try await runtime.wait(.event("findGoldInMyArchive", matching: nil))
+            try await runtime.wait(.event("findGoldInMyArchive", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFindgoldinmyarchiveFires/root/procedure/79cc1b74a92da57e447432a167ed72748cbf87f118c4ced7131ec0585ac2ff19", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/91b4a558ed01b69d1247a1c30dd2b44b785f2cb0694072f0a4e95329955df004") {
@@ -827,7 +833,9 @@ public struct WhenArchivecrawlerFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -858,7 +866,7 @@ public struct WhenArchivecrawlerFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/07868597b0b96d577a917108e6bf07624a771f3ca20aa16e22a1b6782b9aef24") {
             // L1
-            try await runtime.wait(.event("archiveCrawler", matching: nil))
+            try await runtime.wait(.event("archiveCrawler", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenArchivecrawlerFires/root/procedure/07868597b0b96d577a917108e6bf07624a771f3ca20aa16e22a1b6782b9aef24", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/dbaa5b380387b63222d997863fce64056bbda53352de07b883c4536dcd971d15") {
@@ -900,7 +908,9 @@ public struct WhenScanmydropboxFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -931,7 +941,7 @@ public struct WhenScanmydropboxFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/dfd2d6870cca56877c68a361f70e8f813bde5e2d4d77617ea57c2bcb103ec036") {
             // L1
-            try await runtime.wait(.event("scanMyDropbox", matching: nil))
+            try await runtime.wait(.event("scanMyDropbox", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenScanmydropboxFires/root/procedure/dfd2d6870cca56877c68a361f70e8f813bde5e2d4d77617ea57c2bcb103ec036", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/00b40c101caea2a32ec553ab492ad2a2be29e5831922493d7b4a14d482fd9af2") {
@@ -973,7 +983,9 @@ public struct WhenMinemyoldfilesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "archive-crawler",
@@ -1004,7 +1016,7 @@ public struct WhenMinemyoldfilesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/6bc49f13c0acf3dccb52f31485babf6f68991d9701bec0a7bedef0d44f6968ad") {
             // L1
-            try await runtime.wait(.event("mineMyOldFiles", matching: nil))
+            try await runtime.wait(.event("mineMyOldFiles", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMinemyoldfilesFires/root/procedure/6bc49f13c0acf3dccb52f31485babf6f68991d9701bec0a7bedef0d44f6968ad", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/9923550151fcdcd2da6ea9bc112ed6235d3e96b176854b16ae8f58246f76fa59") {

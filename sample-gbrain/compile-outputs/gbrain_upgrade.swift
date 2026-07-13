@@ -590,7 +590,9 @@ public struct GbrainUpgradeInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -673,7 +675,9 @@ public struct WhenGbrainupdateavailableFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -704,7 +708,7 @@ public struct WhenGbrainupdateavailableFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474") {
             // L1
-            try await runtime.wait(.event("gbrainUpdateAvailable", matching: nil))
+            try await runtime.wait(.event("gbrainUpdateAvailable", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainupdateavailableFires/root/procedure/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519") {
@@ -746,7 +750,9 @@ public struct WhenUpgradeavailableFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -777,7 +783,7 @@ public struct WhenUpgradeavailableFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15") {
             // L1
-            try await runtime.wait(.event("upgradeAvailable", matching: nil))
+            try await runtime.wait(.event("upgradeAvailable", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUpgradeavailableFires/root/procedure/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa") {
@@ -819,7 +825,9 @@ public struct WhenUpgradegbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -850,7 +858,7 @@ public struct WhenUpgradegbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef") {
             // L1
-            try await runtime.wait(.event("upgradeGbrain", matching: nil))
+            try await runtime.wait(.event("upgradeGbrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUpgradegbrainFires/root/procedure/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5") {
@@ -892,7 +900,9 @@ public struct WhenUpdategbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -923,7 +933,7 @@ public struct WhenUpdategbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08") {
             // L1
-            try await runtime.wait(.event("updateGbrain", matching: nil))
+            try await runtime.wait(.event("updateGbrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUpdategbrainFires/root/procedure/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28") {
@@ -965,7 +975,9 @@ public struct WhenGbrainisoutdateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -996,7 +1008,7 @@ public struct WhenGbrainisoutdateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852") {
             // L1
-            try await runtime.wait(.event("gbrainIsOutDate", matching: nil))
+            try await runtime.wait(.event("gbrainIsOutDate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainisoutdateFires/root/procedure/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2") {
@@ -1038,7 +1050,9 @@ public struct WhenGbrainselfupgradeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -1069,7 +1083,7 @@ public struct WhenGbrainselfupgradeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d") {
             // L1
-            try await runtime.wait(.event("gbrainSelfUpgrade", matching: nil))
+            try await runtime.wait(.event("gbrainSelfUpgrade", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainselfupgradeFires/root/procedure/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f") {
@@ -1111,7 +1125,9 @@ public struct WhenIsgbrainupdateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -1142,7 +1158,7 @@ public struct WhenIsgbrainupdateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87") {
             // L1
-            try await runtime.wait(.event("isGbrainUpDate", matching: nil))
+            try await runtime.wait(.event("isGbrainUpDate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIsgbrainupdateFires/root/procedure/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd") {
@@ -1184,7 +1200,9 @@ public struct WhenKeepgbraincurrentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "gbrain-upgrade",
@@ -1215,7 +1233,7 @@ public struct WhenKeepgbraincurrentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959") {
             // L1
-            try await runtime.wait(.event("keepGbrainCurrent", matching: nil))
+            try await runtime.wait(.event("keepGbrainCurrent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenKeepgbraincurrentFires/root/procedure/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3") {

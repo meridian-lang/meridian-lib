@@ -1,0 +1,63 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.dailyBriefing.fired with kind = \"schedule\", spec = \"daily briefing\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDailybriefingFires\/root\/procedure\/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "wait for event dailyBriefing.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDailybriefingFires\/root\/procedure\/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "wait for event morningBriefing.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMorningbriefingFires\/root\/procedure\/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "emit trigger.morningBriefing.fired with kind = \"schedule\", spec = \"morning briefing\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMorningbriefingFires\/root\/procedure\/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "wait for event whatSHappeningToday.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhatshappeningtodayFires\/root\/procedure\/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "emit trigger.whatSHappeningToday.fired with kind = \"keyword\", spec = \"what's happening today\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatshappeningtodayFires\/root\/procedure\/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0",
+      "swift_line" : 866
+    },
+    {
+      "canonical" : "`[Source: slug, updated DATE]` -- make sure Every fact in the briefing includes an inline  citation.",
+      "meridian_line" : 34,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/BriefingInput\/contract-steps\/invariants\/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22",
+      "swift_line" : 627
+    },
+    {
+      "canonical" : "use judgment to follow the Phases — steps 2 guidance:\n  **Pending consolidation footer** — when `pending_consolidation_count > 0`,\n  note `N facts await dream-cycle consolidation` so the operator can decide\n  whether to run `gbrain dream` before reading further\n  For each meeting on the calendar:\n  List deal pages in gbrain filtered to active status:\n  Deadlines approaching in the next 7 days\n  List person pages in gbrain sorted by recency:\n  For every attendee on the calendar invite:\n  `gbrain search \"<attendee name>\"` -- find their brain page\n  `gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\n  If no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n  `gbrain search \"<sender name>\"` -- load sender context\n  use judgment to follow the Before an email reply — steps 2 guidance:\n  Read their compiled truth to understand who they are, what they care about, and\n  your relationship history. This turns a cold reply into an informed one\n  `gbrain query \"active deals status\"` -- deal pipeline snapshot\n  `gbrain query \"meetings this week\"` -- recent meeting pages with insights\n  `gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n  `gbrain search --type person --sort updated --limit 10` -- people in play\n  If the briefing creates or updates any brain pages (e.g., new meeting prep\n  pages, updated entity pages), the back-linking iron law applies: every entity\n  mentioned must have a back-link from their page. See `skills\/_brain-filing-rules.md`\n  use judgment to follow the Citation in Briefings — steps 2 guidance:\n  This lets the user trace any claim back to the brain page and assess freshness",
+      "meridian_line" : 75,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/BriefingInput\/phases-steps-2\/procedure\/76cdc64261e598f9b7c9cb18f89bfd8c58ebef9aa9c8bfb977434d0d1c9e924a",
+      "swift_line" : 640
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "briefing.meri",
+  "swift_file" : "briefing.swift"
+}

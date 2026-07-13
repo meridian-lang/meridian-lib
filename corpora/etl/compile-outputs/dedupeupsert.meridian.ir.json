@@ -1,0 +1,119 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event collapseDuplicateDatasets.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCollapseduplicatedatasetsFires\/root\/procedure\/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "emit trigger.collapseDuplicateDatasets.fired with kind = \"keyword\", spec = \"collapse duplicate datasets\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCollapseduplicatedatasetsFires\/root\/procedure\/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "emit trigger.dedupeDatasets.fired with kind = \"keyword\", spec = \"dedupe datasets\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDedupedatasetsFires\/root\/procedure\/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "wait for event dedupeDatasets.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDedupedatasetsFires\/root\/procedure\/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "wait for event runDedupeUpsert.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRundedupeupsertFires\/root\/procedure\/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "emit trigger.runDedupeUpsert.fired with kind = \"keyword\", spec = \"run dedupe upsert\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRundedupeupsertFires\/root\/procedure\/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32",
+      "swift_line" : 683
+    },
+    {
+      "canonical" : "bind datasets = invoke dataset.list.",
+      "meridian_line" : 29,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
+      "swift_line" : 392
+    },
+    {
+      "canonical" : "assert at most 5 datasets whose status equals \"duplicate\".",
+      "meridian_line" : 30,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547",
+      "swift_line" : 399
+    },
+    {
+      "canonical" : "assert at least 0 datasets whose status equals \"stale\".",
+      "meridian_line" : 31,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/e0b94431076ae76606a926f60c571d34811e0f04c9cc3b3b2049917b544489c6",
+      "swift_line" : 404
+    },
+    {
+      "canonical" : "assert exactly 1 datasets whose status equals \"canonical\".",
+      "meridian_line" : 32,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/b3c62bc2077c7ef880887237078befdadd3724e6d1819637d32ddcd43dd69b9c",
+      "swift_line" : 409
+    },
+    {
+      "canonical" : "for each dataset in datasets,\n  if either dataset is stale or the dataset's status equals \"duplicate\",\n    bind recordsInDataset = invoke record.dedupe with dataset = dataset.\n  otherwise,\n    assert the dataset's status is not \"is-blocked\".",
+      "meridian_line" : 33,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/d70548218835de3faeb203c7cb9053766f540e4cb3cbe8a48864cc6b25c1a857",
+      "swift_line" : 413
+    },
+    {
+      "canonical" : "if either dataset is stale or the dataset's status equals \"duplicate\",\n  bind recordsInDataset = invoke record.dedupe with dataset = dataset.\notherwise,\n  assert the dataset's status is not \"is-blocked\".",
+      "meridian_line" : 34,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/iterate.body\/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03",
+      "swift_line" : 421
+    },
+    {
+      "canonical" : "bind recordsInDataset = invoke record.dedupe with dataset = dataset.",
+      "meridian_line" : 35,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/branch.then\/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9",
+      "swift_line" : 425
+    },
+    {
+      "canonical" : "assert the dataset's status is not \"is-blocked\".",
+      "meridian_line" : 37,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/branch.else\/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509",
+      "swift_line" : 443
+    },
+    {
+      "canonical" : "emit etl.report with message = \"dedupe upsert pass complete\".",
+      "meridian_line" : 38,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DedupeUpsert\/workflow-steps\/procedure\/bc812a60faef22f7ebff65124d02aa6e4142c8f91bb95b6d77532f211d474e4e",
+      "swift_line" : 456
+    },
+    {
+      "canonical" : "assert at most 5 datasets whose status equals \"duplicate\".",
+      "meridian_line" : 48,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DedupeUpsert\/assertions\/invariants\/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547",
+      "swift_line" : 387
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "dedupeupsert.meri",
+  "swift_file" : "dedupeupsert.swift"
+}

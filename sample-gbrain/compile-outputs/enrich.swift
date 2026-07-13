@@ -593,7 +593,9 @@ public struct EnrichInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -665,7 +667,9 @@ public struct WhenEnrichFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -696,7 +700,7 @@ public struct WhenEnrichFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnrichFires/root/procedure/42267099cb417a2a1a4d39998be7116b0818530bf6b7d328881c36eeb2d8aeb9") {
             // L1
-            try await runtime.wait(.event("enrich", matching: nil))
+            try await runtime.wait(.event("enrich", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnrichFires/root/procedure/42267099cb417a2a1a4d39998be7116b0818530bf6b7d328881c36eeb2d8aeb9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnrichFires/root/procedure/6a4de4aad76aff43238a716faa69d62c8d1126af9466d232bfff9e3b1fd085da") {
@@ -738,7 +742,9 @@ public struct WhenCreatepersonpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -769,7 +775,7 @@ public struct WhenCreatepersonpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreatepersonpageFires/root/procedure/96165fecb34fd54f3fe270c27003d67f10f51004a3e845a161b1c0fdad0be77b") {
             // L1
-            try await runtime.wait(.event("createPersonPage", matching: nil))
+            try await runtime.wait(.event("createPersonPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreatepersonpageFires/root/procedure/96165fecb34fd54f3fe270c27003d67f10f51004a3e845a161b1c0fdad0be77b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreatepersonpageFires/root/procedure/8455eb5a1927a64afc991a452b20f409531c7da74aad160d490ec1d636e6aab1") {
@@ -811,7 +817,9 @@ public struct WhenUpdatecompanypageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -842,7 +850,7 @@ public struct WhenUpdatecompanypageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUpdatecompanypageFires/root/procedure/29daeb99c945a202552473b945a2c7e119e8bd49b47dd14504a20dda9d5ab074") {
             // L1
-            try await runtime.wait(.event("updateCompanyPage", matching: nil))
+            try await runtime.wait(.event("updateCompanyPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUpdatecompanypageFires/root/procedure/29daeb99c945a202552473b945a2c7e119e8bd49b47dd14504a20dda9d5ab074", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUpdatecompanypageFires/root/procedure/e20bcc4233ae220e56fe317d5c35dc4a4407f922aa144b20b6bbca9d0b95410a") {
@@ -884,7 +892,9 @@ public struct WhenWhoisthispersonFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -915,7 +925,7 @@ public struct WhenWhoisthispersonFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhoisthispersonFires/root/procedure/37439e33f54b7e1f24361cdfa62ddb4a02858c5aa539b9052329a9972d0ff30e") {
             // L1
-            try await runtime.wait(.event("whoIsThisPerson", matching: nil))
+            try await runtime.wait(.event("whoIsThisPerson", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhoisthispersonFires/root/procedure/37439e33f54b7e1f24361cdfa62ddb4a02858c5aa539b9052329a9972d0ff30e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhoisthispersonFires/root/procedure/0094a3872a3a700d6119c2cd87c9c0b9338ff68ec6a5e3333f3dfb3e8d02d8ad") {
@@ -957,7 +967,9 @@ public struct WhenLookupthiscompanyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "enrich",
@@ -988,7 +1000,7 @@ public struct WhenLookupthiscompanyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenLookupthiscompanyFires/root/procedure/36b459e85dc9b36d6bb2dca06d036a58efd199a30d291ce8cb7eb105593804a9") {
             // L1
-            try await runtime.wait(.event("lookUpThisCompany", matching: nil))
+            try await runtime.wait(.event("lookUpThisCompany", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenLookupthiscompanyFires/root/procedure/36b459e85dc9b36d6bb2dca06d036a58efd199a30d291ce8cb7eb105593804a9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenLookupthiscompanyFires/root/procedure/cdaa1a10d08fe7a0b52e956120d6f79e951793785e274c863aa3b2bfd0e38cb0") {

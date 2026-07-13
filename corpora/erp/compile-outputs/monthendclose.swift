@@ -544,7 +544,9 @@ public struct MonthEndClose: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
@@ -657,7 +659,9 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
@@ -689,7 +693,7 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96") {
             // L1
-            try await runtime.wait(.event("monthEndClose", matching: nil))
+            try await runtime.wait(.event("monthEndClose", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonthendcloseFires/root/procedure/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9") {
@@ -731,7 +735,9 @@ public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
@@ -763,7 +769,7 @@ public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4") {
             // L1
-            try await runtime.wait(.event("closeAccountingPeriod", matching: nil))
+            try await runtime.wait(.event("closeAccountingPeriod", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCloseaccountingperiodFires/root/procedure/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82") {

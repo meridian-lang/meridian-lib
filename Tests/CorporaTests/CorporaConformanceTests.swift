@@ -10,6 +10,7 @@ struct CorporaConformanceTests {
         let root: URL
         let vocabulary: Compiler.VocabularyInput
         let rulebook: RulebookInput
+        let moduleSearchPaths: [URL]
         let files: [URL]
     }
 
@@ -53,6 +54,7 @@ struct CorporaConformanceTests {
                     name: name,
                     file: ruleURL.lastPathComponent,
                     source: try String(contentsOf: ruleURL, encoding: .utf8)),
+                moduleSearchPaths: CorpusCompileSupport.moduleSearchPaths(forCorpus: name, root: root),
                 files: files
             )
         }
@@ -91,7 +93,7 @@ struct CorporaConformanceTests {
             for file in corpus.files {
                 do {
                     let source = try String(contentsOf: file, encoding: .utf8)
-                    let swift = try Compiler(options: .init(trace: .silent())).compile(
+                    let swift = try Compiler(options: Self.compilerOptions(for: corpus)).compile(
                         meridianSource: source,
                         meridianFile: file.lastPathComponent,
                         vocabularies: [corpus.vocabulary],
@@ -123,7 +125,7 @@ struct CorporaConformanceTests {
         for corpus in try Self.corpora() {
             for file in corpus.files {
                 let source = try String(contentsOf: file, encoding: .utf8)
-                let (_, manifest) = try Compiler(options: .init(trace: .silent())).compileWithManifest(
+                let (_, _, manifest) = try Compiler(options: Self.compilerOptions(for: corpus)).compileWithManifest(
                     meridianSource: source,
                     meridianFile: file.lastPathComponent,
                     vocabularies: [corpus.vocabulary],
@@ -160,7 +162,7 @@ struct CorporaConformanceTests {
                 sawAnyFixture = true
                 do {
                     let source = try String(contentsOf: file, encoding: .utf8)
-                    let (_, manifest) = try Compiler(options: .init(trace: .silent())).compileWithManifest(
+                    let (_, _, manifest) = try Compiler(options: Self.compilerOptions(for: corpus)).compileWithManifest(
                         meridianSource: source,
                         meridianFile: file.lastPathComponent,
                         vocabularies: [corpus.vocabulary],
@@ -200,6 +202,14 @@ struct CorporaConformanceTests {
                 Comment(rawValue: "Malformed generated Swift:\n" + failures.joined(separator: "\n")))
     }
 
+    private static func compilerOptions(for corpus: Corpus,
+                                        emitterOptions: SwiftEmitter.Options = .init()) -> Compiler.Options {
+        CorpusCompileSupport.compilerOptions(
+            moduleSearchPaths: corpus.moduleSearchPaths,
+            emitterOptions: emitterOptions
+        )
+    }
+
     private static func quantifierHits(in source: String) -> Int {
         let lower = source.lowercased()
         return ["all ", "any ", "no ", "at least ", "at most ", "exactly "]
@@ -210,10 +220,10 @@ struct CorporaConformanceTests {
         try Self.corpora().flatMap { corpus in
             try corpus.files.map { file in
                 let source = try String(contentsOf: file, encoding: .utf8)
-                let opts = Compiler.Options(
+                let opts = Self.compilerOptions(
+                    for: corpus,
                     emitterOptions: SwiftEmitter.Options(
-                        namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(file.deletingPathExtension().lastPathComponent)),
-                    trace: .silent()
+                        namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(file.deletingPathExtension().lastPathComponent))
                 )
                 let swift = try Compiler(options: opts).compile(
                     meridianSource: source,

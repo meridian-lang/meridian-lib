@@ -123,6 +123,16 @@
         "line" : 35
       },
       "text" : "A nurse may administer medication orders whose dose count is at most 2"
+    },
+    {
+      "bounded" : false,
+      "executes" : true,
+      "kind" : "deonticProhibition",
+      "source" : {
+        "file" : "dosecheck.meri",
+        "line" : 36
+      },
+      "text" : "A nurse must not invoke medication.administer when the dose count is more than the dose limit"
     }
   ],
   "meridian_skill" : {
@@ -156,31 +166,37 @@
       {
         "kind" : "procedure",
         "level" : 2,
-        "line" : 37,
+        "line" : 38,
         "text" : "Workflow"
+      },
+      {
+        "kind" : "procedure",
+        "level" : 3,
+        "line" : 40,
+        "text" : "Workflow — steps"
       },
       {
         "kind" : "reference",
         "level" : 2,
-        "line" : 45,
+        "line" : 49,
         "text" : "Anti-Patterns"
       },
       {
         "kind" : "inert",
         "level" : 2,
-        "line" : 53,
+        "line" : 57,
         "text" : "When NOT to use this skill"
       },
       {
         "kind" : "reference",
         "level" : 3,
-        "line" : 55,
+        "line" : 59,
         "text" : "When NOT to use this skill — steps"
       },
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 61,
+        "line" : 65,
         "text" : "Report shape"
       },
       {
@@ -204,19 +220,19 @@
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 40,
+        "line" : 44,
         "text" : "Emit"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 42,
+        "line" : 46,
         "text" : "Note"
       },
       {
         "kind" : "topic",
         "level" : 3,
-        "line" : 43,
+        "line" : 47,
         "text" : "Emit"
       }
     ],
@@ -259,14 +275,24 @@
         "heading" : "Rules — steps",
         "line" : 33,
         "lines" : [
-          "A nurse may administer medication orders whose dose count is at most 2"
+          "A nurse may administer medication orders whose dose count is at most 2",
+          "A nurse must not invoke medication.administer when the dose count is more than the dose limit"
         ],
         "role" : "procedure"
       },
       {
         "executes" : true,
         "heading" : "Workflow",
-        "line" : 37,
+        "line" : 38,
+        "lines" : [
+
+        ],
+        "role" : "procedure"
+      },
+      {
+        "executes" : true,
+        "heading" : "Workflow — steps",
+        "line" : 40,
         "lines" : [
           "if the nurse's dose count is at most the dose limit,",
           "administer the medication order",
@@ -280,7 +306,7 @@
       {
         "executes" : false,
         "heading" : "Anti-Patterns",
-        "line" : 45,
+        "line" : 49,
         "lines" : [
           "Don't round the dose count down \"just this once\" to squeeze in one more",
           "administration — the limit exists because of fatigue risk, not paperwork,",
@@ -294,7 +320,7 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill",
-        "line" : 53,
+        "line" : 57,
         "lines" : [
 
         ],
@@ -303,7 +329,7 @@
       {
         "executes" : false,
         "heading" : "When NOT to use this skill — steps",
-        "line" : 55,
+        "line" : 59,
         "lines" : [
           "Use `medication administer` for the actual allergy and risk check on a",
           "specific order. This skill answers a different question — a running dose",
@@ -314,7 +340,7 @@
       {
         "executes" : false,
         "heading" : "Report shape",
-        "line" : 61,
+        "line" : 65,
         "lines" : [
           "The receipt states the nurse's dose count against the limit and whether",
           "the administration cleared or was routed to another nurse"
@@ -354,47 +380,47 @@
   "source_map" : [
     {
       "meridian_line" : 35,
-      "swift_line" : 444
-    },
-    {
-      "meridian_line" : 38,
-      "swift_line" : 448
-    },
-    {
-      "meridian_line" : 39,
-      "swift_line" : 452
-    },
-    {
-      "meridian_line" : 40,
-      "swift_line" : 466
-    },
-    {
-      "meridian_line" : 41,
-      "swift_line" : 478
+      "swift_line" : 446
     },
     {
       "meridian_line" : 42,
-      "swift_line" : 482
+      "swift_line" : 450
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 495
+      "swift_line" : 454
+    },
+    {
+      "meridian_line" : 44,
+      "swift_line" : 468
+    },
+    {
+      "meridian_line" : 45,
+      "swift_line" : 481
+    },
+    {
+      "meridian_line" : 46,
+      "swift_line" : 485
+    },
+    {
+      "meridian_line" : 47,
+      "swift_line" : 499
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 563
+      "swift_line" : 569
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 568
+      "swift_line" : 574
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 637
+      "swift_line" : 645
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 650
     }
   ],
   "tools_used" : [
@@ -414,16 +440,16 @@
         }
       ],
       "skill_name" : "dose check",
-      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
+      "skill_version_hash" : "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d",
       "source_name" : "dose check a nurse a medication order",
       "step_paths" : [
         "\/DoseCheckNurseMedicationOrder\/rules-steps\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9",
-        "\/DoseCheckNurseMedicationOrder\/workflow\/procedure\/branch.then\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5"
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde",
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204",
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038",
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c",
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9",
+        "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5"
       ],
       "swift_struct" : "DoseCheckNurseMedicationOrder"
     },
@@ -433,7 +459,7 @@
 
       ],
       "skill_name" : "dose check",
-      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
+      "skill_version_hash" : "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d",
       "source_name" : "when checkDoseCount fires",
       "step_paths" : [
         "\/WhenCheckdosecountFires\/root\/procedure\/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498",
@@ -447,7 +473,7 @@
 
       ],
       "skill_name" : "dose check",
-      "skill_version_hash" : "bed73eafb424165a3329691011c1a2b6be399ac68f499aeb7145159f37ea592c",
+      "skill_version_hash" : "b198981561928033b1c94a76fd82b7a58cb0b592f11af9d7a686c7b7fd93f18d",
       "source_name" : "when runDoseLimitCheck fires",
       "step_paths" : [
         "\/WhenRundoselimitcheckFires\/root\/procedure\/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6",

@@ -351,7 +351,9 @@ public struct DagOrchestrate: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
@@ -398,12 +400,12 @@ public struct DagOrchestrate: MeridianWorkflow {
             state.bind("dataset", dataset)
                 if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/e97d6d62915aa5a14e38fce37cc16ce331dfcf1f42eaf6b992e63bbc6a9eb947") {
                     // L29
-                    try await runtime.wait(.event("upstream.done", matching: { _event in MeridianComparison.eq(state.get("event.datasetName"), state.get("dataset.name")) }))
+                    try await runtime.wait(.event("upstream.done", matching: { _event in MeridianComparison.eq(state.get("event.datasetName"), state.get("dataset.name")) }), sourceRange: nil)
                     try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/e97d6d62915aa5a14e38fce37cc16ce331dfcf1f42eaf6b992e63bbc6a9eb947", state: state.snapshot())
                 }
                 if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/4d8bbad64f8a11541500b07b80756aad882b1e27d1090a78152c83bf8fd3970e") {
                     // L30
-                    try await runtime.wait(.signal("pipeline.ready"))
+                    try await runtime.wait(.signal("pipeline.ready"), sourceRange: nil)
                     try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/4d8bbad64f8a11541500b07b80756aad882b1e27d1090a78152c83bf8fd3970e", state: state.snapshot())
                 }
                 // L31
@@ -488,7 +490,9 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
@@ -520,7 +524,7 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/cfd7f5b729dd6e469931fa349173aa78bebc47acc40beb7697782bcd062f6b9b") {
             // L1
-            try await runtime.wait(.event("orchestratePipelineDag", matching: nil))
+            try await runtime.wait(.event("orchestratePipelineDag", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenOrchestratepipelinedagFires/root/procedure/cfd7f5b729dd6e469931fa349173aa78bebc47acc40beb7697782bcd062f6b9b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/c608c27563c2ff4b6c45ef36dd006b87a602a75d7cce8a700d3086c7624c525f") {
@@ -562,7 +566,9 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
@@ -594,7 +600,7 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/ec33e3d1c357d110ec5b13871e32ae286b9646f54c653e2bff5809ac16a2d2c8") {
             // L1
-            try await runtime.wait(.event("runDagOrchestration", matching: nil))
+            try await runtime.wait(.event("runDagOrchestration", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundagorchestrationFires/root/procedure/ec33e3d1c357d110ec5b13871e32ae286b9646f54c653e2bff5809ac16a2d2c8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/db7cc172255699c896c0d9a9fce03bea205ea911fd9cc0f37845124087989a8b") {
@@ -636,7 +642,9 @@ public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
@@ -668,7 +676,7 @@ public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/6f9f3f1b65e933afc53b29b46e941cd591e1669f10404b6ea31dca3b5947cc9a") {
             // L1
-            try await runtime.wait(.event("runDagOrchestrationPass", matching: nil))
+            try await runtime.wait(.event("runDagOrchestrationPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundagorchestrationpassFires/root/procedure/6f9f3f1b65e933afc53b29b46e941cd591e1669f10404b6ea31dca3b5947cc9a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/a82ab44ed67f9c228679e9da80ada33997838fee523e264ffedf7f121bdded7b") {

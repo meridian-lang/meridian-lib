@@ -69,12 +69,13 @@ public extension InMemoryCheckpointer {
 /// external tools (e.g. `meridian resume`) running alongside a live workflow.
 ///
 /// `actor` isolation serialises all operations from a single process.
-public actor FilesystemCheckpointer: Checkpointer {
+public actor FilesystemCheckpointer: Checkpointer, ArtifactWarningSource {
 
     public let rootURL: URL
 
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private var pendingReadWarnings: [RuntimeArtifactWarning] = []
 
     public init(rootURL: URL) throws {
         self.rootURL = rootURL.standardizedFileURL
@@ -121,10 +122,30 @@ public actor FilesystemCheckpointer: Checkpointer {
             .sorted { (lhs, rhs) in
                 (sequence(of: lhs) ?? Int.max) < (sequence(of: rhs) ?? Int.max)
             }
-        return try urls.compactMap { url -> Checkpoint? in
+        var checkpoints: [Checkpoint] = []
+        for url in urls {
             let data = try Data(contentsOf: url)
-            return try? decoder.decode(Checkpoint.self, from: data)
+            do {
+                checkpoints.append(try decoder.decode(Checkpoint.self, from: data))
+            } catch {
+                let warning = RuntimeArtifactWarning(
+                    code: "checkpoint.decode",
+                    message: "failed to decode checkpoint \(url.lastPathComponent): \(error.localizedDescription)",
+                    runID: runID,
+                    artifactPath: url.path
+                )
+                pendingReadWarnings.append(warning)
+                let redacted = RuntimeSecretRedaction.redact(warning.message)
+                fputs("meridian-runtime[\(warning.code)] run=\(runID): \(redacted)\n", stderr)
+            }
         }
+        return checkpoints
+    }
+
+    public func consumeArtifactWarnings() async -> [RuntimeArtifactWarning] {
+        let warnings = pendingReadWarnings
+        pendingReadWarnings = []
+        return warnings
     }
 
     public func latest(forRun runID: String) async throws -> Checkpoint? {

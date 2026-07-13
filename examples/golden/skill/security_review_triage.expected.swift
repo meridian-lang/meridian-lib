@@ -744,7 +744,9 @@ public struct SecurityReviewTriagePullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "security review triage",
@@ -879,7 +881,9 @@ public struct TriageComment: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "security review triage",
@@ -926,8 +930,10 @@ public struct TriageComment: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
         } else {
             try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment still applies\", snapshot: state.snapshot()))", into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
+
             if __meridianShouldRun("/TriageComment/resolve-already-addressed-comments/procedure/branch.else/5cf69e74da5ace045752a2a9d6afc6be400a1f1574392d421e5f8c22671208e2") {
                 try await runtime.emit(
                     event: "audit.note",
@@ -939,6 +945,7 @@ public struct TriageComment: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.else/5cf69e74da5ace045752a2a9d6afc6be400a1f1574392d421e5f8c22671208e2", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
         }
 
 
@@ -969,7 +976,9 @@ public struct PlanSecurityRemediation: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "security review triage",

@@ -387,7 +387,9 @@ public struct TriageAlert: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
@@ -463,11 +465,13 @@ public struct TriageAlert: MeridianWorkflow {
                     }
                     if __meridianShouldRun("/TriageAlert/workflow-steps/procedure/branch.then/00abbcc0000a2b9b57e660816430d5470b33d763c6482f3305b81e339b3dc219") {
                         // L33
-                        try await runtime.wait(.signal("alert.acknowledged"))
+                        try await runtime.wait(.signal("alert.acknowledged"), sourceRange: nil)
                         try await runtime.checkpoint(label: "/TriageAlert/workflow-steps/procedure/branch.then/00abbcc0000a2b9b57e660816430d5470b33d763c6482f3305b81e339b3dc219", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/TriageAlert/workflow-steps/procedure/iterate.body/94825c4e272083347442cca72929ebf7b5aba72dc6ec4f57886bb452e7723563")
                 } else {
                     try await runtime.recordBranchTaken(condition: "meridianDef_Alert_critical(state.get(\"alert\"))", into: "otherwise", step: "/TriageAlert/workflow-steps/procedure/iterate.body/94825c4e272083347442cca72929ebf7b5aba72dc6ec4f57886bb452e7723563")
+
                     // L35
                     let __meridianProseResults_L35 = try await runtime.executeProsePlan(
                         prose: "classify the alert and recommend a response, weighing its severity and service name before escalating",
@@ -479,6 +483,7 @@ public struct TriageAlert: MeridianWorkflow {
                     for (__key, __value) in __meridianProseResults_L35 {
                         state.bind(__key, __value)
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/TriageAlert/workflow-steps/procedure/iterate.body/94825c4e272083347442cca72929ebf7b5aba72dc6ec4f57886bb452e7723563")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
@@ -524,7 +529,9 @@ public struct WhenTriagefiringalertsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
@@ -556,7 +563,7 @@ public struct WhenTriagefiringalertsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTriagefiringalertsFires/root/procedure/e023b2777c265364b0f21f0489ce2c2e11d4e2f0e4a529ffdf1bd07e7ccbc9d2") {
             // L1
-            try await runtime.wait(.event("triageFiringAlerts", matching: nil))
+            try await runtime.wait(.event("triageFiringAlerts", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTriagefiringalertsFires/root/procedure/e023b2777c265364b0f21f0489ce2c2e11d4e2f0e4a529ffdf1bd07e7ccbc9d2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTriagefiringalertsFires/root/procedure/850f7c88cfebf44bdfd4579fcbb2b1f71220d0421816dc45ea15c35bb5492bf0") {
@@ -598,7 +605,9 @@ public struct WhenTriagealertsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
@@ -630,7 +639,7 @@ public struct WhenTriagealertsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTriagealertsFires/root/procedure/b1f22409aebcf9dec49357aadc1882d2da1a49af6d0929b4b59bc97332807c73") {
             // L1
-            try await runtime.wait(.event("triageAlerts", matching: nil))
+            try await runtime.wait(.event("triageAlerts", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTriagealertsFires/root/procedure/b1f22409aebcf9dec49357aadc1882d2da1a49af6d0929b4b59bc97332807c73", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTriagealertsFires/root/procedure/4c14b71b7c77bb52ff3aeed2b9384b2d51c7acde14e8ad2d78be28111c111599") {
@@ -672,7 +681,9 @@ public struct WhenRunalerttriageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
@@ -704,7 +715,7 @@ public struct WhenRunalerttriageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunalerttriageFires/root/procedure/15049bdc8992835ae973850811a9427fd77c6b7232743e53bdef36857aa1e26b") {
             // L1
-            try await runtime.wait(.event("runAlertTriage", matching: nil))
+            try await runtime.wait(.event("runAlertTriage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunalerttriageFires/root/procedure/15049bdc8992835ae973850811a9427fd77c6b7232743e53bdef36857aa1e26b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunalerttriageFires/root/procedure/54d39bc3fe1db37cbd54f59defcabccd297b7cfaef386d180b0cfe8b1a8c68ec") {

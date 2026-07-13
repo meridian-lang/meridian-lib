@@ -411,7 +411,7 @@ public struct AccessMatrix: MeridianWorkflow {
         "triggers": "\"render access matrix\"\n\"publish access matrix\"\n\"generate the audit matrix\"",
     ]
 
-    public static let skillVersionHash = "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+    public static let skillVersionHash = "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct AccessMatrix: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access matrix",
-            versionHash: "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+            versionHash: "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -518,7 +520,7 @@ public struct AccessMatrix: MeridianWorkflow {
 public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+    public static let skillVersionHash = "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -531,11 +533,13 @@ public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access matrix",
-            versionHash: "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+            versionHash: "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -563,7 +567,7 @@ public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe") {
             // L1
-            try await runtime.wait(.event("renderAccessMatrix", matching: nil))
+            try await runtime.wait(.event("renderAccessMatrix", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRenderaccessmatrixFires/root/procedure/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03") {
@@ -592,7 +596,7 @@ public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
 public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+    public static let skillVersionHash = "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -605,11 +609,13 @@ public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access matrix",
-            versionHash: "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+            versionHash: "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -637,7 +643,7 @@ public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882") {
             // L1
-            try await runtime.wait(.event("publishAccessMatrix", matching: nil))
+            try await runtime.wait(.event("publishAccessMatrix", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPublishaccessmatrixFires/root/procedure/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab") {
@@ -666,7 +672,7 @@ public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
 public struct WhenGenerateauditmatrixFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+    public static let skillVersionHash = "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -679,11 +685,13 @@ public struct WhenGenerateauditmatrixFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access matrix",
-            versionHash: "931844ec87fa88b2b230f221f989d996e54addc8e5262ab38ab995f489160400"
+            versionHash: "f9310d289c74f59127bb4693b64a4c0b13da9870339a42a656a1a6eed675a30c"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -711,7 +719,7 @@ public struct WhenGenerateauditmatrixFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232") {
             // L1
-            try await runtime.wait(.event("generateAuditMatrix", matching: nil))
+            try await runtime.wait(.event("generateAuditMatrix", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGenerateauditmatrixFires/root/procedure/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a") {

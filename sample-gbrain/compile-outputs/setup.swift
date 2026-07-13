@@ -590,7 +590,9 @@ public struct SetupInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "setup",
@@ -1142,7 +1144,9 @@ public struct WhenSetupgbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "setup",
@@ -1173,7 +1177,7 @@ public struct WhenSetupgbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/9e40fe808595a3e59fec1c6091aa876ec04be63344b7c0cb5a31fd2680dc395f") {
             // L1
-            try await runtime.wait(.event("setUpGbrain", matching: nil))
+            try await runtime.wait(.event("setUpGbrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSetupgbrainFires/root/procedure/9e40fe808595a3e59fec1c6091aa876ec04be63344b7c0cb5a31fd2680dc395f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/f963a3eab79e9a46ccf9d79e7832e9b39e4f03cf1ed9d41751da74cecc71de24") {
@@ -1215,7 +1219,9 @@ public struct WhenInitializebrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "setup",
@@ -1246,7 +1252,7 @@ public struct WhenInitializebrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/12bd8370a085c77033d9b52d312b8365421a740604f8a42d909c7c37e7d6547b") {
             // L1
-            try await runtime.wait(.event("initializeBrain", matching: nil))
+            try await runtime.wait(.event("initializeBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenInitializebrainFires/root/procedure/12bd8370a085c77033d9b52d312b8365421a740604f8a42d909c7c37e7d6547b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/34e892ccaae53963fc59921541b672c4fdcdb509210f085631beb8dba15567ee") {
@@ -1288,7 +1294,9 @@ public struct WhenGbrainsetupFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "setup",
@@ -1319,7 +1327,7 @@ public struct WhenGbrainsetupFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/8982abfc5b0ff44b45efe1c53e2a47d1c9bfafcfd9d57361d359cca277210c51") {
             // L1
-            try await runtime.wait(.event("gbrainSetup", matching: nil))
+            try await runtime.wait(.event("gbrainSetup", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainsetupFires/root/procedure/8982abfc5b0ff44b45efe1c53e2a47d1c9bfafcfd9d57361d359cca277210c51", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/947c9bae5c6ef47066256149d6edba465068bfefc9ff851bbf6626cf2e54a729") {

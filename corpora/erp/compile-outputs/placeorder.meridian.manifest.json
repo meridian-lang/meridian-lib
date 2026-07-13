@@ -178,7 +178,7 @@
       {
         "kind" : "template",
         "level" : 2,
-        "line" : 45,
+        "line" : 46,
         "text" : "Output"
       },
       {
@@ -273,14 +273,15 @@
         "heading" : "Checks",
         "line" : 42,
         "lines" : [
-          "No blocked order may pass reservation or shipment release"
+          "No blocked order may pass reservation or shipment release",
+          "Blocked orders must not invoke shipment.create"
         ],
         "role" : "reference"
       },
       {
         "executes" : false,
         "heading" : "Output",
-        "line" : 45,
+        "line" : 46,
         "lines" : [
           "The operator expects a queue receipt with processed order numbers and shipment",
           "references, plus the top 3 orders by total amount"
@@ -334,87 +335,87 @@
   "source_map" : [
     {
       "meridian_line" : 23,
-      "swift_line" : 578
+      "swift_line" : 580
     },
     {
       "meridian_line" : 24,
-      "swift_line" : 592
+      "swift_line" : 594
     },
     {
       "meridian_line" : 25,
-      "swift_line" : 606
+      "swift_line" : 608
     },
     {
       "meridian_line" : 26,
-      "swift_line" : 611
+      "swift_line" : 613
     },
     {
       "meridian_line" : 27,
-      "swift_line" : 616
+      "swift_line" : 618
     },
     {
       "meridian_line" : 28,
-      "swift_line" : 620
-    },
-    {
-      "meridian_line" : 29,
       "swift_line" : 622
     },
     {
+      "meridian_line" : 29,
+      "swift_line" : 624
+    },
+    {
       "meridian_line" : 30,
-      "swift_line" : 631
+      "swift_line" : 633
     },
     {
       "meridian_line" : 31,
-      "swift_line" : 645
+      "swift_line" : 647
     },
     {
       "meridian_line" : 32,
-      "swift_line" : 658
+      "swift_line" : 660
     },
     {
       "meridian_line" : 33,
-      "swift_line" : 662
+      "swift_line" : 664
     },
     {
       "meridian_line" : 35,
-      "swift_line" : 669
+      "swift_line" : 673
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 675
+      "swift_line" : 680
     },
     {
       "meridian_line" : 36,
-      "swift_line" : 678
+      "swift_line" : 683
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 694
+      "swift_line" : 699
     },
     {
       "meridian_line" : 39,
-      "swift_line" : 709
+      "swift_line" : 714
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 728
+      "swift_line" : 733
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 796
+      "swift_line" : 803
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 801
+      "swift_line" : 808
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 870
+      "swift_line" : 879
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 875
+      "swift_line" : 884
     }
   ],
   "tools_used" : [
@@ -427,7 +428,7 @@
 
       ],
       "skill_name" : "place order",
-      "skill_version_hash" : "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478",
+      "skill_version_hash" : "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca",
       "source_name" : "place order",
       "step_paths" : [
         "\/PlaceOrder\/workflow-steps\/procedure\/20ac44ee0680ab58bcda673df427ea873d0247a60f15228f69bd914aacb25dc4",
@@ -456,7 +457,7 @@
 
       ],
       "skill_name" : "place order",
-      "skill_version_hash" : "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478",
+      "skill_version_hash" : "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca",
       "source_name" : "when processOpenOrders fires",
       "step_paths" : [
         "\/WhenProcessopenordersFires\/root\/procedure\/3cb0c43208d5e459ac2322620dba00c957be4f17ec2c4363be189ff7b6f2ee30",
@@ -470,7 +471,7 @@
 
       ],
       "skill_name" : "place order",
-      "skill_version_hash" : "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478",
+      "skill_version_hash" : "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca",
       "source_name" : "when placeCustomerOrders fires",
       "step_paths" : [
         "\/WhenPlacecustomerordersFires\/root\/procedure\/ce32957ea4c7274b760c3e3a15ce43fc251a91b8b0d39bb9da26a65ab02dfe2d",

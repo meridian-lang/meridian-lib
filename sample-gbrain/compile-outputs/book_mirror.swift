@@ -592,7 +592,9 @@ public struct BookMirrorInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1144,7 +1146,9 @@ public struct WhenPersonalizedversionthisbookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1175,7 +1179,7 @@ public struct WhenPersonalizedversionthisbookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/bd66ee5a73f96c8283fc37ac742de0087afe4c1b1c0286c9aded4ee88679c06f") {
             // L1
-            try await runtime.wait(.event("personalizedVersionThisBook", matching: nil))
+            try await runtime.wait(.event("personalizedVersionThisBook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPersonalizedversionthisbookFires/root/procedure/bd66ee5a73f96c8283fc37ac742de0087afe4c1b1c0286c9aded4ee88679c06f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/0423cbf2424f49184ddf1bf9d4427da23ed7fe173275f29bcaa3ba60e5c37cbf") {
@@ -1217,7 +1221,9 @@ public struct WhenMirrorthisbookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1248,7 +1254,7 @@ public struct WhenMirrorthisbookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/c4c824113d3cbeba77421598a4a06aa93327d2fa7a74f33164656a1af68c4f31") {
             // L1
-            try await runtime.wait(.event("mirrorThisBook", matching: nil))
+            try await runtime.wait(.event("mirrorThisBook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMirrorthisbookFires/root/procedure/c4c824113d3cbeba77421598a4a06aa93327d2fa7a74f33164656a1af68c4f31", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/f2810d9604f5d610bb42444fb535fec6324b332c38480e9bedcdcaacee1f6c1e") {
@@ -1290,7 +1296,9 @@ public struct WhenTwocolumnbookanalysisFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1321,7 +1329,7 @@ public struct WhenTwocolumnbookanalysisFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/f715d83b423feb1ede8d3c68af22f0c08d6a804e53c4d4d42c168492efba496a") {
             // L1
-            try await runtime.wait(.event("twoColumnBookAnalysis", matching: nil))
+            try await runtime.wait(.event("twoColumnBookAnalysis", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTwocolumnbookanalysisFires/root/procedure/f715d83b423feb1ede8d3c68af22f0c08d6a804e53c4d4d42c168492efba496a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/64f5e28ddf3aaef85cc3834109ea787026168bed44c9cd4a09ec3d82f7e6ddcc") {
@@ -1363,7 +1371,9 @@ public struct WhenApplythisbookmylifeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1394,7 +1404,7 @@ public struct WhenApplythisbookmylifeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/28130284de8fd2a716105361351024d06c0122a1a247c1b58a4270c4347adbf5") {
             // L1
-            try await runtime.wait(.event("applyThisBookMyLife", matching: nil))
+            try await runtime.wait(.event("applyThisBookMyLife", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApplythisbookmylifeFires/root/procedure/28130284de8fd2a716105361351024d06c0122a1a247c1b58a4270c4347adbf5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/1ef457558c489bfc3cf13b333f16c6ea1f4f52df9b028c26446000c5dc3e5e70") {
@@ -1436,7 +1446,9 @@ public struct WhenHowdoesthisbookapplyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "book-mirror",
@@ -1467,7 +1479,7 @@ public struct WhenHowdoesthisbookapplyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/b50bc53ad88d35b00098affc3b94a11a5b68d02b7b5ab406ca3ebe093ca61820") {
             // L1
-            try await runtime.wait(.event("howDoesThisBookApply", matching: nil))
+            try await runtime.wait(.event("howDoesThisBookApply", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHowdoesthisbookapplyFires/root/procedure/b50bc53ad88d35b00098affc3b94a11a5b68d02b7b5ab406ca3ebe093ca61820", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/3df757dea7f3abfdef2871b51926e6c1ad46d951a4ca5b317eb756e44a007b31") {

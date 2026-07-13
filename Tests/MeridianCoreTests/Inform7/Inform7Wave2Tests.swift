@@ -307,7 +307,7 @@ struct DefinitionTests {
 
     @Test("definitions are recorded under meridian_definitions in the manifest")
     func manifestRecordsDefinitions() throws {
-        let (_, input) = try Compiler().compileWithManifest(
+        let (_, _, input) = try Compiler().compileWithManifest(
             meridianSource: """
             ---
             name: review

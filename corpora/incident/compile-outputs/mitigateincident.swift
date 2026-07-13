@@ -387,7 +387,9 @@ public struct MitigateIncident: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
@@ -512,7 +514,9 @@ public struct WhenMitigateopenincidentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
@@ -544,7 +548,7 @@ public struct WhenMitigateopenincidentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMitigateopenincidentsFires/root/procedure/3f939c26d60ca29a0af50663a7ac4faf31180769ea417278a8a40039c30e98e2") {
             // L1
-            try await runtime.wait(.event("mitigateOpenIncidents", matching: nil))
+            try await runtime.wait(.event("mitigateOpenIncidents", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMitigateopenincidentsFires/root/procedure/3f939c26d60ca29a0af50663a7ac4faf31180769ea417278a8a40039c30e98e2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMitigateopenincidentsFires/root/procedure/ebdfb410b52f93dbda42a67bdd8fcf80508ea13fa4e9fc339fef6c7dfbbc3b15") {
@@ -586,7 +590,9 @@ public struct WhenApplyincidentmitigationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
@@ -618,7 +624,7 @@ public struct WhenApplyincidentmitigationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApplyincidentmitigationFires/root/procedure/3529c6670e2907986d3a079851cdd62dd142b73be07adb1b6fa0de4dd50874c8") {
             // L1
-            try await runtime.wait(.event("applyIncidentMitigation", matching: nil))
+            try await runtime.wait(.event("applyIncidentMitigation", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApplyincidentmitigationFires/root/procedure/3529c6670e2907986d3a079851cdd62dd142b73be07adb1b6fa0de4dd50874c8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApplyincidentmitigationFires/root/procedure/5b58ba359debc76a38ae894713af2ade020174b2849530a18ace9746e21cb57b") {
@@ -660,7 +666,9 @@ public struct WhenRunincidentmitigationpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
@@ -692,7 +700,7 @@ public struct WhenRunincidentmitigationpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunincidentmitigationpassFires/root/procedure/4367ead00665c048048953efb9efbdbf3468694960f3997c1de9bbcace81b88b") {
             // L1
-            try await runtime.wait(.event("runIncidentMitigationPass", matching: nil))
+            try await runtime.wait(.event("runIncidentMitigationPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunincidentmitigationpassFires/root/procedure/4367ead00665c048048953efb9efbdbf3468694960f3997c1de9bbcace81b88b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunincidentmitigationpassFires/root/procedure/9b6c036612468dfb59d474a3dab9bbc8802be04033d7712bbe1f2dc58d7c3a32") {

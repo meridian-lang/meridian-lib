@@ -2,93 +2,51 @@
 
 import Foundation
 
-struct Corpus {
+// Corpus catalog — data in corpus-catalog.json; loader aligned with CorpusCatalog.swift.
+struct CorpusRecord: Decodable {
     let id: String
+    let root: String
     let originals: String
     let vocab: String
     let rulebook: String
     let skillsOut: String
-    /// `RESOLVER.md` lives beside `originals` (not named `SKILL.md`, so
-    /// `--batch` never discovers it) and ports to `<root>/RESOLVER.meri`, not
-    /// under `skillsOut` — migrated separately via single-file mode.
     let resolverOriginal: String
     let resolverOut: String
+    let migrationDeviations: String
+    let modulePath: String?
 }
 
-let corpora = [
-    Corpus(
-        id: "gbrain",
-        originals: "sample-gbrain/original-skills",
-        vocab: "sample-gbrain/brain.merconfig",
-        rulebook: "sample-gbrain/brain.merrules",
-        skillsOut: "sample-gbrain/skills",
-        resolverOriginal: "sample-gbrain/original-skills/RESOLVER.md",
-        resolverOut: "sample-gbrain/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "erp",
-        originals: "corpora/erp/original-skills",
-        vocab: "corpora/erp/erp.merconfig",
-        rulebook: "corpora/erp/erp.merrules",
-        skillsOut: "corpora/erp/skills",
-        resolverOriginal: "corpora/erp/original-skills/RESOLVER.md",
-        resolverOut: "corpora/erp/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "procedures",
-        originals: "corpora/procedures/original-skills",
-        vocab: "corpora/procedures/procedures.merconfig",
-        rulebook: "corpora/procedures/procedures.merrules",
-        skillsOut: "corpora/procedures/skills",
-        resolverOriginal: "corpora/procedures/original-skills/RESOLVER.md",
-        resolverOut: "corpora/procedures/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "incident",
-        originals: "corpora/incident/original-skills",
-        vocab: "corpora/incident/incident.merconfig",
-        rulebook: "corpora/incident/incident.merrules",
-        skillsOut: "corpora/incident/skills",
-        resolverOriginal: "corpora/incident/original-skills/RESOLVER.md",
-        resolverOut: "corpora/incident/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "etl",
-        originals: "corpora/etl/original-skills",
-        vocab: "corpora/etl/etl.merconfig",
-        rulebook: "corpora/etl/etl.merrules",
-        skillsOut: "corpora/etl/skills",
-        resolverOriginal: "corpora/etl/original-skills/RESOLVER.md",
-        resolverOut: "corpora/etl/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "governance",
-        originals: "corpora/governance/original-skills",
-        vocab: "corpora/governance/governance.merconfig",
-        rulebook: "corpora/governance/governance.merrules",
-        skillsOut: "corpora/governance/skills",
-        resolverOriginal: "corpora/governance/original-skills/RESOLVER.md",
-        resolverOut: "corpora/governance/RESOLVER.meri"
-    ),
-    Corpus(
-        id: "clinical",
-        originals: "corpora/clinical/original-skills",
-        vocab: "corpora/clinical/clinical.merconfig",
-        rulebook: "corpora/clinical/clinical.merrules",
-        skillsOut: "corpora/clinical/skills",
-        resolverOriginal: "corpora/clinical/original-skills/RESOLVER.md",
-        resolverOut: "corpora/clinical/RESOLVER.meri"
-    ),
-]
+struct CorpusCatalogFile: Decodable {
+    let corpora: [CorpusRecord]
+}
+
+func loadCorpusCatalog() throws -> CorpusCatalogFile {
+    let url = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("corpus-catalog.json")
+    return try JSONDecoder().decode(CorpusCatalogFile.self, from: Data(contentsOf: url))
+}
+
+func selectCorpora(id: String, catalog: CorpusCatalogFile) throws -> [CorpusRecord] {
+    if id == "all" { return catalog.corpora }
+    let matches = catalog.corpora.filter { $0.id == id }
+    guard !matches.isEmpty else {
+        let available = catalog.corpora.map(\.id).sorted().joined(separator: ", ")
+        throw NSError(domain: "CorpusCatalog", code: 1,
+                      userInfo: [NSLocalizedDescriptionKey: "unknown corpus: \(id) (available: \(available))"])
+    }
+    return matches
+}
 
 struct Options {
     var corpus = "all"
     var routeFuzzy = true
 }
 
-func usage() -> String {
-    """
-    usage: swift scripts/generate-migration.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all] [--no-route-fuzzy]
+func usage(catalog: CorpusCatalogFile) -> String {
+    let ids = catalog.corpora.map(\.id).sorted().joined(separator: "|")
+    return """
+    usage: swift scripts/generate-migration.swift [--corpus \(ids)|all] [--no-route-fuzzy]
 
     Batch re-migrates <root>/original-skills/**/SKILL.md into <root>/skills/*.meri
     (AGENTS.md Phase 3, "batch re-migrate the remaining skills") using:
@@ -123,10 +81,9 @@ func parseArgs() -> Options {
         case "--no-route-fuzzy":
             options.routeFuzzy = false
         case "-h", "--help":
-            print(usage())
-            exit(0)
+            return options
         default:
-            FileHandle.standardError.write(Data("unknown argument: \(arg)\n\(usage())\n".utf8))
+            FileHandle.standardError.write(Data("unknown argument: \(arg)\n".utf8))
             exit(2)
         }
     }
@@ -150,16 +107,26 @@ func run(_ executable: String, _ arguments: [String]) -> (status: Int32, output:
     return (process.terminationStatus, String(decoding: data, as: UTF8.self))
 }
 
+let catalog: CorpusCatalogFile
+do {
+    catalog = try loadCorpusCatalog()
+} catch {
+    FileHandle.standardError.write(Data("\(error)\n".utf8))
+    exit(1)
+}
+
 let options = parseArgs()
-let selected: [Corpus]
-if options.corpus == "all" {
-    selected = corpora
-} else {
-    selected = corpora.filter { $0.id == options.corpus }
-    if selected.isEmpty {
-        FileHandle.standardError.write(Data("unknown corpus: \(options.corpus)\n\(usage())\n".utf8))
-        exit(2)
-    }
+if CommandLine.arguments.contains("-h") || CommandLine.arguments.contains("--help") {
+    print(usage(catalog: catalog))
+    exit(0)
+}
+
+let selected: [CorpusRecord]
+do {
+    selected = try selectCorpora(id: options.corpus, catalog: catalog)
+} catch {
+    FileHandle.standardError.write(Data("\(error.localizedDescription)\n\(usage(catalog: catalog))\n".utf8))
+    exit(2)
 }
 
 var failures = 0

@@ -130,7 +130,7 @@ public struct InertYieldAnalyzer {
         let knowledge = try compiler.knowledge(
             forSource: meriSource, sourceFile: file,
             vocabularies: vocabularies, rulebooks: rulebookInputs)
-        let metrics = SkillMetrics.analyze(meriSource, rulebook: knowledge.rulebook)
+        let metrics = SkillMetrics.analyze(meriSource, rulebook: knowledge.rulebook, lexicon: knowledge.lexicon)
         let sections = metrics.inertDetails.map { analyzeSection($0, knowledge: knowledge) }
         return FileYield(file: file, sections: sections)
     }

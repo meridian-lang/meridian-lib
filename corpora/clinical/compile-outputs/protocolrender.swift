@@ -405,7 +405,9 @@ public struct ProtocolRenderMedication: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "protocol render",
@@ -507,7 +509,9 @@ public struct WhenRenderprotocolFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "protocol render",
@@ -539,7 +543,7 @@ public struct WhenRenderprotocolFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/1281de4a1190ea9a254f7521abbbff257c3cfcdbe854e97907ca7f3027aec81f") {
             // L1
-            try await runtime.wait(.event("renderProtocol", matching: nil))
+            try await runtime.wait(.event("renderProtocol", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRenderprotocolFires/root/procedure/1281de4a1190ea9a254f7521abbbff257c3cfcdbe854e97907ca7f3027aec81f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/46ce0727b0fc2d5810ac16b8c3f70cfe58d54941eedef79f63f427d6daa69e1d") {
@@ -581,7 +585,9 @@ public struct WhenLookupdosingprotocolFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "protocol render",
@@ -613,7 +619,7 @@ public struct WhenLookupdosingprotocolFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/36f16d8518bdc8e9b9d9099cc58d27f9ebbae5e9ea409d683516f55880f7210a") {
             // L1
-            try await runtime.wait(.event("lookUpDosingProtocol", matching: nil))
+            try await runtime.wait(.event("lookUpDosingProtocol", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenLookupdosingprotocolFires/root/procedure/36f16d8518bdc8e9b9d9099cc58d27f9ebbae5e9ea409d683516f55880f7210a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/20b34e21f06fce5531b9afd235538425a5698190f7e1bae5aaf9dbe1fa96e014") {

@@ -544,7 +544,9 @@ public struct ReturnsProcessing: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
@@ -624,6 +626,7 @@ public struct ReturnsProcessing: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/ReturnsProcessing/workflow/procedure/branch.then/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReturnsProcessing/workflow/procedure/b9964351dde7ce64f0b91ef302bbdd67dc10ce8c7a4a9cb46f44d4229d7bbb2a")
         }
 
         // L21
@@ -643,6 +646,7 @@ public struct ReturnsProcessing: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/ReturnsProcessing/workflow/procedure/branch.then/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5~2", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ReturnsProcessing/workflow/procedure/4d96aeb15fce54ee8efd9c11318a23f75f5767a141cbe8e9ef5d541438f55da8")
         }
 
         if __meridianShouldRun("/ReturnsProcessing/workflow/procedure/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1") {
@@ -697,7 +701,9 @@ public struct WhenProcessreturnsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
@@ -729,7 +735,7 @@ public struct WhenProcessreturnsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessreturnsFires/root/procedure/eba10ccaba5fa1a0fe17404ff0b7831bde10ba20bf49abf0bd4950d305a4f784") {
             // L1
-            try await runtime.wait(.event("processReturns", matching: nil))
+            try await runtime.wait(.event("processReturns", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessreturnsFires/root/procedure/eba10ccaba5fa1a0fe17404ff0b7831bde10ba20bf49abf0bd4950d305a4f784", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessreturnsFires/root/procedure/9042bfb15652aefa764495263d508009d8109a686a46a6c69b116b98d33fa94c") {
@@ -771,7 +777,9 @@ public struct WhenRoutereturnedordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
@@ -803,7 +811,7 @@ public struct WhenRoutereturnedordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRoutereturnedordersFires/root/procedure/26461a16cdf6eae63d323972eb72312e92af62ec3b9c4536a915f4cd9e7e40f2") {
             // L1
-            try await runtime.wait(.event("routeReturnedOrders", matching: nil))
+            try await runtime.wait(.event("routeReturnedOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRoutereturnedordersFires/root/procedure/26461a16cdf6eae63d323972eb72312e92af62ec3b9c4536a915f4cd9e7e40f2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRoutereturnedordersFires/root/procedure/baeee9a775e8f3b0de234607f1e2a7febb45f6a82b948afcfef897091c435af8") {

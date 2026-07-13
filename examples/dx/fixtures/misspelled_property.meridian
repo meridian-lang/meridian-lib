@@ -1,0 +1,9 @@
+---
+vocabulary: dx.merconfig
+---
+
+Definition: an order is overdue if it has no ident.
+
+To inspect an order:
+  if the order is overdue,
+    complete with reason "late".

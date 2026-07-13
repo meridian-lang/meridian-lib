@@ -296,10 +296,9 @@ struct SwiftEmitterPrimitiveTests {
         #expect(!out.contains("} else {"))
     }
 
-    // 8B/E: `branch.taken` instrumentation — every arm records which one ran
-    // (`TraceTreeRenderer` already renders the `branched` kind; this call
-    // site was the only missing link).
-    @Test("branch with else emits branch.taken in both the then and else arms")
+    // 8B/E: `branch.taken` / `branch.end` instrumentation — every arm records
+    // which one ran and closes the arm so TraceTreeRenderer can nest the body.
+    @Test("branch with else emits branch.taken/end in both the then and else arms")
     func branchTakenInstrumentation() {
         let thenBlock = IRBlock(statements: [.complete(CompleteIR(reason: "ok"))])
         let elseBlock = IRBlock(statements: [.complete(CompleteIR(reason: "nok"))])
@@ -312,11 +311,15 @@ struct SwiftEmitterPrimitiveTests {
         let out = emitter.emitBranch(ir, ctx: ctx, workflow: workflow()).toString()
         #expect(out.contains("try await runtime.recordBranchTaken(condition: \"true\", into: \"then\", step: \"/Test/root/branch\")"),
                 Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchEnded(into: \"then\", step: \"/Test/root/branch\")"),
+                Comment(rawValue: out))
         #expect(out.contains("try await runtime.recordBranchTaken(condition: \"true\", into: \"otherwise\", step: \"/Test/root/branch\")"),
+                Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchEnded(into: \"otherwise\", step: \"/Test/root/branch\")"),
                 Comment(rawValue: out))
     }
 
-    @Test("match branch emits branch.taken per case, using the pattern as `into`")
+    @Test("match branch emits branch.taken/end per case, using the pattern as `into`")
     func branchTakenInstrumentationMatch() {
         let done = IRBlock(statements: [.complete(CompleteIR(reason: "matched"))])
         let fallback = IRBlock(statements: [.complete(CompleteIR(reason: "fallback"))])
@@ -329,7 +332,11 @@ struct SwiftEmitterPrimitiveTests {
         let out = emitter.emitBranch(ir, ctx: ctx, workflow: workflow()).toString()
         #expect(out.contains("try await runtime.recordBranchTaken(condition: \"state.get(\\\"choice\\\")\", into: \"literal(string(\\\"yes\\\"))\", step: \"branch\")"),
                 Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchEnded(into: \"literal(string(\\\"yes\\\"))\", step: \"branch\")"),
+                Comment(rawValue: out))
         #expect(out.contains("try await runtime.recordBranchTaken(condition: \"state.get(\\\"choice\\\")\", into: \"otherwise\", step: \"branch\")"),
+                Comment(rawValue: out))
+        #expect(out.contains("try await runtime.recordBranchEnded(into: \"otherwise\", step: \"branch\")"),
                 Comment(rawValue: out))
     }
 

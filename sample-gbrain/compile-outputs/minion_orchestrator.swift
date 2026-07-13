@@ -591,7 +591,9 @@ public struct MinionOrchestratorInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -672,7 +674,9 @@ public struct WhenGbrainjobssubmitFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -703,7 +707,7 @@ public struct WhenGbrainjobssubmitFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c") {
             // L1
-            try await runtime.wait(.event("gbrainJobsSubmit", matching: nil))
+            try await runtime.wait(.event("gbrainJobsSubmit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainjobssubmitFires/root/procedure/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65") {
@@ -745,7 +749,9 @@ public struct WhenSubmitgbrainjobFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -776,7 +782,7 @@ public struct WhenSubmitgbrainjobFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d") {
             // L1
-            try await runtime.wait(.event("submitGbrainJob", matching: nil))
+            try await runtime.wait(.event("submitGbrainJob", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSubmitgbrainjobFires/root/procedure/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483") {
@@ -818,7 +824,9 @@ public struct WhenSubmitshelljobFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -849,7 +857,7 @@ public struct WhenSubmitshelljobFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c") {
             // L1
-            try await runtime.wait(.event("submitShellJob", matching: nil))
+            try await runtime.wait(.event("submitShellJob", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSubmitshelljobFires/root/procedure/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e") {
@@ -891,7 +899,9 @@ public struct WhenShelljobFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -922,7 +932,7 @@ public struct WhenShelljobFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShelljobFires/root/procedure/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e") {
             // L1
-            try await runtime.wait(.event("shellJob", matching: nil))
+            try await runtime.wait(.event("shellJob", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShelljobFires/root/procedure/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShelljobFires/root/procedure/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e") {
@@ -964,7 +974,9 @@ public struct WhenRunshellcommandinbackgroundFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -995,7 +1007,7 @@ public struct WhenRunshellcommandinbackgroundFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6") {
             // L1
-            try await runtime.wait(.event("runShellCommandInBackground", matching: nil))
+            try await runtime.wait(.event("runShellCommandInBackground", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunshellcommandinbackgroundFires/root/procedure/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8") {
@@ -1037,7 +1049,9 @@ public struct WhenDeterministicbackgroundtaskFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1068,7 +1082,7 @@ public struct WhenDeterministicbackgroundtaskFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e") {
             // L1
-            try await runtime.wait(.event("deterministicBackgroundTask", matching: nil))
+            try await runtime.wait(.event("deterministicBackgroundTask", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDeterministicbackgroundtaskFires/root/procedure/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251") {
@@ -1110,7 +1124,9 @@ public struct WhenSpawnagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1141,7 +1157,7 @@ public struct WhenSpawnagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288") {
             // L1
-            try await runtime.wait(.event("spawnAgent", matching: nil))
+            try await runtime.wait(.event("spawnAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSpawnagentFires/root/procedure/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020") {
@@ -1183,7 +1199,9 @@ public struct WhenBackgroundtaskFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1214,7 +1232,7 @@ public struct WhenBackgroundtaskFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b") {
             // L1
-            try await runtime.wait(.event("backgroundTask", matching: nil))
+            try await runtime.wait(.event("backgroundTask", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBackgroundtaskFires/root/procedure/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf") {
@@ -1256,7 +1274,9 @@ public struct WhenRuninbackgroundFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1287,7 +1307,7 @@ public struct WhenRuninbackgroundFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8") {
             // L1
-            try await runtime.wait(.event("runInBackground", matching: nil))
+            try await runtime.wait(.event("runInBackground", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRuninbackgroundFires/root/procedure/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9") {
@@ -1329,7 +1349,9 @@ public struct WhenCheckagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1360,7 +1382,7 @@ public struct WhenCheckagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckagentFires/root/procedure/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041") {
             // L1
-            try await runtime.wait(.event("checkAgent", matching: nil))
+            try await runtime.wait(.event("checkAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckagentFires/root/procedure/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckagentFires/root/procedure/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7") {
@@ -1402,7 +1424,9 @@ public struct WhenAgentprogressFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1433,7 +1457,7 @@ public struct WhenAgentprogressFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166") {
             // L1
-            try await runtime.wait(.event("agentProgress", matching: nil))
+            try await runtime.wait(.event("agentProgress", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAgentprogressFires/root/procedure/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186") {
@@ -1475,7 +1499,9 @@ public struct WhenWhatsrunningFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1506,7 +1532,7 @@ public struct WhenWhatsrunningFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2") {
             // L1
-            try await runtime.wait(.event("whatSRunning", matching: nil))
+            try await runtime.wait(.event("whatSRunning", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatsrunningFires/root/procedure/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee") {
@@ -1548,7 +1574,9 @@ public struct WhenSteeragentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1579,7 +1607,7 @@ public struct WhenSteeragentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSteeragentFires/root/procedure/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03") {
             // L1
-            try await runtime.wait(.event("steerAgent", matching: nil))
+            try await runtime.wait(.event("steerAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSteeragentFires/root/procedure/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSteeragentFires/root/procedure/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec") {
@@ -1621,7 +1649,9 @@ public struct WhenChangedirectionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1652,7 +1682,7 @@ public struct WhenChangedirectionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a") {
             // L1
-            try await runtime.wait(.event("changeDirection", matching: nil))
+            try await runtime.wait(.event("changeDirection", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenChangedirectionFires/root/procedure/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b") {
@@ -1694,7 +1724,9 @@ public struct WhenTellagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1725,7 +1757,7 @@ public struct WhenTellagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTellagentFires/root/procedure/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd") {
             // L1
-            try await runtime.wait(.event("tellAgent", matching: nil))
+            try await runtime.wait(.event("tellAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTellagentFires/root/procedure/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTellagentFires/root/procedure/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a") {
@@ -1767,7 +1799,9 @@ public struct WhenPauseagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1798,7 +1832,7 @@ public struct WhenPauseagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPauseagentFires/root/procedure/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc") {
             // L1
-            try await runtime.wait(.event("pauseAgent", matching: nil))
+            try await runtime.wait(.event("pauseAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPauseagentFires/root/procedure/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPauseagentFires/root/procedure/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6") {
@@ -1840,7 +1874,9 @@ public struct WhenStopagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1871,7 +1907,7 @@ public struct WhenStopagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenStopagentFires/root/procedure/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293") {
             // L1
-            try await runtime.wait(.event("stopAgent", matching: nil))
+            try await runtime.wait(.event("stopAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenStopagentFires/root/procedure/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenStopagentFires/root/procedure/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2") {
@@ -1913,7 +1949,9 @@ public struct WhenResumeagentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -1944,7 +1982,7 @@ public struct WhenResumeagentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenResumeagentFires/root/procedure/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d") {
             // L1
-            try await runtime.wait(.event("resumeAgent", matching: nil))
+            try await runtime.wait(.event("resumeAgent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenResumeagentFires/root/procedure/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenResumeagentFires/root/procedure/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070") {
@@ -1986,7 +2024,9 @@ public struct WhenParalleltasksFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -2017,7 +2057,7 @@ public struct WhenParalleltasksFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a") {
             // L1
-            try await runtime.wait(.event("parallelTasks", matching: nil))
+            try await runtime.wait(.event("parallelTasks", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenParalleltasksFires/root/procedure/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0") {
@@ -2059,7 +2099,9 @@ public struct WhenFanoutFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -2090,7 +2132,7 @@ public struct WhenFanoutFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFanoutFires/root/procedure/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9") {
             // L1
-            try await runtime.wait(.event("fanOut", matching: nil))
+            try await runtime.wait(.event("fanOut", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFanoutFires/root/procedure/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFanoutFires/root/procedure/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c") {
@@ -2132,7 +2174,9 @@ public struct WhenDotheseinparallelFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "minion-orchestrator",
@@ -2163,7 +2207,7 @@ public struct WhenDotheseinparallelFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da") {
             // L1
-            try await runtime.wait(.event("doTheseInParallel", matching: nil))
+            try await runtime.wait(.event("doTheseInParallel", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDotheseinparallelFires/root/procedure/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397") {

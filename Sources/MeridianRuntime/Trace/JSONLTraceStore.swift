@@ -1,6 +1,6 @@
 import Foundation
 
-public actor JSONLTraceStore: TraceStore {
+public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
     private struct LineEnvelope: Codable {
         let record: TraceRecord
         let checksum: String
@@ -16,6 +16,7 @@ public actor JSONLTraceStore: TraceStore {
     private var nextIngestOrder: Int = 1
     private var tailHashByRun: [String: String] = [:]
     private var hasLoaded = false
+    private var pendingReadWarnings: [RuntimeArtifactWarning] = []
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
 
@@ -69,6 +70,7 @@ public actor JSONLTraceStore: TraceStore {
 
     public func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,
@@ -84,12 +86,13 @@ public actor JSONLTraceStore: TraceStore {
         } else if let pattern, let subject = pattern.subject, let indexed = subjectIndex[subject] {
             candidateIndices = indexed
         } else {
-            candidateIndices = scope == .acrossAllRuns ? timeIndex : Array(records.indices)
+            candidateIndices = (scope == .acrossAllRuns || scope == .acrossSkills) ? timeIndex : Array(records.indices)
         }
 
         return TraceStoreHelpers.filterAndSort(
             candidateIndices.lazy.map { self.records[$0] },
             scope: scope,
+            scopeSkills: scopeSkills,
             runID: runID,
             skillName: skillName,
             window: window,
@@ -110,6 +113,12 @@ public actor JSONLTraceStore: TraceStore {
     public func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
         try await ensureLoaded()
         return HashChain.verify(records: records, runID: runID)
+    }
+
+    public func consumeArtifactWarnings() async -> [RuntimeArtifactWarning] {
+        let warnings = pendingReadWarnings
+        pendingReadWarnings = []
+        return warnings
     }
 
     private func ensureLoaded() async throws {
@@ -158,6 +167,11 @@ public actor JSONLTraceStore: TraceStore {
                 }
                 validLineCount = index
                 try quarantineTornFinalLine(line)
+                recordReadWarning(
+                    code: "trace-store.read",
+                    message: "quarantined torn final JSONL line in \(fileURL.lastPathComponent)",
+                    runID: parsedRecords.last?.run ?? "unknown"
+                )
                 break
             }
         }
@@ -173,6 +187,18 @@ public actor JSONLTraceStore: TraceStore {
         let quarantineURL = fileURL.deletingLastPathComponent()
             .appendingPathComponent(fileURL.lastPathComponent + ".quarantine-\(stamp)")
         try Data(line.utf8).write(to: quarantineURL, options: .atomic)
+    }
+
+    private func recordReadWarning(code: String, message: String, runID: String) {
+        let warning = RuntimeArtifactWarning(
+            code: code,
+            message: message,
+            runID: runID,
+            artifactPath: fileURL.path
+        )
+        pendingReadWarnings.append(warning)
+        let redacted = RuntimeSecretRedaction.redact(warning.message)
+        fputs("meridian-runtime[\(warning.code)] run=\(runID): \(redacted)\n", stderr)
     }
 
     private func replaceInMemory(with newRecords: [TraceRecord]) {

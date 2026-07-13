@@ -105,12 +105,12 @@ struct TraceEvaluatorTests {
         try await store.append(record(id: "A", at: 10, run: "run-1", skill: "deploy", tag: .completed, subject: "deploy", outcome: .success))
 
         let strict = try await TraceEvaluator.evaluate(
-            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: pattern(.step("deploy"), .succeeded))),
+            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: pattern(.step("deploy"), .succeeded), holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)),
             store: store,
             context: .init(runID: "run-1", skillName: "deploy", evaluationInstant: date(20))
         )
         let indeterminate = try await TraceEvaluator.evaluate(
-            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("missing"), .succeeded), holds: pattern(.step("deploy"), .succeeded))),
+            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("missing"), .succeeded), holds: pattern(.step("deploy"), .succeeded), holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)),
             store: store,
             context: .init(runID: "run-1", skillName: "deploy", evaluationInstant: date(20))
         )
@@ -287,7 +287,7 @@ struct TraceEvaluatorTests {
 
         let negatedHolds = TraceEventPatternQuery(subject: .named("critical alert"), outcome: .occurred, negated: true)
         let value = try await TraceEvaluator.evaluate(
-            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: negatedHolds)),
+            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: negatedHolds, holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)),
             store: store,
             context: .init(runID: "run-1", skillName: "deploy", evaluationInstant: date(20))
         )
@@ -302,7 +302,7 @@ struct TraceEvaluatorTests {
 
         let negatedHolds = TraceEventPatternQuery(subject: .named("critical alert"), outcome: .occurred, negated: true)
         let value = try await TraceEvaluator.evaluate(
-            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: negatedHolds)),
+            temporal: TraceTemporalQuery(kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: negatedHolds, holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)),
             store: store,
             context: .init(runID: "run-1", skillName: "deploy", evaluationInstant: date(20))
         )
@@ -316,7 +316,7 @@ struct TraceEvaluatorTests {
         try await store.append(record(id: "B", at: 11, run: "run-2", skill: "deploy", tag: .failed, subject: "deploy", outcome: .failure))
 
         let value = try await TraceEvaluator.evaluate(
-            temporal: TraceTemporalQuery(scope: .acrossAllRuns, kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: pattern(.step("deploy"), .failed))),
+            temporal: TraceTemporalQuery(scope: .acrossAllRuns, kind: .sinceLast(anchor: pattern(.step("deploy"), .succeeded), holds: pattern(.step("deploy"), .failed), holdsStatePredicateJSON: nil, holdsUsesStateHistory: false)),
             store: store,
             context: .init(runID: "run-2", skillName: "deploy", evaluationInstant: date(20))
         )
@@ -400,6 +400,7 @@ private struct PermissiveTraceStore: TraceStore {
 
     func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,

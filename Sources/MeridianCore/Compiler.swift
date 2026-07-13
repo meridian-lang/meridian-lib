@@ -27,14 +27,26 @@ public struct Compiler {
         /// frontmatter policy at compile time. Default: `.strict` (every
         /// resolution failure raises a hard error).
         public var fallbackPolicy: FallbackPolicy
+        /// Directories searched for `import <module>` packages (`<path>/<name>/module.merconfig`).
+        public var moduleSearchPaths: [URL]
+        /// Directory used for relative module resolution (typically the importer's folder).
+        public var anchorDirectory: URL?
+        /// When true, `compileMultiFile` emits domain and workflow Swift into separate files.
+        public var emitMultiFile: Bool
         public init(emitterOptions: SwiftEmitter.Options = .init(),
                     trace: ParserTrace = .shared,
                     lexicon: EnglishLexicon = .default,
-                    fallbackPolicy: FallbackPolicy = .strict) {
+                    fallbackPolicy: FallbackPolicy = .strict,
+                    moduleSearchPaths: [URL] = [],
+                    anchorDirectory: URL? = nil,
+                    emitMultiFile: Bool = false) {
             self.emitterOptions = emitterOptions
             self.trace = trace
             self.lexicon = lexicon
             self.fallbackPolicy = fallbackPolicy
+            self.moduleSearchPaths = moduleSearchPaths
+            self.anchorDirectory = anchorDirectory
+            self.emitMultiFile = emitMultiFile
         }
     }
 
@@ -131,7 +143,7 @@ public struct Compiler {
         meridianFile: String = "workflow.meridian",
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput] = []
-    ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
+    ) throws -> (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input) {
         let trace = options.trace
         trace.resetProfile()
         let compileSpan = trace.push(.timing, "compile \(meridianFile)")
@@ -161,6 +173,28 @@ public struct Compiler {
         )
     }
 
+    /// Like `compileWithManifest`, but returns a domain/workflows Swift split.
+    public func compileMultiFile(
+        meridianSource: String,
+        meridianFile: String = "workflow.meridian",
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput] = []
+    ) throws -> (output: SwiftEmitter.MultiFileOutput, manifest: ManifestEmitter.Input) {
+        var splitOpts = options
+        splitOpts.emitMultiFile = true
+        let splitCompiler = Compiler(options: splitOpts)
+        let result = try splitCompiler.compileWithManifest(
+            meridianSource: meridianSource,
+            meridianFile: meridianFile,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks
+        )
+        guard let multi = result.multiFile else {
+            throw CompilerError.codegenError(message: "multi-file emit was not produced")
+        }
+        return (multi, result.manifest)
+    }
+
     public func compileToModel(
         meridianSource: String,
         meridianFile: String = "workflow.meridian",
@@ -187,45 +221,26 @@ public struct Compiler {
                                rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
                 .parse(meridianSource, file: meridianFile)
         }
-        try validateImports(ast.imports, against: vocabularies, file: meridianFile)
-        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
-
-        let effectivePolicy = effectiveFallbackPolicy(
-            metadata: ast.metadata,
-            sourceFile: meridianFile,
-            engine: engine
-        )
-        let lowering = makeLoweringContext(
+        let lowered = try lowerParsedAST(
             ast: ast,
-            sourceFile: meridianFile,
+            meridianFile: meridianFile,
             symbols: bootstrap.symbols,
+            config: bootstrap.config,
             lexicon: bootstrap.lexicon,
-            rulebook: bootstrap.rulebook,
             trace: trace,
-            fallbackPolicy: effectivePolicy,
-            engine: engine
-        )
-        let frontmatter = lowering.frontmatter
-        let lowerer = lowering.lowerer
-        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: false) }
-        let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
-        try engine.throwIfErrors()
-
-        workflows = addingSynthesizedTriggers(
-            to: workflows,
-            frontmatter: frontmatter,
-            metadata: ast.metadata,
-            sourceFile: meridianFile,
-            lexicon: bootstrap.lexicon,
             rulebook: bootstrap.rulebook,
-            trace: trace
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            authoredSource: meridianSource,
+            preRegistered: false,
+            engine: engine
         )
 
         return VerbalizerModel(
-            workflows: workflows,
+            workflows: lowered.workflows,
             loweredDefinitions: definitionInfos(
                 symbols: bootstrap.symbols,
-                loweredDefinitions: loweredDefinitions,
+                loweredDefinitions: lowered.loweredDefinitions,
                 inlineDefinitions: ast.definitions
             ),
             inlineDefinitions: ast.definitions,
@@ -335,8 +350,17 @@ public struct Compiler {
         }
         let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
 
+        let anchor = options.anchorDirectory
+            ?? meridianSources.first.map { URL(fileURLWithPath: ($0.file as NSString).deletingLastPathComponent) }
+            ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        var moduleImportSpecs: [ModuleImportSpec] = []
+        for meridian in meridianSources {
+            moduleImportSpecs += harvestModuleImports(from: meridian.source, file: meridian.file)
+        }
+
         var config = MerConfigFile()
         var seenNames: Set<String> = []
+        var localVocabConfigs: [MerConfigFile] = []
         for input in vocabularies {
             if !seenNames.insert(input.name).inserted {
                 throw CompilerError.diagnostics([
@@ -351,6 +375,26 @@ public struct Compiler {
                 try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
                     .parse(input.source, file: input.file)
             }
+            moduleImportSpecs += ModuleResolver.parseImportsLines(parsed.imports, file: input.file)
+            localVocabConfigs.append(parsed)
+        }
+
+        if !moduleImportSpecs.isEmpty {
+            let resolver = ModuleResolver(
+                moduleSearchPaths: options.moduleSearchPaths,
+                anchorDirectory: anchor,
+                trace: trace,
+                lexicon: lexicon
+            )
+            let resolution = try trace.phase("bootstrap.modules") {
+                try resolver.resolve(imports: moduleImportSpecs)
+            }
+            for mod in resolution.modules {
+                config = try config.merging(mod.config)
+            }
+            trace.log(.symbols, "module lockfile: \(resolution.lockfile.modules.count) entries")
+        }
+        for parsed in localVocabConfigs {
             config = try config.merging(parsed)
         }
         for meridian in meridianSources {
@@ -369,37 +413,9 @@ public struct Compiler {
         validateProductionTraceCapturePolicies(in: config, engine: engine)
         try engine.throwIfErrors()
 
-        lexicon = trace.phase("bootstrap.lexiconMerge") { lexicon.merging(
-            comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: config.languageSynonyms.durationSynonyms,
-            assertionSynonyms: config.languageSynonyms.assertionSynonyms,
-            normativeCueSynonyms: config.languageSynonyms.normativeCueSynonyms,
-            inferenceCueSynonyms: config.languageSynonyms.inferenceCueSynonyms,
-            referenceHeadingSynonyms: config.languageSynonyms.referenceHeadingSynonyms,
-            timestampProperty: config.languageSynonyms.timestampProperty,
-            emptySynonyms: config.languageSynonyms.emptySynonyms,
-            filledSynonyms: config.languageSynonyms.filledSynonyms,
-            pastWindowSynonyms: config.languageSynonyms.pastWindowSynonyms,
-            futureWindowSynonyms: config.languageSynonyms.futureWindowSynonyms,
-            timestampAliasSynonyms: config.languageSynonyms.timestampAliasSynonyms,
-            aggregateSynonyms: config.languageSynonyms.aggregateSynonyms,
-            superlativeSynonyms: config.languageSynonyms.superlativeSynonyms,
-            sortBySynonyms: config.languageSynonyms.sortBySynonyms,
-            ascendingSynonyms: config.languageSynonyms.ascendingSynonyms,
-            descendingSynonyms: config.languageSynonyms.descendingSynonyms,
-            possessiveSynonyms: config.languageSynonyms.possessiveSynonyms,
-            anaphoraSynonyms: config.languageSynonyms.anaphoraSynonyms,
-            conditionHeaderSynonyms: config.languageSynonyms.conditionHeaderSynonyms,
-            actionHeaderSynonyms: config.languageSynonyms.actionHeaderSynonyms,
-            wildcardSynonyms: config.languageSynonyms.wildcardSynonyms,
-            traceOutcomeSynonyms: config.languageSynonyms.traceOutcomeSynonyms,
-            traceAuxiliarySynonyms: config.languageSynonyms.traceAuxiliarySynonyms,
-            shellFenceSynonyms: config.languageSynonyms.shellFenceSynonyms,
-            fenceToolSynonyms: config.languageSynonyms.fenceToolMapping,
-            guardedFenceIntroducerSynonyms: config.languageSynonyms.guardedFenceIntroducerSynonyms,
-            fallbackChainIntroducerSynonyms: config.languageSynonyms.fallbackChainIntroducerSynonyms,
-            approvalToolSynonyms: config.languageSynonyms.approvalToolSynonyms
-        ) }
+        lexicon = trace.phase("bootstrap.lexiconMerge") {
+            lexicon.merging(from: config.languageSynonyms)
+        }
 
         let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
         let symbols = trace.phase("symbols") {
@@ -427,6 +443,10 @@ public struct Compiler {
         rulebooks: [RulebookInput] = []
     ) throws -> [String: String] {
         let trace = options.trace
+        trace.resetProfile()
+        let packSpan = trace.push(.timing, "compileSkillpack (\(skills.count) file(s))")
+        defer { trace.pop(packSpan); trace.profileSummary() }
+
         let engine = DiagnosticEngine(trace: trace)
         let bootstrap = try bootstrap(
             meridianSources: skills.map { ($0.source, $0.file) },
@@ -443,9 +463,11 @@ public struct Compiler {
         var parsed: [(ast: MeridianFile, file: String, engine: DiagnosticEngine)] = []
         for skill in skills {
             let engine = DiagnosticEngine(trace: trace)
-            let ast = try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                                         rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
-                .parse(skill.source, file: skill.file)
+            let ast = try trace.phase("parse \(skill.file)") {
+                try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
+                                   rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
+                    .parse(skill.source, file: skill.file)
+            }
             parsed.append((ast, skill.file, engine))
         }
 
@@ -491,15 +513,24 @@ public struct Compiler {
         authoredSource: String,
         preRegistered: Bool,
         engine: DiagnosticEngine
-    ) throws -> (swift: String, manifest: ManifestEmitter.Input) {
-        try validateImports(ast.imports, against: vocabularies, file: meridianFile)
-        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
-
-        let effectivePolicy = effectiveFallbackPolicy(
-            metadata: ast.metadata,
-            sourceFile: meridianFile,
+    ) throws -> (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input) {
+        let lowered = try lowerParsedAST(
+            ast: ast,
+            meridianFile: meridianFile,
+            symbols: symbols,
+            config: config,
+            lexicon: lexicon,
+            trace: trace,
+            rulebook: rulebook,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            authoredSource: authoredSource,
+            preRegistered: preRegistered,
             engine: engine
         )
+        let workflows = lowered.workflows
+        let loweredDefinitions = lowered.loweredDefinitions
+        let skillName = lowered.skillName
 
         let constantsDecl: SwiftEmitter.ConstantsDecl? = config.constants.isEmpty ? nil :
             SwiftEmitter.ConstantsDecl(entries: config.constants.map { c in
@@ -517,60 +548,13 @@ public struct Compiler {
                 )
             })
 
-        let domainDecl = try buildDomainDecl(from: config)
-
-        let lowering = makeLoweringContext(
-            ast: ast,
-            sourceFile: meridianFile,
-            symbols: symbols,
-            lexicon: lexicon,
-            rulebook: rulebook,
-            trace: trace,
-            fallbackPolicy: effectivePolicy,
-            engine: engine
-        )
-        let frontmatter = lowering.frontmatter
-
-        // Batch diagnostics collector — per-file, single-threaded (passed in so
-        // it also holds any parse-phase diagnostics). The lowerer recovers
-        // per-workflow/per-rule into this engine so one compile reports many
-        // errors; we throw the aggregate before codegen.
-        let lowerer = lowering.lowerer
-        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: preRegistered) }
-        // 2B: lower the registered checkable adjectives to file-scope helpers.
-        let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
-        // Surface all collected lowering diagnostics at once, before codegen.
-        try engine.throwIfErrors()
-
-        workflows = addingSynthesizedTriggers(
-            to: workflows,
-            frontmatter: frontmatter,
-            metadata: ast.metadata,
-            sourceFile: meridianFile,
-            lexicon: lexicon,
-            rulebook: rulebook,
-            trace: trace
-        )
-
-        let skillName = frontmatter.name
-            ?? meridianFile.replacingOccurrences(of: ".meridian", with: "")
-                .replacingOccurrences(of: ".meri", with: "")
-        let skillVersionHash = try TraceIdentityPlanner.skillVersionHash(
-            meridianSource: authoredSource,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
-        let runtimeTraceConfiguration = TraceIdentityPlanner.runtimeTraceConfiguration(
-            from: config,
-            skillName: skillName,
-            skillVersionHash: skillVersionHash,
-            workflows: workflows
-        )
-        workflows = try TraceIdentityPlanner.annotate(
-            workflows: workflows,
-            skillSections: ast.skillSections,
-            runtimeTraceConfiguration: runtimeTraceConfiguration
-        )
+        let domainDecl = try trace.phase("domainDecl") {
+            try buildDomainDecl(from: config)
+        }
+        if let domainDecl {
+            trace.log(.codegen,
+                      "domain decl: \(domainDecl.kinds.count) kind(s), \(domainDecl.enumerations.count) enum(s)")
+        }
 
         // Emit Swift
         let emitterOpts = SwiftEmitter.Options(
@@ -589,6 +573,21 @@ public struct Compiler {
                           fileMetadata: ast.metadata,
                           definitions: loweredDefinitions)
         }
+        let multiFile: SwiftEmitter.MultiFileOutput?
+        if options.emitMultiFile {
+            multiFile = try trace.phase("codegen-multi") {
+                try SwiftEmitter(options: emitterOpts, trace: trace)
+                    .emitMultiFile(workflows: workflows,
+                                   constantsDecl: constantsDecl,
+                                   instancesDecl: instancesDecl,
+                                   domainDecl: domainDecl,
+                                   fileMetadata: ast.metadata,
+                                   definitions: loweredDefinitions)
+            }
+            trace.log(.codegen, "multi-file emit: domain + workflows split")
+        } else {
+            multiFile = nil
+        }
 
         // C5: Rule manifest entries. Reclassify `ast.rules` independently of
         // the lowering pass above (whose attach/no-attach bookkeeping is
@@ -601,21 +600,54 @@ public struct Compiler {
         // `executes: true` here rather than threading attach status out of
         // the lowerer for this edge case.
         let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
-        let ruleManifestEntries: [ManifestEmitter.RuleManifestEntry] = ast.rules.map { raw in
-            guard let parsed = ruleAnalyzer.classify(raw) else {
+        let ruleManifestEntries: [ManifestEmitter.RuleManifestEntry] = try trace.phase("manifestRules") {
+            try ast.rules.map { raw in
+                guard let parsed = try ruleAnalyzer.classify(raw) else {
+                    return ManifestEmitter.RuleManifestEntry(
+                        text: raw.text, kind: "unknown", executes: false,
+                        source: .init(file: meridianFile, line: raw.sourceLine))
+                }
+                let (kind, bounded) = Compiler.ruleManifestKind(parsed)
                 return ManifestEmitter.RuleManifestEntry(
-                    text: raw.text, kind: "unknown", executes: false,
+                    text: raw.text, kind: kind, executes: true, bounded: bounded,
                     source: .init(file: meridianFile, line: raw.sourceLine))
             }
-            let (kind, bounded) = Compiler.ruleManifestKind(parsed)
-            return ManifestEmitter.RuleManifestEntry(
-                text: raw.text, kind: kind, executes: true, bounded: bounded,
-                source: .init(file: meridianFile, line: raw.sourceLine))
         }
+        trace.log(.codegen, "manifest rules: \(ruleManifestEntries.count) entr\(ruleManifestEntries.count == 1 ? "y" : "ies")")
 
         // Assemble the COMPLETE manifest Input as part of every compile. The
         // rich data computed here (workflows, outline, recorded sections) is no
         // longer discarded — the host emits the manifest from this Input.
+        let verbalizerModel = VerbalizerModel(
+            workflows: workflows,
+            loweredDefinitions: definitionInfos(
+                symbols: symbols,
+                loweredDefinitions: loweredDefinitions,
+                inlineDefinitions: ast.definitions
+            ),
+            inlineDefinitions: ast.definitions,
+            symbols: symbols,
+            lexicon: lexicon,
+            sourceFileName: meridianFile,
+            authoredSource: authoredSource,
+            metadata: ast.metadata,
+            outline: ast.outline,
+            skillSections: ast.skillSections,
+            toolsUsed: ast.toolsUsed
+        )
+        let skillVersionHash = try TraceIdentityPlanner.skillVersionHash(
+            meridianSource: authoredSource,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks
+        )
+        let obligationDocument = try trace.phase("obligationDocument") {
+            try ObligationDocumentBuilder.build(
+                from: verbalizerModel,
+                options: .init(skillName: skillName, skillVersionHash: skillVersionHash)
+            )
+        }
+        trace.log(.codegen,
+                  "obligation document: \(obligationDocument.obligations.count) obligation(s)")
         let manifestInput = ManifestEmitter.Input(
             sourceFiles: [meridianFile] + vocabularies.map(\.file),
             workflows: workflows,
@@ -660,9 +692,10 @@ public struct Compiler {
                         base: $0.base, thirdPerson: $0.thirdPerson,
                         pastParticiple: $0.pastParticiple, relation: $0.relation, line: $0.sourceLine)
                 },
-            skillVersionHash: skillVersionHash
+            skillVersionHash: skillVersionHash,
+            obligations: obligationDocument.obligations
         )
-        return (swift, manifestInput)
+        return (swift, multiFile, manifestInput)
     }
 
     private func duplicateInputHelp(for mode: BootstrapInputMode) -> DuplicateInputHelp {
@@ -708,6 +741,83 @@ public struct Compiler {
     private struct LoweringContext {
         let lowerer: ASTToIR
         let frontmatter: SkillFrontmatter
+    }
+
+    private struct LoweredCompileUnit {
+        let workflows: [IRWorkflow]
+        let loweredDefinitions: [LoweredDefinition]
+        let frontmatter: SkillFrontmatter
+        let skillName: String
+    }
+
+    /// Shared parse→lower→trigger→obligation path for `compileToModel` and
+    /// `lowerAndEmit`. Preserves `preRegistered`, trace phases, and diagnostics.
+    private func lowerParsedAST(
+        ast: MeridianFile,
+        meridianFile: String,
+        symbols: SymbolTable,
+        config: MerConfigFile,
+        lexicon: EnglishLexicon,
+        trace: ParserTrace,
+        rulebook: Rulebook,
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput],
+        authoredSource: String,
+        preRegistered: Bool,
+        engine: DiagnosticEngine
+    ) throws -> LoweredCompileUnit {
+        try validateImports(ast.imports, against: vocabularies, file: meridianFile)
+        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
+
+        let effectivePolicy = effectiveFallbackPolicy(
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            engine: engine
+        )
+        let lowering = makeLoweringContext(
+            ast: ast,
+            sourceFile: meridianFile,
+            symbols: symbols,
+            lexicon: lexicon,
+            rulebook: rulebook,
+            trace: trace,
+            fallbackPolicy: effectivePolicy,
+            engine: engine
+        )
+        let frontmatter = lowering.frontmatter
+        let lowerer = lowering.lowerer
+        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: preRegistered) }
+        let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
+        try engine.throwIfErrors()
+
+        workflows = addingSynthesizedTriggers(
+            to: workflows,
+            frontmatter: frontmatter,
+            metadata: ast.metadata,
+            sourceFile: meridianFile,
+            lexicon: lexicon,
+            rulebook: rulebook,
+            trace: trace
+        )
+        let skillName = frontmatter.name
+            ?? meridianFile.replacingOccurrences(of: ".meridian", with: "")
+                .replacingOccurrences(of: ".meri", with: "")
+        workflows = try annotateAndStampObligations(
+            workflows: workflows,
+            skillSections: ast.skillSections,
+            config: config,
+            skillName: skillName,
+            authoredSource: authoredSource,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks,
+            trace: trace
+        )
+        return LoweredCompileUnit(
+            workflows: workflows,
+            loweredDefinitions: loweredDefinitions,
+            frontmatter: frontmatter,
+            skillName: skillName
+        )
     }
 
     private func makeLoweringContext(
@@ -762,6 +872,44 @@ public struct Compiler {
             .synthesize(triggers, sourceFile: sourceFile)
     }
 
+    private func annotateAndStampObligations(
+        workflows: [IRWorkflow],
+        skillSections: [SkillSectionRecord],
+        config: MerConfigFile,
+        skillName: String,
+        authoredSource: String,
+        vocabularies: [VocabularyInput],
+        rulebooks: [RulebookInput],
+        trace: ParserTrace
+    ) throws -> [IRWorkflow] {
+        let skillVersionHash = try trace.phase("traceIdentity.hash") {
+            try TraceIdentityPlanner.skillVersionHash(
+                meridianSource: authoredSource,
+                vocabularies: vocabularies,
+                rulebooks: rulebooks
+            )
+        }
+        let runtimeTraceConfiguration = TraceIdentityPlanner.runtimeTraceConfiguration(
+            from: config,
+            skillName: skillName,
+            skillVersionHash: skillVersionHash,
+            workflows: workflows
+        )
+        var annotated = try trace.phase("traceIdentity.annotate") {
+            try TraceIdentityPlanner.annotate(
+                workflows: workflows,
+                skillSections: skillSections,
+                runtimeTraceConfiguration: runtimeTraceConfiguration
+            )
+        }
+        trace.log(.codegen, "trace identity: annotated \(annotated.count) workflow(s)")
+        annotated = try trace.phase("obligationStamp") {
+            try ObligationIdStamper.stampContractAsserts(in: annotated)
+        }
+        trace.log(.codegen, "obligation stamp: contract asserts stamped")
+        return annotated
+    }
+
     /// Build the meridian-line → swift-line source map from the generated Swift
     /// by reading the `// L{n}` provenance comments codegen emits above each
     /// primitive. This is the compile→run bridge: a runtime JSONL event's Swift
@@ -790,6 +938,9 @@ public struct Compiler {
         case .trigger: return ("trigger", false)
         case .unsupportedTriggerCondition: return ("unsupportedTrigger", false)
         case .permission(_, _, _, _, let isBounded, _, _): return ("permission", isBounded)
+        case .deonticProhibition: return ("deonticProhibition", false)
+        case .deonticObligation: return ("deonticObligation", false)
+        case .deonticPermission: return ("deonticPermission", false)
         }
     }
 
@@ -1010,6 +1161,27 @@ public struct Compiler {
         return MerConfigFile(vocabulary: vocab)
     }
 
+    private func harvestModuleImports(from source: String, file: String) -> [ModuleImportSpec] {
+        let lines = source.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return [] }
+        var entries: [String: String] = [:]
+        var i = 1
+        while i < lines.count {
+            let line = lines[i]
+            if line.trimmingCharacters(in: .whitespaces) == "---" { break }
+            if let colon = line.firstIndex(of: ":") {
+                let key = String(line[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
+                var value = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
+                if value.hasPrefix("\"") && value.hasSuffix("\"") && value.count >= 2 {
+                    value = String(value.dropFirst().dropLast())
+                }
+                entries[key] = value
+            }
+            i += 1
+        }
+        return ModuleResolver.parseImportList(entries["imports"], file: file, line: 1)
+    }
+
     /// Verify each `vocabulary:` entry from the frontmatter resolves to one of
     /// the provided `VocabularyInput` names. The matcher accepts either the
     /// bare name (`foo`) or the file form (`foo.merconfig`). When
@@ -1021,8 +1193,15 @@ public struct Compiler {
     private func validateImports(_ imports: [ImportStatementAST],
                                  against vocabularies: [VocabularyInput],
                                  file: String) throws {
+        let vocabularyImports = imports.filter { $0.kind == .vocabulary }
+        let moduleImports = imports.filter { $0.kind == .module }
+        if !moduleImports.isEmpty && options.moduleSearchPaths.isEmpty
+            && options.anchorDirectory == nil {
+            // Module imports are resolved during bootstrap; validation here only
+            // checks legacy vocabulary references.
+        }
         if vocabularies.isEmpty {
-            guard let imp = imports.first else { return }
+            guard let imp = vocabularyImports.first else { return }
             let raw = imp.path.trimmingCharacters(in: .whitespacesAndNewlines)
             let token = raw.hasSuffix(".") ? String(raw.dropLast()) : raw
             throw CompilerError.diagnostics([
@@ -1037,7 +1216,7 @@ public struct Compiler {
         }
         let names  = Set(vocabularies.map(\.name))
         let files  = Set(vocabularies.map(\.file))
-        for imp in imports {
+        for imp in vocabularyImports {
             let raw = imp.path.trimmingCharacters(in: .whitespacesAndNewlines)
             let token = raw.hasSuffix(".") ? String(raw.dropLast()) : raw
             // Vocabulary tokens may carry path-like prefixes (`../foo.merconfig`)
@@ -1141,15 +1320,16 @@ public struct Compiler {
         // Build per-kind properties; flatten parent chain.
         // Stable iteration over kind declarations: source-line order.
         let kindList = kinds.values.sorted { $0.sourceLine < $1.sourceLine }
+        let knownKindNames = Set(kinds.keys.map { $0.lowercased() })
         let outKinds: [SwiftEmitter.DomainDecl.Kind] = kindList.map { k in
             let inheritedChain = ancestorChain(of: k.name, in: kinds)
             // Farthest ancestor first, nearest parent last (matches
             // `ancestorChain`'s ordering) — so a nearer declaration is a later
             // element here, which is what "nearest wins" dedup below relies on.
             let rawInherited = inheritedChain.flatMap { ancestor in
-                (props[ancestor] ?? []).map { propertyToDecl($0, kindName: ancestor, enumByKindProp: enumNameByKindProp) }
+                (props[ancestor] ?? []).map { propertyToDecl($0, kindName: ancestor, enumByKindProp: enumNameByKindProp, knownKindNames: knownKindNames) }
             }
-            let ownProps = (props[k.name] ?? []).map { propertyToDecl($0, kindName: k.name, enumByKindProp: enumNameByKindProp) }
+            let ownProps = (props[k.name] ?? []).map { propertyToDecl($0, kindName: k.name, enumByKindProp: enumNameByKindProp, knownKindNames: knownKindNames) }
             // A kind re-declaring an ancestor's property name — e.g. "A
             // clinician has a name and a role." / "A nurse has a name and a
             // dose count." — overrides that property, not duplicates it: the
@@ -1187,6 +1367,19 @@ public struct Compiler {
                 return nil
             }
             guard !defaults.isEmpty else { continue }
+            if defaults.count >= 2 {
+                let usuallyDefaults = defaults.filter { $0.lineEntry.name.isEmpty }
+                let uniqueUsually = Set(usuallyDefaults.map(\.value))
+                if usuallyDefaults.count >= 2, uniqueUsually.count > 1 {
+                    throw CompilerError.diagnostics(usuallyDefaults.map { entry in
+                        Diagnostic.error(
+                            .domainContradictoryDefault,
+                            message: "contradictory default for `\(kind)`: `\(entry.value)` conflicts with another `is usually` assertion",
+                            range: SourceRange(file: "<merged>", line: 0, column: 1),
+                            help: "Pick a single default case per kind, or split the kind so each default applies to a distinct property.")
+                    })
+                }
+            }
             var concrete = entries.filter { entry in
                 if case .enumeration(let cases, let defaultCase) = entry.type {
                     return !(entry.name.isEmpty && cases.isEmpty && defaultCase != nil)
@@ -1213,10 +1406,11 @@ public struct Compiler {
                 if case .enumeration(let cases, let existingDefault) = entry.type {
                     if let existingDefault,
                        existingDefault.caseInsensitiveCompare(defaultValue) != .orderedSame {
+                        let code: DiagnosticCode = entry.name.isEmpty ? .domainContradictoryDefault : .invalidEnumDefault
                         throw CompilerError.diagnostics([
                             Diagnostic.error(
-                                .invalidEnumDefault,
-                                message: "conflicting defaults for `\(kind).\(entry.name)`: `\(existingDefault)` and `\(defaultValue)`",
+                                code,
+                                message: "conflicting defaults for `\(kind).\(entry.name.isEmpty ? kind : entry.name)`: `\(existingDefault)` and `\(defaultValue)`",
                                 range: SourceRange(file: "<merged>", line: 1, column: 1),
                                 help: "Pick a single default case per enum property.")
                         ])
@@ -1251,13 +1445,14 @@ public struct Compiler {
 
     private func propertyToDecl(_ p: PropertyEntry,
                                 kindName: String,
-                                enumByKindProp: [String: String]) -> SwiftEmitter.DomainDecl.Property {
+                                enumByKindProp: [String: String],
+                                knownKindNames: Set<String>) -> SwiftEmitter.DomainDecl.Property {
         switch p.type {
         case .defaulted:
-            // Defaulted properties (no `which is …` clause) are scalar Strings.
             return .init(p.name, .scalar("String"))
-        case .explicit(let typeName):
-            return .init(p.name, .scalar(scalarTypeName(typeName)))
+        case .explicit, .listOf, .optional:
+            let swift = BuiltinScalarTypes.resolvePropertySwiftType(p.type, knownKindNames: knownKindNames)
+            return .init(p.name, .scalar(swift))
         case .enumeration(_, let defaultCase):
             // The enumeration's Swift type was registered above (same `props`
             // dict, same "kind|property" key) — the lookup is guaranteed to

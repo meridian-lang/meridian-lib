@@ -593,7 +593,9 @@ public struct StrategicReadingInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -663,7 +665,9 @@ public struct WhenStrategicreadingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -694,7 +698,7 @@ public struct WhenStrategicreadingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenStrategicreadingFires/root/procedure/1956fc56b65791d9a269b84487682cc652472ecb63ef9fff8914528c752862ab") {
             // L1
-            try await runtime.wait(.event("strategicReading", matching: nil))
+            try await runtime.wait(.event("strategicReading", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenStrategicreadingFires/root/procedure/1956fc56b65791d9a269b84487682cc652472ecb63ef9fff8914528c752862ab", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenStrategicreadingFires/root/procedure/848932458d26e662a889816cf7026dc6a88e97f648ebd128ab220e60c9dd7acc") {
@@ -736,7 +740,9 @@ public struct WhenReadthislensFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -767,7 +773,7 @@ public struct WhenReadthislensFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReadthislensFires/root/procedure/6860f5f204cb64c0d673fd661ea2b545694bd3b596d33535bbeef23775c973c7") {
             // L1
-            try await runtime.wait(.event("readThisLens", matching: nil))
+            try await runtime.wait(.event("readThisLens", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReadthislensFires/root/procedure/6860f5f204cb64c0d673fd661ea2b545694bd3b596d33535bbeef23775c973c7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReadthislensFires/root/procedure/5c00578cc2da21f445bbe5de33f65f3db3730122e10271a5866bb3e037615f53") {
@@ -809,7 +815,9 @@ public struct WhenApplythismyproblemFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -840,7 +848,7 @@ public struct WhenApplythismyproblemFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApplythismyproblemFires/root/procedure/e3578a017179e0b2b50dbf64b6d4548af5f91f5a21117c25bceea9f1236827d9") {
             // L1
-            try await runtime.wait(.event("applyThisMyProblem", matching: nil))
+            try await runtime.wait(.event("applyThisMyProblem", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApplythismyproblemFires/root/procedure/e3578a017179e0b2b50dbf64b6d4548af5f91f5a21117c25bceea9f1236827d9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApplythismyproblemFires/root/procedure/2c11a1761a149d76c97ea4139a26018bce3fc367c898bdb112e44011db8130fa") {
@@ -882,7 +890,9 @@ public struct WhenWhatcanilearnthisFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -913,7 +923,7 @@ public struct WhenWhatcanilearnthisFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatcanilearnthisFires/root/procedure/b522815097d5d33b52d515dac33c8199fddc3959cc01db26c733a402c540c336") {
             // L1
-            try await runtime.wait(.event("whatCanILearnThis", matching: nil))
+            try await runtime.wait(.event("whatCanILearnThis", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatcanilearnthisFires/root/procedure/b522815097d5d33b52d515dac33c8199fddc3959cc01db26c733a402c540c336", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatcanilearnthisFires/root/procedure/9c67e6e1df2ee85c980b2777d3aa55a3665b2d11eb0f2324aac6808250716f1f") {
@@ -955,7 +965,9 @@ public struct WhenExtractplaybookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "strategic-reading",
@@ -986,7 +998,7 @@ public struct WhenExtractplaybookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenExtractplaybookFires/root/procedure/234103ecd7219ebf95c2b0c5cd491f3599c983280032c7ef97b126ab846b267d") {
             // L1
-            try await runtime.wait(.event("extractPlaybook", matching: nil))
+            try await runtime.wait(.event("extractPlaybook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenExtractplaybookFires/root/procedure/234103ecd7219ebf95c2b0c5cd491f3599c983280032c7ef97b126ab846b267d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenExtractplaybookFires/root/procedure/3c147d47173ea2c57e53463146b181ea77a3dca7b016a4bded017302bee93b5f") {

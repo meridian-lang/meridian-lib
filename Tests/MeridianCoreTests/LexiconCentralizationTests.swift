@@ -501,3 +501,142 @@ struct SectionAliasDataTests {
         #expect(SkillSectionRole.builtinRole(forHeading: "Philosophy") == nil)
     }
 }
+
+@Suite("Lexicon merge recipe — Phase 1 cleanup categories")
+struct LexiconPhase1RecipeTests {
+    private func mergedLexicon(from cfg: String) throws -> EnglishLexicon {
+        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        return EnglishLexicon.default.merging(from: config.languageSynonyms)
+    }
+
+    @Test("vague-hedge and effectful-judgment synonyms merge into the lexicon")
+    func vagueHedgeAndEffectfulJudgment() throws {
+        let lex = try mergedLexicon(from: """
+        === language ===
+        Vague-hedge synonyms:
+          kinda
+        Effectful-judgment synonyms:
+          scrub the
+        """)
+        #expect(lex.conditionVagueHedges.contains("kinda"))
+        #expect(lex.effectfulJudgmentCuePhrases.contains("scrub the"))
+    }
+
+    @Test("article, preposition, copula, participle, and tool-stopword synonyms merge")
+    func surfaceVocabularySynonyms() throws {
+        let lex = try mergedLexicon(from: """
+        === language ===
+        Article synonyms:
+          da
+        Parameter-article synonyms:
+          ein
+        Preposition synonyms:
+          durch
+        Copula synonyms:
+          sein
+        Participle synonyms:
+          gekauft
+        Tool-stopword synonyms:
+          ausführen
+        """)
+        #expect(lex.articles.contains("da"))
+        #expect(lex.parameterArticles.contains("ein"))
+        #expect(lex.prepositions.contains("durch"))
+        #expect(lex.copulas.contains("sein"))
+        #expect(lex.participles.contains("gekauft"))
+        #expect(lex.toolStopwords.contains("ausführen"))
+    }
+
+    @Test("irregular-plural mapping and contract-reference synonyms merge")
+    func pluralAndContractReference() throws {
+        let lex = try mergedLexicon(from: """
+        === language ===
+        Irregular-plural mapping:
+          maus = mäuse
+        Contract-reference synonyms:
+          bereits erzwungen
+        """)
+        #expect(lex.pluralize("maus") == "mäuse")
+        #expect(lex.contractReferencePhrases.contains("bereits erzwungen"))
+    }
+
+    @Test("merging(from:) matches Compiler bootstrap lexicon merge")
+    func mergingFromMatchesBootstrap() throws {
+        let cfg = """
+        === language ===
+        Normative-cue synonyms:
+          shall
+        Shell fence synonyms:
+          fish
+        Vague-hedge synonyms:
+          kinda
+        """
+        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let fromHelper = EnglishLexicon.default.merging(from: config.languageSynonyms)
+        let fromBootstrap = try Compiler().knowledge(
+            forSource: "",
+            sourceFile: "probe.meri",
+            vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)]
+        ).lexicon
+        #expect(fromHelper.normativeCueWords == fromBootstrap.normativeCueWords)
+        #expect(fromHelper.shellFenceLanguages == fromBootstrap.shellFenceLanguages)
+        #expect(fromHelper.conditionVagueHedges == fromBootstrap.conditionVagueHedges)
+    }
+
+    @Test("custom shell fence is honored on migrator metrics path")
+    func customShellFenceOnMetricsPath() throws {
+        let cfg = """
+        === language ===
+        Shell fence synonyms:
+          fish
+        """
+        let lex = try mergedLexicon(from: cfg)
+        let body = """
+        To run:
+          ```fish
+          echo hi
+          ```
+        """
+        let metrics = SkillMetrics.analyze(body, lexicon: lex)
+        #expect(metrics.inertSections == 0)
+    }
+
+    @Test("definite-article take prefix still works after article synonym merge")
+    func articleTakePrefix() throws {
+        let lex = EnglishLexicon.default.merging(
+            comparisonSynonyms: [],
+            durationSynonyms: [:],
+            articleSynonyms: ["das"]
+        )
+        let out = try Compiler(options: .init(lexicon: lex, fallbackPolicy: .lenient)).compile(
+            meridianSource: """
+            To process:
+              for each the first 5 orders:
+                complete.
+            """,
+            meridianFile: "test.meridian",
+            merconfigSource: "",
+            merconfigFile: "test.merconfig"
+        )
+        #expect(out.contains(".prefix(5)"))
+    }
+
+    @Test("CanonicalForms.comparison round-trips equal and notEqual")
+    func comparisonRoundTripEqualNotEqual() throws {
+        let lex = EnglishLexicon.default
+        let cases: [(ComparisonOp, ComparisonOpAST, String)] = [
+            (.equal, .equal, "equals"),
+            (.notEqual, .notEqual, "is not"),
+        ]
+        for (irOp, astOp, surface) in cases {
+            #expect(CanonicalForms.comparison(irOp, lexicon: lex) == surface)
+            let parsed = ExpressionParser(symbols: nil, trace: .silent(), lexicon: lex)
+                .parse("the status \(surface) \"open\"")
+            if case .comparison(_, let parsedOp, _) = parsed {
+                #expect(parsedOp == astOp)
+            } else {
+                Issue.record("expected comparison for \(surface), got \(parsed)")
+            }
+        }
+    }
+}

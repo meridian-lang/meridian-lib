@@ -240,8 +240,12 @@ struct SkillSectionBuilder {
         let statement = group.head.statement
         guard analyzer.looksLikeRuleShapedSentence(statement) else { return nil }
         let candidate = RuleAST(text: statement, sourceLine: group.head.number)
-        guard analyzer.classify(candidate) != nil else { return nil }
-        return candidate
+        do {
+            guard try analyzer.classify(candidate) != nil else { return nil }
+            return candidate
+        } catch {
+            return candidate
+        }
     }
 
     /// Extract a tool id from a `## Tools Used` bullet. Two equally-valid forms

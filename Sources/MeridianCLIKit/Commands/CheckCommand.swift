@@ -27,6 +27,10 @@ public struct CheckCommand: AsyncParsableCommand {
             help: "Path to a .merconfig file. Repeatable; auto-discovers when omitted.")
     var merconfig: [String] = []
 
+    @Option(name: .long, parsing: .singleValue,
+            help: "Directory searched for shared module packages. Repeatable.")
+    var modulePath: [String] = []
+
     @OptionGroup var cliTrace: CLITraceOptions
 
     @Option(name: .long,
@@ -40,7 +44,7 @@ public struct CheckCommand: AsyncParsableCommand {
     var write: Bool = false
 
     public func run() async throws {
-        try await runDiagnosticsCheck(input: input, merconfig: merconfig,
+        try await runDiagnosticsCheck(input: input, merconfig: merconfig, modulePath: modulePath,
                                       trace: cliTrace.trace, traceFile: cliTrace.traceFile,
                                       traceFormat: cliTrace.traceFormat,
                                       format: diagnosticsFormat, fix: fix, write: write)

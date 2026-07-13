@@ -13,6 +13,84 @@ meridian --help
 meridian --version
 ```
 
+### `--module-path` (shared module imports)
+
+Five compile-family commands accept repeatable `--module-path <dir>` to search
+for shared Meridian module packages (`import module …` in source). See
+[22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md).
+
+| Command | `--module-path` |
+|---|---|
+| `compile` | yes |
+| `check` / `verify` | yes (`check` only; `verify` alias omits the flag) |
+| `explain` | yes |
+| `obligations` | yes |
+| `canonicalize` | yes |
+| All other subcommands (`drift`, `run`, `trace eval`, `migrate-skill`, …) | no |
+
+---
+
+## `meridian canonicalize`
+
+Compare authored Meridian source against its Canonical English form, report
+line-level drift hunks, and optionally ask an LLM to propose surface rewrites
+(dry-run only — never writes the source file).
+
+```bash
+meridian canonicalize <source> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable. |
+| `--module-path <dir>` | (none) | Directory searched for shared module packages. Repeatable. |
+| `--propose` | false | Ask the configured LLM provider to propose authored-line rewrites toward canonical English. Requires `MERIDIAN_LLM_API_URL`. |
+| `--llm <model>` | env default | Optional model override when `--propose` is set. |
+| `--json` | false | Emit a stable JSON drift or proposal report. |
+| `--trace <categories>` | (none) | Enable `ParserTrace`; useful categories include `verbalizer` and `drift`. |
+| `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+
+`canonicalize` shares the drift engine with `meridian drift` but adds optional
+LLM-backed rewrite proposals. Unlike `drift`, it also accepts `--module-path`
+for skills that import shared modules.
+
+```bash
+meridian canonicalize skill.meri \
+    --merconfig skill.merconfig \
+    --rulebook skill.merrules \
+    --json
+
+meridian canonicalize skill.meri --propose --llm gpt-4o-mini
+```
+
+---
+
+## `meridian mcp serve`
+
+Run a stdio Model Context Protocol server exposing Meridian compile/check/explain/obligations tools to MCP hosts.
+
+```bash
+meridian mcp serve [--once]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--once` | false | Handle one JSON-RPC request from stdin and exit (for tests). |
+
+This subcommand is the in-repo MCP integration surface. The standalone
+**MeridianMCP** product ships a dedicated MCP server binary for production
+deployments; `meridian mcp serve` mirrors the same tool surface for local
+development and CI.
+
+```bash
+# Long-running stdio server
+meridian mcp serve
+
+# Single-request harness (tests)
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' | meridian mcp serve --once
+```
+
 ---
 
 ## `meridian compile`
@@ -36,6 +114,7 @@ meridian compile <source> [options]
 |---|---|---|
 | `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. **Repeatable** — pass once per vocabulary. If omitted, all `.merconfig` files in the same directory as `<source>` are loaded (sorted alphabetically). Falls back to the parent directory if none are found there. |
 | `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. **Repeatable**. If omitted, all `.merrules` files in the same directory as `<source>` are loaded (sorted alphabetically), falling back to the parent directory. Required for skill files that reference `rulebook:` in frontmatter. |
+| `--module-path <dir>` | (none) | Directory searched for shared module packages. **Repeatable**. See [22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md). |
 | `-o, --output <dir>` | `build` | Directory to write the generated `.swift` and `.meridian.manifest.json`. Created with intermediate directories if needed. |
 | `--timestamp` | false | Include a generation timestamp in the generated file header. |
 | `--no-line-comments` | false | Suppress `// L{n}` source-line comments in generated code. |
@@ -134,8 +213,11 @@ meridian verify examples/order_processing.meridian \
     --trace phrase.match
 ```
 
-Both commands:
+Both commands share diagnostics and trace behavior. Only `check` accepts
+`--module-path` (the top-level `verify` alias does not expose that flag).
+
 - Accept a repeatable `--merconfig` flag (same auto-detection logic as `compile`).
+- `check` additionally accepts repeatable `--module-path <dir>`.
 - Accept `--trace <categories>` and `--trace-file <path>` (full parity with `compile`).
 - Accept `--diagnostics-format <human|json>`, `--fix`, and `--write` (same
   semantics as `compile`).
@@ -499,8 +581,10 @@ meridian explain <source> [options]
 |---|---|---|
 | `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable; same auto-detection as `compile`. |
 | `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable; same auto-detection as `compile`. |
+| `--module-path <dir>` | (none) | Directory searched for shared module packages. Repeatable. |
 | `--trace <categories>` | (none) | Enable `ParserTrace`; canonical emission logs under `verbalizer`. |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
+| `--no-obligation-ids` | false | Omit `[OBL-…]` obligation id annotations from canonical output. |
 
 Example:
 
@@ -510,10 +594,69 @@ meridian explain corpora/erp/skills/placeorder.meri \
     --rulebook corpora/erp/erp.merrules
 ```
 
-The output is intended for audit and review. It normalizes accepted synonyms and
-rulebook sugar to one stable spelling, and it omits documentation/reference
-sections that do not lower to IR. The SEM-8-03 gate recompiles this output and
-checks IR structural equality. See [18_VERBALIZER.md](18_VERBALIZER.md).
+Deontic norms and contract asserts are annotated with stable obligation ids by
+default (Wave 9). See [20_DEONTIC.md](20_DEONTIC.md) and
+[23_PROVER_READY_OBLIGATIONS.md](23_PROVER_READY_OBLIGATIONS.md).
+
+---
+
+## `meridian explain-swift`
+
+Explain Meridian-generated Swift by joining `// L{n}` provenance comments with
+the companion `.meridian.ir.json` sidecar emitted by `meridian compile`.
+
+```bash
+meridian explain-swift <generated.swift> [--sidecar <path>]
+```
+
+When `--sidecar` is omitted, the sidecar defaults to
+`<swift-stem>.meridian.ir.json` beside the Swift file.
+
+Example:
+
+```bash
+meridian compile skill.meridian --output build/
+meridian explain-swift build/skill.swift
+```
+
+---
+
+## `meridian obligations`
+
+Emit the prover-ready obligation artifact JSON for a compiled skill
+([SEM-8-02](cookbook/MERIDIAN_SEMANTICS.md)). Each norm and contract assert
+lowers to a versioned record with stable `OBL-<hash>` id, canonical English,
+and optional proof-IR projections.
+
+```bash
+meridian obligations <source> [options]
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable. |
+| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable. |
+| `--module-path <dir>` | (none) | Directory searched for shared module packages. Repeatable. |
+| `--output <path>` | stdout | Write JSON to this file instead of stdout. |
+| `--summary` | false | Print a one-line obligation summary per skill. |
+| `--schema` | false | Print the obligation artifact schema and exit. |
+| `--no-include-proof-ir` | false | Omit condition/action proof IR from each obligation. |
+| `--trace <categories>` | (none) | Enable compile-time tracing for the obligations phase. |
+
+Examples:
+
+```bash
+meridian obligations corpora/governance/skills/grantaccess.meri \
+    --merconfig corpora/governance/governance.merconfig \
+    --rulebook corpora/governance/governance.merrules
+
+meridian obligations skill.meri --summary
+meridian obligations --schema
+```
+
+Non-empty obligation sets also appear under `meridian_obligations` in
+`*.meridian.manifest.json` from `meridian compile`. Formal prover discharge is
+out of scope — see [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md).
 
 ---
 

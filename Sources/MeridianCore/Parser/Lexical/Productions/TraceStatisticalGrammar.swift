@@ -17,6 +17,29 @@ struct TraceStatisticalGrammar {
     }
 
     private func parseScoped(_ text: String) -> ExpressionAST? {
+        let acrossSkills = lexicon.grammar.traceAcrossSkillsMarker
+        if text.lowercased().hasPrefix(acrossSkills) {
+            let remainder = String(text.dropFirst(acrossSkills.count)).trimmingCharacters(in: .whitespaces)
+            let parts = remainder.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count >= 2 else { return nil }
+            for split in stride(from: parts.count - 1, through: 1, by: -1) {
+                let skills = Array(parts[0..<split]).filter { !$0.isEmpty }
+                let body = parts[split...].joined(separator: ", ").trimmingCharacters(in: .whitespaces)
+                guard !skills.isEmpty, !body.isEmpty, case .traceStatistical(let statistical)? = parseUnscoped(body) else { continue }
+                return .traceStatistical(TraceStatisticalAST(
+                    scope: .acrossSkills(skills),
+                    pattern: statistical.pattern,
+                    outcome: statistical.outcome,
+                    bound: statistical.bound,
+                    denominator: statistical.denominator,
+                    window: statistical.window,
+                    monitorCadence: statistical.monitorCadence,
+                    blocking: statistical.blocking,
+                    confidencePercent: statistical.confidencePercent
+                ))
+            }
+            return nil
+        }
         let marker = lexicon.grammar.traceAcrossAllRunsMarker
         guard text.lowercased().hasPrefix(marker) else { return nil }
         let remainder = String(text.dropFirst(marker.count)).trimmingCharacters(in: .whitespaces)
@@ -29,7 +52,8 @@ struct TraceStatisticalGrammar {
             denominator: statistical.denominator,
             window: statistical.window,
             monitorCadence: statistical.monitorCadence,
-            blocking: statistical.blocking
+            blocking: statistical.blocking,
+            confidencePercent: statistical.confidencePercent
         ))
     }
 
@@ -40,6 +64,11 @@ struct TraceStatisticalGrammar {
             working = String(working.dropLast(lexicon.grammar.traceStatisticalBlockingSuffix.count))
                 .trimmingCharacters(in: .whitespaces)
             blocking = true
+        }
+
+        var confidence: Double?
+        if let confidenceValue = parseConfidenceSuffix(&working) {
+            confidence = confidenceValue
         }
 
         var cadence: (Double, TimeUnitAST)?
@@ -66,7 +95,8 @@ struct TraceStatisticalGrammar {
                 denominator: .runs,
                 window: window,
                 monitorCadence: cadence,
-                blocking: blocking
+                blocking: blocking,
+                confidencePercent: confidence
             ))
         }
 
@@ -78,7 +108,8 @@ struct TraceStatisticalGrammar {
                 denominator: parsed.denominator,
                 window: window,
                 monitorCadence: cadence,
-                blocking: blocking
+                blocking: blocking,
+                confidencePercent: confidence
             ))
         }
 
@@ -184,6 +215,20 @@ struct TraceStatisticalGrammar {
         return numeric > 1 ? numeric / 100.0 : numeric
     }
 
+    private func parseConfidenceSuffix(_ text: inout String) -> Double? {
+        let marker = lexicon.grammar.traceStatisticalWithConfidenceMarker
+        let suffix = lexicon.grammar.traceStatisticalConfidenceSuffix
+        guard let range = QuoteAwareScanner.rangeOfMarker(marker, in: text) else { return nil }
+        let tail = String(text[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+        guard tail.lowercased().hasSuffix(suffix) else { return nil }
+        let percentText = String(tail.dropLast(suffix.count)).trimmingCharacters(in: .whitespaces)
+        guard let value = Double(percentText.replacingOccurrences(of: "%", with: "").trimmingCharacters(in: .whitespaces)) else {
+            return nil
+        }
+        text = String(text[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+        return value
+    }
+
     private func earlyDiagnostic(for text: String) -> ExpressionAST? {
         let lower = text.lowercased()
         if lower.contains(lexicon.grammar.traceStatisticalMostOfTimePhrase) {
@@ -191,14 +236,6 @@ struct TraceStatisticalGrammar {
                 "`most of the time` is intentionally unsupported in statistical predicates.",
                 code: .statisticalVagueFrequency,
                 help: "Use an explicit percentage or the fixed `usually` / `rarely` forms."
-            )
-        }
-        if lower.contains(lexicon.grammar.traceStatisticalConfidenceSuffix),
-           lower.contains(" with ") {
-            return .malformed(
-                "`with <n>% confidence` is reserved until confidence-interval semantics land.",
-                code: .statisticalConfidenceReserved,
-                help: "Remove the confidence clause for now and use the raw percentage threshold alone."
             )
         }
         return nil

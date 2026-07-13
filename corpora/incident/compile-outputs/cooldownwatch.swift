@@ -387,7 +387,9 @@ public struct CooldownWatch: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
@@ -474,6 +476,7 @@ public struct CooldownWatch: MeridianWorkflow {
 
                                 try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/branch.then/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76", state: state.snapshot())
                             }
+                            try await runtime.recordBranchEnded(into: "then", step: "/CooldownWatch/workflow/procedure/iterate.body/a536212f5ea2261fe5289492946513046ad7a4d73ce6a9d04dc512bbc25b2f73")
                         }
 
                         try await runtime.checkpoint(label: __meridianLoopLabel_0_3_body_0, state: state.snapshot())
@@ -488,7 +491,7 @@ public struct CooldownWatch: MeridianWorkflow {
 
         if __meridianShouldRun("/CooldownWatch/workflow/procedure/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f") {
             // L31
-            try await runtime.wait(.duration(.seconds(600)))
+            try await runtime.wait(.duration(.seconds(600)), sourceRange: nil)
             try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f", state: state.snapshot())
         }
         if __meridianShouldRun("/CooldownWatch/workflow/procedure/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6") {
@@ -541,7 +544,9 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
@@ -573,7 +578,7 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90") {
             // L1
-            try await runtime.wait(.event("watchAlertCooldown", matching: nil))
+            try await runtime.wait(.event("watchAlertCooldown", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWatchalertcooldownFires/root/procedure/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98") {
@@ -615,7 +620,9 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
@@ -647,7 +654,7 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297") {
             // L1
-            try await runtime.wait(.event("runCooldownWatch", matching: nil))
+            try await runtime.wait(.event("runCooldownWatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRuncooldownwatchFires/root/procedure/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3") {
@@ -689,7 +696,9 @@ public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
@@ -721,7 +730,7 @@ public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487") {
             // L1
-            try await runtime.wait(.event("runAlertCooldownPass", matching: nil))
+            try await runtime.wait(.event("runAlertCooldownPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunalertcooldownpassFires/root/procedure/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa") {

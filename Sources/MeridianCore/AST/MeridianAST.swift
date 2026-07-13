@@ -22,6 +22,30 @@ public struct LanguageSynonyms: Sendable {
     /// `Reference-heading synonyms:` block) — see
     /// `EnglishLexicon.referenceHeadingWords`.
     public let referenceHeadingSynonyms: [String]
+    /// Extra vague condition hedges (`=== language ===` `Vague-hedge synonyms:`).
+    public let conditionVagueHedgeSynonyms: [String]
+    /// Extra effectful-judgment goal cues (`=== language ===`
+    /// `Effectful-judgment synonyms:`).
+    public let effectfulJudgmentCueSynonyms: [String]
+    /// Extra definite/indefinite articles (`=== language ===` `Article synonyms:`).
+    public let articleSynonyms: [String]
+    /// Extra parameter-slot articles (`=== language ===`
+    /// `Parameter-article synonyms:`).
+    public let parameterArticleSynonyms: [String]
+    /// Extra preposition stop-words (`=== language ===` `Preposition synonyms:`).
+    public let prepositionSynonyms: [String]
+    /// Extra copula connectors (`=== language ===` `Copula synonyms:`).
+    public let copulaSynonyms: [String]
+    /// Extra past-participle stop signals (`=== language ===` `Participle synonyms:`).
+    public let participleSynonyms: [String]
+    /// Extra tool-resolution stop-words (`=== language ===`
+    /// `Tool-stopword synonyms:`).
+    public let toolStopwordSynonyms: [String]
+    /// Irregular plural overrides (`=== language ===` `Irregular-plural mapping:`).
+    public let irregularPluralSynonyms: [String: String]
+    /// Documentary contract-guard body phrases (`=== language ===`
+    /// `Contract-reference synonyms:`) — see `EnglishLexicon.contractReferencePhrases`.
+    public let contractReferenceSynonyms: [String]
     /// Optional override for the temporal-iteration timestamp property
     /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
     public let timestampProperty: String?
@@ -33,6 +57,8 @@ public struct LanguageSynonyms: Sendable {
     public let timestampAliasSynonyms: [String]
     public let aggregateSynonyms: [(String, AggregateKindAST)]
     public let superlativeSynonyms: [String: SuperlativeDirection]
+    /// Measurable backing for checkable adjectives (`Gradable adjectives:` block).
+    public let gradableAdjectiveSynonyms: [String: GradableAdjectiveMetadata]
     public let sortBySynonyms: [String]
     public let ascendingSynonyms: [String]
     public let descendingSynonyms: [String]
@@ -71,6 +97,16 @@ public struct LanguageSynonyms: Sendable {
                 normativeCueSynonyms: [String] = [],
                 inferenceCueSynonyms: [String] = [],
                 referenceHeadingSynonyms: [String] = [],
+                conditionVagueHedgeSynonyms: [String] = [],
+                effectfulJudgmentCueSynonyms: [String] = [],
+                articleSynonyms: [String] = [],
+                parameterArticleSynonyms: [String] = [],
+                prepositionSynonyms: [String] = [],
+                copulaSynonyms: [String] = [],
+                participleSynonyms: [String] = [],
+                toolStopwordSynonyms: [String] = [],
+                irregularPluralSynonyms: [String: String] = [:],
+                contractReferenceSynonyms: [String] = [],
                 timestampProperty: String? = nil,
                 emptySynonyms: [String] = [],
                 filledSynonyms: [String] = [],
@@ -79,6 +115,7 @@ public struct LanguageSynonyms: Sendable {
                 timestampAliasSynonyms: [String] = [],
                 aggregateSynonyms: [(String, AggregateKindAST)] = [],
                 superlativeSynonyms: [String: SuperlativeDirection] = [:],
+                gradableAdjectiveSynonyms: [String: GradableAdjectiveMetadata] = [:],
                 sortBySynonyms: [String] = [],
                 ascendingSynonyms: [String] = [],
                 descendingSynonyms: [String] = [],
@@ -100,6 +137,16 @@ public struct LanguageSynonyms: Sendable {
         self.normativeCueSynonyms = normativeCueSynonyms
         self.inferenceCueSynonyms = inferenceCueSynonyms
         self.referenceHeadingSynonyms = referenceHeadingSynonyms
+        self.conditionVagueHedgeSynonyms = conditionVagueHedgeSynonyms
+        self.effectfulJudgmentCueSynonyms = effectfulJudgmentCueSynonyms
+        self.articleSynonyms = articleSynonyms
+        self.parameterArticleSynonyms = parameterArticleSynonyms
+        self.prepositionSynonyms = prepositionSynonyms
+        self.copulaSynonyms = copulaSynonyms
+        self.participleSynonyms = participleSynonyms
+        self.toolStopwordSynonyms = toolStopwordSynonyms
+        self.irregularPluralSynonyms = irregularPluralSynonyms
+        self.contractReferenceSynonyms = contractReferenceSynonyms
         self.timestampProperty = timestampProperty
         self.emptySynonyms = emptySynonyms
         self.filledSynonyms = filledSynonyms
@@ -108,6 +155,7 @@ public struct LanguageSynonyms: Sendable {
         self.timestampAliasSynonyms = timestampAliasSynonyms
         self.aggregateSynonyms = aggregateSynonyms
         self.superlativeSynonyms = superlativeSynonyms
+        self.gradableAdjectiveSynonyms = gradableAdjectiveSynonyms
         self.sortBySynonyms = sortBySynonyms
         self.ascendingSynonyms = ascendingSynonyms
         self.descendingSynonyms = descendingSynonyms
@@ -150,6 +198,10 @@ public struct TraceConfigurationAST: Sendable, Equatable {
     public let profile: TraceConfigValue<TraceProfile>?
     public let storeFailurePolicy: TraceConfigValue<TraceStoreFailurePolicy>?
     public let deploymentZone: TraceConfigValue<String>?
+    public let crossSkillAllowList: TraceConfigValue<[String]>?
+    public let stateHistoryRetention: TraceConfigValue<Bool>?
+    public let storePath: TraceConfigValue<String>?
+    public let storeEndpoint: TraceConfigValue<String>?
     public let toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>]
 
     public init(
@@ -164,6 +216,10 @@ public struct TraceConfigurationAST: Sendable, Equatable {
         profile: TraceConfigValue<TraceProfile>? = nil,
         storeFailurePolicy: TraceConfigValue<TraceStoreFailurePolicy>? = nil,
         deploymentZone: TraceConfigValue<String>? = nil,
+        crossSkillAllowList: TraceConfigValue<[String]>? = nil,
+        stateHistoryRetention: TraceConfigValue<Bool>? = nil,
+        storePath: TraceConfigValue<String>? = nil,
+        storeEndpoint: TraceConfigValue<String>? = nil,
         toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>] = [:]
     ) {
         self.store = store
@@ -177,6 +233,10 @@ public struct TraceConfigurationAST: Sendable, Equatable {
         self.profile = profile
         self.storeFailurePolicy = storeFailurePolicy
         self.deploymentZone = deploymentZone
+        self.crossSkillAllowList = crossSkillAllowList
+        self.stateHistoryRetention = stateHistoryRetention
+        self.storePath = storePath
+        self.storeEndpoint = storeEndpoint
         self.toolCapturePolicies = toolCapturePolicies
     }
 }
@@ -188,6 +248,8 @@ public struct MerConfigFile: Sendable {
     public let tools: [ToolDeclaration]
     public let languageSynonyms: LanguageSynonyms
     public let traceConfiguration: TraceConfigurationAST
+    /// `=== imports ===` lines (`import <module> [as <alias>]`).
+    public let imports: [ModuleImportLine]
 
     public init(
         vocabulary: [VocabularyStatement] = [],
@@ -195,7 +257,8 @@ public struct MerConfigFile: Sendable {
         instances: [InstanceDeclaration] = [],
         tools: [ToolDeclaration] = [],
         languageSynonyms: LanguageSynonyms = LanguageSynonyms(),
-        traceConfiguration: TraceConfigurationAST = TraceConfigurationAST()
+        traceConfiguration: TraceConfigurationAST = TraceConfigurationAST(),
+        imports: [ModuleImportLine] = []
     ) {
         self.vocabulary = vocabulary
         self.constants = constants
@@ -203,6 +266,7 @@ public struct MerConfigFile: Sendable {
         self.tools = tools
         self.languageSynonyms = languageSynonyms
         self.traceConfiguration = traceConfiguration
+        self.imports = imports
     }
 
     /// Concatenate two parsed merconfig files, preserving declaration order
@@ -217,6 +281,16 @@ public struct MerConfigFile: Sendable {
             normativeCueSynonyms: languageSynonyms.normativeCueSynonyms + other.languageSynonyms.normativeCueSynonyms,
             inferenceCueSynonyms: languageSynonyms.inferenceCueSynonyms + other.languageSynonyms.inferenceCueSynonyms,
             referenceHeadingSynonyms: languageSynonyms.referenceHeadingSynonyms + other.languageSynonyms.referenceHeadingSynonyms,
+            conditionVagueHedgeSynonyms: languageSynonyms.conditionVagueHedgeSynonyms + other.languageSynonyms.conditionVagueHedgeSynonyms,
+            effectfulJudgmentCueSynonyms: languageSynonyms.effectfulJudgmentCueSynonyms + other.languageSynonyms.effectfulJudgmentCueSynonyms,
+            articleSynonyms: languageSynonyms.articleSynonyms + other.languageSynonyms.articleSynonyms,
+            parameterArticleSynonyms: languageSynonyms.parameterArticleSynonyms + other.languageSynonyms.parameterArticleSynonyms,
+            prepositionSynonyms: languageSynonyms.prepositionSynonyms + other.languageSynonyms.prepositionSynonyms,
+            copulaSynonyms: languageSynonyms.copulaSynonyms + other.languageSynonyms.copulaSynonyms,
+            participleSynonyms: languageSynonyms.participleSynonyms + other.languageSynonyms.participleSynonyms,
+            toolStopwordSynonyms: languageSynonyms.toolStopwordSynonyms + other.languageSynonyms.toolStopwordSynonyms,
+            irregularPluralSynonyms: languageSynonyms.irregularPluralSynonyms.merging(other.languageSynonyms.irregularPluralSynonyms) { _, new in new },
+            contractReferenceSynonyms: languageSynonyms.contractReferenceSynonyms + other.languageSynonyms.contractReferenceSynonyms,
             timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty,
             emptySynonyms: languageSynonyms.emptySynonyms + other.languageSynonyms.emptySynonyms,
             filledSynonyms: languageSynonyms.filledSynonyms + other.languageSynonyms.filledSynonyms,
@@ -225,6 +299,7 @@ public struct MerConfigFile: Sendable {
             timestampAliasSynonyms: languageSynonyms.timestampAliasSynonyms + other.languageSynonyms.timestampAliasSynonyms,
             aggregateSynonyms: languageSynonyms.aggregateSynonyms + other.languageSynonyms.aggregateSynonyms,
             superlativeSynonyms: languageSynonyms.superlativeSynonyms.merging(other.languageSynonyms.superlativeSynonyms) { _, new in new },
+            gradableAdjectiveSynonyms: languageSynonyms.gradableAdjectiveSynonyms.merging(other.languageSynonyms.gradableAdjectiveSynonyms) { _, new in new },
             sortBySynonyms: languageSynonyms.sortBySynonyms + other.languageSynonyms.sortBySynonyms,
             ascendingSynonyms: languageSynonyms.ascendingSynonyms + other.languageSynonyms.ascendingSynonyms,
             descendingSynonyms: languageSynonyms.descendingSynonyms + other.languageSynonyms.descendingSynonyms,
@@ -247,7 +322,8 @@ public struct MerConfigFile: Sendable {
             instances:  instances  + other.instances,
             tools: try mergeTools(with: other.tools),
             languageSynonyms: mergedSynonyms,
-            traceConfiguration: try traceConfiguration.merging(other.traceConfiguration)
+            traceConfiguration: try traceConfiguration.merging(other.traceConfiguration),
+            imports: imports + other.imports
         )
     }
 
@@ -305,6 +381,10 @@ public extension TraceConfigurationAST {
             profile: mergeValue(profile, other.profile, key: "profile"),
             storeFailurePolicy: mergeValue(storeFailurePolicy, other.storeFailurePolicy, key: "store failure policy"),
             deploymentZone: mergeValue(deploymentZone, other.deploymentZone, key: "deployment zone"),
+            crossSkillAllowList: mergeValue(crossSkillAllowList, other.crossSkillAllowList, key: "cross-skill allow-list"),
+            stateHistoryRetention: mergeValue(stateHistoryRetention, other.stateHistoryRetention, key: "state history"),
+            storePath: mergeValue(storePath, other.storePath, key: "store path"),
+            storeEndpoint: mergeValue(storeEndpoint, other.storeEndpoint, key: "store endpoint"),
             toolCapturePolicies: try mergeToolCapturePolicies(other.toolCapturePolicies)
         )
     }
@@ -425,9 +505,11 @@ public struct PropertyEntry: Sendable {
     public init(name: String, type: PropertyTypeAST) { self.name = name; self.type = type }
 }
 
-public enum PropertyTypeAST: Sendable {
+public indirect enum PropertyTypeAST: Sendable {
     case defaulted
     case explicit(String)
+    case listOf(PropertyTypeAST)
+    case optional(PropertyTypeAST)
     case enumeration(cases: [String], defaultCase: String?)
 }
 
@@ -715,10 +797,24 @@ public struct MeridianFile: Sendable {
     }
 }
 
+public enum ImportKind: Sendable, Equatable {
+    /// Legacy frontmatter `vocabulary:` merconfig reference.
+    case vocabulary
+    /// Shared module package (`import <module> [as <alias>]`).
+    case module
+}
+
 public struct ImportStatementAST: Sendable {
     public let path: String
+    public let alias: String?
+    public let kind: ImportKind
     public let sourceLine: Int
-    public init(path: String, sourceLine: Int = 0) { self.path = path; self.sourceLine = sourceLine }
+    public init(path: String, alias: String? = nil, kind: ImportKind = .vocabulary, sourceLine: Int = 0) {
+        self.path = path
+        self.alias = alias
+        self.kind = kind
+        self.sourceLine = sourceLine
+    }
 }
 
 public struct RuleAST: Sendable {
@@ -909,9 +1005,19 @@ public struct AssertStatementAST: Sendable {
 
 public struct WaitStatementAST: Sendable {
     public let condition: WaitConditionAST
+    public let timeout: (value: Double, unit: TimeUnitAST)?
+    public let timeoutRecover: ASTBlock?
     public let sourceLine: Int
-    public init(condition: WaitConditionAST, sourceLine: Int = 0) {
-        self.condition = condition; self.sourceLine = sourceLine
+    public init(
+        condition: WaitConditionAST,
+        timeout: (value: Double, unit: TimeUnitAST)? = nil,
+        timeoutRecover: ASTBlock? = nil,
+        sourceLine: Int = 0
+    ) {
+        self.condition = condition
+        self.timeout = timeout
+        self.timeoutRecover = timeoutRecover
+        self.sourceLine = sourceLine
     }
 }
 
@@ -943,6 +1049,12 @@ public enum TimeUnitAST: Sendable, Equatable {
     }
 }
 
+public enum CalendarAmountUnitAST: Sendable, Equatable {
+    case businessDays
+    case calendarDays
+    case months
+}
+
 public struct CommitStatementAST: Sendable {
     public let label: String?
     public let sourceLine: Int
@@ -959,18 +1071,32 @@ public struct CompleteStatementAST: Sendable {
     }
 }
 
+public enum UnknownHandlingPolicyAST: Sendable, Equatable {
+    case explicit
+    case asTrue
+    case asFalse
+}
+
 public struct ConditionalStatementAST: Sendable {
     public let condition: ExpressionAST
     public let thenBlock: ASTBlock
     public let unknownBlock: ASTBlock?
     public let elseBlock: ASTBlock?
+    public let unknownPolicy: UnknownHandlingPolicyAST
+    public let authoredForm: BranchAuthoredForm
     public let sourceLine: Int
     public init(condition: ExpressionAST, thenBlock: ASTBlock,
                 unknownBlock: ASTBlock? = nil,
-                elseBlock: ASTBlock? = nil, sourceLine: Int = 0) {
+                elseBlock: ASTBlock? = nil,
+                unknownPolicy: UnknownHandlingPolicyAST = .explicit,
+                authoredForm: BranchAuthoredForm = .ifPositive,
+                sourceLine: Int = 0) {
         self.condition = condition; self.thenBlock = thenBlock
         self.unknownBlock = unknownBlock
-        self.elseBlock = elseBlock; self.sourceLine = sourceLine
+        self.elseBlock = elseBlock
+        self.unknownPolicy = unknownPolicy
+        self.authoredForm = authoredForm
+        self.sourceLine = sourceLine
     }
 }
 
@@ -1025,6 +1151,8 @@ public struct IterationRefinementAST: Sendable {
     public var temporal: (property: String, window: TemporalWindow, seconds: Double)?
     public var sort: (property: String, ascending: Bool)?
     public var take: Int?
+    /// `the last N` take-suffix (distinct from temporal windows).
+    public var takeFromEnd: Int?
     /// 2B: Leading adjective modifiers (`for each stale page`) split off the
     /// kind noun. Resolved to `.definitionPredicate` filters at lowering.
     public var adjectives: [String]
@@ -1033,16 +1161,19 @@ public struct IterationRefinementAST: Sendable {
                 temporal: (property: String, window: TemporalWindow, seconds: Double)? = nil,
                 sort: (property: String, ascending: Bool)? = nil,
                 take: Int? = nil,
+                takeFromEnd: Int? = nil,
                 adjectives: [String] = []) {
         self.predicate = predicate
         self.temporal = temporal
         self.sort = sort
         self.take = take
+        self.takeFromEnd = takeFromEnd
         self.adjectives = adjectives
     }
 
     public var isEmpty: Bool {
-        predicate == nil && temporal == nil && sort == nil && take == nil && adjectives.isEmpty
+        predicate == nil && temporal == nil && sort == nil && take == nil
+            && takeFromEnd == nil && adjectives.isEmpty
     }
 }
 
@@ -1118,16 +1249,24 @@ public struct ProseStepAST: Sendable {
     /// ordinary judgment/discretion/autonomy steps. Carried on both split IR
     /// primitives (`AIJudgmentIR`/`AIAutonomyIR`) — no new IR shape needed.
     public let guidance: String?
+    /// `producing a <kind> called <name>` bindings from the judgment header.
+    public let outputBindings: [(kind: String, name: String)]
+    /// Explicit `using <tool>` scope from the judgment header.
+    public let usingTools: [String]
 
     public init(text: String, sourceLine: Int = 0,
                 dispatch: ProseDispatchAST? = nil,
                 autonomy: AutonomyConfigAST? = nil,
-                guidance: String? = nil) {
+                guidance: String? = nil,
+                outputBindings: [(kind: String, name: String)] = [],
+                usingTools: [String] = []) {
         self.text = text
         self.sourceLine = sourceLine
         self.dispatch = dispatch
         self.autonomy = autonomy
         self.guidance = guidance
+        self.outputBindings = outputBindings
+        self.usingTools = usingTools
     }
 }
 
@@ -1279,9 +1418,10 @@ public struct TraceStatisticalPatternAST: Sendable {
     }
 }
 
-public enum TraceScopeAST: Sendable {
+public enum TraceScopeAST: Sendable, Equatable {
     case currentRun
     case acrossAllRuns
+    case acrossSkills([String])
 }
 
 public enum TraceCountComparatorAST: Sendable {
@@ -1296,6 +1436,12 @@ public indirect enum TraceTemporalKindAST: Sendable {
     case countInWindow(EventPatternAST, comparator: TraceCountComparatorAST, duration: (Double, TimeUnitAST))
     case inARow(EventPatternAST, count: Int)
     case sinceLast(anchor: EventPatternAST, holds: ExpressionAST)
+    case boundedFutureMonitor(condition: ExpressionAST, horizon: (Double, TimeUnitAST), mode: FutureMonitorModeAST)
+}
+
+public enum FutureMonitorModeAST: Sendable, Equatable {
+    case eventuallyWithin
+    case alwaysFor
 }
 
 public struct TraceTemporalAST: Sendable {
@@ -1334,6 +1480,7 @@ public struct TraceStatisticalAST: Sendable {
     public let window: (Double, TimeUnitAST)?
     public let monitorCadence: (Double, TimeUnitAST)?
     public let blocking: Bool
+    public let confidencePercent: Double?
 
     public init(
         scope: TraceScopeAST = .currentRun,
@@ -1343,7 +1490,8 @@ public struct TraceStatisticalAST: Sendable {
         denominator: TraceStatisticalDenominatorAST,
         window: (Double, TimeUnitAST)? = nil,
         monitorCadence: (Double, TimeUnitAST)? = nil,
-        blocking: Bool = false
+        blocking: Bool = false,
+        confidencePercent: Double? = nil
     ) {
         self.scope = scope
         self.pattern = pattern
@@ -1353,6 +1501,7 @@ public struct TraceStatisticalAST: Sendable {
         self.window = window
         self.monitorCadence = monitorCadence
         self.blocking = blocking
+        self.confidencePercent = confidencePercent
     }
 }
 
@@ -1384,11 +1533,17 @@ public struct DescriptionAST: Sendable {
     public let sort: (property: String, ascending: Bool)?
     /// 3C: a `the first N` take-prefix (post-filter, post-sort).
     public let take: Int?
+    /// 3C: a `the last N` take-suffix (post-filter, post-sort) — disambiguated
+    /// from temporal `within the last N <unit>` by requiring a kind noun, not a
+    /// duration unit, immediately after the count.
+    public let takeFromEnd: Int?
     public init(noun: String, adjectives: [String] = [], wherePredicate: ExpressionAST? = nil,
                 verbClauses: [VerbClauseAST] = [],
-                sort: (property: String, ascending: Bool)? = nil, take: Int? = nil) {
+                sort: (property: String, ascending: Bool)? = nil, take: Int? = nil,
+                takeFromEnd: Int? = nil) {
         self.noun = noun; self.adjectives = adjectives; self.wherePredicate = wherePredicate
         self.verbClauses = verbClauses; self.sort = sort; self.take = take
+        self.takeFromEnd = takeFromEnd
     }
 }
 
@@ -1439,8 +1594,8 @@ public enum LiteralAST: Sendable {
     case boolean(Bool)
     case money(Double, currency: String)
     case duration(Double, TimeUnitAST)
+    case calendarAmount(Double, CalendarAmountUnitAST)
 }
-
 public enum ComparisonOpAST: Sendable {
     case equal, notEqual
     case lessThan, lessOrEqual

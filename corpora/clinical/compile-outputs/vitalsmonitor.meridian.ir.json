@@ -1,0 +1,77 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event monitorPatientVitals.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMonitorpatientvitalsFires\/root\/procedure\/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715",
+      "swift_line" : 642
+    },
+    {
+      "canonical" : "emit trigger.monitorPatientVitals.fired with kind = \"keyword\", spec = \"monitor patient vitals\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMonitorpatientvitalsFires\/root\/procedure\/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe",
+      "swift_line" : 642
+    },
+    {
+      "canonical" : "emit trigger.runVitalsWatch.fired with kind = \"ambient\", spec = \"run vitals watch\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunvitalswatchFires\/root\/procedure\/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7",
+      "swift_line" : 642
+    },
+    {
+      "canonical" : "wait for event runVitalsWatch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunvitalswatchFires\/root\/procedure\/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9",
+      "swift_line" : 642
+    },
+    {
+      "canonical" : "until patient is monitored,\n  wait 900 seconds.\n  bind vitalSigns = invoke vitals.read with patient = patient.",
+      "meridian_line" : 37,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/VitalsMonitorPatient\/workflow\/procedure\/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5",
+      "swift_line" : 447
+    },
+    {
+      "canonical" : "wait 900 seconds.",
+      "meridian_line" : 38,
+      "primitive" : "wait",
+      "stable_step_path" : "\/VitalsMonitorPatient\/workflow\/procedure\/iterate.body\/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94",
+      "swift_line" : 456
+    },
+    {
+      "canonical" : "bind vitalSigns = invoke vitals.read with patient = patient.",
+      "meridian_line" : 39,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/VitalsMonitorPatient\/workflow\/procedure\/iterate.body\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+      "swift_line" : 461
+    },
+    {
+      "canonical" : "emit clinical.note with message = \"patient vitals confirmed current\".",
+      "meridian_line" : 40,
+      "primitive" : "emit",
+      "stable_step_path" : "\/VitalsMonitorPatient\/workflow\/procedure\/af2f178d6ac045d7bdd16773ea7cf7c316dce4ee8235723b2407b946fb63f0ec",
+      "swift_line" : 480
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"vitals monitor pass complete\".",
+      "meridian_line" : 41,
+      "primitive" : "emit",
+      "stable_step_path" : "\/VitalsMonitorPatient\/workflow\/procedure\/919dbffa31074245b7d3f2595470ccb9413d8b8a9a1da0a8de065664917dab00",
+      "swift_line" : 491
+    },
+    {
+      "canonical" : "assert the patient's last observed at is within the last 14400 seconds.",
+      "meridian_line" : 44,
+      "primitive" : "assert",
+      "stable_step_path" : "\/VitalsMonitorPatient\/guarantees\/invariants\/726fdf8c8503e31fe37ab32d0724601f9a897bf85fa419937388662120c64364",
+      "swift_line" : 443
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "vitalsmonitor.meri",
+  "swift_file" : "vitalsmonitor.swift"
+}

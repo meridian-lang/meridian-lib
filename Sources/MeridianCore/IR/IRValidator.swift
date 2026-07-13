@@ -367,10 +367,16 @@ private struct Validator {
                 validate(.eventPattern(pattern), range: range, context: .valueExpression)
             case .inARow(let pattern, _):
                 validate(.eventPattern(pattern), range: range, context: .valueExpression)
-            case .sinceLast(let anchor, let holds, let holdsPattern):
+            case .sinceLast(let anchor, let holds, let holdsPattern, let usesStateHistory):
                 validate(.eventPattern(anchor), range: range, context: .valueExpression)
                 validate(holds, range: range, context: .valueExpression)
-                validate(.eventPattern(holdsPattern), range: range, context: .valueExpression)
+                if let holdsPattern {
+                    validate(.eventPattern(holdsPattern), range: range, context: .valueExpression)
+                } else if !usesStateHistory {
+                    invalidIR("since-the-last holds must resolve to an event pattern or state history", range: range)
+                }
+            case .boundedFutureMonitor(let condition, _, _):
+                validate(condition, range: range, context: .valueExpression)
             }
         case .traceStatistical(let statistical):
             if let subjectKey = statistical.subjectKeyExpr {
@@ -520,6 +526,8 @@ private struct Validator {
             return "\(value.timeIntervalSince1970)"
         case .enumValue(let value, kind: let kind):
             return "\(kind).\(value)"
+        case .calendarAmount(let amount):
+            return "\(amount.magnitude) \(amount.unit.rawValue)"
         }
     }
 

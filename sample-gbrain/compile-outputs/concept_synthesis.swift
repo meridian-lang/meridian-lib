@@ -592,7 +592,9 @@ public struct ConceptSynthesisInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -706,7 +708,9 @@ public struct WhenConceptsynthesisFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -737,7 +741,7 @@ public struct WhenConceptsynthesisFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenConceptsynthesisFires/root/procedure/d0ab66bc5eca0bcf719bfab67195278223875f9b3c8a849d5ccbec719f27a9da") {
             // L1
-            try await runtime.wait(.event("conceptSynthesis", matching: nil))
+            try await runtime.wait(.event("conceptSynthesis", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenConceptsynthesisFires/root/procedure/d0ab66bc5eca0bcf719bfab67195278223875f9b3c8a849d5ccbec719f27a9da", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenConceptsynthesisFires/root/procedure/ed13b86144c3107a1de9be7a54e3aeb26bd7fc923d2dc3e92dba500891161784") {
@@ -779,7 +783,9 @@ public struct WhenSynthesizemyconceptsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -810,7 +816,7 @@ public struct WhenSynthesizemyconceptsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSynthesizemyconceptsFires/root/procedure/6b33e624b23f20491232f3b054c85a0763bb3467f4996d071ba22778f11a187a") {
             // L1
-            try await runtime.wait(.event("synthesizeMyConcepts", matching: nil))
+            try await runtime.wait(.event("synthesizeMyConcepts", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSynthesizemyconceptsFires/root/procedure/6b33e624b23f20491232f3b054c85a0763bb3467f4996d071ba22778f11a187a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSynthesizemyconceptsFires/root/procedure/f58583cec5ba8bb4a8d3b28158bf9c7179e2dc9606c737d8b2c275f51062339e") {
@@ -852,7 +858,9 @@ public struct WhenFindpatternsacrossmynotesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -883,7 +891,7 @@ public struct WhenFindpatternsacrossmynotesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFindpatternsacrossmynotesFires/root/procedure/82754de2e2240f027dfe50b380668d86968051671bd9a5c7d3102487eaa407e1") {
             // L1
-            try await runtime.wait(.event("findPatternsAcrossMyNotes", matching: nil))
+            try await runtime.wait(.event("findPatternsAcrossMyNotes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFindpatternsacrossmynotesFires/root/procedure/82754de2e2240f027dfe50b380668d86968051671bd9a5c7d3102487eaa407e1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFindpatternsacrossmynotesFires/root/procedure/ad7182e50a0b13a7d5f00756749586d0776ff7d5e04f65f65d4fd6920d8a8491") {
@@ -925,7 +933,9 @@ public struct WhenBuildmyintellectualmapFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -956,7 +966,7 @@ public struct WhenBuildmyintellectualmapFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBuildmyintellectualmapFires/root/procedure/dc647d02dd5eaa62ec74023900db076c7452d390e5e2c17d000d165d29e49d06") {
             // L1
-            try await runtime.wait(.event("buildMyIntellectualMap", matching: nil))
+            try await runtime.wait(.event("buildMyIntellectualMap", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBuildmyintellectualmapFires/root/procedure/dc647d02dd5eaa62ec74023900db076c7452d390e5e2c17d000d165d29e49d06", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBuildmyintellectualmapFires/root/procedure/176a9e721a386ec6cfb502c1c570d73916fe5695bf22822ec90509267ab7eb0b") {
@@ -998,7 +1008,9 @@ public struct WhenTraceideaevolutionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -1029,7 +1041,7 @@ public struct WhenTraceideaevolutionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTraceideaevolutionFires/root/procedure/4a38ac615ae49a3780424a1d65eead98357217072a1ef1d53131f4c9273d1b17") {
             // L1
-            try await runtime.wait(.event("traceIdeaEvolution", matching: nil))
+            try await runtime.wait(.event("traceIdeaEvolution", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTraceideaevolutionFires/root/procedure/4a38ac615ae49a3780424a1d65eead98357217072a1ef1d53131f4c9273d1b17", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTraceideaevolutionFires/root/procedure/c3cdeb89578efd06931bcf971f69ab51440a7855965a3d83082ca1b8fd3440b8") {
@@ -1071,7 +1083,9 @@ public struct WhenCanonvsriffFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "concept-synthesis",
@@ -1102,7 +1116,7 @@ public struct WhenCanonvsriffFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCanonvsriffFires/root/procedure/3dc22e7208956149c504ea83612386c266ef37934b81ed5c4aa339eaf06e5f29") {
             // L1
-            try await runtime.wait(.event("canonVsRiff", matching: nil))
+            try await runtime.wait(.event("canonVsRiff", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCanonvsriffFires/root/procedure/3dc22e7208956149c504ea83612386c266ef37934b81ed5c4aa339eaf06e5f29", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCanonvsriffFires/root/procedure/3453cb99f697a8ac56c910cb97cf76ae3c689a4e2d9904bf4fd861a023c1403f") {

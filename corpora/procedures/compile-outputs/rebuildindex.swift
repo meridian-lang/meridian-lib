@@ -422,7 +422,9 @@ public struct RebuildIndex: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
@@ -551,7 +553,9 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
@@ -583,7 +587,7 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477") {
             // L1
-            try await runtime.wait(.event("rebuildLaggingIndexes", matching: nil))
+            try await runtime.wait(.event("rebuildLaggingIndexes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRebuildlaggingindexesFires/root/procedure/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008") {
@@ -625,7 +629,9 @@ public struct WhenIndexjobstaleFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
@@ -657,7 +663,7 @@ public struct WhenIndexjobstaleFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f") {
             // L1
-            try await runtime.wait(.event("indexJobStale", matching: nil))
+            try await runtime.wait(.event("indexJobStale", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIndexjobstaleFires/root/procedure/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8") {

@@ -411,7 +411,7 @@ public struct ClassifyResource: MeridianWorkflow {
         "triggers": "\"classify resources\"\n\"classify unclassified resources\"\n\"run the classification sweep\"",
     ]
 
-    public static let skillVersionHash = "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+    public static let skillVersionHash = "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct ClassifyResource: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "classify resource",
-            versionHash: "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+            versionHash: "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -506,8 +508,10 @@ public struct ClassifyResource: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/ClassifyResource/classification-routing-steps/procedure/branch.then/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
                 } else {
                     try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldClassify\"), .boolean(true))", into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
+
                     // L43
                     let __meridianProseResults_L43 = try await runtime.executeProsePlan(
                         prose: "classify the access request and recommend a classification",
@@ -519,6 +523,7 @@ public struct ClassifyResource: MeridianWorkflow {
                     for (__key, __value) in __meridianProseResults_L43 {
                         state.bind(__key, __value)
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
@@ -551,7 +556,7 @@ public struct ClassifyResource: MeridianWorkflow {
 public struct WhenClassifyresourcesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+    public static let skillVersionHash = "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -564,11 +569,13 @@ public struct WhenClassifyresourcesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "classify resource",
-            versionHash: "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+            versionHash: "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -596,7 +603,7 @@ public struct WhenClassifyresourcesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845") {
             // L1
-            try await runtime.wait(.event("classifyResources", matching: nil))
+            try await runtime.wait(.event("classifyResources", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenClassifyresourcesFires/root/procedure/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517") {
@@ -625,7 +632,7 @@ public struct WhenClassifyresourcesFires: MeridianWorkflow {
 public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+    public static let skillVersionHash = "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -638,11 +645,13 @@ public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "classify resource",
-            versionHash: "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+            versionHash: "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -670,7 +679,7 @@ public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1") {
             // L1
-            try await runtime.wait(.event("classifyUnclassifiedResources", matching: nil))
+            try await runtime.wait(.event("classifyUnclassifiedResources", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenClassifyunclassifiedresourcesFires/root/procedure/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a") {
@@ -699,7 +708,7 @@ public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
 public struct WhenRunclassificationsweepFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+    public static let skillVersionHash = "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -712,11 +721,13 @@ public struct WhenRunclassificationsweepFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "classify resource",
-            versionHash: "f1972f16456a301cabe6566c3843eafc4d2798444e14be96d4e02adab112274b"
+            versionHash: "da6c8071ce3b232b7290f8b7fdf3a90d60556714b14c3e7818880015adca5b86"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -744,7 +755,7 @@ public struct WhenRunclassificationsweepFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca") {
             // L1
-            try await runtime.wait(.event("runClassificationSweep", matching: nil))
+            try await runtime.wait(.event("runClassificationSweep", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunclassificationsweepFires/root/procedure/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3") {

@@ -71,7 +71,7 @@ public struct RunCommand: AsyncParsableCommand {
         // selection — no second `.silent()` re-lower that dropped rulebooks.
         let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: .init(trace: traceInstance))
-        let compiled: (swift: String, manifest: ManifestEmitter.Input)
+        let compiled: (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input)
         do {
             compiled = try compiler.compileWithManifest(
                 meridianSource: meridianSource,

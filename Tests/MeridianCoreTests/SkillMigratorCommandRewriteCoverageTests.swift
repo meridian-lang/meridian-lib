@@ -68,7 +68,7 @@ struct SkillMigratorCommandRewriteCoverageTests {
         gbrain open <slug>
         ```
         """
-        let out = migrator().rewriteCommandPlaceholders(src)
+        let out = migrator().rewriteCommandPlaceholders(src, lexicon: .default)
         #expect(out.contains("gbrain open {slug}"))
         #expect(!out.contains("<slug>"))
     }
@@ -140,7 +140,7 @@ struct SkillMigratorCommandRewriteCoverageTests {
         ---
         - `open <slug>
         """
-        let out = migrator().rewriteCommandPlaceholders(src)
+        let out = migrator().rewriteCommandPlaceholders(src, lexicon: .default)
         #expect(out.contains("`open <slug>"))
     }
 }

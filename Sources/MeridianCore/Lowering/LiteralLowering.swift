@@ -15,6 +15,14 @@ enum LiteralLowering {
         case .boolean(let b):            return .boolean(b)
         case .money(let a, let c):       return .money(Decimal(a), currency: c)
         case .duration(let v, let unit): return .duration(.seconds(Int64(v * Double(unit.inSeconds))))
+        case .calendarAmount(let v, let unit):
+            return .calendarAmount(CalendarAmountIR(magnitude: v, unit: {
+                switch unit {
+                case .businessDays: return .businessDays
+                case .calendarDays: return .calendarDays
+                case .months: return .months
+                }
+            }()))
         }
     }
 

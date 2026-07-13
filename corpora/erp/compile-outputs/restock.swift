@@ -544,7 +544,9 @@ public struct Restock: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
@@ -673,7 +675,9 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
@@ -705,7 +709,7 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/02ff9f22af1969cc3ed7639df7a20ce24743313640092b472a514998ddfd8395") {
             // L1
-            try await runtime.wait(.event("restockShortProducts", matching: nil))
+            try await runtime.wait(.event("restockShortProducts", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRestockshortproductsFires/root/procedure/02ff9f22af1969cc3ed7639df7a20ce24743313640092b472a514998ddfd8395", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/e0d724a1f16d85e17f888ef0f230f29e0468443185beb2296a7229794477132e") {
@@ -747,7 +751,9 @@ public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
@@ -779,7 +785,7 @@ public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/813821437fbeaef0a527e9fd4867724b8706aec63c3f686372a4ff7fd486ffcd") {
             // L1
-            try await runtime.wait(.event("inventoryBelowReorderPoint", matching: nil))
+            try await runtime.wait(.event("inventoryBelowReorderPoint", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenInventorybelowreorderpointFires/root/procedure/813821437fbeaef0a527e9fd4867724b8706aec63c3f686372a4ff7fd486ffcd", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/78842fbb941cffde905375c4332721956b1085cc8da84ed8315937e64417d9d6") {

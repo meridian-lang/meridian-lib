@@ -45,6 +45,8 @@ public enum MeridianRuntimeError: Error, Sendable {
     case cancelled
     case traceStoreFailure(String)
     case observerFailure(String)
+    /// Thrown when a blocking deontic prohibition prevents an invoke.
+    case violation(message: String, sourceRange: SourceRange? = nil)
     /// Thrown when `wait(.approval(...))` receives a `.denied` verdict.
     /// Can be caught by `recover from approval.denied:` in generated code.
     case approvalDenied(role: String, sourceRange: SourceRange?)
@@ -70,6 +72,9 @@ public func meridianMatches(_ error: any Error, named name: String) -> Bool {
     }
     if let re = error as? MeridianRuntimeError, case .approvalDenied(let role, _) = re {
         return role == name || "approval.denied" == name
+    }
+    if let re = error as? MeridianRuntimeError, case .timeout = re {
+        return name == "wait.timeout"
     }
     return false
 }

@@ -1,0 +1,23 @@
+---
+name: release sentinel wave9
+description: Trimmed Wave 8 temporal workflow fixture kept for bundle regression; deontic obligation tests use inline mer in Wave9NorthStarFixtureTests.
+triggers:
+  - "run release sentinel wave9"
+parameters: service
+---
+
+Definition: a service is stale if the deploy step has ever failed.
+Definition: a service is recoverable if the service is stale since the last deploy step succeeded.
+
+To run release sentinel wave9 for a service:
+  if the deploy step has ever failed,
+    complete with reason "release sentinel saw a prior deploy failure".
+  if the deploy step has failed within the last 7 days,
+    complete with reason "release sentinel saw a recent deploy failure".
+  if the service is recoverable,
+    complete with reason "release sentinel is healthy since the last successful deploy".
+  if it is unknown whether,
+    complete with reason "release sentinel has no successful deploy anchor yet".
+  otherwise,
+    complete with reason "release sentinel is not healthy since the last successful deploy".
+  complete with reason "release sentinel wave9 pass complete".

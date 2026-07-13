@@ -590,7 +590,9 @@ public struct AskUserInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ask-user",
@@ -627,6 +629,7 @@ public struct AskUserInput: MeridianWorkflow {
             // L65
             await runtime.complete(reason: nil, step: "/AskUserInput/when-not-to-use-steps/negative-applicability/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/AskUserInput/when-not-to-use-steps/negative-applicability/9568b620bfb6105bd3b8f2a44face8fe595edce2502f9694ddb20e7dbae2e9c3")
         }
 
         if __meridianShouldRun("/AskUserInput/anti-patterns-steps-2/prohibitions/0a3257413247dd5ce1fc2fdc2206c33eadc70ba4a686cf9b2a047e1943f3d517") {
@@ -678,7 +681,9 @@ public struct WhenPresentoptionsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ask-user",
@@ -709,7 +714,7 @@ public struct WhenPresentoptionsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/eec06581dc5176ad236722549a810aa91e1afc2996fe8af3ad3ec9337f844235") {
             // L1
-            try await runtime.wait(.event("presentOptions", matching: nil))
+            try await runtime.wait(.event("presentOptions", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPresentoptionsFires/root/procedure/eec06581dc5176ad236722549a810aa91e1afc2996fe8af3ad3ec9337f844235", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/a66d2f8de212d21dd8759f2fe39bddd8d1086d7a701b04787f4a4cd1f5546dd1") {
@@ -751,7 +756,9 @@ public struct WhenAskproceedingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ask-user",
@@ -782,7 +789,7 @@ public struct WhenAskproceedingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/4ed67a188948f3fa0d7644910757bd7990d4ca72b054b74ad030949df8a84c40") {
             // L1
-            try await runtime.wait(.event("askProceeding", matching: nil))
+            try await runtime.wait(.event("askProceeding", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAskproceedingFires/root/procedure/4ed67a188948f3fa0d7644910757bd7990d4ca72b054b74ad030949df8a84c40", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/02c18d54276b8abbe3ea14f17bf6fd1b7a756fd1b4153314f8ce55e7e9784b8b") {
@@ -824,7 +831,9 @@ public struct WhenChoicegateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ask-user",
@@ -855,7 +864,7 @@ public struct WhenChoicegateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenChoicegateFires/root/procedure/2203a20380ad8c8a5ea10174aed02b92428cce230482cbf4e99b8d615abd9e8f") {
             // L1
-            try await runtime.wait(.event("choiceGate", matching: nil))
+            try await runtime.wait(.event("choiceGate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenChoicegateFires/root/procedure/2203a20380ad8c8a5ea10174aed02b92428cce230482cbf4e99b8d615abd9e8f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenChoicegateFires/root/procedure/1dc63646e13eaa9e69be702ec78f00ce62af5df37543a9393bfc30eb9d1ff754") {
@@ -897,7 +906,9 @@ public struct WhenUserdecisionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ask-user",
@@ -928,7 +939,7 @@ public struct WhenUserdecisionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/3c8face1c339d35233cbe105ff826741c92b1a73a9dc8612514ff244feb1f1aa") {
             // L1
-            try await runtime.wait(.event("userDecision", matching: nil))
+            try await runtime.wait(.event("userDecision", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUserdecisionFires/root/procedure/3c8face1c339d35233cbe105ff826741c92b1a73a9dc8612514ff244feb1f1aa", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/0663a1962caa3ecd076728407790717d5ee9221c3ce4b5b7d67f351a4783cf3f") {

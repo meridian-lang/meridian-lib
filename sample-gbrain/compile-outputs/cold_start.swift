@@ -593,7 +593,9 @@ public struct ColdStartInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -663,7 +665,9 @@ public struct WhenColdstartFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -694,7 +698,7 @@ public struct WhenColdstartFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenColdstartFires/root/procedure/a25d9bb063dfa2232602038a8a53152bcb7d5a1e24a1b4fda440a6a22811b542") {
             // L1
-            try await runtime.wait(.event("coldStart", matching: nil))
+            try await runtime.wait(.event("coldStart", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenColdstartFires/root/procedure/a25d9bb063dfa2232602038a8a53152bcb7d5a1e24a1b4fda440a6a22811b542", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenColdstartFires/root/procedure/c65ecc8c6661bbb51cc4f8213c02162d4c5e496995cb3f2dd38c152a3f4a69a1") {
@@ -736,7 +740,9 @@ public struct WhenFillmybrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -767,7 +773,7 @@ public struct WhenFillmybrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFillmybrainFires/root/procedure/9524d8bfa25f5378d749889f6af33106ee7139e0388783837634f10d66832632") {
             // L1
-            try await runtime.wait(.event("fillMyBrain", matching: nil))
+            try await runtime.wait(.event("fillMyBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFillmybrainFires/root/procedure/9524d8bfa25f5378d749889f6af33106ee7139e0388783837634f10d66832632", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFillmybrainFires/root/procedure/f8de529f6e36a5832c9ef7d31e3d2244b96e8d702c41e0c388ef327d875451f2") {
@@ -809,7 +815,9 @@ public struct WhenBootstrapbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -840,7 +848,7 @@ public struct WhenBootstrapbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBootstrapbrainFires/root/procedure/743aa91791a7a43a7c31268774ddfdd0c8089cfac05cd778f72ac89bde8ec3e6") {
             // L1
-            try await runtime.wait(.event("bootstrapBrain", matching: nil))
+            try await runtime.wait(.event("bootstrapBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBootstrapbrainFires/root/procedure/743aa91791a7a43a7c31268774ddfdd0c8089cfac05cd778f72ac89bde8ec3e6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBootstrapbrainFires/root/procedure/baab8a9218376f40cb35cb66f4f96a9f7f05bfc4613a0895e13e7b5c22d33c99") {
@@ -882,7 +890,9 @@ public struct WhenImportmydataFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -913,7 +923,7 @@ public struct WhenImportmydataFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenImportmydataFires/root/procedure/087dda6124e14e59bcea2f377ff43a18e9457a3219a902286fa8853edc79dca0") {
             // L1
-            try await runtime.wait(.event("importMyData", matching: nil))
+            try await runtime.wait(.event("importMyData", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenImportmydataFires/root/procedure/087dda6124e14e59bcea2f377ff43a18e9457a3219a902286fa8853edc79dca0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenImportmydataFires/root/procedure/4a371bdbcf4c803af5d9c38549492aeddfb04aff9b8e5dc98024016bacbd9225") {
@@ -955,7 +965,9 @@ public struct WhenDayoneFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -986,7 +998,7 @@ public struct WhenDayoneFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDayoneFires/root/procedure/ca32ed6661059d47282bf8d0e6d1983080aecc6df87dce5f6e6685ad3039453c") {
             // L1
-            try await runtime.wait(.event("dayOne", matching: nil))
+            try await runtime.wait(.event("dayOne", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDayoneFires/root/procedure/ca32ed6661059d47282bf8d0e6d1983080aecc6df87dce5f6e6685ad3039453c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDayoneFires/root/procedure/50d972170701f338676c01a3a82261cb40bbf9855a546864e1e2227f7f992b41") {
@@ -1028,7 +1040,9 @@ public struct WhenGetstartedFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -1059,7 +1073,7 @@ public struct WhenGetstartedFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGetstartedFires/root/procedure/bd28b8c6eabd11f30995ba212d8ea38a3b01a632b6b99292f0124aa4f0bac7f2") {
             // L1
-            try await runtime.wait(.event("getStarted", matching: nil))
+            try await runtime.wait(.event("getStarted", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGetstartedFires/root/procedure/bd28b8c6eabd11f30995ba212d8ea38a3b01a632b6b99292f0124aa4f0bac7f2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGetstartedFires/root/procedure/b379a9b61dd1a5e215084593794ecfa168f641799a34339a05f6ff1ab170a561") {
@@ -1101,7 +1115,9 @@ public struct WhenWhatshouldiimportfirstFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -1132,7 +1148,7 @@ public struct WhenWhatshouldiimportfirstFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatshouldiimportfirstFires/root/procedure/ddd77ae311666737d5bd2679bf6fbb71f8820b93e80dc4d67dcb696d347f9a90") {
             // L1
-            try await runtime.wait(.event("whatShouldIImportFirst", matching: nil))
+            try await runtime.wait(.event("whatShouldIImportFirst", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatshouldiimportfirstFires/root/procedure/ddd77ae311666737d5bd2679bf6fbb71f8820b93e80dc4d67dcb696d347f9a90", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatshouldiimportfirstFires/root/procedure/617be1ca2aac2db5f448510bc7920344bc4488b040b25b92cd13ad3a5eee411a") {
@@ -1174,7 +1190,9 @@ public struct WhenPopulatebrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -1205,7 +1223,7 @@ public struct WhenPopulatebrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPopulatebrainFires/root/procedure/9fb0a0368a9021dd5da92c903cc9e6ffde2aae401fb08a0b20287694c5776aa1") {
             // L1
-            try await runtime.wait(.event("populateBrain", matching: nil))
+            try await runtime.wait(.event("populateBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPopulatebrainFires/root/procedure/9fb0a0368a9021dd5da92c903cc9e6ffde2aae401fb08a0b20287694c5776aa1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPopulatebrainFires/root/procedure/b5d7e5240c2c730c313253b0b36e171de9b659fb083f1ca7d3de475bbf48bc4f") {
@@ -1247,7 +1265,9 @@ public struct WhenNowwhatFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cold-start",
@@ -1278,7 +1298,7 @@ public struct WhenNowwhatFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenNowwhatFires/root/procedure/321fd8b22a5282e6c387b7c48f3de341e43a5343d00cab7fd2f2beb9e7e615e9") {
             // L1
-            try await runtime.wait(.event("nowWhat", matching: nil))
+            try await runtime.wait(.event("nowWhat", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenNowwhatFires/root/procedure/321fd8b22a5282e6c387b7c48f3de341e43a5343d00cab7fd2f2beb9e7e615e9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenNowwhatFires/root/procedure/b28e38b5e2627a33e66ba6cc4233a6468707720b89b486a9f6fb9c917d7fb836") {

@@ -744,7 +744,9 @@ public struct MergeConflictPlaybookPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "merge conflict playbook",
@@ -842,6 +844,7 @@ public struct MergeConflictPlaybookPullRequest: MeridianWorkflow {
             }
             await runtime.complete(reason: "mechanical_sync_done", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/20e96a769d743cc2b4068a94a08209b45e57a94590891ac178bc986c0cb50fc5")
             return WorkflowResult(reason: "mechanical_sync_done", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/4aa27c81707869e9eead39738e948556aaf90dd175a267ffa54c0979a0ea1ac6")
         }
 
         if __meridianShouldRun("/MergeConflictPlaybookPullRequest/plan-non-trivial-conflicts-under-discretion/procedure/7b95ac183976b4b5d180d8adc6e586f10aae1d4a49682c9d1dfd56893c275f2c") {
@@ -886,7 +889,9 @@ public struct PlanConflictResolution: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "merge conflict playbook",

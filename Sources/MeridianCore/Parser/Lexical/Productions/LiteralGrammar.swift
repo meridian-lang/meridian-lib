@@ -34,6 +34,7 @@ struct LiteralGrammar {
             return .literal(.string(String(t.dropFirst().dropLast())))
         }
 
+        if let cal = lexicon.parseCalendarAmount(t) { return .literal(.calendarAmount(cal.0, cal.1)) }
         if let dur = lexicon.parseDuration(t) { return .literal(.duration(dur.0, dur.1)) }
         if let d = Double(t), t.contains(".") { return .literal(.double(d)) }
         if let n = Int(t) { return .literal(.integer(n)) }

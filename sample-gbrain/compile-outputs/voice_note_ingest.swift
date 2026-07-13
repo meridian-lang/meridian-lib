@@ -592,7 +592,9 @@ public struct VoiceNoteIngestInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -662,7 +664,9 @@ public struct WhenVoicenoteFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -693,7 +697,7 @@ public struct WhenVoicenoteFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/79d521402844c0ab0d138c9e5a694b710c46e722cb215d36f0546bcd465d8cef") {
             // L1
-            try await runtime.wait(.event("voiceNote", matching: nil))
+            try await runtime.wait(.event("voiceNote", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVoicenoteFires/root/procedure/79d521402844c0ab0d138c9e5a694b710c46e722cb215d36f0546bcd465d8cef", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/dd7f5ecd950f3d5e6397f87f80f7f07bc3cc58a8e4cea3f52ceab6d951c9e4d7") {
@@ -735,7 +739,9 @@ public struct WhenIngestthisvoicememoFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -766,7 +772,7 @@ public struct WhenIngestthisvoicememoFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/39f7f5b975578b53bfb32dc17ce5ae8381d38e707aa38d9d0968eca0f14a7c77") {
             // L1
-            try await runtime.wait(.event("ingestThisVoiceMemo", matching: nil))
+            try await runtime.wait(.event("ingestThisVoiceMemo", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIngestthisvoicememoFires/root/procedure/39f7f5b975578b53bfb32dc17ce5ae8381d38e707aa38d9d0968eca0f14a7c77", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/d9702b10b1fdcbcc9dcd0cf83448805ed69dc3f59309459e39011ed827fd8de3") {
@@ -808,7 +814,9 @@ public struct WhenTranscribeandfileFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -839,7 +847,7 @@ public struct WhenTranscribeandfileFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/c02411c85fce1198a2a4c5ee74b07a019d07baae165bab6c35f157ad136e2e22") {
             // L1
-            try await runtime.wait(.event("transcribeAndFile", matching: nil))
+            try await runtime.wait(.event("transcribeAndFile", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTranscribeandfileFires/root/procedure/c02411c85fce1198a2a4c5ee74b07a019d07baae165bab6c35f157ad136e2e22", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/8f568d893d8077512fe347e110c0d2c558821f512cf504b04383905be2735903") {
@@ -881,7 +889,9 @@ public struct WhenVoicenoteingestFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -912,7 +922,7 @@ public struct WhenVoicenoteingestFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/a93947e8f2cace6de651d5874da954bd9202b05552fa9caaad1af9d0d81fe2fc") {
             // L1
-            try await runtime.wait(.event("voiceNoteIngest", matching: nil))
+            try await runtime.wait(.event("voiceNoteIngest", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVoicenoteingestFires/root/procedure/a93947e8f2cace6de651d5874da954bd9202b05552fa9caaad1af9d0d81fe2fc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/e37b84b284a4ca96d95f3196ff3cefa49e54c31a901d774ff124ea591aa9b289") {
@@ -954,7 +964,9 @@ public struct WhenSavethisaudionoteFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -985,7 +997,7 @@ public struct WhenSavethisaudionoteFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/0c35120059690d75eb505b7a29da24384619982aec6e73902287fe5b54852279") {
             // L1
-            try await runtime.wait(.event("saveThisAudioNote", matching: nil))
+            try await runtime.wait(.event("saveThisAudioNote", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSavethisaudionoteFires/root/procedure/0c35120059690d75eb505b7a29da24384619982aec6e73902287fe5b54852279", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/67c9282aec02130c092de466e4a4cbe70767cf58758eeffec426a9b395e617c2") {
@@ -1027,7 +1039,9 @@ public struct WhenAudiomessageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "voice-note-ingest",
@@ -1058,7 +1072,7 @@ public struct WhenAudiomessageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/2a775861f7fe8e92b0ceeb42d83b50beede47fe14128b1f282bffbab8f78cda6") {
             // L1
-            try await runtime.wait(.event("audioMessage", matching: nil))
+            try await runtime.wait(.event("audioMessage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAudiomessageFires/root/procedure/2a775861f7fe8e92b0ceeb42d83b50beede47fe14128b1f282bffbab8f78cda6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/2688c5cff537808bbdc6491d3bcf34b5a2c09e39e2c2918e20d8d79b030bacdb") {

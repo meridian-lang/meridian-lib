@@ -592,7 +592,9 @@ public struct PerplexityResearchInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -667,7 +669,9 @@ public struct WhenPerplexityresearchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -698,7 +702,7 @@ public struct WhenPerplexityresearchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPerplexityresearchFires/root/procedure/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f") {
             // L1
-            try await runtime.wait(.event("perplexityResearch", matching: nil))
+            try await runtime.wait(.event("perplexityResearch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPerplexityresearchFires/root/procedure/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPerplexityresearchFires/root/procedure/521d4cab3ec8908dde96e06e40870f78eec27111ab26efee1c009a4703e5c1f9") {
@@ -740,7 +744,9 @@ public struct WhenPerplexityresearchFires2: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -771,7 +777,7 @@ public struct WhenPerplexityresearchFires2: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPerplexityresearchFires2/root/procedure/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f") {
             // L1
-            try await runtime.wait(.event("perplexityResearch", matching: nil))
+            try await runtime.wait(.event("perplexityResearch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPerplexityresearchFires2/root/procedure/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPerplexityresearchFires2/root/procedure/35fd96aeee48e9fadd435e8da92614d565123244ef5a17896d5e71b36ef6ae0b") {
@@ -813,7 +819,9 @@ public struct WhenWhatsnewFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -844,7 +852,7 @@ public struct WhenWhatsnewFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatsnewFires/root/procedure/ea79268257ab44e3d6c83746e206045db6e4bcd0fd465aeb00cfe027da03b80c") {
             // L1
-            try await runtime.wait(.event("whatSNew", matching: nil))
+            try await runtime.wait(.event("whatSNew", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatsnewFires/root/procedure/ea79268257ab44e3d6c83746e206045db6e4bcd0fd465aeb00cfe027da03b80c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatsnewFires/root/procedure/4b77ce63e01936134ef085beb2c41a9a94e116984d4a8fd883cd8c7c082513ff") {
@@ -886,7 +894,9 @@ public struct WhenCurrentstateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -917,7 +927,7 @@ public struct WhenCurrentstateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCurrentstateFires/root/procedure/5c9350742979cfb0d87b917dd01149b12acbf7df6a8bb62b148125d331312126") {
             // L1
-            try await runtime.wait(.event("currentState", matching: nil))
+            try await runtime.wait(.event("currentState", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCurrentstateFires/root/procedure/5c9350742979cfb0d87b917dd01149b12acbf7df6a8bb62b148125d331312126", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCurrentstateFires/root/procedure/448aa4db63ef1c1733a8bfd740d8ea868b6aa04ada7557204527b458b50eacb6") {
@@ -959,7 +969,9 @@ public struct WhenWebresearchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -990,7 +1002,7 @@ public struct WhenWebresearchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWebresearchFires/root/procedure/8a85185365c3caf13f9347bf9b2710d3373b15c7aace504cd60c50dcbc45cacf") {
             // L1
-            try await runtime.wait(.event("webResearch", matching: nil))
+            try await runtime.wait(.event("webResearch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWebresearchFires/root/procedure/8a85185365c3caf13f9347bf9b2710d3373b15c7aace504cd60c50dcbc45cacf", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWebresearchFires/root/procedure/a1ea5d46f4de430453d885c31356d295eac7da9a010c03aaf966375a68d01463") {
@@ -1032,7 +1044,9 @@ public struct WhenWhatchangedFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -1063,7 +1077,7 @@ public struct WhenWhatchangedFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatchangedFires/root/procedure/a0ecfd1c049b8f24fba3d280997330623ebfa468f917d36131c6086e5f11718a") {
             // L1
-            try await runtime.wait(.event("whatChanged", matching: nil))
+            try await runtime.wait(.event("whatChanged", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatchangedFires/root/procedure/a0ecfd1c049b8f24fba3d280997330623ebfa468f917d36131c6086e5f11718a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatchangedFires/root/procedure/2aeab5f49b21c8434e5331f9075d6b823ed9f6d359a256667e2853930b96b941") {
@@ -1105,7 +1119,9 @@ public struct WhenSurfacenewdevelopmentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "perplexity-research",
@@ -1136,7 +1152,7 @@ public struct WhenSurfacenewdevelopmentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSurfacenewdevelopmentsFires/root/procedure/f5b83e1576031200a71cf7a2549a6cb4bd13b8f03009f99fe307aa35a62c1537") {
             // L1
-            try await runtime.wait(.event("surfaceNewDevelopments", matching: nil))
+            try await runtime.wait(.event("surfaceNewDevelopments", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSurfacenewdevelopmentsFires/root/procedure/f5b83e1576031200a71cf7a2549a6cb4bd13b8f03009f99fe307aa35a62c1537", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSurfacenewdevelopmentsFires/root/procedure/f3d92926b754a6b4da3e5a604da27c73d41fa19ebaba817c634e82c94fd55de1") {

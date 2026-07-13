@@ -414,7 +414,7 @@ public struct ReviewRequestsReviewerAccessRequest: MeridianWorkflow {
         "parameters": "reviewer, access request",
     ]
 
-    public static let skillVersionHash = "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+    public static let skillVersionHash = "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -427,11 +427,13 @@ public struct ReviewRequestsReviewerAccessRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review requests",
-            versionHash: "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+            versionHash: "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -547,7 +549,7 @@ public struct ReviewRequestsReviewerAccessRequest: MeridianWorkflow {
 public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+    public static let skillVersionHash = "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -560,11 +562,13 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review requests",
-            versionHash: "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+            versionHash: "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -592,7 +596,7 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554") {
             // L1
-            try await runtime.wait(.event("reviewAccessRequests", matching: nil))
+            try await runtime.wait(.event("reviewAccessRequests", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReviewaccessrequestsFires/root/procedure/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661") {
@@ -621,7 +625,7 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
 public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+    public static let skillVersionHash = "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -634,11 +638,13 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review requests",
-            versionHash: "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+            versionHash: "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -666,7 +672,7 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408") {
             // L1
-            try await runtime.wait(.event("reviewPendingRequests", matching: nil))
+            try await runtime.wait(.event("reviewPendingRequests", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReviewpendingrequestsFires/root/procedure/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394") {
@@ -695,7 +701,7 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
 public struct WhenWorkrequestqueueFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+    public static let skillVersionHash = "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -708,11 +714,13 @@ public struct WhenWorkrequestqueueFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review requests",
-            versionHash: "c4785a59891ce19e5fcd2bcdbe7e710621008fc2811ba500111755873b7d8e7e"
+            versionHash: "6e3aeae8f3299565f40e54021586bb643c3060faad31105fbef5049ba23fa7f0"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -740,7 +748,7 @@ public struct WhenWorkrequestqueueFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f") {
             // L1
-            try await runtime.wait(.event("workRequestQueue", matching: nil))
+            try await runtime.wait(.event("workRequestQueue", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWorkrequestqueueFires/root/procedure/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05") {

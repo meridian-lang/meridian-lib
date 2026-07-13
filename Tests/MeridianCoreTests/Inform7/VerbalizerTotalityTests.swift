@@ -63,7 +63,7 @@ struct VerbalizerTotalityTests {
             .traceTemporal(TraceTemporalIR(scope: .currentRun, kind: .withinWindow(EventPatternIR(subject: .step("deploy"), outcome: .failed), duration: .seconds(300)))),
             .traceTemporal(TraceTemporalIR(scope: .currentRun, kind: .countInWindow(EventPatternIR(subject: .step("deploy"), outcome: .failed), comparator: .atLeast(2), duration: .seconds(300)))),
             .traceTemporal(TraceTemporalIR(scope: .currentRun, kind: .inARow(EventPatternIR(subject: .step("deploy"), outcome: .failed), count: 2))),
-            .traceTemporal(TraceTemporalIR(scope: .currentRun, kind: .sinceLast(anchor: EventPatternIR(subject: .step("deploy"), outcome: .succeeded), holds: .comparison(.identifierRef(name: "service"), .equal, .literal(.string("healthy"))), holdsPattern: EventPatternIR(subject: .step("deploy"), outcome: .failed)))),
+            .traceTemporal(TraceTemporalIR(scope: .currentRun, kind: .sinceLast(anchor: EventPatternIR(subject: .step("deploy"), outcome: .succeeded), holds: .comparison(.identifierRef(name: "service"), .equal, .literal(.string("healthy"))), holdsPattern: EventPatternIR(subject: .step("deploy"), outcome: .failed), holdsUsesStateHistory: false))),
             .traceStatistical(TraceStatisticalIR(
                 scope: .currentRun,
                 pattern: TraceStatisticalPatternIR(subject: .step("deploy")),

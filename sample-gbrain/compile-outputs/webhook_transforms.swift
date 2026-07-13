@@ -591,7 +591,9 @@ public struct WebhookTransformsInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "webhook-transforms",
@@ -649,7 +651,9 @@ public struct WhenSetupwebhookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "webhook-transforms",
@@ -680,7 +684,7 @@ public struct WhenSetupwebhookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSetupwebhookFires/root/procedure/a0ee60ae296a8fd07e8d962128c4beee7e3d432e535bf6560b0d103eeb9e9762") {
             // L1
-            try await runtime.wait(.event("setUpWebhook", matching: nil))
+            try await runtime.wait(.event("setUpWebhook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSetupwebhookFires/root/procedure/a0ee60ae296a8fd07e8d962128c4beee7e3d432e535bf6560b0d103eeb9e9762", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSetupwebhookFires/root/procedure/98485e0ad4089b363a79652ffe2befc6bad8127b0a633ec99795b85fc83a084a") {
@@ -722,7 +726,9 @@ public struct WhenProcesswebhookeventFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "webhook-transforms",
@@ -753,7 +759,7 @@ public struct WhenProcesswebhookeventFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcesswebhookeventFires/root/procedure/5ea5a1883cd49be5d50c6933045ddf8f85487526d27a2262dac6bddb597303f5") {
             // L1
-            try await runtime.wait(.event("processWebhookEvent", matching: nil))
+            try await runtime.wait(.event("processWebhookEvent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcesswebhookeventFires/root/procedure/5ea5a1883cd49be5d50c6933045ddf8f85487526d27a2262dac6bddb597303f5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcesswebhookeventFires/root/procedure/95ed74a9b9b2f1d3b75465e64bad009665571dc6b3967317350f4243cc6f15db") {
@@ -795,7 +801,9 @@ public struct WhenTransformthiseventFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "webhook-transforms",
@@ -826,7 +834,7 @@ public struct WhenTransformthiseventFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTransformthiseventFires/root/procedure/396757d77561be88fb9fc6f75f0b249588c436296e8c3588f39e353167e16104") {
             // L1
-            try await runtime.wait(.event("transformThisEvent", matching: nil))
+            try await runtime.wait(.event("transformThisEvent", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTransformthiseventFires/root/procedure/396757d77561be88fb9fc6f75f0b249588c436296e8c3588f39e353167e16104", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTransformthiseventFires/root/procedure/6c36f83eecd3114bfacb508ff01d7e81758d1b043d347cddd318fe8a6fc2503c") {

@@ -856,6 +856,35 @@ struct VerbalizerCoverageTests {
         #expect(named.contains("33.35"), Comment(rawValue: named))
     }
 
+    @Test("trace-temporal .ever payload whose-clause and statistical acrossSkills scope")
+    func traceEverPayloadAndAcrossSkillsStatistical() {
+        let v = Verbalizer(model: emptyModel())
+        let ever = v.verbalize(.traceTemporal(TraceTemporalIR(
+            scope: .currentRun,
+            kind: .ever(EventPatternIR(
+                subject: .step("deploy"),
+                outcome: .failed,
+                payloadPredicate: .comparison(
+                    .identifierRef(name: "amount"),
+                    .greaterThan,
+                    .literal(.number(10))
+                )
+            ))
+        )))
+        #expect(ever.contains("whose"), Comment(rawValue: ever))
+        #expect(ever.contains("has ever"), Comment(rawValue: ever))
+
+        let across = v.verbalize(.traceStatistical(TraceStatisticalIR(
+            scope: .acrossSkills(["alpha", "beta"]),
+            pattern: TraceStatisticalPatternIR(subject: .step("deploy")),
+            outcome: .succeeds,
+            bound: .atLeast(0.5),
+            denominator: .runs
+        )))
+        #expect(across.contains("alpha"), Comment(rawValue: across))
+        #expect(across.contains("beta"), Comment(rawValue: across))
+    }
+
     @Test("verbClauseFilterText falls back to nil when no relation backing matches the filtered property")
     func verbClauseFilterTextNoMatchingRelation() {
         // Every relation is tool-backed, so `first(where:)` exhausts the whole

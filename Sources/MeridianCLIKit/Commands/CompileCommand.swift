@@ -26,6 +26,10 @@ public struct CompileCommand: AsyncParsableCommand {
             help: "Path to a .merrules rulebook. Repeatable. If omitted, every .merrules in the input's directory (or its parent) is auto-loaded.")
     var rulebook: [String] = []
 
+    @Option(name: .long, parsing: .singleValue,
+            help: "Directory searched for shared module packages (`<path>/<name>/module.merconfig`). Repeatable.")
+    var modulePath: [String] = []
+
     @Option(name: .long,
             help: "Wrap all generated declarations in `public enum <name> { … }` so independently-compiled files can share one Swift module without colliding. Defaults to `auto` (derive the name from the input file stem). Pass `none` to emit flat top-level declarations.")
     var namespace: String = "auto"
@@ -38,6 +42,9 @@ public struct CompileCommand: AsyncParsableCommand {
 
     @Flag(name: .long, help: "Skip swift-format formatting of generated code.")
     var noFormat: Bool = false
+
+    @Flag(name: .long, help: "Emit domain and workflow Swift as separate files (`Domain.swift`, `Workflows.swift`).")
+    var multiFile: Bool = false
 
     @OptionGroup var cliTrace: CLITraceOptions
 
@@ -82,6 +89,14 @@ public struct CompileCommand: AsyncParsableCommand {
                                    file: url.lastPathComponent, source: src))
         }
 
+        let moduleSearchPaths = try modulePath.map { path in
+            let url = URL(fileURLWithPath: path).standardized
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                throw cliInputNotFound(path, label: "module-path")
+            }
+            return url
+        }
+
         let traceInstance = try cliTrace.makeTrace()
 
         let resolvedNamespace: String?
@@ -100,7 +115,10 @@ public struct CompileCommand: AsyncParsableCommand {
                 emitSourceLineComments: !noLineComments,
                 namespaceEnum: resolvedNamespace
             ),
-            trace: traceInstance
+            trace: traceInstance,
+            moduleSearchPaths: moduleSearchPaths,
+            anchorDirectory: meridianURL.deletingLastPathComponent(),
+            emitMultiFile: multiFile
         )
         let compiler = Compiler(options: compilerOpts)
 
@@ -117,7 +135,7 @@ public struct CompileCommand: AsyncParsableCommand {
             diagPaths[url.lastPathComponent] = url
         }
 
-        let compiled: (swift: String, manifest: ManifestEmitter.Input)
+        let compiled: (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input)
         do {
             compiled = try compiler.compileWithManifest(
                 meridianSource: meridianSource,
@@ -156,8 +174,19 @@ public struct CompileCommand: AsyncParsableCommand {
 
         // Write output
         try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true)
-        let outFile = outputURL.appendingPathComponent(meridianURL.deletingPathExtension().lastPathComponent + ".swift")
-        try swift.write(to: outFile, atomically: true, encoding: .utf8)
+        let stem = meridianURL.deletingPathExtension().lastPathComponent
+        if multiFile, let split = compiled.multiFile {
+            let domainFile = outputURL.appendingPathComponent("Domain.swift")
+            let workflowsFile = outputURL.appendingPathComponent("Workflows.swift")
+            try split.domainSource.write(to: domainFile, atomically: true, encoding: .utf8)
+            try split.workflowsSource.write(to: workflowsFile, atomically: true, encoding: .utf8)
+            print("✓ \(domainFile.path)")
+            print("✓ \(workflowsFile.path)")
+        } else {
+            let outFile = outputURL.appendingPathComponent(stem + ".swift")
+            try swift.write(to: outFile, atomically: true, encoding: .utf8)
+            print("✓ \(outFile.path)")
+        }
 
         // Write the COMPLETE manifest the compiler assembled (workflows,
         // metadata, outline, recorded sections), merging in the source map
@@ -182,13 +211,27 @@ public struct CompileCommand: AsyncParsableCommand {
             relations: m.relations,
             verbs: m.verbs
         ))
-        let manifestFile = outputURL.appendingPathComponent(
-            meridianURL.deletingPathExtension().lastPathComponent + ".meridian.manifest.json"
-        )
+        let manifestFile = outputURL.appendingPathComponent(stem + ".meridian.manifest.json")
         try manifest.write(to: manifestFile, atomically: true, encoding: .utf8)
 
-        print("✓ \(outFile.path)")
+        let model = try compiler.compileToModel(
+            meridianSource: meridianSource,
+            meridianFile: meridianURL.lastPathComponent,
+            vocabularies: vocabularies,
+            rulebooks: rulebooks
+        )
+        let sidecar = try IRSidecarEmitter(trace: traceInstance).emit(
+            workflows: model.workflows,
+            verbalizer: Verbalizer(model: model, trace: traceInstance),
+            sourceFile: meridianURL.lastPathComponent,
+            swiftFile: stem + ".swift",
+            sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift)
+        )
+        let sidecarFile = outputURL.appendingPathComponent(stem + ".meridian.ir.json")
+        try sidecar.write(to: sidecarFile, atomically: true, encoding: .utf8)
+
         print("✓ \(manifestFile.path)")
+        print("✓ \(sidecarFile.path)")
     }
 
     // MARK: - Helpers

@@ -351,7 +351,9 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
@@ -386,10 +388,12 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("extract"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.9),
     denominator: .runs,
-    window: nil
+    window: nil,
+    confidencePercent: nil
 ),
                 cadence: .seconds(86400),
                 message: "Expected the extract step usually succeeds, checked every 1 days",
@@ -404,10 +408,12 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("load"), outcome: .failed, subjectKey: nil, payloadContains: nil),
     bound: .atMost(0.1),
     denominator: .runs,
-    window: nil
+    window: nil,
+    confidencePercent: nil
 ),
                 cadence: .seconds(86400),
                 message: "Expected the load step rarely fails, checked every 1 days",
@@ -422,10 +428,12 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("extract"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.9),
     denominator: .runs,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ),
                 cadence: .seconds(86400),
                 message: "Expected the extract step succeeds in at least 90% of runs within the last 30 days otherwise:",
@@ -440,10 +448,12 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("load"), outcome: .failed, subjectKey: nil, payloadContains: nil),
     bound: .atMost(0.05),
     denominator: .occurrences,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ),
                 cadence: .seconds(86400),
                 message: "Expected the load step fails in at most 5% of occurrences within the last 30 days otherwise:",
@@ -456,13 +466,15 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
         // L36
         let __meridianTruth_0_4 = try await runtime.evaluateTrace(TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("extract"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.9),
     denominator: .runs,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ), evaluationInstant: await runtime.currentDate())
         if __meridianTruth_0_4 == .true {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"extract\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.9),\n    denominator: .runs,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"extract\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.9),\n    denominator: .runs,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
             if __meridianShouldRun("/PipelineReliabilityWatch/workflow-steps/procedure/branch.then/1d359d9dbb8061460c7f85126f6265962289045e38238c38768d7e02e2843868") {
                 // L37
                 try await runtime.emit(
@@ -474,8 +486,9 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/PipelineReliabilityWatch/workflow-steps/procedure/branch.then/1d359d9dbb8061460c7f85126f6265962289045e38238c38768d7e02e2843868", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
         } else if __meridianTruth_0_4 == .indeterminate {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"extract\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.9),\n    denominator: .runs,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"extract\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),\n    bound: .atLeast(0.9),\n    denominator: .runs,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
             if __meridianShouldRun("/PipelineReliabilityWatch/workflow-steps/procedure/branch.unknown/1ef6dfe7269518e1d57adea01649c498de35510832247c17fe8d020ee926add4") {
                 // L39
                 try await runtime.emit(
@@ -487,18 +500,21 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/PipelineReliabilityWatch/workflow-steps/procedure/branch.unknown/1ef6dfe7269518e1d57adea01649c498de35510832247c17fe8d020ee926add4", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps/procedure/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e")
         }
 
         // L43
         let __meridianTruth_0_5 = try await runtime.evaluateTrace(TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("load"), outcome: .failed, subjectKey: nil, payloadContains: nil),
     bound: .atMost(0.05),
     denominator: .occurrences,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ), evaluationInstant: await runtime.currentDate())
         if __meridianTruth_0_5 == .true {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"load\"), outcome: .failed, subjectKey: nil, payloadContains: nil),\n    bound: .atMost(0.05),\n    denominator: .occurrences,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"load\"), outcome: .failed, subjectKey: nil, payloadContains: nil),\n    bound: .atMost(0.05),\n    denominator: .occurrences,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
             if __meridianShouldRun("/PipelineReliabilityWatch/workflow-steps-2/procedure/branch.then/31b7063368fb6760dc3b0ad35d752562b5fde14e909025db24e2110607fa594c") {
                 // L44
                 try await runtime.emit(
@@ -510,8 +526,9 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/PipelineReliabilityWatch/workflow-steps-2/procedure/branch.then/31b7063368fb6760dc3b0ad35d752562b5fde14e909025db24e2110607fa594c", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
         } else if __meridianTruth_0_5 == .indeterminate {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    pattern: TraceEventPatternQuery(subject: .step(\"load\"), outcome: .failed, subjectKey: nil, payloadContains: nil),\n    bound: .atMost(0.05),\n    denominator: .occurrences,\n    window: .seconds(2592000)\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceStatisticalQuery(\n    scope: .currentRun,\n    scopeSkills: [],\n    pattern: TraceEventPatternQuery(subject: .step(\"load\"), outcome: .failed, subjectKey: nil, payloadContains: nil),\n    bound: .atMost(0.05),\n    denominator: .occurrences,\n    window: .seconds(2592000),\n    confidencePercent: nil\n), evaluationInstant: await runtime.currentDate()) == .true)", into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
             if __meridianShouldRun("/PipelineReliabilityWatch/workflow-steps-2/procedure/branch.unknown/a641f78aa3d450c8b098adea7b6dcfeee33a59b04047466e049b0401ef70e00d") {
                 // L46
                 try await runtime.emit(
@@ -523,6 +540,7 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/PipelineReliabilityWatch/workflow-steps-2/procedure/branch.unknown/a641f78aa3d450c8b098adea7b6dcfeee33a59b04047466e049b0401ef70e00d", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "unknown", step: "/PipelineReliabilityWatch/workflow-steps-2/procedure/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195")
         }
 
         if __meridianShouldRun("/PipelineReliabilityWatch/workflow-steps-3/procedure/57d436791e4233eccc6c92e120ed7f636357ca861092528e0a5f4fe65bbc5d8f") {
@@ -563,7 +581,9 @@ public struct WhenRunpipelinereliabilitywatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
@@ -595,7 +615,7 @@ public struct WhenRunpipelinereliabilitywatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpipelinereliabilitywatchFires/root/procedure/8492b5adc05b2301f238e724ee0500432ec616dd72a3e3f0c7c975916cae34f6") {
             // L1
-            try await runtime.wait(.event("runPipelineReliabilityWatch", matching: nil))
+            try await runtime.wait(.event("runPipelineReliabilityWatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpipelinereliabilitywatchFires/root/procedure/8492b5adc05b2301f238e724ee0500432ec616dd72a3e3f0c7c975916cae34f6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpipelinereliabilitywatchFires/root/procedure/dea4bc3d83e623e12ddd914d871ef308c3d2a1938ae9002410e1f0f6d3f86086") {
@@ -637,7 +657,9 @@ public struct WhenCheckpipelinereliabilityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
@@ -669,7 +691,7 @@ public struct WhenCheckpipelinereliabilityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckpipelinereliabilityFires/root/procedure/23826838d041224389668447b72a651091c0990a943774793439d88a40e955ee") {
             // L1
-            try await runtime.wait(.event("checkPipelineReliability", matching: nil))
+            try await runtime.wait(.event("checkPipelineReliability", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckpipelinereliabilityFires/root/procedure/23826838d041224389668447b72a651091c0990a943774793439d88a40e955ee", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckpipelinereliabilityFires/root/procedure/d3cd4f52dc9bd0661687f0d669549803b0f065f785305f896fa962012e3570e0") {
@@ -711,7 +733,9 @@ public struct WhenMonitorextractloadreliabilityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
@@ -743,7 +767,7 @@ public struct WhenMonitorextractloadreliabilityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonitorextractloadreliabilityFires/root/procedure/4bd0523b0b913b2a002cac193a7e3e19f5f7b8688bbd1839d08abeefcd10ffd1") {
             // L1
-            try await runtime.wait(.event("monitorExtractLoadReliability", matching: nil))
+            try await runtime.wait(.event("monitorExtractLoadReliability", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonitorextractloadreliabilityFires/root/procedure/4bd0523b0b913b2a002cac193a7e3e19f5f7b8688bbd1839d08abeefcd10ffd1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonitorextractloadreliabilityFires/root/procedure/ee5dab199a1b25881869856cc0932e76ed1f4def758389d5fe390f4888c6cecc") {

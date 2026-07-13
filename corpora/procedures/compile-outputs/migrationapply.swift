@@ -422,7 +422,9 @@ public struct MigrationApply: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
@@ -481,7 +483,7 @@ public struct MigrationApply: MeridianWorkflow {
             state.bind("migration", migration)
                 if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/iterate.body/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045") {
                     // L21
-                    try await runtime.wait(.approval(of: state.get("migration") ?? .null, by: RoleRef(identifier: "a database administrator")))
+                    try await runtime.wait(.approval(of: state.get("migration") ?? .null, by: RoleRef(identifier: "a database administrator")), sourceRange: nil)
                     try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/iterate.body/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045", state: state.snapshot())
                 }
                 // L23
@@ -562,7 +564,9 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
@@ -594,7 +598,7 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b") {
             // L1
-            try await runtime.wait(.event("applyPendingMigrations", matching: nil))
+            try await runtime.wait(.event("applyPendingMigrations", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApplypendingmigrationsFires/root/procedure/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c") {
@@ -636,7 +640,9 @@ public struct WhenRunschemamigrationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
@@ -668,7 +674,7 @@ public struct WhenRunschemamigrationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f") {
             // L1
-            try await runtime.wait(.event("runSchemaMigration", matching: nil))
+            try await runtime.wait(.event("runSchemaMigration", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunschemamigrationFires/root/procedure/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d") {

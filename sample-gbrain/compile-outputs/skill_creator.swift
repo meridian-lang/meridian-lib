@@ -591,7 +591,9 @@ public struct SkillCreatorInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skill-creator",
@@ -691,7 +693,9 @@ public struct WhenCreateskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skill-creator",
@@ -722,7 +726,7 @@ public struct WhenCreateskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCreateskillFires/root/procedure/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc") {
             // L1
-            try await runtime.wait(.event("createSkill", matching: nil))
+            try await runtime.wait(.event("createSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCreateskillFires/root/procedure/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCreateskillFires/root/procedure/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069") {
@@ -764,7 +768,9 @@ public struct WhenNewskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skill-creator",
@@ -795,7 +801,7 @@ public struct WhenNewskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenNewskillFires/root/procedure/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb") {
             // L1
-            try await runtime.wait(.event("newSkill", matching: nil))
+            try await runtime.wait(.event("newSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenNewskillFires/root/procedure/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenNewskillFires/root/procedure/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc") {
@@ -837,7 +843,9 @@ public struct WhenImprovethisskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skill-creator",
@@ -868,7 +876,7 @@ public struct WhenImprovethisskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403") {
             // L1
-            try await runtime.wait(.event("improveThisSkill", matching: nil))
+            try await runtime.wait(.event("improveThisSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenImprovethisskillFires/root/procedure/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001") {

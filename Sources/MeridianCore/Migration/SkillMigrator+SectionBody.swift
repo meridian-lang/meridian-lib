@@ -21,7 +21,7 @@ extension SkillMigrator {
             var t = raw.trimmingCharacters(in: .whitespaces)
             if t.hasPrefix("```") {
                 let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                let executableFence = isShellFence(lang) || knowledge.lexicon.fenceTool(for: lang) != nil
+                let executableFence = knowledge.lexicon.isShellFence(lang) || knowledge.lexicon.fenceTool(for: lang) != nil
                 guard executableFence else { return false }
                 var fenceLines = [raw]
                 var j = body.index(after: i)

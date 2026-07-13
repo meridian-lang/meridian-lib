@@ -744,7 +744,9 @@ public struct ReviewCommentRefactorPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review comment refactor",
@@ -870,7 +872,9 @@ public struct ResolveComment: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "review comment refactor",
@@ -917,8 +921,10 @@ public struct ResolveComment: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
         } else {
             try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment was already addressed\", snapshot: state.snapshot()))", into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
+
             if __meridianShouldRun("/ResolveComment/sub-workflows/procedure/branch.else/8e69d74e93a91518c469ddd7e9d5b4f6658aae2691e46391fe90c9c895655819") {
                 try await runtime.emit(
                     event: "audit.note",
@@ -930,6 +936,7 @@ public struct ResolveComment: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.else/8e69d74e93a91518c469ddd7e9d5b4f6658aae2691e46391fe90c9c895655819", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
         }
 
 

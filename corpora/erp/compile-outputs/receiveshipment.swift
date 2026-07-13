@@ -544,7 +544,9 @@ public struct ReceiveShipment: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
@@ -590,7 +592,7 @@ public struct ReceiveShipment: MeridianWorkflow {
         }
         if __meridianShouldRun("/ReceiveShipment/workflow/procedure/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028") {
             // L17
-            try await runtime.wait(.signal("manifest_confirmed"))
+            try await runtime.wait(.signal("manifest_confirmed"), sourceRange: nil)
             try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028", state: state.snapshot())
         }
         if __meridianShouldRun("/ReceiveShipment/workflow/procedure/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd") {
@@ -631,7 +633,9 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
@@ -663,7 +667,7 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438") {
             // L1
-            try await runtime.wait(.event("receiveInboundShipment", matching: nil))
+            try await runtime.wait(.event("receiveInboundShipment", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReceiveinboundshipmentFires/root/procedure/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df") {
@@ -705,7 +709,9 @@ public struct WhenShipmentreceivedFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
@@ -737,7 +743,7 @@ public struct WhenShipmentreceivedFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225") {
             // L1
-            try await runtime.wait(.event("shipmentReceived", matching: nil))
+            try await runtime.wait(.event("shipmentReceived", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShipmentreceivedFires/root/procedure/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43") {

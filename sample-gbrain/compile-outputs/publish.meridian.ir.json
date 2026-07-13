@@ -1,0 +1,126 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event createShareableLink.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCreateshareablelinkFires\/root\/procedure\/9e61a242957e1153ea2757437f1952af034ba09076ed12462e4845b4ec02b7c6",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "emit trigger.createShareableLink.fired with kind = \"keyword\", spec = \"create shareable link\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCreateshareablelinkFires\/root\/procedure\/c7a7339b39fb449a41ba3902f2f28af5db1953f8e827475877184d831c7120b3",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "wait for event publishPage.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPublishpageFires\/root\/procedure\/8c1a56515537f6749bd41176ebd566a18ac1bbd9e54ec550e6d915bb841f9e46",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "emit trigger.publishPage.fired with kind = \"keyword\", spec = \"publish page\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPublishpageFires\/root\/procedure\/af26c344e75edd627e813982cb01cbb0cb4908c99a43f663ced13f88ff39dde9",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "wait for event shareThisPage.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSharethispageFires\/root\/procedure\/26e83cf5b86263d39eabf480d17b3b7b08f1a2e00fe137589ef8df39a1ecd528",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "emit trigger.shareThisPage.fired with kind = \"keyword\", spec = \"share this page\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSharethispageFires\/root\/procedure\/7409b5c225a0a479b8b7e3431b92fdfe5f785fdd3ff3627fbb300d9b3ac79c6c",
+      "swift_line" : 983
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --out \/tmp\/acme-share.html`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/quick-reference\/procedure\/0da618150cc419841a3baaceff674236a47a0ff7c0dfac26bf3b0a8dbfbf4819",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/quick-reference\/procedure\/6b98635b972dd3012f541bb6201bdb4cccecfcf6f7317cac21bfda7e6fe6fc5e",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --password`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/quick-reference\/procedure\/89aedba77065c9e381e7925fe169cff6af7d7ecc5085a05277f35918e94c6ac3",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --password \"secret123\"`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/quick-reference\/procedure\/d28a0680f725e99c332d4ce71aa64adaf78b990f1e0cc06f807a544e446a290d",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --password --title \"Acme -- Deal Analysis\"`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/quick-reference\/procedure\/dc874c260edd829ca86c5f3184e7ee38e57d81b86d6a8c1f1026cef193724984",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "`gbrain publish brain\/people\/jane-doe.md --password --out ~\/Desktop\/jane-briefing.html`.",
+      "meridian_line" : 96,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/option-a-local-file-simplest-steps\/procedure\/2900e307d25d8d87201cb5f2eaf7ba97234ac488a20d75e2593814119eec6b4d",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "`gbrain files signed-url shares\/acme\/acme.html`.",
+      "meridian_line" : 107,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/option-b-upload-to-cloud-storage-steps\/procedure\/0b819aead71caf27452728234be6e816caa316f38faa9cb4c27187f0a99a0c83",
+      "swift_line" : 731
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --password \"secret\" --out \/tmp\/acme.html`.",
+      "meridian_line" : 107,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/option-b-upload-to-cloud-storage-steps\/procedure\/d5e3f29e23c16d6a99d4aa21173da20bced42f40e6ce5ab574a5f32fbb27d859",
+      "swift_line" : 731
+    },
+    {
+      "canonical" : "`gbrain files upload \/tmp\/acme.html --page shares\/acme`.",
+      "meridian_line" : 107,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/option-b-upload-to-cloud-storage-steps\/procedure\/d5e44b300642d9ecefdab6dd42b7ccb900d91bababe1a8a49eddb5da66786e4d",
+      "swift_line" : 731
+    },
+    {
+      "canonical" : "`gbrain publish brain\/trips\/japan-2026.md --out trip.html`.",
+      "meridian_line" : 126,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/option-d-github-pages-gist\/procedure\/e933922932cbc0b73317b7cd16559e177b2ee9441c6c7f7e997e7e7603814d4c",
+      "swift_line" : 744
+    },
+    {
+      "canonical" : "`gbrain publish brain\/companies\/acme.md --password \"same-password\" --out shares\/acme.html`.",
+      "meridian_line" : 155,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/PublishInput\/updating-a-published-page-steps\/procedure\/9fef1958a1d123ccd3364325c1fc198f8867bca0aacb73cdca9638e679aa14f8",
+      "swift_line" : 757
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "publish.meri",
+  "swift_file" : "publish.swift"
+}

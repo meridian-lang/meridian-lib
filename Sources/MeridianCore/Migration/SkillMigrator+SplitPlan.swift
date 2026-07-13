@@ -344,7 +344,11 @@ extension SkillMigrator {
             // ("the file may exist outside the indexed brain") spuriously
             // satisfies `classifyPermission`.
             guard ruleAnalyzer.looksLikeRuleShapedSentence(text) else { return false }
-            return ruleAnalyzer.classify(RuleAST(text: text, sourceLine: 0)) != nil
+            do {
+                return try ruleAnalyzer.classify(RuleAST(text: text, sourceLine: 0)) != nil
+            } catch {
+                return true
+            }
         }
 
         // Step 1: atomic-block scan (fences are one block).
@@ -356,7 +360,7 @@ extension SkillMigrator {
             if t.hasPrefix("```") {
                 var fenceLines = [raw]
                 let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                let shell = isShellFence(lang)
+                let shell = knowledge.lexicon.isShellFence(lang)
                 let toolFence = !shell && knowledge.lexicon.fenceTool(for: lang) != nil
                 var j = body.index(after: i)
                 while j < body.endIndex {

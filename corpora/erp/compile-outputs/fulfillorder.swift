@@ -544,7 +544,9 @@ public struct FulfillOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
@@ -639,16 +641,19 @@ public struct FulfillOrder: MeridianWorkflow {
                     try await runtime.recordBranchTaken(condition: "meridianDef_Order_highValue(state.get(\"order\"))", into: "then", step: "/FulfillOrder/workflow-steps/procedure/iterate.body/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63")
                     if __meridianShouldRun("/FulfillOrder/workflow-steps/procedure/branch.then/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd") {
                         // L30
-                        try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "an account manager")))
+                        try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "an account manager")), sourceRange: nil)
                         try await runtime.checkpoint(label: "/FulfillOrder/workflow-steps/procedure/branch.then/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/FulfillOrder/workflow-steps/procedure/iterate.body/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63")
                 } else {
                     try await runtime.recordBranchTaken(condition: "meridianDef_Order_highValue(state.get(\"order\"))", into: "otherwise", step: "/FulfillOrder/workflow-steps/procedure/iterate.body/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63")
+
                     if __meridianShouldRun("/FulfillOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100") {
                         // L32
                         try await runtime.assert(MeridianComparison.gt(state.get("order.totalAmount"), .number(Decimal(0))), message: "Expected the order's total amount is more than 0")
                         try await runtime.checkpoint(label: "/FulfillOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/FulfillOrder/workflow-steps/procedure/iterate.body/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63")
                 }
 
                 if __meridianShouldRun("/FulfillOrder/workflow-steps/procedure/iterate.body/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1") {
@@ -708,7 +713,9 @@ public struct WhenFulfillerpordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
@@ -740,7 +747,7 @@ public struct WhenFulfillerpordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFulfillerpordersFires/root/procedure/371bdff9c74de1360acbde6d6b9b5df97527e509ac63812c0a991bacaa016e07") {
             // L1
-            try await runtime.wait(.event("fulfillErpOrders", matching: nil))
+            try await runtime.wait(.event("fulfillErpOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFulfillerpordersFires/root/procedure/371bdff9c74de1360acbde6d6b9b5df97527e509ac63812c0a991bacaa016e07", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFulfillerpordersFires/root/procedure/b4585dfb4b9f998e0137e8df388c10acc0fd0d628256f1746c2823d0947e66a8") {
@@ -782,7 +789,9 @@ public struct WhenReleaseshipmentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
@@ -814,7 +823,7 @@ public struct WhenReleaseshipmentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReleaseshipmentsFires/root/procedure/65572f28d45b31aecdd7a446a749e0a13f7a364d402ebb844331902fd7430e43") {
             // L1
-            try await runtime.wait(.event("releaseShipments", matching: nil))
+            try await runtime.wait(.event("releaseShipments", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReleaseshipmentsFires/root/procedure/65572f28d45b31aecdd7a446a749e0a13f7a364d402ebb844331902fd7430e43", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReleaseshipmentsFires/root/procedure/b5a41039d3a54a01ec41175e1147c7ff3a61f35c2255e2a3982382bb4fc76984") {

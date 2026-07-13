@@ -1,0 +1,112 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event fulfillErpOrders.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFulfillerpordersFires\/root\/procedure\/371bdff9c74de1360acbde6d6b9b5df97527e509ac63812c0a991bacaa016e07",
+      "swift_line" : 830
+    },
+    {
+      "canonical" : "emit trigger.fulfillErpOrders.fired with kind = \"keyword\", spec = \"fulfill ERP orders\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFulfillerpordersFires\/root\/procedure\/b4585dfb4b9f998e0137e8df388c10acc0fd0d628256f1746c2823d0947e66a8",
+      "swift_line" : 830
+    },
+    {
+      "canonical" : "wait for event releaseShipments.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenReleaseshipmentsFires\/root\/procedure\/65572f28d45b31aecdd7a446a749e0a13f7a364d402ebb844331902fd7430e43",
+      "swift_line" : 830
+    },
+    {
+      "canonical" : "emit trigger.releaseShipments.fired with kind = \"keyword\", spec = \"release shipments\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenReleaseshipmentsFires\/root\/procedure\/b5a41039d3a54a01ec41175e1147c7ff3a61f35c2255e2a3982382bb4fc76984",
+      "swift_line" : 830
+    },
+    {
+      "canonical" : "`ofbiz shipment --pending --json` -- capture pending warehouse work.",
+      "meridian_line" : 24,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/ecbf8103415e374bc23699f771908225bef29bcf764b4f6b14453a7dfafdcecb",
+      "swift_line" : 585
+    },
+    {
+      "canonical" : "bind orders = invoke order.list with status = \"open\".",
+      "meridian_line" : 25,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+      "swift_line" : 599
+    },
+    {
+      "canonical" : "assert all orders have a number.",
+      "meridian_line" : 26,
+      "primitive" : "assert",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/7a9db8cbb8a8e8fe7e4d0600d8e3ffa8ad6efb4573d843fd2e2c7831491c9722",
+      "swift_line" : 613
+    },
+    {
+      "canonical" : "for each order in orders,\n  bind inventory = invoke inventory.reserve with order = order.\n  if order is high value,\n    wait for approval of order from an account manager.\n  otherwise,\n    assert the order's total amount is more than 0.\n  bind shipment = invoke shipment.create with order = order.",
+      "meridian_line" : 27,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/c889557acbc1a08740b3003c99da1d92e626e1765341dd35321e7fd18d34fb5a",
+      "swift_line" : 617
+    },
+    {
+      "canonical" : "bind inventory = invoke inventory.reserve with order = order.",
+      "meridian_line" : 28,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/1680adb79bc9e4ee837f4b97376c396edb5bece099b1320ac60aff895bac9523",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "if order is high value,\n  wait for approval of order from an account manager.\notherwise,\n  assert the order's total amount is more than 0.",
+      "meridian_line" : 29,
+      "primitive" : "branch",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/1d8a1706a446a542185dc1cca6fe83925933c32e0705de9e71720c83a0a91c63",
+      "swift_line" : 639
+    },
+    {
+      "canonical" : "wait for approval of order from an account manager.",
+      "meridian_line" : 30,
+      "primitive" : "wait",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/branch.then\/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd",
+      "swift_line" : 643
+    },
+    {
+      "canonical" : "assert the order's total amount is more than 0.",
+      "meridian_line" : 32,
+      "primitive" : "assert",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/branch.else\/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100",
+      "swift_line" : 652
+    },
+    {
+      "canonical" : "bind shipment = invoke shipment.create with order = order.",
+      "meridian_line" : 33,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/iterate.body\/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1",
+      "swift_line" : 660
+    },
+    {
+      "canonical" : "emit erp.report with message = \"shipment release queue drained\".",
+      "meridian_line" : 34,
+      "primitive" : "emit",
+      "stable_step_path" : "\/FulfillOrder\/workflow-steps\/procedure\/ef690b1d6c253dd5d0b1612df7704438369ee89167dcf8f5a72550795ab36104",
+      "swift_line" : 679
+    },
+    {
+      "canonical" : "assert Every released order has inventory reserved.",
+      "meridian_line" : 37,
+      "primitive" : "assert",
+      "stable_step_path" : "\/FulfillOrder\/checks\/invariants\/e71a240890b2dbb476748330ea3000da5b350497d36f5f96693504131b43b754",
+      "swift_line" : 580
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "fulfillorder.meri",
+  "swift_file" : "fulfillorder.swift"
+}

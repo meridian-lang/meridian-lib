@@ -591,7 +591,9 @@ public struct DataResearchInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -663,7 +665,9 @@ public struct WhenResearchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -694,7 +698,7 @@ public struct WhenResearchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenResearchFires/root/procedure/ec0fdcdaee65b0dfb6245492c97ca9aa10d54c3d5db901965b22593c72bcd731") {
             // L1
-            try await runtime.wait(.event("research", matching: nil))
+            try await runtime.wait(.event("research", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenResearchFires/root/procedure/ec0fdcdaee65b0dfb6245492c97ca9aa10d54c3d5db901965b22593c72bcd731", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenResearchFires/root/procedure/0cd2dc9904cd2754d8e87204bfe133e17c93f3e14857b980f408e9b701812a6e") {
@@ -736,7 +740,9 @@ public struct WhenTrackFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -767,7 +773,7 @@ public struct WhenTrackFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTrackFires/root/procedure/252d35f3f58df0432eed656afca89e586ad98f1d3072f38b6f817c63bd063fca") {
             // L1
-            try await runtime.wait(.event("track", matching: nil))
+            try await runtime.wait(.event("track", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTrackFires/root/procedure/252d35f3f58df0432eed656afca89e586ad98f1d3072f38b6f817c63bd063fca", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTrackFires/root/procedure/4d403cde7d905bc042718b345a702a4895b247a726299c1790af4d4fac706cde") {
@@ -809,7 +815,9 @@ public struct WhenExtractemailFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -840,7 +848,7 @@ public struct WhenExtractemailFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenExtractemailFires/root/procedure/389baf6c9a37deb96753434f6224a1bb90de6bb44c2a3504da93e658cdbd7366") {
             // L1
-            try await runtime.wait(.event("extractEmail", matching: nil))
+            try await runtime.wait(.event("extractEmail", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenExtractemailFires/root/procedure/389baf6c9a37deb96753434f6224a1bb90de6bb44c2a3504da93e658cdbd7366", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenExtractemailFires/root/procedure/f6daec9b55903c1002ecffb81cadbe5ea8fa6ada6686ec30fca653a526167bb8") {
@@ -882,7 +890,9 @@ public struct WhenInvestorupdatesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -913,7 +923,7 @@ public struct WhenInvestorupdatesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenInvestorupdatesFires/root/procedure/329e97e85378db32ba5a1369d39ed24f405d41eea3ba2ef8bf3cbbe816b7550b") {
             // L1
-            try await runtime.wait(.event("investorUpdates", matching: nil))
+            try await runtime.wait(.event("investorUpdates", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenInvestorupdatesFires/root/procedure/329e97e85378db32ba5a1369d39ed24f405d41eea3ba2ef8bf3cbbe816b7550b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenInvestorupdatesFires/root/procedure/b7056dff484ff0dd934ddc455caf9e3908c2a3affc2abdbee60461e9b031ea31") {
@@ -955,7 +965,9 @@ public struct WhenDonationsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -986,7 +998,7 @@ public struct WhenDonationsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDonationsFires/root/procedure/03413607094ebee3949c9f3ac79cad3c90236248ee09e48be49561e02cd266f6") {
             // L1
-            try await runtime.wait(.event("donations", matching: nil))
+            try await runtime.wait(.event("donations", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDonationsFires/root/procedure/03413607094ebee3949c9f3ac79cad3c90236248ee09e48be49561e02cd266f6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDonationsFires/root/procedure/8a2d8dae6ca978256f9264119cef1b282afa5f5b8773340a40779f3877c3e075") {
@@ -1028,7 +1040,9 @@ public struct WhenBuildtrackerFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -1059,7 +1073,7 @@ public struct WhenBuildtrackerFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBuildtrackerFires/root/procedure/2742ba077d5d4621485f2b83e4c510a4784363e844fe07f359a17b3cbd3928c2") {
             // L1
-            try await runtime.wait(.event("buildTracker", matching: nil))
+            try await runtime.wait(.event("buildTracker", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBuildtrackerFires/root/procedure/2742ba077d5d4621485f2b83e4c510a4784363e844fe07f359a17b3cbd3928c2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBuildtrackerFires/root/procedure/681f060c2bf4d80cf30f0ee7fb0b81302d075df876ae411dd339ddd04ea9328a") {
@@ -1101,7 +1115,9 @@ public struct WhenDatadigFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "data-research",
@@ -1132,7 +1148,7 @@ public struct WhenDatadigFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDatadigFires/root/procedure/a47ea33faf46909ff6ca828127cf925dded9a1e97c5f0bb5f27fd25619a6fab8") {
             // L1
-            try await runtime.wait(.event("dataDig", matching: nil))
+            try await runtime.wait(.event("dataDig", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDatadigFires/root/procedure/a47ea33faf46909ff6ca828127cf925dded9a1e97c5f0bb5f27fd25619a6fab8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDatadigFires/root/procedure/898b1d07a5f388dc10dfabfd64e1928ca107da02d720da64e6537b1a5c24d2a6") {

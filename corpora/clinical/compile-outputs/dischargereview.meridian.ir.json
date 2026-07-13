@@ -1,0 +1,84 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.dischargePatient.fired with kind = \"keyword\", spec = \"discharge patient\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "wait for event dischargePatient.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "wait for event reviewDischarge.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "emit trigger.reviewDischarge.fired with kind = \"keyword\", spec = \"review discharge\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4",
+      "swift_line" : 650
+    },
+    {
+      "canonical" : "assert either not the patient's status equals \"held\" or the clinician's role equals \"attending\".",
+      "meridian_line" : 35,
+      "primitive" : "assert",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/rules-steps\/procedure\/5b785a6f38e1ef38aa0406fe6ed3c49b8aa13851e03c65c79047d8a22caf9648",
+      "swift_line" : 446
+    },
+    {
+      "canonical" : "if the patient's status equals \"held\",\n  bind hold = invoke order.override with order = medication order.\n  emit clinical.note with message = \"hold overridden by attending, discharge may proceed\".",
+      "meridian_line" : 39,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/c6628fa43732ceb5dfa620197eb49fb19c0b5111d2fe9a8b946497b332fb45e1",
+      "swift_line" : 450
+    },
+    {
+      "canonical" : "bind hold = invoke order.override with order = medication order.",
+      "meridian_line" : 40,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/ca7a51411cdc03f2b94331fa7e5b43b2686bc76cdadcb72496dc37ce3858b21b",
+      "swift_line" : 454
+    },
+    {
+      "canonical" : "emit clinical.note with message = \"hold overridden by attending, discharge may proceed\".",
+      "meridian_line" : 41,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39",
+      "swift_line" : 468
+    },
+    {
+      "canonical" : "if not the patient's status equals \"held\",\n  emit clinical.note with message = \"no active hold, discharge proceeds normally\".",
+      "meridian_line" : 42,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/4c90a9201e885bdbcf09809f34858dbfdc06d1ae710cb2155d287401d1234aaa",
+      "swift_line" : 481
+    },
+    {
+      "canonical" : "emit clinical.note with message = \"no active hold, discharge proceeds normally\".",
+      "meridian_line" : 43,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe",
+      "swift_line" : 485
+    },
+    {
+      "canonical" : "emit clinical.report with message = \"discharge review pass complete\".",
+      "meridian_line" : 44,
+      "primitive" : "emit",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db",
+      "swift_line" : 499
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "dischargereview.meri",
+  "swift_file" : "dischargereview.swift"
+}

@@ -531,7 +531,7 @@ public struct PlaceOrder: MeridianWorkflow {
         "triggers": "\"process open orders\"\n\"place customer orders\"",
     ]
 
-    public static let skillVersionHash = "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+    public static let skillVersionHash = "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -544,11 +544,13 @@ public struct PlaceOrder: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "place order",
-            versionHash: "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+            versionHash: "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
         ),
         toolCapturePolicies: [:]
     )
@@ -663,13 +665,16 @@ public struct PlaceOrder: MeridianWorkflow {
                         try await runtime.assert(MeridianComparison.neq(state.get("order.customerId"), state.get("empty,")), message: "Expected the order's customer id is not empty,")
                         try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.then/57d55a046e2b470f97587818317268a47c6843a16ee3756a3715e364b459f553", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
                 } else {
                     try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
+
                     if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100") {
                         // L35
                         try await runtime.assert(MeridianComparison.gt(state.get("order.totalAmount"), .number(Decimal(0))), message: "Expected the order's total amount is more than 0")
                         try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
                 }
 
                 // L37
@@ -749,7 +754,7 @@ public struct PlaceOrder: MeridianWorkflow {
 public struct WhenProcessopenordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+    public static let skillVersionHash = "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -762,11 +767,13 @@ public struct WhenProcessopenordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "place order",
-            versionHash: "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+            versionHash: "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
         ),
         toolCapturePolicies: [:]
     )
@@ -794,7 +801,7 @@ public struct WhenProcessopenordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/3cb0c43208d5e459ac2322620dba00c957be4f17ec2c4363be189ff7b6f2ee30") {
             // L1
-            try await runtime.wait(.event("processOpenOrders", matching: nil))
+            try await runtime.wait(.event("processOpenOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessopenordersFires/root/procedure/3cb0c43208d5e459ac2322620dba00c957be4f17ec2c4363be189ff7b6f2ee30", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/997a6896e33363c05150dd6af8ac9f9da2c31ca7c0a5a2db660a6dff463186ea") {
@@ -823,7 +830,7 @@ public struct WhenProcessopenordersFires: MeridianWorkflow {
 public struct WhenPlacecustomerordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+    public static let skillVersionHash = "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -836,11 +843,13 @@ public struct WhenPlacecustomerordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "place order",
-            versionHash: "bfecb9389c1e7c048a9c39f19309b40e914edae0b19e0031f1a559c094637478"
+            versionHash: "f93fd5b3f5f57d3b9c5f5e2b18c5643d76d4a20f60764d10b14cc347b86d5dca"
         ),
         toolCapturePolicies: [:]
     )
@@ -868,7 +877,7 @@ public struct WhenPlacecustomerordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/fbb2ab5ca2677c42682fb1c688721a054abdb13448bd6a8c5124b841141acd54") {
             // L1
-            try await runtime.wait(.event("placeCustomerOrders", matching: nil))
+            try await runtime.wait(.event("placeCustomerOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPlacecustomerordersFires/root/procedure/fbb2ab5ca2677c42682fb1c688721a054abdb13448bd6a8c5124b841141acd54", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/ce32957ea4c7274b760c3e3a15ce43fc251a91b8b0d39bb9da26a65ab02dfe2d") {

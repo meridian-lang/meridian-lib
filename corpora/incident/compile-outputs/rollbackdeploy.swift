@@ -387,7 +387,9 @@ public struct RollbackDeploy: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
@@ -451,7 +453,7 @@ public struct RollbackDeploy: MeridianWorkflow {
             state.bind("deploy", deploy)
                 if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/iterate.body/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60") {
                     // L34
-                    try await runtime.wait(.approval(of: state.get("deploy") ?? .null, by: RoleRef(identifier: "an oncall engineer")))
+                    try await runtime.wait(.approval(of: state.get("deploy") ?? .null, by: RoleRef(identifier: "an oncall engineer")), sourceRange: nil)
                     try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/iterate.body/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
@@ -497,7 +499,9 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
@@ -529,7 +533,7 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8") {
             // L1
-            try await runtime.wait(.event("rollBackUnhealthyDeploys", matching: nil))
+            try await runtime.wait(.event("rollBackUnhealthyDeploys", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRollbackunhealthydeploysFires/root/procedure/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31") {
@@ -571,7 +575,9 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
@@ -603,7 +609,7 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b") {
             // L1
-            try await runtime.wait(.event("revertFailedDeploy", matching: nil))
+            try await runtime.wait(.event("revertFailedDeploy", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRevertfaileddeployFires/root/procedure/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642") {
@@ -645,7 +651,9 @@ public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
@@ -677,7 +685,7 @@ public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987") {
             // L1
-            try await runtime.wait(.event("runDeployRollbackPass", matching: nil))
+            try await runtime.wait(.event("runDeployRollbackPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRundeployrollbackpassFires/root/procedure/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7") {

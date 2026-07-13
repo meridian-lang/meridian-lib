@@ -1,0 +1,245 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event archiveThisResearch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenArchivethisresearchFires\/root\/procedure\/8c377b538a1fd727180ef669022565ade870bea9e7f0834eb4d94cc19ed6d01a",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.archiveThisResearch.fired with kind = \"keyword\", spec = \"archive this research\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenArchivethisresearchFires\/root\/procedure\/b21ceef28d014850004752d1b4f9aaea92a88753d3690143954dbcd13399c5d8",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event archiveThisResearchThread.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenArchivethisresearchthreadFires\/root\/procedure\/20a0707ae90e43ec98c9c5eef26345ac5ca2244e1c2c6549f50d423d5b48d40e",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.archiveThisResearchThread.fired with kind = \"keyword\", spec = \"archive this research thread\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenArchivethisresearchthreadFires\/root\/procedure\/5a72ffa83d3e28b99df9bd028653064b738bc4346e0d3ee1ac7d986c7708e3f6",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event brainThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenBrainthisFires\/root\/procedure\/9538961c776e188cea723019b9d31ad4a0a9db3a98861eb19f1c6aef0d467d71",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.brainThis.fired with kind = \"keyword\", spec = \"brain this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBrainthisFires\/root\/procedure\/c7249f0464c8f84d668554cfe7a0a69c12001a5018d26879301e14b0e1dcb133",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event checkEverythingIsInRight.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckeverythingisinrightFires\/root\/procedure\/1aea0afcafec28ce8a841a822b20de9a62e3ad970c526864fd3963b36cd30a3e",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.checkEverythingIsInRight.fired with kind = \"keyword\", spec = \"check everything is in the right place\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckeverythingisinrightFires\/root\/procedure\/cea70d70890511ad4f1f1352a5cd60a41a797dfec497f6a26f91e8b289094c34",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event dryThisUp.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDrythisupFires\/root\/procedure\/53f8e63b76beada90b25fc0d733a6298f973cf39ec3499f3cef6803067d91765",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.dryThisUp.fired with kind = \"keyword\", spec = \"DRY this up\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDrythisupFires\/root\/procedure\/8113b281f92c2bfdbfa875427cc2e365f1f44abb5ee001c2233e3f3cc4a6c6c7",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event eiirp.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenEiirpFires\/root\/procedure\/7649d0131a1ad42bd9ba3424f75889b2fd458986ad0f4194d1f6322b115cd7f5",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.eiirp.fired with kind = \"keyword\", spec = \"eiirp\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenEiirpFires\/root\/procedure\/c8ea04c3c4d5cd822e1b74de75d7b44992947252a39aba97a22243fb782dee6e",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.everythingInItsRightPlace.fired with kind = \"keyword\", spec = \"everything in its right place\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenEverythinginitsrightplaceFires\/root\/procedure\/210e1c0eeab13e73ffaced60bc55655fc58d9916825a6f19482a3581eef107f2",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event everythingInItsRightPlace.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenEverythinginitsrightplaceFires\/root\/procedure\/c990cf608d0a25d7d8790f568dca617e5dbc62d80bc6964647eefb81e3e663a4",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.fileAllThis.fired with kind = \"keyword\", spec = \"file all of this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFileallthisFires\/root\/procedure\/2c9c207cfb77877087a766eb3f648abb1398408cb64b41deca7ee8e6f1f6e3aa",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event fileAllThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFileallthisFires\/root\/procedure\/7dad71293bf57f6f55d5388a8c3feba37d643f90695f9f0968b0763ce1af9e5b",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event fileThisProperly.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFilethisproperlyFires\/root\/procedure\/320611207b9dfa5fa2cc416e6ec84f31d07160c602050e0bfce5214da0b7386a",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.fileThisProperly.fired with kind = \"keyword\", spec = \"file this properly\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFilethisproperlyFires\/root\/procedure\/a244cf3ddd736e500a5ee25e7e16873a640a8ca3f595c67390e2ceeef049adce",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event makeThisPermanent.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMakethispermanentFires\/root\/procedure\/8d8c82c2f74ddc06f2bd35c1083ea3a28ee52cfd7943eaf3018d04b3b90fbaf7",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.makeThisPermanent.fired with kind = \"keyword\", spec = \"make this permanent\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMakethispermanentFires\/root\/procedure\/f8ef415766b3539705b26ed65b34e389f62538099c0fe2337d60ab6caf605bf7",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.makeThisReDoable.fired with kind = \"keyword\", spec = \"make this re-doable\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMakethisredoableFires\/root\/procedure\/69de49fce60e47424daadb1450643f0e854c8692ff39c67fa7726470e38ea39b",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event makeThisReDoable.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMakethisredoableFires\/root\/procedure\/abb919f9095ff8aaf3a63eee59fd5ee96277ba85108b3c7af74086f10f8fcd6f",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.organizeAllThis.fired with kind = \"keyword\", spec = \"organize all of this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenOrganizeallthisFires\/root\/procedure\/0cf5943f119086e2a5d6bd5d733a07c277b3fbd61574ed2b85d533686a93304f",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event organizeAllThis.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenOrganizeallthisFires\/root\/procedure\/46eef54f1d6101e437269c4def4b4d6025e83743b75834b717f39cf3ec042649",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.organizeAllThisWork.fired with kind = \"keyword\", spec = \"organize all of this work\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenOrganizeallthisworkFires\/root\/procedure\/644a94d266ed47090c7b99e51e01680f5c09dde0fac22cd2f13eecf7fac61d00",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event organizeAllThisWork.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenOrganizeallthisworkFires\/root\/procedure\/6bf1c8ee5b328cc5de442d3ccb4937c65825660ae252ddd1d60cee3402ea7e20",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event putThisInBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPutthisinbrainFires\/root\/procedure\/843c0df5afa1ac0ca69a4aecd934b923074f7821644298cf8a7fc3496ac62d41",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.putThisInBrain.fired with kind = \"keyword\", spec = \"put this in the brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPutthisinbrainFires\/root\/procedure\/c5fc61bbcdb53d865bbdf9ab10e81df6b0e99afc0e2603cba791bdcf29eea900",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event storeThisResearch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenStorethisresearchFires\/root\/procedure\/0d3c0a5d88ba740191d1e993cad1024d29c122adee017084e6843ff0203e0a75",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.storeThisResearch.fired with kind = \"keyword\", spec = \"store this research\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenStorethisresearchFires\/root\/procedure\/132d253b14f9b07885c89eae94d1e6f97e67c05fdb251182900ce3e225e581c3",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "wait for event whereDoesThisResearchGo.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWheredoesthisresearchgoFires\/root\/procedure\/841373ca658c481a99ebdc76c91605fa62338d4a5ce10aa876202f1f39a0b86d",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "emit trigger.whereDoesThisResearchGo.fired with kind = \"keyword\", spec = \"where does this research go\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWheredoesthisresearchgoFires\/root\/procedure\/910a21d30141a9c33d8306abf86b732b19f0e1fccef0c1a767ffeeda07083a4c",
+      "swift_line" : 1849
+    },
+    {
+      "canonical" : "`gbrain schema show --json`.",
+      "meridian_line" : 152,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EiirpInput\/phase-2-taxonomy-where-does-each-piece-go-steps\/procedure\/263ad4215a012f5abea812b3577b332a89926f6039f3096a381faad32eaf3252",
+      "swift_line" : 636
+    },
+    {
+      "canonical" : "use judgment to follow the Phase 2: TAXONOMY — Where does each piece go? — steps 2 guidance:\n  If `brain-taxonomist` is installed, INVOKE IT for ambiguous cases. It runs\n  the same decision protocol against the active pack and gives you a single\n  recommended filing path with reasoning\n  Output: a filing plan table:\n  codeblock:bash:IyBXaGF0J3MgZW1lcmdpbmcgaW4gdGhlIGJyYWluIHRoYXQgdGhlIGFjdGl2ZSBwYWNrIGRvZXNuJ3QgY292ZXI\/CmdicmFpbiBzY2hlbWEgZGV0ZWN0IC0tanNvbgoKIyBMTE0tcmVmaW5lZCBzdWdnZXN0aW9ucyAoaGV1cmlzdGljIHdoZW4gbm8gQVBJIGtleSBzZXQpLgpnYnJhaW4gc2NoZW1hIHN1Z2dlc3QgLS1qc29uCgojIFJldmlldyB3aGF0J3MgcGVuZGluZzsgcHJvbW90ZSBvciBpZ25vcmUgZWFjaCBjYW5kaWRhdGUuCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1qc29uCmdicmFpbiBzY2hlbWEgcmV2aWV3LWNhbmRpZGF0ZXMgLS1hcHBseSA8cHJlZml4LW9yLXR5cGUtbmFtZT4=\n  If schema needs change:\n  Propose the addition to the user before running `review-candidates --apply`\n  For each item in the filing plan:\n  Use the brain page template. MUST include:\n  For each entity mentioned:\n  Check if a brain page exists (`gbrain search \"<name>\"` or `gbrain get_page people\/<slug>`)\n  If exists: update State, append Timeline entry citing this research\n  If not: create with enrichment\n  After ALL pages are written, run `gbrain sync` (or commit + push in the\n  brain repo). Verify every link resolves\n  This phase operates on the SKILL graph, not just the research\n  For each identified pattern:\n  Shared logic → `lib\/` (not copy-pasted into skills)\n  Is shared code copy-pasted between skills? (extract to `lib\/`)\n  On approval: invoke `\/skillify` for each new\/modified skill\n  codeblock:bash:Z2JyYWluIGNoZWNrLXJlc29sdmFibGUgICAgICAgICAgICAgICAgICAgICAgICAgIyByb3V0aW5nLXRhYmxlIHJlYWNoYWJpbGl0eQpnYnJhaW4gZG9jdG9yIC0tanNvbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAjIGhlYWx0aCBzdXJmYWNlCmdicmFpbiBzZWFyY2ggIjx0b3BpYyBrZXl3b3Jkcz4iICAgICAgICAgICAgICAgICMgYnJhaW4gcGFnZXMgZmluZGFibGUKZ2JyYWluIG9ycGhhbnMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBhbnkgcGFnZXMgd2l0aG91dCBpbmJvdW5kIGxpbmtzPw==\n  All brain pages have proper frontmatter against active schema pack\n  All entity pages are cross-linked\n  Any new skills have routing entries in `skills\/RESOLVER.md`\n  No DRY violations (no duplicated logic across skills)\n  No MECE violations (no ambiguous routing between skills)\n  Active schema pack updated if new content types emerged\n  `gbrain doctor` reports `schema_pack_consistency: ok`\n  codeblock:markdown:IyMgRUlJUlAgQ29tcGxldGU6IFtUb3BpY10KCiMjIyBCcmFpbiBwYWdlcyBjcmVhdGVkL3VwZGF0ZWQKLSBbcGF0aF0g4oCUIFtkZXNjcmlwdGlvbl0KLSAuLi4KCiMjIyBFbnRpdHkgcGFnZXMKLSBbcGF0aF0g4oCUIFtjcmVhdGVkL3VwZGF0ZWRdCi0gLi4uCgojIyMgU2NoZW1hIGNoYW5nZXMKLSBbbm9uZSAvIGRlc2NyaXB0aW9uIG9mIGNoYW5nZXMgKyB3aGljaCBwYWNrIGRlbHRhIGZpbGVdCgojIyMgU2tpbGxzIGlkZW50aWZpZWQKLSBbc2tpbGwtbmFtZV0g4oCUIFtzdGF0dXM6IGNyZWF0ZWQgLyBtZXJnZWQgLyBkZWZlcnJlZF0KLSAuLi4KCiMjIyBSZXNvbHZlciBzdGF0dXMKLSBEUlkgY2hlY2s6IFtjbGVhbl0KLSBNRUNFIGF1ZGl0OiBbY2xlYW5dCi0gQWN0aXZlIHBhY2s6IFtuYW1lXSB2W3ZlcnNpb25dCi0gc2NoZW1hX3BhY2tfY29uc2lzdGVuY3k6IFtvayAvIHdhcm4g4oCUIHBjdCB1bnR5cGVkXQ==\n  Never treat non-English sources as secondary\n  **EIIRP is idempotent.** Running it twice on the same work should produce no changes the second time\n  **EIIRP consumes the active schema pack as data.** Never hard-code directory tables in EIIRP's logic — read from `gbrain schema show --json` so users who picked `gbrain-recommended` OR custom packs get the right behavior automatically\n  Phase 6 verification uses `gbrain doctor`'s schema_pack_consistency\n  check (T7) for the persistent surface",
+      "meridian_line" : 159,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/EiirpInput\/phase-2-taxonomy-where-does-each-piece-go-steps-2\/procedure\/2e2b1ea88326a9b4d9dc8b461970da8576acdd13c23897c05af48fda9292129f",
+      "swift_line" : 648
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "eiirp.meri",
+  "swift_file" : "eiirp.swift"
+}

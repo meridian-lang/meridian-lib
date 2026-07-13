@@ -351,7 +351,9 @@ public struct QualityGate: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
@@ -478,7 +480,9 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
@@ -510,7 +514,7 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/a5d30ae97db9f4bf6b35e35ea5e0009456c69976b34e47f40887b033ea886621") {
             // L1
-            try await runtime.wait(.event("runQualityGate", matching: nil))
+            try await runtime.wait(.event("runQualityGate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunqualitygateFires/root/procedure/a5d30ae97db9f4bf6b35e35ea5e0009456c69976b34e47f40887b033ea886621", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/2dc6996084fec1e926741fd2c1ff5cd99ee659090815cbe95a5b8ffc02421b8f") {
@@ -552,7 +556,9 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
@@ -584,7 +590,7 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/f19603e13fb622f6678dc9f0f2b739d2018025a518d802e01e405560e032d4ff") {
             // L1
-            try await runtime.wait(.event("checkDataQuality", matching: nil))
+            try await runtime.wait(.event("checkDataQuality", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckdataqualityFires/root/procedure/f19603e13fb622f6678dc9f0f2b739d2018025a518d802e01e405560e032d4ff", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/7bd0b45e67ff201c392c5274e0613bd5a6af836a985f3993aac759caccdb0153") {
@@ -626,7 +632,9 @@ public struct WhenRunqualitygatepassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
@@ -658,7 +666,7 @@ public struct WhenRunqualitygatepassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/f0e67ce878717aeebcb5f2bd721a97e06de915e5bdb632034764c11eff7a35e1") {
             // L1
-            try await runtime.wait(.event("runQualityGatePass", matching: nil))
+            try await runtime.wait(.event("runQualityGatePass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunqualitygatepassFires/root/procedure/f0e67ce878717aeebcb5f2bd721a97e06de915e5bdb632034764c11eff7a35e1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/3d436ce95245b8e67cb21cf95a8a8374d657717343d46cfb73895ea4f555ddbc") {

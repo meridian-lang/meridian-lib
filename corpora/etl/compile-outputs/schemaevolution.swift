@@ -351,7 +351,9 @@ public struct SchemaEvolution: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
@@ -433,8 +435,10 @@ public struct SchemaEvolution: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.then/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
                 } else {
                     try await runtime.recordBranchTaken(condition: "meridianDef_Schema_compatible(state.get(\"schema\"))", into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
+
                     if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/branch.else/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad") {
                         // L35
                         try await runtime.emit(
@@ -446,6 +450,7 @@ public struct SchemaEvolution: MeridianWorkflow {
                         )
                         try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.else/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
@@ -491,7 +496,9 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
@@ -523,7 +530,7 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3") {
             // L1
-            try await runtime.wait(.event("checkSchemaEvolution", matching: nil))
+            try await runtime.wait(.event("checkSchemaEvolution", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckschemaevolutionFires/root/procedure/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e") {
@@ -565,7 +572,9 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
@@ -597,7 +606,7 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6") {
             // L1
-            try await runtime.wait(.event("validateSchemaCompatibility", matching: nil))
+            try await runtime.wait(.event("validateSchemaCompatibility", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenValidateschemacompatibilityFires/root/procedure/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca") {
@@ -639,7 +648,9 @@ public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
@@ -671,7 +682,7 @@ public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a") {
             // L1
-            try await runtime.wait(.event("runSchemaCompatibilityCheck", matching: nil))
+            try await runtime.wait(.event("runSchemaCompatibilityCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunschemacompatibilitycheckFires/root/procedure/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb") {

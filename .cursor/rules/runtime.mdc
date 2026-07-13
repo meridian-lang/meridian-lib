@@ -118,8 +118,8 @@ Use `InMemoryObserver` in tests.
 
 ### `Event` not `MeridianEvent`
 
-The event type is `Event`, not `MeridianEvent`. It has 29 `EventKind` cases.
-See `docs/06_RUNTIME.md` for the full list.
+The event type is `Event`, not `MeridianEvent`. It has 31 `EventKind` cases
+(including `violated`). See `docs/06_RUNTIME.md` for the full list.
 
 ### Trace subsystem (Wave 8) — `Sources/MeridianRuntime/Trace/`
 

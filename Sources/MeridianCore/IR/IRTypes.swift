@@ -50,6 +50,7 @@ public struct IRWorkflow: Sendable {
     public let skillName: String
     public let skillVersionHash: String
     public let runtimeTraceConfiguration: RuntimeTraceConfiguration?
+    public let norms: [NormIR]
 
     public init(
         name: String,
@@ -62,7 +63,8 @@ public struct IRWorkflow: Sendable {
         allowsDiscretion: Bool = false,
         skillName: String? = nil,
         skillVersionHash: String = "unknown",
-        runtimeTraceConfiguration: RuntimeTraceConfiguration? = nil
+        runtimeTraceConfiguration: RuntimeTraceConfiguration? = nil,
+        norms: [NormIR] = []
     ) {
         self.name = name
         self.explicitStructName = explicitStructName
@@ -76,6 +78,7 @@ public struct IRWorkflow: Sendable {
         self.skillName = skillName ?? name
         self.skillVersionHash = skillVersionHash
         self.runtimeTraceConfiguration = runtimeTraceConfiguration
+        self.norms = norms
     }
 
     /// Derive UpperCamelCase struct name from natural-language workflow name.
@@ -170,21 +173,52 @@ public struct BindIR: Sendable {
     }
 }
 
+public enum UnknownHandlingPolicyIR: Sendable, Equatable {
+  case explicit
+  case asTrue
+  case asFalse
+}
+
 // MARK: - 3. branch
+
+/// D11 authored-form metadata: `unless` and `if not` lower to the same
+/// negated predicate but verbalize with the keyword the author used.
+public enum BranchAuthoredForm: String, Sendable, Equatable, Codable {
+    case ifPositive
+    case ifNot
+    case unlessHeader
+    case unlessSuffix
+}
 
 public struct BranchIR: Sendable {
     public let condition: BranchCondition
     public let thenBlock: IRBlock
     public let unknownBlock: IRBlock?
     public let elseBlock: IRBlock?
+    public let unknownPolicy: UnknownHandlingPolicyIR
+    public let authoredForm: BranchAuthoredForm
+    public let deonticGuard: DeonticGuardIR?
     public let sourceRange: SourceRange
     public let stableStepPath: String?
 
-    public init(condition: BranchCondition, thenBlock: IRBlock, unknownBlock: IRBlock? = nil, elseBlock: IRBlock? = nil, sourceRange: SourceRange = .unknown, stableStepPath: String? = nil) {
+    public init(
+        condition: BranchCondition,
+        thenBlock: IRBlock,
+        unknownBlock: IRBlock? = nil,
+        elseBlock: IRBlock? = nil,
+        unknownPolicy: UnknownHandlingPolicyIR = .explicit,
+        authoredForm: BranchAuthoredForm = .ifPositive,
+        deonticGuard: DeonticGuardIR? = nil,
+        sourceRange: SourceRange = .unknown,
+        stableStepPath: String? = nil
+    ) {
         self.condition = condition
         self.thenBlock = thenBlock
         self.unknownBlock = unknownBlock
         self.elseBlock = elseBlock
+        self.unknownPolicy = unknownPolicy
+        self.authoredForm = authoredForm
+        self.deonticGuard = deonticGuard
         self.sourceRange = sourceRange
         self.stableStepPath = stableStepPath
     }
@@ -242,13 +276,16 @@ public struct IRIterationRefinement: Sendable {
     public let filters: [IRExpression]
     public let sort: (path: String, ascending: Bool)?
     public let take: Int?
+    public let takeFromEnd: Int?
 
     public init(filters: [IRExpression] = [],
                 sort: (path: String, ascending: Bool)? = nil,
-                take: Int? = nil) {
+                take: Int? = nil,
+                takeFromEnd: Int? = nil) {
         self.filters = filters
         self.sort = sort
         self.take = take
+        self.takeFromEnd = takeFromEnd
     }
 }
 
@@ -286,6 +323,8 @@ public struct AssertIR: Sendable {
     public let monitored: Bool
     public let cadence: Duration?
     public let blocking: Bool
+    public let obligationId: String?
+    public let violationDisposition: ViolationDisposition?
     public let sourceRange: SourceRange
     public let stableStepPath: String?
 
@@ -296,6 +335,8 @@ public struct AssertIR: Sendable {
         monitored: Bool = false,
         cadence: Duration? = nil,
         blocking: Bool = false,
+        obligationId: String? = nil,
+        violationDisposition: ViolationDisposition? = nil,
         sourceRange: SourceRange = .unknown,
         stableStepPath: String? = nil
     ) {
@@ -305,6 +346,8 @@ public struct AssertIR: Sendable {
         self.monitored = monitored
         self.cadence = cadence
         self.blocking = blocking
+        self.obligationId = obligationId
+        self.violationDisposition = violationDisposition
         self.sourceRange = sourceRange
         self.stableStepPath = stableStepPath
     }
@@ -619,9 +662,10 @@ public struct EventPatternIR: Sendable {
     }
 }
 
-public enum TraceScope: Sendable {
+public enum TraceScope: Sendable, Equatable {
     case currentRun
     case acrossAllRuns
+    case acrossSkills([String])
 }
 
 public enum TraceCountComparatorIR: Sendable {
@@ -640,8 +684,16 @@ public indirect enum TraceTemporalKind: Sendable {
     /// query) so the verbalizer can round-trip the surface form; `holdsPattern`
     /// is the event pattern that predicate resolves to, which is what the
     /// runtime/emitter evaluate. Lowering guarantees the two agree and rejects a
-    /// pure state predicate with MER-TMP-019 (Meridian v1 has no state history).
-    case sinceLast(anchor: EventPatternIR, holds: IRExpression, holdsPattern: EventPatternIR)
+    /// pure state predicate with MER-TMP-019 unless state-history retention is
+    /// enabled for the keyed subject (SEM-4-12 / SEM-5-13).
+    case sinceLast(anchor: EventPatternIR, holds: IRExpression, holdsPattern: EventPatternIR?, holdsUsesStateHistory: Bool)
+    /// Bounded future monitor (SEM-5-12): Contract/obligation contexts only.
+    case boundedFutureMonitor(condition: IRExpression, horizon: Duration, mode: FutureMonitorModeIR)
+}
+
+public enum FutureMonitorModeIR: Sendable, Equatable {
+    case eventuallyWithin
+    case alwaysFor
 }
 
 public struct TraceTemporalIR: Sendable {
@@ -690,6 +742,7 @@ public struct TraceStatisticalIR: Sendable {
     public let window: Duration?
     public let monitorCadence: Duration?
     public let blocking: Bool
+    public let confidencePercent: Double?
     public let subjectKeyExpr: IRExpression?
 
     public init(
@@ -701,6 +754,7 @@ public struct TraceStatisticalIR: Sendable {
         window: Duration? = nil,
         monitorCadence: Duration? = nil,
         blocking: Bool = false,
+        confidencePercent: Double? = nil,
         subjectKeyExpr: IRExpression? = nil
     ) {
         self.scope = scope
@@ -711,6 +765,7 @@ public struct TraceStatisticalIR: Sendable {
         self.window = window
         self.monitorCadence = monitorCadence
         self.blocking = blocking
+        self.confidencePercent = confidencePercent
         self.subjectKeyExpr = subjectKeyExpr
     }
 }
@@ -749,10 +804,13 @@ public struct DescriptionIR: Sendable {
     public let sort: (path: String, ascending: Bool)?
     /// 3C: a post-sort `first N` take-prefix.
     public let take: Int?
+    /// 3C: a post-sort `the last N` take-suffix.
+    public let takeFromEnd: Int?
     public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = [],
-                sort: (path: String, ascending: Bool)? = nil, take: Int? = nil) {
+                sort: (path: String, ascending: Bool)? = nil, take: Int? = nil,
+                takeFromEnd: Int? = nil) {
         self.collection = collection; self.elementVar = elementVar; self.filters = filters
-        self.sort = sort; self.take = take
+        self.sort = sort; self.take = take; self.takeFromEnd = takeFromEnd
     }
 }
 
@@ -775,6 +833,98 @@ public struct LoweredDefinition: Sendable {
     public let body: IRExpression
     public init(functionName: String, subjectVar: String, body: IRExpression) {
         self.functionName = functionName; self.subjectVar = subjectVar; self.body = body
+    }
+}
+
+// MARK: - Deontic norms (Wave 9A)
+
+public struct ActionArgumentConstraint: Sendable {
+    public let path: String
+    public let op: ComparisonOp
+    public let value: IRExpression
+
+    public init(path: String, op: ComparisonOp, value: IRExpression) {
+        self.path = path
+        self.op = op
+        self.value = value
+    }
+}
+
+public struct ActionPatternIR: Sendable {
+    public let toolID: String
+    public let argumentConstraints: [ActionArgumentConstraint]
+
+    public init(toolID: String, argumentConstraints: [ActionArgumentConstraint] = []) {
+        self.toolID = toolID
+        self.argumentConstraints = argumentConstraints
+    }
+}
+
+public enum NormKind: String, Sendable, Hashable {
+    case prohibition
+    case obligation
+    case permission
+}
+
+public enum NormScope: Sendable, Hashable {
+    case skill
+    case workflow(String)
+    case section(stablePath: String)
+    case kind(String)
+}
+
+public struct NormIR: Sendable {
+    public let id: String
+    public let kind: NormKind
+    public let scope: NormScope
+    public let actionPattern: ActionPatternIR?
+    public let condition: IRExpression?
+    public let blocking: Bool
+    public let sourceRange: SourceRange
+    public let originalText: String
+
+    public init(
+        id: String = "",
+        kind: NormKind,
+        scope: NormScope,
+        actionPattern: ActionPatternIR? = nil,
+        condition: IRExpression? = nil,
+        blocking: Bool = false,
+        sourceRange: SourceRange,
+        originalText: String
+    ) {
+        self.id = id
+        self.kind = kind
+        self.scope = scope
+        self.actionPattern = actionPattern
+        self.condition = condition
+        self.blocking = blocking
+        self.sourceRange = sourceRange
+        self.originalText = originalText
+    }
+}
+
+public enum ViolationDisposition: String, Sendable, Hashable {
+    case prevented
+    case observed
+}
+
+public struct DeonticGuardIR: Sendable {
+    public let obligationId: String
+    public let disposition: ViolationDisposition
+    public let blocking: Bool
+    public let actionPattern: ActionPatternIR
+
+    public init(
+        obligationId: String,
+        disposition: ViolationDisposition,
+        blocking: Bool,
+        actionPattern: ActionPatternIR
+    ) {
+        self.obligationId = obligationId
+        self.disposition = disposition
+        self.blocking = blocking
+        self.actionPattern = actionPattern
     }
 }
 
@@ -802,12 +952,29 @@ public enum LogicalOp: Sendable {
     case and, or, not
 }
 
+public struct CalendarAmountIR: Sendable, Equatable {
+    public enum Unit: String, Sendable, Equatable {
+        case businessDays
+        case calendarDays
+        case months
+    }
+
+    public let magnitude: Double
+    public let unit: Unit
+
+    public init(magnitude: Double, unit: Unit) {
+        self.magnitude = magnitude
+        self.unit = unit
+    }
+}
+
 public enum IRLiteral: Sendable {
     case string(String)
     case number(Decimal)
     case boolean(Bool)
     case money(Decimal, currency: String)
     case duration(Duration)
+    case calendarAmount(CalendarAmountIR)
     case date(Date)
     case dateTime(Date)
     case enumValue(String, kind: String)

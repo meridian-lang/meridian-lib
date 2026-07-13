@@ -14,6 +14,8 @@ struct MeridianLinterTests {
         """)
         #expect(diagnostics.contains { $0.severity == .error && $0.code == .ambiguousAnaphora })
         #expect(diagnostics.first?.help?.contains("Spell out") == true)
+        #expect(diagnostics.first?.notes.first?.message.contains("comment") == true)
+        #expect(diagnostics.first?.notes.first?.message.contains("job") == true)
         #expect(diagnostics.first?.primaryRange.startLine == 3)
     }
 

@@ -2,65 +2,49 @@
 
 import Foundation
 
-struct Corpus {
+struct CorpusRecord: Decodable {
     let id: String
     let root: String
+    let originals: String
     let vocab: String
     let rulebook: String
+    let skillsOut: String
+    let resolverOriginal: String
+    let resolverOut: String
+    let migrationDeviations: String
+    let modulePath: String?
 }
 
-let corpora = [
-    Corpus(
-        id: "gbrain",
-        root: "sample-gbrain",
-        vocab: "sample-gbrain/brain.merconfig",
-        rulebook: "sample-gbrain/brain.merrules"
-    ),
-    Corpus(
-        id: "erp",
-        root: "corpora/erp",
-        vocab: "corpora/erp/erp.merconfig",
-        rulebook: "corpora/erp/erp.merrules"
-    ),
-    Corpus(
-        id: "procedures",
-        root: "corpora/procedures",
-        vocab: "corpora/procedures/procedures.merconfig",
-        rulebook: "corpora/procedures/procedures.merrules"
-    ),
-    Corpus(
-        id: "incident",
-        root: "corpora/incident",
-        vocab: "corpora/incident/incident.merconfig",
-        rulebook: "corpora/incident/incident.merrules"
-    ),
-    Corpus(
-        id: "etl",
-        root: "corpora/etl",
-        vocab: "corpora/etl/etl.merconfig",
-        rulebook: "corpora/etl/etl.merrules"
-    ),
-    Corpus(
-        id: "governance",
-        root: "corpora/governance",
-        vocab: "corpora/governance/governance.merconfig",
-        rulebook: "corpora/governance/governance.merrules"
-    ),
-    Corpus(
-        id: "clinical",
-        root: "corpora/clinical",
-        vocab: "corpora/clinical/clinical.merconfig",
-        rulebook: "corpora/clinical/clinical.merrules"
-    ),
-]
+struct CorpusCatalogFile: Decodable {
+    let corpora: [CorpusRecord]
+}
+
+func loadCorpusCatalog() throws -> CorpusCatalogFile {
+    let url = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("corpus-catalog.json")
+    return try JSONDecoder().decode(CorpusCatalogFile.self, from: Data(contentsOf: url))
+}
+
+func selectCorpora(id: String, catalog: CorpusCatalogFile) throws -> [CorpusRecord] {
+    if id == "all" { return catalog.corpora }
+    let matches = catalog.corpora.filter { $0.id == id }
+    guard !matches.isEmpty else {
+        let available = catalog.corpora.map(\.id).sorted().joined(separator: ", ")
+        throw NSError(domain: "CorpusCatalog", code: 1,
+                      userInfo: [NSLocalizedDescriptionKey: "unknown corpus: \(id) (available: \(available))"])
+    }
+    return matches
+}
 
 struct Options {
     var corpus = "all"
 }
 
-func usage() -> String {
-    """
-    usage: swift scripts/generate-compile-outputs.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all]
+func usage(catalog: CorpusCatalogFile) -> String {
+    let ids = catalog.corpora.map(\.id).sorted().joined(separator: "|")
+    return """
+    usage: swift scripts/generate-compile-outputs.swift [--corpus \(ids)|all]
 
     Cleans and regenerates <root>/compile-outputs from <root>/skills/*.meri,
     <root>/RESOLVER.meri, and any hand-authored flat <root>/rules/*.meridian
@@ -79,10 +63,9 @@ func parseArgs() -> Options {
         case "--corpus":
             if let value = iterator.next() { options.corpus = value }
         case "-h", "--help":
-            print(usage())
-            exit(0)
+            return options
         default:
-            FileHandle.standardError.write(Data("unknown argument: \(arg)\n\(usage())\n".utf8))
+            FileHandle.standardError.write(Data("unknown argument: \(arg)\n".utf8))
             exit(2)
         }
     }
@@ -123,10 +106,6 @@ func meriFiles(root: String) -> [String] {
     if fileManager.fileExists(atPath: resolver) {
         files += [resolver]
     }
-    // Flat rules/*.meridian fixtures (hand-authored, not migrated) are
-    // flat-path regression coverage for the top-of-file Phase-8 rule desugar
-    // — compile them alongside the migrated skills so they land in
-    // compile-outputs/ too.
     let rulesDir = rootURL.appendingPathComponent("rules")
     let rulesFiles = ((try? fileManager.contentsOfDirectory(
         at: rulesDir,
@@ -149,16 +128,49 @@ func cleanOutput(_ path: String) throws {
     }
 }
 
-let options = parseArgs()
-let selected: [Corpus]
-if options.corpus == "all" {
-    selected = corpora
-} else {
-    selected = corpora.filter { $0.id == options.corpus }
-    if selected.isEmpty {
-        FileHandle.standardError.write(Data("unknown corpus: \(options.corpus)\n\(usage())\n".utf8))
-        exit(2)
+func frontmatterVocabulary(for meriPath: String, corpusRoot: String) -> String? {
+    guard let text = try? String(contentsOfFile: meriPath, encoding: .utf8) else { return nil }
+    guard text.hasPrefix("---") else { return nil }
+    let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
+    guard lines.count > 2 else { return nil }
+    var end = 1
+    while end < lines.count, lines[end] != "---" { end += 1 }
+    guard end < lines.count else { return nil }
+    for line in lines[1..<end] {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasPrefix("vocabulary:") else { continue }
+        let name = trimmed.dropFirst("vocabulary:".count).trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return nil }
+        let skillDir = URL(fileURLWithPath: meriPath).deletingLastPathComponent()
+        let besideSkill = skillDir.appendingPathComponent(String(name)).path
+        if FileManager.default.fileExists(atPath: besideSkill) { return besideSkill }
+        let besideRoot = URL(fileURLWithPath: corpusRoot).appendingPathComponent(String(name)).path
+        if FileManager.default.fileExists(atPath: besideRoot) { return besideRoot }
+        return besideSkill
     }
+    return nil
+}
+
+let catalog: CorpusCatalogFile
+do {
+    catalog = try loadCorpusCatalog()
+} catch {
+    FileHandle.standardError.write(Data("\(error)\n".utf8))
+    exit(1)
+}
+
+let options = parseArgs()
+if CommandLine.arguments.contains("-h") || CommandLine.arguments.contains("--help") {
+    print(usage(catalog: catalog))
+    exit(0)
+}
+
+let selected: [CorpusRecord]
+do {
+    selected = try selectCorpora(id: options.corpus, catalog: catalog)
+} catch {
+    FileHandle.standardError.write(Data("\(error.localizedDescription)\n\(usage(catalog: catalog))\n".utf8))
+    exit(2)
 }
 
 var failures = 0
@@ -182,13 +194,17 @@ for corpus in selected {
 
     var compiled = 0
     for file in files {
-        let args = [
+        let vocab = frontmatterVocabulary(for: file, corpusRoot: corpus.root) ?? corpus.vocab
+        var args = [
             "swift", "run", "meridian", "compile", file,
-            "--merconfig", corpus.vocab,
+            "--merconfig", vocab,
             "--rulebook", corpus.rulebook,
             "--no-format", "--namespace", "auto",
             "--output", output,
         ]
+        if let modulePath = corpus.modulePath {
+            args += ["--module-path", modulePath]
+        }
         let result = run("/usr/bin/env", args)
         if result.status == 0 {
             compiled += 1

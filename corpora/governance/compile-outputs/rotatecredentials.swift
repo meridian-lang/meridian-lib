@@ -411,7 +411,7 @@ public struct RotateCredentials: MeridianWorkflow {
         "triggers": "\"rotate credentials\"\n\"rotate stale credentials\"\n\"run the credential rotation pass\"",
     ]
 
-    public static let skillVersionHash = "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+    public static let skillVersionHash = "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct RotateCredentials: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rotate credentials",
-            versionHash: "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+            versionHash: "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -488,7 +490,7 @@ public struct RotateCredentials: MeridianWorkflow {
             state.bind("credential", credential)
                 if __meridianShouldRun("/RotateCredentials/workflow/procedure/iterate.body/cc99b9f4f9325b4074540677fbbec4d1e8ca98546fe7a7ff1ccf63f0d3709fec") {
                     // L33
-                    try await runtime.wait(.duration(.seconds(300)))
+                    try await runtime.wait(.duration(.seconds(300)), sourceRange: nil)
                     try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/iterate.body/cc99b9f4f9325b4074540677fbbec4d1e8ca98546fe7a7ff1ccf63f0d3709fec", state: state.snapshot())
                 }
                 // L34
@@ -548,7 +550,7 @@ public struct RotateCredentials: MeridianWorkflow {
 public struct WhenRotatecredentialsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+    public static let skillVersionHash = "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -561,11 +563,13 @@ public struct WhenRotatecredentialsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rotate credentials",
-            versionHash: "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+            versionHash: "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -593,7 +597,7 @@ public struct WhenRotatecredentialsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/e3fbcb3119880244332e942b657fe69d7fed007ff0e0b6599ebd846fec3f2ba6") {
             // L1
-            try await runtime.wait(.event("rotateCredentials", matching: nil))
+            try await runtime.wait(.event("rotateCredentials", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRotatecredentialsFires/root/procedure/e3fbcb3119880244332e942b657fe69d7fed007ff0e0b6599ebd846fec3f2ba6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/58aab05edf2d655bd3f0ffd460a63e5233e034b9c266e3c3c4364a314f42101f") {
@@ -622,7 +626,7 @@ public struct WhenRotatecredentialsFires: MeridianWorkflow {
 public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+    public static let skillVersionHash = "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -635,11 +639,13 @@ public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rotate credentials",
-            versionHash: "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+            versionHash: "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -667,7 +673,7 @@ public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/bebb7d761a9ea7a5b798651a7f17f886b37c9f8938f25fc921b66db8a970ca1b") {
             // L1
-            try await runtime.wait(.event("rotateStaleCredentials", matching: nil))
+            try await runtime.wait(.event("rotateStaleCredentials", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRotatestalecredentialsFires/root/procedure/bebb7d761a9ea7a5b798651a7f17f886b37c9f8938f25fc921b66db8a970ca1b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/8aaff499eaaccd71409184d4c5caad2af40d70cd5a1e65b24e468d26cd0802c9") {
@@ -696,7 +702,7 @@ public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
 public struct WhenRuncredentialrotationpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+    public static let skillVersionHash = "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -709,11 +715,13 @@ public struct WhenRuncredentialrotationpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rotate credentials",
-            versionHash: "3e0f5d0c2bed51b98ec63f31e7d49776efdf3fa46eb7e0418e076750bf921de9"
+            versionHash: "c3f75c1b05c4584267e8ff4dfdc3d9f91c96db9f3ca2aa26414cfe7d7556d826"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -741,7 +749,7 @@ public struct WhenRuncredentialrotationpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/aaffccb9a97cc1b06895ad30730b01cb1bc724b4e830fe3ac6c7e7fe3ea520b3") {
             // L1
-            try await runtime.wait(.event("runCredentialRotationPass", matching: nil))
+            try await runtime.wait(.event("runCredentialRotationPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRuncredentialrotationpassFires/root/procedure/aaffccb9a97cc1b06895ad30730b01cb1bc724b4e830fe3ac6c7e7fe3ea520b3", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/8f454b283514b8843428d06595bf35b184c49d6169decae3aa790ae45499d079") {

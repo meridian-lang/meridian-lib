@@ -591,7 +591,9 @@ public struct CronSchedulerInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cron-scheduler",
@@ -649,7 +651,9 @@ public struct WhenSchedulejobFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cron-scheduler",
@@ -680,7 +684,7 @@ public struct WhenSchedulejobFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSchedulejobFires/root/procedure/c44523024f748b35f5a286105b3c529d1071bf032f32cc66c5d0a21dfad40424") {
             // L1
-            try await runtime.wait(.event("scheduleJob", matching: nil))
+            try await runtime.wait(.event("scheduleJob", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSchedulejobFires/root/procedure/c44523024f748b35f5a286105b3c529d1071bf032f32cc66c5d0a21dfad40424", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSchedulejobFires/root/procedure/3156d4dcf80b7cdf828dd6397dd2fd813096ca46f7530c7c651de85f481eb4a4") {
@@ -722,7 +726,9 @@ public struct WhenCronFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cron-scheduler",
@@ -753,7 +759,7 @@ public struct WhenCronFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCronFires/root/procedure/63f185774800a248696f0940d16b8c8dcf56c5a115de9a4d06d746be29484e6e") {
             // L1
-            try await runtime.wait(.event("cron", matching: nil))
+            try await runtime.wait(.event("cron", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCronFires/root/procedure/63f185774800a248696f0940d16b8c8dcf56c5a115de9a4d06d746be29484e6e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCronFires/root/procedure/105edb16e9443dd9765aa545627db230d5e102c4d3472cdac4fa1d24e3b14eea") {
@@ -795,7 +801,9 @@ public struct WhenQuiethoursFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cron-scheduler",
@@ -826,7 +834,7 @@ public struct WhenQuiethoursFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenQuiethoursFires/root/procedure/de70e112340efee5acbb8e8506528ac88635709b59751dca58c9ecda9bcecf64") {
             // L1
-            try await runtime.wait(.event("quietHours", matching: nil))
+            try await runtime.wait(.event("quietHours", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenQuiethoursFires/root/procedure/de70e112340efee5acbb8e8506528ac88635709b59751dca58c9ecda9bcecf64", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenQuiethoursFires/root/procedure/570457738fecf9c901786e5b5a804631bf9cdeb45d1c5f743829518b11a4988d") {
@@ -868,7 +876,9 @@ public struct WhenWhatjobsarerunningFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cron-scheduler",
@@ -899,7 +909,7 @@ public struct WhenWhatjobsarerunningFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatjobsarerunningFires/root/procedure/f790344aee08b158e0209386a5b6096188af8375a8c1bfebbee2b7b2d1349226") {
             // L1
-            try await runtime.wait(.event("whatJobsAreRunning", matching: nil))
+            try await runtime.wait(.event("whatJobsAreRunning", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatjobsarerunningFires/root/procedure/f790344aee08b158e0209386a5b6096188af8375a8c1bfebbee2b7b2d1349226", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatjobsarerunningFires/root/procedure/db93b869f3b512d3f6571d76bee75b0c20a86e3cc2f122d8628829fb354a7f8b") {

@@ -29,14 +29,49 @@ struct DescriptionGrammar {
     ///   per-element noun, never the plural.
     func parse(_ raw: String, allowSingularHead: Bool = false) -> DescriptionAST? {
         guard let sym = symbols else { return nil }
-        var s = lexicon.stripLeadingArticle(raw)
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
 
         var take: Int?
-        let leading = s.split(separator: " ").map(String.init)
+        var takeFromEnd: Int?
+        let leading = trimmed.split(separator: " ").map(String.init)
         let first = lexicon.grammar.iterationMarkers.firstPrefix.trimmingCharacters(in: .whitespaces)
         if leading.count >= 2, leading[0].lowercased() == first, let n = Int(leading[1]) {
             take = n
-            s = leading[2...].joined(separator: " ")
+        } else if leading.count >= 3,
+                  let definite = lexicon.definiteArticle,
+                  leading[0].lowercased() == definite,
+                  leading[1].lowercased() == first,
+                  let n = Int(leading[2]) {
+            take = n
+        } else if leading.count >= 3,
+                  let definite = lexicon.definiteArticle,
+                  leading[0].lowercased() == definite,
+                  leading[1].lowercased() == lexicon.grammar.iterationMarkers.lastTakePrefix.trimmingCharacters(in: .whitespaces),
+                  let n = Int(leading[2]) {
+            takeFromEnd = n
+        }
+
+        var s = lexicon.stripLeadingArticle(trimmed)
+        if take != nil || takeFromEnd != nil {
+            let leadingAfterStrip = s.split(separator: " ").map(String.init)
+            if take != nil,
+               leadingAfterStrip.count >= 2,
+               leadingAfterStrip[0].lowercased() == first,
+               Int(leadingAfterStrip[1]) != nil {
+                s = leadingAfterStrip[2...].joined(separator: " ")
+            } else if take != nil,
+                      leadingAfterStrip.count >= 3,
+                      let definite = lexicon.definiteArticle,
+                      leadingAfterStrip[0].lowercased() == definite,
+                      leadingAfterStrip[1].lowercased() == first,
+                      Int(leadingAfterStrip[2]) != nil {
+                s = leadingAfterStrip[3...].joined(separator: " ")
+            } else if takeFromEnd != nil,
+                      leadingAfterStrip.count >= 2,
+                      leadingAfterStrip[0].lowercased() == lexicon.grammar.iterationMarkers.lastTakePrefix.trimmingCharacters(in: .whitespaces),
+                      Int(leadingAfterStrip[1]) != nil {
+                s = leadingAfterStrip[2...].joined(separator: " ")
+            }
         }
 
         var sort: (property: String, ascending: Bool)?
@@ -72,11 +107,11 @@ struct DescriptionGrammar {
         guard !noun.isEmpty else { return nil }
         let singular = lexicon.singularize(noun.lowercased())
         guard sym.kinds[singular] != nil, allowSingularHead || noun.lowercased() != singular else { return nil }
-        if wherePred == nil, verbClauses.isEmpty, adjectives.isEmpty, sort == nil, take == nil {
+        if wherePred == nil, verbClauses.isEmpty, adjectives.isEmpty, sort == nil, take == nil, takeFromEnd == nil {
             return nil
         }
         return DescriptionAST(noun: noun, adjectives: adjectives, wherePredicate: wherePred,
-                              verbClauses: verbClauses, sort: sort, take: take)
+                              verbClauses: verbClauses, sort: sort, take: take, takeFromEnd: takeFromEnd)
     }
 
     /// A description, or (failing that) a bare plural declared kind with no

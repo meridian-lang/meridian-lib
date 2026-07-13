@@ -95,7 +95,9 @@ struct TraceReplayTests {
                     scope: .currentRun,
                     kind: .sinceLast(
                         anchor: .init(subject: .step("deploy"), outcome: .succeeded),
-                        holds: .init(subject: .step("deploy"), outcome: .failed)
+                        holds: .init(subject: .step("deploy"), outcome: .failed),
+                        holdsStatePredicateJSON: nil,
+                        holdsUsesStateHistory: false
                     )
                 )
             ),

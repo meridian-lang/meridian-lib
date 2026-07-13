@@ -51,6 +51,14 @@ struct ComparisonCoverageTests {
         #expect(MeridianComparison.isNotEmpty(.list([.null])))
     }
 
+    @Test("SEM_2_02 missing member projection stays nothing and does not default-match")
+    func sem202NothingProjection() {
+        let page = Value.record(["id": .string("p-1")])
+        #expect(page.member("owner") == nil)
+        #expect(!MeridianComparison.eq(page.member("owner"), .string("alice")))
+        #expect(MeridianComparison.eq(nil, nil))
+    }
+
     @Test("identifies matches by id string, record id, list membership; nil never matches")
     func identifies() {
         #expect(MeridianComparison.identifies(.string("u1"), .string("u1")))

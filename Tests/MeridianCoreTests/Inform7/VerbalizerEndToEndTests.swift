@@ -86,12 +86,7 @@ struct VerbalizerEndToEndTests {
             $0.displayPath.hasSuffix("corpora/governance/skills/escalatepending.meri")
         })
         let escalateSource = try String(contentsOf: escalate.file, encoding: .utf8)
-        let escalateModel = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: escalateSource,
-            meridianFile: escalate.file.lastPathComponent,
-            vocabularies: escalate.vocabularies,
-            rulebooks: escalate.rulebooks
-        )
+        let escalateModel = try VerbalizerTestSupport.compileFixture(escalate, source: escalateSource)
         #expect(!SkillFrontmatter(escalateModel.metadata).triggers.isEmpty)
         let escalateCanonical = try Verbalizer(model: escalateModel).verbalize()
         // Frontmatter synthesizers are `when … fires`; rule-injected triggers are not.
@@ -115,12 +110,7 @@ struct VerbalizerEndToEndTests {
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
 
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
 
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         VerbalizerTestSupport.assertNoUnresolved(second, context: "\(fixture.displayPath) canonical")
@@ -209,12 +199,7 @@ struct VerbalizerEndToEndTests {
             $0.displayPath.hasSuffix("corpora/erp/skills/placeorder.meri")
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows))
         #expect(canonical.contains("To place order"))
@@ -243,12 +228,7 @@ struct VerbalizerEndToEndTests {
             $0.displayPath.hasSuffix("corpora/incident/skills/triagealert.meri")
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows))
         #expect(canonical.contains("use judgment to"), Comment(rawValue: VerbalizerTestSupport.snippet(canonical)))
@@ -272,12 +252,7 @@ struct VerbalizerEndToEndTests {
             }
             do {
                 let source = try String(contentsOf: fixture.file, encoding: .utf8)
-                let (_, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-                    source,
-                    vocabularies: fixture.vocabularies,
-                    rulebooks: fixture.rulebooks,
-                    file: fixture.file.lastPathComponent
-                )
+                let (_, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
                 #expect(!canonical.contains("# assertion message:"))
                 if try Verbalizer(model: second).verbalize() != canonical {
                     failures.append("\(fixture.displayPath): not a fixpoint")
@@ -296,12 +271,7 @@ struct VerbalizerEndToEndTests {
             $0.displayPath.hasSuffix("corpora/etl/skills/backfillpartitions.meri")
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows))
         #expect(canonical.contains("simultaneously:") || canonical.contains("in the background"),
                 Comment(rawValue: VerbalizerTestSupport.snippet(canonical)))
@@ -317,12 +287,7 @@ struct VerbalizerEndToEndTests {
             $0.file.lastPathComponent == "dependency_upgrade_sweep.meri"
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows))
         #expect(try Verbalizer(model: second).verbalize() == canonical)
@@ -414,12 +379,7 @@ struct VerbalizerEndToEndTests {
         })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
         #expect(source.contains("make sure"))
-        let (_, canonical, _) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (_, canonical, _) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         let drift = DriftEngine.diff(authored: source, canonical: canonical)
         #expect((drift.counts[.synonymCanonicalized] ?? 0) >= 1
                 || (drift.counts[.meaningBearing] ?? 0) >= 1)
@@ -485,12 +445,7 @@ struct VerbalizerEndToEndTests {
         let fixtures = try VerbalizerTestSupport.sampleGbrainFixtures()
         let fixture = try #require(fixtures.first { $0.file.lastPathComponent == "ingest.meri" })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows))
         #expect(!first.toolsUsed.isEmpty || canonical.contains("tools:"),
@@ -539,12 +494,7 @@ struct VerbalizerEndToEndTests {
     ) throws {
         let fixture = try #require(fixtures.first { $0.file.lastPathComponent == lastPathComponent })
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         VerbalizerTestSupport.assertNoUnresolved(second, context: "\(fixture.displayPath) canonical")
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows),

@@ -11,7 +11,7 @@ extension SkillMigrator {
     /// placeholders are left as `<…>` (the author wires them up by hand — e.g.
     /// to a bind or loop variable — in the re-port). A heading-less or
     /// parameter-less document is returned untouched.
-    func rewriteCommandPlaceholders(_ markdown: String) -> String {
+    func rewriteCommandPlaceholders(_ markdown: String, lexicon: EnglishLexicon) -> String {
         let lines = markdown.components(separatedBy: "\n")
         let scope = frontmatterParamScope(lines)
         guard !scope.isEmpty else { return markdown }
@@ -22,7 +22,7 @@ extension SkillMigrator {
             if t.hasPrefix("```") {
                 if !inShellFence {
                     let lang = String(t.dropFirst(3)).trimmingCharacters(in: .whitespaces).lowercased()
-                    inShellFence = isShellFence(lang)
+                    inShellFence = lexicon.isShellFence(lang)
                 } else {
                     inShellFence = false
                 }

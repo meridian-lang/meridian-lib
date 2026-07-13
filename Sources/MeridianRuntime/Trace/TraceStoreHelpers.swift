@@ -51,16 +51,20 @@ enum TraceStoreHelpers {
     static func filterAndSort<S: Sequence>(
         _ records: S,
         scope: TraceScope,
+        scopeSkills: [String] = [],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,
         pattern: TraceQueryPattern?
     ) -> [TraceRecord] where S.Element == TraceRecord {
         let filtered = records.filter { record in
-            if scope == .currentRun, let runID, record.run != runID {
-                return false
-            }
-            if let skillName, record.skillName != skillName {
+            if !TraceStoreHelpers.matchesScope(
+                record,
+                scope: scope,
+                scopeSkills: scopeSkills,
+                runID: runID,
+                skillName: skillName
+            ) {
                 return false
             }
             if let window, !window.contains(record.at) {
@@ -75,8 +79,29 @@ enum TraceStoreHelpers {
         switch scope {
         case .currentRun:
             return filtered.sorted(by: TraceRecordOrdering.runLocal)
-        case .acrossAllRuns:
+        case .acrossAllRuns, .acrossSkills:
             return filtered.sorted(by: TraceRecordOrdering.crossRun)
+        }
+    }
+
+    static func matchesScope(
+        _ record: TraceRecord,
+        scope: TraceScope,
+        scopeSkills: [String],
+        runID: String?,
+        skillName: String?
+    ) -> Bool {
+        switch scope {
+        case .currentRun:
+            if let runID, record.run != runID { return false }
+            if let skillName, record.skillName != skillName { return false }
+            return true
+        case .acrossAllRuns:
+            if let skillName, record.skillName != skillName { return false }
+            return true
+        case .acrossSkills:
+            let allowed = Set(scopeSkills.map { $0.lowercased() })
+            return allowed.contains(record.skillName.lowercased())
         }
     }
 }

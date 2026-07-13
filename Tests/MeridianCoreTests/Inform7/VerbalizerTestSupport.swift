@@ -8,6 +8,15 @@ enum VerbalizerTestSupport {
         let file: URL
         let vocabularies: [Compiler.VocabularyInput]
         let rulebooks: [RulebookInput]
+        let moduleSearchPaths: [URL]
+
+        init(file: URL, vocabularies: [Compiler.VocabularyInput], rulebooks: [RulebookInput],
+             moduleSearchPaths: [URL] = []) {
+            self.file = file
+            self.vocabularies = vocabularies
+            self.rulebooks = rulebooks
+            self.moduleSearchPaths = moduleSearchPaths
+        }
 
         var displayPath: String {
             file.path.replacingOccurrences(of: repositoryRoot().path + "/", with: "")
@@ -57,8 +66,17 @@ enum VerbalizerTestSupport {
         return url
     }
 
-    static func compiler() -> Compiler {
-        Compiler(options: .init(trace: .silent()))
+    static func compiler(moduleSearchPaths: [URL] = []) -> Compiler {
+        Compiler(options: .init(trace: .silent(), moduleSearchPaths: moduleSearchPaths))
+    }
+
+    static func moduleSearchPaths(forCorpus corpus: String, root: URL) -> [URL] {
+        switch corpus {
+        case "governance":
+            return [root.appendingPathComponent("modules")]
+        default:
+            return []
+        }
     }
 
     static func baseVocabInput() -> Compiler.VocabularyInput {
@@ -86,15 +104,37 @@ enum VerbalizerTestSupport {
             let corpus = root.lastPathComponent
             let vocab = try vocabularyInput(root.appendingPathComponent("\(corpus).merconfig"), name: corpus)
             let rulebook = try rulebookInput(root.appendingPathComponent("\(corpus).merrules"), name: corpus)
+            let moduleSearchPaths = moduleSearchPaths(forCorpus: corpus, root: root)
             fixtures += try sortedMeriFiles(in: root.appendingPathComponent("skills")).map {
-                Fixture(file: $0, vocabularies: [vocab], rulebooks: [rulebook])
+                Fixture(file: $0, vocabularies: [vocab], rulebooks: [rulebook],
+                        moduleSearchPaths: moduleSearchPaths)
             }
             let resolver = root.appendingPathComponent("RESOLVER.meri")
             if FileManager.default.fileExists(atPath: resolver.path) {
-                fixtures.append(Fixture(file: resolver, vocabularies: [vocab], rulebooks: [rulebook]))
+                fixtures.append(Fixture(file: resolver, vocabularies: [vocab], rulebooks: [rulebook],
+                                        moduleSearchPaths: moduleSearchPaths))
             }
         }
         return fixtures
+    }
+
+    static func compileFixture(_ fixture: Fixture, source: String) throws -> VerbalizerModel {
+        try compiler(moduleSearchPaths: fixture.moduleSearchPaths).compileToModel(
+            meridianSource: source,
+            meridianFile: fixture.file.lastPathComponent,
+            vocabularies: fixture.vocabularies,
+            rulebooks: fixture.rulebooks
+        )
+    }
+
+    static func canonicalRoundTrip(_ fixture: Fixture, source: String) throws -> (VerbalizerModel, String, VerbalizerModel) {
+        try canonicalRoundTrip(
+            source,
+            vocabularies: fixture.vocabularies,
+            rulebooks: fixture.rulebooks,
+            file: fixture.file.lastPathComponent,
+            moduleSearchPaths: fixture.moduleSearchPaths
+        )
     }
 
     static func exampleFixtures() throws -> [Fixture] {
@@ -149,8 +189,9 @@ enum VerbalizerTestSupport {
     }
 
     static func canonicalRoundTrip(_ source: String, vocabularies: [Compiler.VocabularyInput] = [baseVocabInput()],
-                                   rulebooks: [RulebookInput] = [], file: String = "test.meri") throws -> (VerbalizerModel, String, VerbalizerModel) {
-        let compiler = compiler()
+                                   rulebooks: [RulebookInput] = [], file: String = "test.meri",
+                                   moduleSearchPaths: [URL] = []) throws -> (VerbalizerModel, String, VerbalizerModel) {
+        let compiler = Self.compiler(moduleSearchPaths: moduleSearchPaths)
         let first = try compiler.compileToModel(
             meridianSource: source,
             meridianFile: file,

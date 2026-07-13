@@ -1,0 +1,112 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event buildTracker.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenBuildtrackerFires\/root\/procedure\/2742ba077d5d4621485f2b83e4c510a4784363e844fe07f359a17b3cbd3928c2",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.buildTracker.fired with kind = \"keyword\", spec = \"build a tracker\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBuildtrackerFires\/root\/procedure\/681f060c2bf4d80cf30f0ee7fb0b81302d075df876ae411dd339ddd04ea9328a",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.dataDig.fired with kind = \"keyword\", spec = \"data dig\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDatadigFires\/root\/procedure\/898b1d07a5f388dc10dfabfd64e1928ca107da02d720da64e6537b1a5c24d2a6",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event dataDig.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDatadigFires\/root\/procedure\/a47ea33faf46909ff6ca828127cf925dded9a1e97c5f0bb5f27fd25619a6fab8",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event donations.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDonationsFires\/root\/procedure\/03413607094ebee3949c9f3ac79cad3c90236248ee09e48be49561e02cd266f6",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.donations.fired with kind = \"keyword\", spec = \"donations\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDonationsFires\/root\/procedure\/8a2d8dae6ca978256f9264119cef1b282afa5f5b8773340a40779f3877c3e075",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event extractEmail.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenExtractemailFires\/root\/procedure\/389baf6c9a37deb96753434f6224a1bb90de6bb44c2a3504da93e658cdbd7366",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.extractEmail.fired with kind = \"keyword\", spec = \"extract from email\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenExtractemailFires\/root\/procedure\/f6daec9b55903c1002ecffb81cadbe5ea8fa6ada6686ec30fca653a526167bb8",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event investorUpdates.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenInvestorupdatesFires\/root\/procedure\/329e97e85378db32ba5a1369d39ed24f405d41eea3ba2ef8bf3cbbe816b7550b",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.investorUpdates.fired with kind = \"keyword\", spec = \"investor updates\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenInvestorupdatesFires\/root\/procedure\/b7056dff484ff0dd934ddc455caf9e3908c2a3affc2abdbee60461e9b031ea31",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.research.fired with kind = \"keyword\", spec = \"research\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenResearchFires\/root\/procedure\/0cd2dc9904cd2754d8e87204bfe133e17c93f3e14857b980f408e9b701812a6e",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event research.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenResearchFires\/root\/procedure\/ec0fdcdaee65b0dfb6245492c97ca9aa10d54c3d5db901965b22593c72bcd731",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "wait for event track.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTrackFires\/root\/procedure\/252d35f3f58df0432eed656afca89e586ad98f1d3072f38b6f817c63bd063fca",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "emit trigger.track.fired with kind = \"keyword\", spec = \"track\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenTrackFires\/root\/procedure\/4d403cde7d905bc042718b345a702a4895b247a726299c1790af4d4fac706cde",
+      "swift_line" : 1155
+    },
+    {
+      "canonical" : "`skills\/conventions\/quality.md` -- References  for citation and back-linking rules.",
+      "meridian_line" : 141,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/DataResearchInput\/conventions\/procedure\/e5180d82d951c867080d94d5723ad8887084a4fbe0f4408985183b6472fa2d18",
+      "swift_line" : 628
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "data_research.meri",
+  "swift_file" : "data_research.swift"
+}

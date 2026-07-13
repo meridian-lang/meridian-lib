@@ -546,7 +546,9 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
@@ -583,10 +585,12 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
     scope: .currentRun,
+    scopeSkills: [],
     pattern: TraceEventPatternQuery(subject: .step("payment"), outcome: .succeeded, subjectKey: nil, payloadContains: nil),
     bound: .atLeast(0.9),
     denominator: .runs,
-    window: .seconds(2592000)
+    window: .seconds(2592000),
+    confidencePercent: nil
 ),
                 cadence: .seconds(86400),
                 message: "Expected the payment step succeeds in at least 90% of runs within the last 30 days",
@@ -597,8 +601,8 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
             try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/contract/invariants/19147fda65daf042098ca2895daf75708c381d7d98190b1cfe6eba329e0713c4", state: state.snapshot())
         }
         // L39
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .inARow(TraceEventPatternQuery(subject: .step("payment"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .inARow(TraceEventPatternQuery(subject: .step(\"payment\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step("payment"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step(\"payment\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc")
             if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5") {
                 // L40
                 try await runtime.emit(
@@ -610,6 +614,7 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc")
         }
 
         if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/18111ab9e476a9af58fbefcee7f4b70ff5c339ac60156930af3790bcf0740d3a") {
@@ -650,7 +655,9 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
@@ -682,7 +689,7 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/decfbaa41c2d6acb5f904c3231943a80d2f24f7a2848c50279cec61a7ff0138f") {
             // L1
-            try await runtime.wait(.event("runPaymentFailureMonitor", matching: nil))
+            try await runtime.wait(.event("runPaymentFailureMonitor", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpaymentfailuremonitorFires/root/procedure/decfbaa41c2d6acb5f904c3231943a80d2f24f7a2848c50279cec61a7ff0138f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/8f312cc7036289d2bebbefc0fae6d71302ae6d5c180f035d8cf5a19e7c9d5484") {
@@ -724,7 +731,9 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
@@ -756,7 +765,7 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/75d177d480c40d8f99126176ca8a7eef3a86797a3349a9d64b2772e9aba9f65f") {
             // L1
-            try await runtime.wait(.event("monitorPaymentFailures", matching: nil))
+            try await runtime.wait(.event("monitorPaymentFailures", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMonitorpaymentfailuresFires/root/procedure/75d177d480c40d8f99126176ca8a7eef3a86797a3349a9d64b2772e9aba9f65f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/7aaa8b3288aa3ed0d1c3f227af6161f03bba38bab8c71e5003a2928bd951a988") {
@@ -798,7 +807,9 @@ public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
@@ -830,7 +841,7 @@ public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/5042409e920ce154e4a556087f63ac765ac38f9c06354d94599421aa59854d9f") {
             // L1
-            try await runtime.wait(.event("checkPaymentRetryHealth", matching: nil))
+            try await runtime.wait(.event("checkPaymentRetryHealth", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckpaymentretryhealthFires/root/procedure/5042409e920ce154e4a556087f63ac765ac38f9c06354d94599421aa59854d9f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/71170ab67bfdccc1cf98a0d066f8329320239aa9823bfa0dd1247fdc49576fdb") {

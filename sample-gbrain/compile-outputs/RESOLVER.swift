@@ -582,7 +582,9 @@ public struct EntryInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
@@ -629,6 +631,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/always-on-every-message-steps/procedure/branch.then/342ef698f8e27728894fea857c50546b0ba259194b55a2933e180ea94a0b8be4", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/always-on-every-message-steps/procedure/94a6c49273c24080152b2ef46797fbbd69c73db5cc1b84e692f7c05c599d16d1")
         }
 
         // L10
@@ -647,6 +650,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/always-on-every-message-steps/procedure/branch.then/065b076c2350113bd6f67c3848a2450cc2d0cc0deb20259e42c2887397014004", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/always-on-every-message-steps/procedure/cd57b5eb55dfcba825d7932c250fd3f0e4f848e3e79bf175b389c8d4900ce5db")
         }
 
         // L69
@@ -665,6 +669,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/56013a466ae4d39ef514e902680344c33585c0e08c229951f2160e556e36be3a", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/3f336a9254ce0aced173082b57f234afd2fa695ddf5ffa3595cc0650098650c5")
         }
 
         // L69
@@ -683,6 +688,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/4697cf0768674d1f698faf6a835a74271c435af8ec3a073a8484d08f3e777841", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/dd0e4c73bd765ccccca9d7f27fd991cabdb910ff5a454a569da2ea60a4f612df")
         }
 
         // L69
@@ -701,6 +707,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/ccadddd18f775c3a23cd985f0b4ffcf8fd1541682e2617ee9d621978b442737f", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/c90e764d9536e10f088c5b718aa6e9b790abaa46acc97e6f854be3b56415c66b")
         }
 
         // L69
@@ -719,6 +726,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/393cef8e4012896f4868640050b07f6d27d14ce0d53a5ab255e920c8f47851e6", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/a5e1e70cab02d66d0b64cf4256c3405d77b0491e5e439034b34c33f39f629751")
         }
 
         // L69
@@ -737,6 +745,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/0ffa45e7d2cc967b6dd7293b2a09f24a5aca83f916075fe7653b7833ede861dc", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/8aa195c3cd79109e398089682d044f8f2e4e2a9425bfdc4a0870e9a79900de7a")
         }
 
         // L69
@@ -756,6 +765,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/0b83a30949dd6bbfcbff1f29404ea8f0aa309d1b39ebb95a0ebe389cbdeefd31", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/1db82403fe8355ed8f5c3366808ec150161b3865850caffb59170f0c322c387c")
         }
 
         // L69
@@ -775,6 +785,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/4cdd6c0a0f7b25f0481af7176def7f1249873eb4dc58123cddc8145d080a9ac5", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/44a88f5d0bcac10e9606c9b10eef27311cf582458f82a3bd1df8756ee0c9aeba")
         }
 
         // L69
@@ -794,6 +805,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/27c8124dbddcd5eec4811cdeefe698cb59974b79ef8a0924d6b67faa9e50b524", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/e9e97ec09664c11bbc424965a6f4f1e4c7df26a731d17187d181047cc9157efc")
         }
 
         // L69
@@ -812,6 +824,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/1f73a9487f971b9a5353150e2be00dfbcfbd7c137f86395b2cb2244d3f56112e", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/691918a41303896607c589ab96fc59be6ccbe5f7d6852cc1009ccdb18693e786")
         }
 
         // L69
@@ -831,6 +844,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/89da7d5b224db2271596e1911819ac20a133454bcca58dca64682e0e7121c75a", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/f249ba54da0537ebfad243ad2290f2ee6fc6124dcb79be0e09382bcfd85872e9")
         }
 
         // L69
@@ -849,6 +863,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/4614714fc2f483a63ca41d7e414f3875728fb8416c95f339577533d61445a5c0", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/b65bd2a6dbbe857cf11a4f9c6ef50f9ff97a543b7bef7587ce9c1b07e1ea617c")
         }
 
         // L69
@@ -867,6 +882,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/326a727fe3b0446b7d542c0a5f5097e088881ea860e8d952e2403fe1b7c5b948", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/c384e592e7df5f2b49e6ce5821f28d5065431f59fa64d5677e1ccf627acb6c2a")
         }
 
         // L69
@@ -885,6 +901,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/41a1e6789ed1fdc7923c2b59b1d08837c617c8022092a6415d2536990bc1fda1", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/f713f7826184181e822862696c61bfaf3fef73422f2f980cd556aa0ba362669e")
         }
 
         // L69
@@ -903,6 +920,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/b41dce5f449fab0b8deb1e117655ef1d34a1d845da048339db818e1b56a0f352", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/f5e4447c5c1d9a9c93dca5a7176ba8df54715734f9d4206dc7268619822abc16")
         }
 
         // L69
@@ -922,6 +940,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/78ca53131d9a1d33bbc80230eec0bb9f6d63da9629ee681288b7cd2fb2ca1bc3", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/09700ec57b8a26fec4c7cf403c19334713943a189657b052067dabc72d44a186")
         }
 
         // L69
@@ -941,6 +960,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/operational-steps/procedure/branch.then/a49b597230444db88493ac9540810ce851ccd49fc1586c7f55a733a21eaa6c8b", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/operational-steps/procedure/debef5610440b63c795a9d70be9bf9c922411bf531c7f27989a8fe4c544bee93")
         }
 
         // L94
@@ -971,6 +991,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/identity-access-always-on-steps/procedure/branch.then/17fd419494c251af12e9b58601fbf8693d4e0672d3e03520309f4fadee033d94", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/identity-access-always-on-steps/procedure/25a47253634abf08526e2f2e9b88eceab823dd6f3ec60002f38fed10503a8180")
         }
 
         // L114
@@ -990,6 +1011,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/identity-access-always-on-steps/procedure/branch.then/24a8f49ef3fbea2c00f5adb08de7c6722111f5f7c2a181c9d742b7ca4578833d", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/identity-access-always-on-steps/procedure/139d4c5b287f16f8d49d44145286898f26e0ee8477b0016b5bfa21193ccc0851")
         }
 
         // L114
@@ -1009,6 +1031,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/identity-access-always-on-steps/procedure/branch.then/bb7482f56a1e2264a61b5200b02ea6f387f3d5bf8a7921f9b42f8a4f39839a30", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/identity-access-always-on-steps/procedure/dff09737643ee20998654d8785e2df996b71a5e460771db73ca66e4ff56facee")
         }
 
         // L114
@@ -1028,6 +1051,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/identity-access-always-on-steps/procedure/branch.then/b564ea0c1fd7ebb699fe64e3b284855705386d190cd0c14fdc076df4537e8819", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/identity-access-always-on-steps/procedure/fe48edcc30ddd245ccf764214a40ed571a4c6391193f0048817267bfd9fb12c9")
         }
 
         if __meridianShouldRun("/EntryInput/conventions-cross-cutting-steps/procedure/e5180d82d951c867080d94d5723ad8887084a4fbe0f4408985183b6472fa2d18") {
@@ -1145,6 +1169,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/58de1ac2c771591d5f34db1283f67d8aae6002fb79fbf0b874a1382d55055484", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/91e70e603cea92a8cad507fbadcfb2746c1603a30a75c408791f7d8a29448e72")
         }
 
         // L156
@@ -1164,6 +1189,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/b6152b037a32f95227c0d48f73d0dc517885f4f53d3c06bbe1021f370034cf75", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/261b95bdb0da3b71158189e2d1f888b79fd2d32e3a42cc430ba25591d585a32c")
         }
 
         // L156
@@ -1183,6 +1209,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/707eec20a8ecdca787454ecfe0f102a51d9b80aca497f1f44dcee8ecf4cc81f9", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/c56e466f8dde1706eb6dca4267d916b09698c6630bd57bcf23cab3f0b3b0d3e8")
         }
 
         // L156
@@ -1202,6 +1229,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/1cce35d98524445a61cba92d7501600c7b82c79218983e3123edb2d4ada8d057", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/3952c1c871ef941353792ffbd55ba2e9213a305e1118b7ebd74c258869f8b15e")
         }
 
         // L156
@@ -1221,6 +1249,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/fb91f4961baf0f98c80f610bbdc8773f97cfbecc55500b61c9754f8950090511", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/c934408837975ae2a393aef328d4951cbccfa1f755eee9f9d5a5eec79863485d")
         }
 
         // L156
@@ -1240,6 +1269,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/4cc350893c817dd75aa507b475362a318b3f9ff29ddc2ef6ffb63fe7c9127bfb", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/bde22743bee6bd92fef9fdb7699187ac9f0938e40b4fbccb95f4d5de0531cbf6")
         }
 
         // L156
@@ -1259,6 +1289,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/e521dfc99c8f92e9da426806c93131cb06beb94e59a2a6eda03129a02a0f6da4", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/cdbd99fb2a6ffb57bac98229cb15f8a0328e958e5d854874bfe2ce00a1d91662")
         }
 
         // L156
@@ -1278,6 +1309,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/17b6e37ba7c18d71e685b6454fc1f43ab10cab3fd3572cb27384830dc20aaf50", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/488be1f4ac70eed3a61e853415b7aa295d694dc54f24ea81519661ed5cca9712")
         }
 
         // L156
@@ -1297,6 +1329,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/b3562a6ecd703dc77d2a2aa801cda4c29b149dbb39c1631c2169de0dd3e298bb", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/887d4d752ef0b3a18a91679c042ce9fe4f0f051187a0e00482484648b8ff75af")
         }
 
         // L156
@@ -1316,6 +1349,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/60dd6244958273bd65d1062885dfbbb45d2119194905fb911aebe979b6b7f0aa", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/ed86443653e3977083ad43f6705b0953ab81bcdc75de5e65ceb27893016d0fc8")
         }
 
         // L156
@@ -1334,6 +1368,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/7ee8a65a56f702236e0b96b389f969c69e94ec65d473494914f99bdfd0dc4798", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/169e73bbb2ef86b7db9c649a30277523b916d3bdd14ab2a6213e7452ecc98c21")
         }
 
         // L156
@@ -1352,6 +1387,7 @@ public struct EntryInput: MeridianWorkflow {
 
                 try await runtime.checkpoint(label: "/EntryInput/uncategorized-steps/procedure/branch.then/1773e837f666946908d3f97a759e19fd1f4843e6400d157d381a462e7bf86347", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/EntryInput/uncategorized-steps/procedure/ddba5dda4e0dbab4e272c6363c13f941591a661c363c09a3145d7df9f17f3323")
         }
 
 

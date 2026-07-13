@@ -205,6 +205,7 @@ struct TraceStoreTests {
             await runtime.recordEvent(.emit, payload: ["event": .string("semantic.trace")])
             let records = try await store.query(
                 scope: .currentRun,
+                scopeSkills: [],
                 runID: runtime.runID,
                 skillName: "trace-skill",
                 window: nil,
@@ -242,7 +243,7 @@ struct TraceStoreTests {
         try await store.append(makeRecord(id: "C", at: now, run: "run-1", ingestOrder: 3, tag: .completed))
 
         try await store.compact(retention: .seconds(3_600), now: now)
-        let records = try await store.query(scope: .currentRun, runID: "run-1", skillName: nil, window: nil, pattern: nil)
+        let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
 
         #expect(records.map(\.id) == ["B", "C"])
     }
@@ -255,8 +256,8 @@ struct TraceStoreTests {
         try await store.append(makeRecord(id: "A", at: t0, run: "run-1", ingestOrder: 1, tag: .invoked))
         try await store.append(makeRecord(id: "M", at: t0.addingTimeInterval(1), run: "run-2", ingestOrder: 1, tag: .completed))
 
-        let runLocal = try await store.query(scope: .currentRun, runID: "run-1", skillName: nil, window: nil, pattern: nil)
-        let global = try await store.query(scope: .acrossAllRuns, runID: nil, skillName: nil, window: nil, pattern: nil)
+        let runLocal = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
+        let global = try await store.query(scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: nil, window: nil, pattern: nil)
 
         #expect(runLocal.map(\.id) == ["A", "Z"])
         #expect(global.map(\.id) == ["A", "Z", "M"])
@@ -269,8 +270,40 @@ struct TraceStoreTests {
         try await store.append(makeRecord(id: "late", at: t0.addingTimeInterval(1), run: "run-1", ingestOrder: 1, tag: .emitted))
         try await store.append(makeRecord(id: "early", at: t0, run: "run-1", ingestOrder: 1, tag: .invoked))
 
-        let records = try await store.query(scope: .currentRun, runID: "run-1", skillName: nil, window: nil, pattern: nil)
+        let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
         #expect(records.map(\.id) == ["early", "late"])
+    }
+
+    @Test("schema v1 records remain readable in v2 stores (N-1 reader)")
+    func schemaV1ReaderRegression() async throws {
+        let store = InMemoryTraceStore()
+        let v1 = TraceRecord(
+            schemaVersion: 1,
+            id: "legacy-v1",
+            at: Date(timeIntervalSince1970: 1_700_000_000),
+            ingestOrder: 1,
+            run: "run-1",
+            step: "deploy",
+            skillName: "skill",
+            skillVersionHash: "hash",
+            tag: .emitted,
+            subject: "legacy",
+            subjectKey: nil,
+            payload: ["event": .string("legacy")],
+            payloadHash: "payload",
+            outcome: .success
+        )
+        try await store.append(v1)
+        let records = try await store.query(
+            scope: .currentRun,
+            scopeSkills: [],
+            runID: "run-1",
+            skillName: nil,
+            window: nil,
+            pattern: TraceQueryPattern(tags: [.emitted], subject: "legacy")
+        )
+        #expect(records.count == 1)
+        #expect(records[0].schemaVersion == 1)
     }
 
     @Test("append rejects unsupported trace schema versions")
@@ -304,7 +337,7 @@ struct TraceStoreTests {
         let at = Date(timeIntervalSince1970: 200)
         try await store.append(makeRecord(id: "A", at: at, run: "run-1", ingestOrder: 0, tag: .emitted))
         try await store.append(makeRecord(id: "B", at: at, run: "run-1", ingestOrder: 0, tag: .emitted))
-        let records = try await store.query(scope: .currentRun, runID: "run-1", skillName: nil, window: nil, pattern: nil)
+        let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
 
         #expect(records[0].ingestOrder == 1)
         #expect(records[1].ingestOrder == 2)
@@ -326,8 +359,8 @@ struct TraceStoreTests {
             try await jsonl.append(record)
         }
 
-        let memoryRecords = try await memory.query(scope: .acrossAllRuns, runID: nil, skillName: nil, window: nil, pattern: nil)
-        let jsonlRecords = try await jsonl.query(scope: .acrossAllRuns, runID: nil, skillName: nil, window: nil, pattern: nil)
+        let memoryRecords = try await memory.query(scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: nil, window: nil, pattern: nil)
+        let jsonlRecords = try await jsonl.query(scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: nil, window: nil, pattern: nil)
         #expect(memoryRecords == jsonlRecords)
     }
 
@@ -347,7 +380,7 @@ struct TraceStoreTests {
         await runtime.recordEvent(.emit, payload: ["event": .string("first"), "step": .string("/deploy/root")])
         await runtime.recordEvent(.emit, payload: ["event": .string("second"), "step": .string("/deploy/root")])
 
-        let records = try await store.query(scope: .acrossAllRuns, runID: nil, skillName: "deploy", window: nil, pattern: nil)
+        let records = try await store.query(scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: "deploy", window: nil, pattern: nil)
         #expect(records.compactMap(\.subject).contains("trace-store"),
                 Comment(rawValue: records.map { $0.subject ?? "<nil>" }.joined(separator: ", ")))
         #expect(records.contains { $0.subject == "trace-store" && $0.operationalDetail == "degraded-witnessing-marker" })
@@ -384,7 +417,7 @@ struct TraceStoreTests {
         }
 
         let reopened = try JSONLTraceStore(fileURL: fileURL)
-        let records = try await reopened.query(scope: .acrossAllRuns, runID: nil, skillName: nil, window: nil, pattern: nil)
+        let records = try await reopened.query(scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: nil, window: nil, pattern: nil)
         let sidecars = try FileManager.default.contentsOfDirectory(at: tempRoot, includingPropertiesForKeys: nil)
         #expect(records.count == 1)
         #expect(sidecars.contains { $0.lastPathComponent.contains(".quarantine-") })
@@ -399,7 +432,7 @@ struct TraceStoreTests {
         let valid = try await store.verifyChain(runID: "run-1")
         #expect(valid.isValid)
 
-        let records = try await store.query(scope: .currentRun, runID: "run-1", skillName: nil, window: nil, pattern: nil)
+        let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
         let tampered = TraceRecord(
             schemaVersion: records[1].schemaVersion,
             id: records[1].id,
@@ -436,6 +469,7 @@ struct TraceStoreTests {
 
         let records = try await store.query(
             scope: .acrossAllRuns,
+            scopeSkills: [],
             runID: nil,
             skillName: nil,
             window: nil,
@@ -446,37 +480,7 @@ struct TraceStoreTests {
     }
 }
 
-private let allEventKinds: [EventKind] = [
-    .workflowStarted,
-    .workflowCompleted,
-    .workflowFailed,
-    .workflowCancelled,
-    .workflowSuspended,
-    .workflowResumed,
-    .bind,
-    .invokeStart,
-    .invokeEnd,
-    .invokeError,
-    .planStart,
-    .planEnd,
-    .planError,
-    .planRejected,
-    .autonomyStart,
-    .autonomyStep,
-    .autonomyEnd,
-    .branchTaken,
-    .iterateStart,
-    .iterateIteration,
-    .iterateEnd,
-    .assertPassed,
-    .assertFailed,
-    .emit,
-    .emitError,
-    .waitStart,
-    .waitResume,
-    .commit,
-    .recoverEngaged
-]
+private let allEventKinds: [EventKind] = Array(EventKind.allCases)
 
 private func makeRecord(
     id: String,
@@ -549,12 +553,20 @@ private actor FailingTraceStore: TraceStore {
 
     func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,
         pattern: TraceQueryPattern?
     ) async throws -> [TraceRecord] {
-        try await backing.query(scope: scope, runID: runID, skillName: skillName, window: window, pattern: pattern)
+        try await backing.query(
+            scope: scope,
+            scopeSkills: scopeSkills,
+            runID: runID,
+            skillName: skillName,
+            window: window,
+            pattern: pattern
+        )
     }
 
     func compact(retention: Duration, now: Date) async throws {

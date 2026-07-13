@@ -142,7 +142,7 @@ struct ObservabilityRuntimeCoverageTests {
 
         #expect(await blockingRuntime.operationalDiagnostics().contains { $0.code == "monitor.assertion" })
         let violated = try await healthyStore.query(
-            scope: .acrossAllRuns, runID: nil, skillName: "deploy", window: nil, pattern: nil)
+            scope: .acrossAllRuns, scopeSkills: [], runID: nil, skillName: "deploy", window: nil, pattern: nil)
         #expect(violated.contains { $0.tag == .violated })
     }
 
@@ -212,6 +212,7 @@ private actor QueryFailingTraceStore: TraceStore {
 
     func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,

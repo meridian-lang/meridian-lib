@@ -403,7 +403,9 @@ public struct ShiftHandoff: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
@@ -504,7 +506,9 @@ public struct WhenRunshifthandoffFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
@@ -536,7 +540,7 @@ public struct WhenRunshifthandoffFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunshifthandoffFires/root/procedure/50e1533b84681226573568422f14c9089fdc897b6aad00c7ad92f15e0847d637") {
             // L1
-            try await runtime.wait(.event("runShiftHandoff", matching: nil))
+            try await runtime.wait(.event("runShiftHandoff", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunshifthandoffFires/root/procedure/50e1533b84681226573568422f14c9089fdc897b6aad00c7ad92f15e0847d637", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunshifthandoffFires/root/procedure/99bc2ca22cc48a16d31abc7fcea7e1aab5733fac36a654c86fa7346913cd59a7") {
@@ -578,7 +582,9 @@ public struct WhenRendershifthandoffreportFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
@@ -610,7 +616,7 @@ public struct WhenRendershifthandoffreportFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRendershifthandoffreportFires/root/procedure/411abbdcf1835eb201ca5d7e2f64b932112e8418a575654b44c45cda797771ae") {
             // L1
-            try await runtime.wait(.event("renderShiftHandoffReport", matching: nil))
+            try await runtime.wait(.event("renderShiftHandoffReport", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRendershifthandoffreportFires/root/procedure/411abbdcf1835eb201ca5d7e2f64b932112e8418a575654b44c45cda797771ae", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRendershifthandoffreportFires/root/procedure/bca5ddd90e1610fcdf61810ba169dfb7d5c8c203237b4e22061e50529fe8e2b1") {

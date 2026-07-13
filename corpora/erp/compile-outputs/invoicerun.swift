@@ -544,7 +544,9 @@ public struct InvoiceRun: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
@@ -657,7 +659,9 @@ public struct WhenRuninvoicesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
@@ -689,7 +693,7 @@ public struct WhenRuninvoicesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRuninvoicesFires/root/procedure/c262d025300a1b3981996e9dcc99cb70938d45813ee6abadaf3744af92bcfa33") {
             // L1
-            try await runtime.wait(.event("runInvoices", matching: nil))
+            try await runtime.wait(.event("runInvoices", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRuninvoicesFires/root/procedure/c262d025300a1b3981996e9dcc99cb70938d45813ee6abadaf3744af92bcfa33", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRuninvoicesFires/root/procedure/edbd7e1703f783eaf87dc04bdfbe441797d14eb61cbb40d77852279c908a9a3a") {
@@ -731,7 +735,9 @@ public struct WhenBillingbatchFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
@@ -763,7 +769,7 @@ public struct WhenBillingbatchFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBillingbatchFires/root/procedure/63cd5ab3498d25654e3bf00dc0d6cfd59839797caa5d48bee01b4b134345fdfa") {
             // L1
-            try await runtime.wait(.event("billingBatch", matching: nil))
+            try await runtime.wait(.event("billingBatch", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBillingbatchFires/root/procedure/63cd5ab3498d25654e3bf00dc0d6cfd59839797caa5d48bee01b4b134345fdfa", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBillingbatchFires/root/procedure/d5051e5b12a4b80abb3d8a326d14eb09c41ec2e8bb13f16f18efffbd7bfa7fe7") {

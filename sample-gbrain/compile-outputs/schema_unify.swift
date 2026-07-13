@@ -590,7 +590,9 @@ public struct SchemaUnifyInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -837,7 +839,9 @@ public struct WhenUnifymytypesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -868,7 +872,7 @@ public struct WhenUnifymytypesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenUnifymytypesFires/root/procedure/95e20390572d686c1231bd6f1e14f0d10d1352b487a2278c165ce3bd77f2eeac") {
             // L1
-            try await runtime.wait(.event("unifyMyTypes", matching: nil))
+            try await runtime.wait(.event("unifyMyTypes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenUnifymytypesFires/root/procedure/95e20390572d686c1231bd6f1e14f0d10d1352b487a2278c165ce3bd77f2eeac", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenUnifymytypesFires/root/procedure/27a6558daa816e3ff759824aee7735738da954f8458c12a0dd00bac28c67a6b5") {
@@ -910,7 +914,9 @@ public struct WhenMigrategbrainbasev2Fires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -941,7 +947,7 @@ public struct WhenMigrategbrainbasev2Fires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMigrategbrainbasev2Fires/root/procedure/677dfae02028344ef67ecfd95ef8bcfd81bf8301f408561e8b039d08a110054e") {
             // L1
-            try await runtime.wait(.event("migrateGbrainBaseV2", matching: nil))
+            try await runtime.wait(.event("migrateGbrainBaseV2", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMigrategbrainbasev2Fires/root/procedure/677dfae02028344ef67ecfd95ef8bcfd81bf8301f408561e8b039d08a110054e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMigrategbrainbasev2Fires/root/procedure/68a8cc4391c5a77d002075dcb80ef60769d453ad92c61695f14ecb9f60bc0f75") {
@@ -983,7 +989,9 @@ public struct When94types14Fires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1014,7 +1022,7 @@ public struct When94types14Fires: MeridianWorkflow {
 
         if __meridianShouldRun("/When94types14Fires/root/procedure/b66c3e3b1b857686431f8f97c8c28baf13cf3404c87e096c15c53ab2f232c792") {
             // L1
-            try await runtime.wait(.event("94Types14", matching: nil))
+            try await runtime.wait(.event("94Types14", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/When94types14Fires/root/procedure/b66c3e3b1b857686431f8f97c8c28baf13cf3404c87e096c15c53ab2f232c792", state: state.snapshot())
         }
         if __meridianShouldRun("/When94types14Fires/root/procedure/c21e505b72341f6014c8a19e172e7da9e2d36565fcc0dece364a886b80fb5aab") {
@@ -1056,7 +1064,9 @@ public struct WhenApplycanonicaltaxonomyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1087,7 +1097,7 @@ public struct WhenApplycanonicaltaxonomyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApplycanonicaltaxonomyFires/root/procedure/d35c71c59694b4108e3d797ad9eaac2192f524fd8a71eedc6e94a4c9c4765f66") {
             // L1
-            try await runtime.wait(.event("applyCanonicalTaxonomy", matching: nil))
+            try await runtime.wait(.event("applyCanonicalTaxonomy", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApplycanonicaltaxonomyFires/root/procedure/d35c71c59694b4108e3d797ad9eaac2192f524fd8a71eedc6e94a4c9c4765f66", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApplycanonicaltaxonomyFires/root/procedure/7b33538819a9179fbb141b22cf79d362b0a08fc78e33fec9838a25bbf6d7a40b") {
@@ -1129,7 +1139,9 @@ public struct WhenCleanupmypagetypesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1160,7 +1172,7 @@ public struct WhenCleanupmypagetypesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCleanupmypagetypesFires/root/procedure/f7fb556cc61ad6822789230511314473302a6f225066bf8ef417bc8fcb58b17f") {
             // L1
-            try await runtime.wait(.event("cleanUpMyPageTypes", matching: nil))
+            try await runtime.wait(.event("cleanUpMyPageTypes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCleanupmypagetypesFires/root/procedure/f7fb556cc61ad6822789230511314473302a6f225066bf8ef417bc8fcb58b17f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCleanupmypagetypesFires/root/procedure/dca970841ecfdef643430e8f7974c106323a2d6b195ffece626d496bef83dfd3") {
@@ -1202,7 +1214,9 @@ public struct WhenPackupgradeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1233,7 +1247,7 @@ public struct WhenPackupgradeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPackupgradeFires/root/procedure/574f4b9f035a620708fd5c9812524cfda7df6c838525a3ecb3b215417f6ddf49") {
             // L1
-            try await runtime.wait(.event("packUpgrade", matching: nil))
+            try await runtime.wait(.event("packUpgrade", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPackupgradeFires/root/procedure/574f4b9f035a620708fd5c9812524cfda7df6c838525a3ecb3b215417f6ddf49", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPackupgradeFires/root/procedure/6dcddd9d316f95b2ea6ab2cc8c94f3438fce5731772ef1919988eeabaece6e32") {
@@ -1275,7 +1289,9 @@ public struct WhenShrinktypeproliferationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1306,7 +1322,7 @@ public struct WhenShrinktypeproliferationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShrinktypeproliferationFires/root/procedure/ca1c31dcf7824e50470517244dd3d7a0905e5015cb8edc9e6cf2e45b062832da") {
             // L1
-            try await runtime.wait(.event("shrinkTypeProliferation", matching: nil))
+            try await runtime.wait(.event("shrinkTypeProliferation", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShrinktypeproliferationFires/root/procedure/ca1c31dcf7824e50470517244dd3d7a0905e5015cb8edc9e6cf2e45b062832da", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShrinktypeproliferationFires/root/procedure/ea04b51ee3275ef40f45955891f98e286611e10e76aa0c3a5be5e28d86a6a81e") {
@@ -1348,7 +1364,9 @@ public struct WhenWhatdoescanonicaltaxonomylookFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1379,7 +1397,7 @@ public struct WhenWhatdoescanonicaltaxonomylookFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatdoescanonicaltaxonomylookFires/root/procedure/f56ac8767bc1f405984d20a5caddb56596560e59ab06d342e36bd2e65637acc0") {
             // L1
-            try await runtime.wait(.event("whatDoesCanonicalTaxonomyLook", matching: nil))
+            try await runtime.wait(.event("whatDoesCanonicalTaxonomyLook", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatdoescanonicaltaxonomylookFires/root/procedure/f56ac8767bc1f405984d20a5caddb56596560e59ab06d342e36bd2e65637acc0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatdoescanonicaltaxonomylookFires/root/procedure/6c8614ae8faa47c5276f5dc11cb75ca9619e248554b0e482b04bb7a4f8af371e") {
@@ -1421,7 +1439,9 @@ public struct WhenConsolidatepagetypesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1452,7 +1472,7 @@ public struct WhenConsolidatepagetypesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenConsolidatepagetypesFires/root/procedure/26e1119293a7d728a31f4f02bd70ec225c5e86c7cfed096eb31319760d21b2a7") {
             // L1
-            try await runtime.wait(.event("consolidatePageTypes", matching: nil))
+            try await runtime.wait(.event("consolidatePageTypes", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenConsolidatepagetypesFires/root/procedure/26e1119293a7d728a31f4f02bd70ec225c5e86c7cfed096eb31319760d21b2a7", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenConsolidatepagetypesFires/root/procedure/0ae6581e925092d336fcb4fc7ed332c0d1b623b8d4ecf2a2ffd70b9b345280d1") {
@@ -1494,7 +1514,9 @@ public struct WhenRetypepagescanonicalFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema-unify",
@@ -1525,7 +1547,7 @@ public struct WhenRetypepagescanonicalFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRetypepagescanonicalFires/root/procedure/217fb4997aa9db8cc22686f6ceb4442a30d2181a29e580132b16a083365d2962") {
             // L1
-            try await runtime.wait(.event("retypePagesCanonical", matching: nil))
+            try await runtime.wait(.event("retypePagesCanonical", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRetypepagescanonicalFires/root/procedure/217fb4997aa9db8cc22686f6ceb4442a30d2181a29e580132b16a083365d2962", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRetypepagescanonicalFires/root/procedure/d4a21088a3721ec30feebd30d27f5de8e9a032b09de38fa37ba4f0612c0eebd3") {

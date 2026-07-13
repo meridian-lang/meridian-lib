@@ -387,7 +387,9 @@ public struct EscalateIncident: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate incident",
@@ -451,7 +453,7 @@ public struct EscalateIncident: MeridianWorkflow {
             state.bind("incident", incident)
                 if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f") {
                     // L28
-                    try await runtime.wait(.event("alert.fired", matching: { _event in MeridianComparison.eq(state.get("event.serviceName"), state.get("incident.serviceName")) }))
+                    try await runtime.wait(.event("alert.fired", matching: { _event in MeridianComparison.eq(state.get("event.serviceName"), state.get("incident.serviceName")) }), sourceRange: nil)
                     try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/iterate.body/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f", state: state.snapshot())
                 }
                 if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/f95f981f873a7217ad6072b67917938387cae9de56865623731c84126c273f5c") {
@@ -502,7 +504,9 @@ public struct WhenEscalateopenincidentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate incident",
@@ -534,7 +538,7 @@ public struct WhenEscalateopenincidentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293") {
             // L1
-            try await runtime.wait(.event("escalateOpenIncidents", matching: nil))
+            try await runtime.wait(.event("escalateOpenIncidents", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEscalateopenincidentsFires/root/procedure/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db") {
@@ -576,7 +580,9 @@ public struct WhenEscalatestalledincidentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate incident",
@@ -608,7 +614,7 @@ public struct WhenEscalatestalledincidentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5") {
             // L1
-            try await runtime.wait(.event("escalateStalledIncidents", matching: nil))
+            try await runtime.wait(.event("escalateStalledIncidents", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEscalatestalledincidentsFires/root/procedure/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781") {
@@ -650,7 +656,9 @@ public struct WhenRunincidentescalationFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "escalate incident",
@@ -682,7 +690,7 @@ public struct WhenRunincidentescalationFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0") {
             // L1
-            try await runtime.wait(.event("runIncidentEscalation", matching: nil))
+            try await runtime.wait(.event("runIncidentEscalation", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunincidentescalationFires/root/procedure/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa") {

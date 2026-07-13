@@ -1,0 +1,140 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event bootstrapBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenBootstrapbrainFires\/root\/procedure\/743aa91791a7a43a7c31268774ddfdd0c8089cfac05cd778f72ac89bde8ec3e6",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.bootstrapBrain.fired with kind = \"keyword\", spec = \"bootstrap brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBootstrapbrainFires\/root\/procedure\/baab8a9218376f40cb35cb66f4f96a9f7f05bfc4613a0895e13e7b5c22d33c99",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event coldStart.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenColdstartFires\/root\/procedure\/a25d9bb063dfa2232602038a8a53152bcb7d5a1e24a1b4fda440a6a22811b542",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.coldStart.fired with kind = \"keyword\", spec = \"cold start\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenColdstartFires\/root\/procedure\/c65ecc8c6661bbb51cc4f8213c02162d4c5e496995cb3f2dd38c152a3f4a69a1",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.dayOne.fired with kind = \"keyword\", spec = \"day one\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDayoneFires\/root\/procedure\/50d972170701f338676c01a3a82261cb40bbf9855a546864e1e2227f7f992b41",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event dayOne.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDayoneFires\/root\/procedure\/ca32ed6661059d47282bf8d0e6d1983080aecc6df87dce5f6e6685ad3039453c",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event fillMyBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFillmybrainFires\/root\/procedure\/9524d8bfa25f5378d749889f6af33106ee7139e0388783837634f10d66832632",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.fillMyBrain.fired with kind = \"keyword\", spec = \"fill my brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFillmybrainFires\/root\/procedure\/f8de529f6e36a5832c9ef7d31e3d2244b96e8d702c41e0c388ef327d875451f2",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.getStarted.fired with kind = \"keyword\", spec = \"get started\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenGetstartedFires\/root\/procedure\/b379a9b61dd1a5e215084593794ecfa168f641799a34339a05f6ff1ab170a561",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event getStarted.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenGetstartedFires\/root\/procedure\/bd28b8c6eabd11f30995ba212d8ea38a3b01a632b6b99292f0124aa4f0bac7f2",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event importMyData.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenImportmydataFires\/root\/procedure\/087dda6124e14e59bcea2f377ff43a18e9457a3219a902286fa8853edc79dca0",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.importMyData.fired with kind = \"keyword\", spec = \"import my data\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenImportmydataFires\/root\/procedure\/4a371bdbcf4c803af5d9c38549492aeddfb04aff9b8e5dc98024016bacbd9225",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event nowWhat.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenNowwhatFires\/root\/procedure\/321fd8b22a5282e6c387b7c48f3de341e43a5343d00cab7fd2f2beb9e7e615e9",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.nowWhat.fired with kind = \"keyword\", spec = \"now what?\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenNowwhatFires\/root\/procedure\/b28e38b5e2627a33e66ba6cc4233a6468707720b89b486a9f6fb9c917d7fb836",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event populateBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPopulatebrainFires\/root\/procedure\/9fb0a0368a9021dd5da92c903cc9e6ffde2aae401fb08a0b20287694c5776aa1",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.populateBrain.fired with kind = \"keyword\", spec = \"populate brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPopulatebrainFires\/root\/procedure\/b5d7e5240c2c730c313253b0b36e171de9b659fb083f1ca7d3de475bbf48bc4f",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "emit trigger.whatShouldIImportFirst.fired with kind = \"keyword\", spec = \"what should I import first\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/617be1ca2aac2db5f448510bc7920344bc4488b040b25b92cd13ad3a5eee411a",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "wait for event whatShouldIImportFirst.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/ddd77ae311666737d5bd2679bf6fbb71f8820b93e80dc4d67dcb696d347f9a90",
+      "swift_line" : 1305
+    },
+    {
+      "canonical" : "use judgment to follow the Phase 0: ClawVisor Setup (Required for API Access) — steps 5 guidance:\n  **Critical scoping rule:** Be expansive in task purposes. \"Email triage\" gets\n  rejected by intent verification. \"Full executive assistant email management\n  including inbox triage, searching by any criteria, reading emails, tracking\n  threads\" works. The intent model uses the purpose to judge each request.\n  If the user already has a notes system, this\n  is hundreds or thousands of structured pages ready to go\n  codeblock:bash:ZWNobyAiPT09IE1hcmtkb3duIFJlcG9zaXRvcnkgRGlzY292ZXJ5ID09PSIKZm9yIGRpciBpbiAvZGF0YS8qIH4vZ2l0Lyogfi9Eb2N1bWVudHMvKiB+L25vdGVzLyogfi9vYnNpZGlhbi8qIDI+L2Rldi9udWxsOyBkbwogIGlmIFsgLWQgIiRkaXIiIF07IHRoZW4KICAgIG1kX2NvdW50PSQoZmluZCAiJGRpciIgLW5hbWUgIioubWQiIC1ub3QgLXBhdGggIiovbm9kZV9tb2R1bGVzLyoiIFwKICAgICAgLW5vdCAtcGF0aCAiKi8uZ2l0LyoiIC1ub3QgLXBhdGggIiovLm9ic2lkaWFuLyoiIDI+L2Rldi9udWxsIHwgd2MgLWwgfCB0ciAtZCAnICcpCiAgICBpZiBbICIkbWRfY291bnQiIC1ndCA1IF07IHRoZW4KICAgICAgdG90YWxfc2l6ZT0kKGR1IC1zaCAiJGRpciIgMj4vZGV2L251bGwgfCBjdXQgLWYxKQogICAgICBlY2hvICIgICRkaXIgKCR0b3RhbF9zaXplLCAkbWRfY291bnQgLm1kIGZpbGVzKSIKICAgIGZpCiAgZmkKZG9uZQ==\n  codeblock:bash:IyBGb3IgT2JzaWRpYW4gdmF1bHRzLCB1c2UgdGhlIG1pZ3JhdGUgc2tpbGwgZm9yIHByb3BlciB3aWtpbGluayBoYW5kbGluZwpnYnJhaW4gbWlncmF0ZSAtLWZyb20gb2JzaWRpYW4gLS1wYXRoIC9wYXRoL3RvL3ZhdWx0CgojIEZvciBwbGFpbiBtYXJrZG93biBkaXJlY3RvcmllcwpnYnJhaW4gaW1wb3J0IC9wYXRoL3RvL2RpciAtLW5vLWVtYmVkIC0td29ya2VycyA0CgojIFZlcmlmeQpnYnJhaW4gc3RhdHMKZ2JyYWluIHNlYXJjaCAiPHRvcGljIGZyb20gdGhlIGltcG9ydGVkIGRhdGE+Ig==\n  Run link extraction: `gbrain extract links --source db`\n  Run timeline extraction: `gbrain extract timeline --source db`\n  Start embeddings: `gbrain embed --stale` (runs in background)\n  Every person in your contacts becomes a brain page\n  with name, email, phone, company, and notes. This is the foundation that all other\n  imports build on — when Gmail references \"john@acme.com\", the brain already knows\n  who John is\n  codeblock:bash:Y3VybCAtcyAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRHT09HTEVfVE9LRU4iIFwKICAiaHR0cHM6Ly9wZW9wbGUuZ29vZ2xlYXBpcy5jb20vdjEvcGVvcGxlL21lL2Nvbm5lY3Rpb25zP3BlcnNvbkZpZWxkcz1uYW1lcyxlbWFpbEFkZHJlc3NlcyxwaG9uZU51bWJlcnMsb3JnYW5pemF0aW9ucyxiaW9ncmFwaGllcyZwYWdlU2l6ZT0xMDAwIg==\n  For each contact:\n  Check brain first — `gbrain search \"name\"` to avoid duplicates\n  Calendar events reveal who the user meets\n  with, how often, and in what context. Combined with contacts, this builds a rich\n  relationship map\n  For each event with attendees:\n  Email reveals organizational\n  relationships, ongoing conversations, and communication patterns\n  For each email thread:\n  Auto-skip (never import):\n  Always import:\n  AI conversation exports reveal what the user\n  was researching, building, and thinking about. This is original thinking\n  preserved in dialog form\n  **ChatGPT:** Settings → Data Controls → Export → `conversations.json`\n  **Claude:** Download from claude.ai conversation history\n  **Perplexity:** Export from settings\n  For each conversation:\n  use judgment to follow the Processing — steps 2 guidance:\n  **Assess significance** (1-5 scale):\n  Capture original thinking — the user's exact phrasing is the signal\n  Never paraphrase\n  Twitter reveals what the user\n  thinks, who they engage with, and what ideas they're developing publicly\n  **Original tweets** → capture with full context, extract entities\n  **Quote tweets** → capture the user's commentary + the source tweet\n  **Threads** → reconstruct as a single narrative\n  **Bookmarks** → high-signal curation, import with tags\n  **Likes** — low signal, skip unless the user wants them\n  This is the long tail —\n  less structured but potentially very high value (old journals, letters, early writing)\n  Delegate to the `archive-crawler` skill. It handles:\n  Crawling directory structures\n  Filtering for high-value content (user's own writing, not installers)\n  Text extraction from PDFs, images (OCR), documents\n  Entity extraction and brain page creation\n  Supported sources:\n  Local directories (Dropbox sync folder, Google Drive, old hard drives)\n  Cloud storage (Backblaze B2, S3) via mounted paths\n  Email archives (PST, mbox, EML, Google Takeout)\n  Data exports (LinkedIn, Facebook, etc.)\n  If the user has a meeting\n  recording service (Circleback, Otter, Fireflies, Read.ai), import recent\n  transcripts\n  Delegate to `meeting-ingestion` skill. Key rules:\n  Always pull the complete transcript, not just the AI summary\n  Entity propagation is MANDATORY — every attendee gets a timeline update\n  If the session is interrupted:\n  Read `~\/.gbrain\/cold-start-state.json`",
+      "meridian_line" : 139,
+      "primitive" : "aiJudgment",
+      "stable_step_path" : "\/ColdStartInput\/phase-0-clawvisor-setup-required-for-api-access-steps-5\/procedure\/53279ecf0ba92fe1c35cb83ba4cd16056cc9a79c481e7a09e9a72a53c4a1dc89",
+      "swift_line" : 629
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "cold_start.meri",
+  "swift_file" : "cold_start.swift"
+}

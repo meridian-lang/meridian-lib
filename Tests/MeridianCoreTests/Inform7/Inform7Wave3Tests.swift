@@ -196,7 +196,7 @@ struct RelationBackingTests {
 
     @Test("relations and verbs are recorded in the manifest")
     func manifestRecordsRelationsAndVerbs() throws {
-        let (_, input) = try Compiler().compileWithManifest(
+        let (_, _, input) = try Compiler().compileWithManifest(
             meridianSource: """
             ---
             name: verify

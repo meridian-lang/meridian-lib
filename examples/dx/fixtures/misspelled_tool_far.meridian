@@ -1,0 +1,6 @@
+---
+vocabulary: dx.merconfig
+---
+
+To process an order:
+  invoke zzzzzzzzzz with order = the order.

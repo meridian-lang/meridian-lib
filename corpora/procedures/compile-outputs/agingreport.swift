@@ -422,7 +422,9 @@ public struct AgingReport: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
@@ -517,7 +519,9 @@ public struct WhenAgingreportFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
@@ -549,7 +553,7 @@ public struct WhenAgingreportFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAgingreportFires/root/procedure/dd28a1ec6f0d7f90a47a37386f5abd3dd1d14b1076ddfe70903f0fa9b3ae3ac4") {
             // L1
-            try await runtime.wait(.event("agingReport", matching: nil))
+            try await runtime.wait(.event("agingReport", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAgingreportFires/root/procedure/dd28a1ec6f0d7f90a47a37386f5abd3dd1d14b1076ddfe70903f0fa9b3ae3ac4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAgingreportFires/root/procedure/ece842f958f8ac8a2069393e59625946bedef50b7fc1c35739c5ba1921200d86") {
@@ -591,7 +595,9 @@ public struct WhenStalerecordreportFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
@@ -623,7 +629,7 @@ public struct WhenStalerecordreportFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/b0b03b088fec7386591f1a1559fbc250e65da57e3246e62e242a2f7dea86aff9") {
             // L1
-            try await runtime.wait(.event("staleRecordReport", matching: nil))
+            try await runtime.wait(.event("staleRecordReport", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenStalerecordreportFires/root/procedure/b0b03b088fec7386591f1a1559fbc250e65da57e3246e62e242a2f7dea86aff9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/715c5bcde93c66f1a260a86e153481a2c9cbf25273506833a04433c0e0099fa2") {

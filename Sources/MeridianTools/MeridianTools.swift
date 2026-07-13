@@ -34,16 +34,12 @@ public enum MeridianTools {
         case "regex.replace": return try regexReplace(args)
         case "mcp.call":
             throw ToolError.implementation(
-                code: "mcp.requires_registry",
-                message: "mcp.call is dispatched through ToolRegistry's replaceable MCP adapter",
+                code: "mcp.not_configured",
+                message: "mcp.call requires a configured MCP transport in ToolRegistry (register .mcp with http or stdio transport)",
                 cause: nil
             )
         case "llm.chat":
-            throw ToolError.implementation(
-                code: "llm.not_implemented",
-                message: "llm.chat is intentionally not implemented yet",
-                cause: nil
-            )
+            return try await chatLLM(args)
         case "llm.decide", "llm.judge":
             return try await decideLLM(args)
         case "validate.json_schema": return validateJSONSchema(args)
@@ -54,12 +50,26 @@ public enum MeridianTools {
         }
     }
 
-    /// B4: Default implementation returns `false` deterministically so tests are
-    /// safe and reproducible. Hosts override by registering their own `llm.decide`
-    /// tool in `ToolRegistry` before running workflows.
+    /// Uses a configured HTTP provider when `MERIDIAN_LLM_API_URL` is set, otherwise
+    /// the deterministic test provider. Hosts may also register their own closure
+    /// in `ToolRegistry` to replace this default.
     static func decideLLM(_ args: [String: Value]) async throws -> Value {
-        _ = stringArg(args, "question")
-        return .boolean(false)
+        do {
+            let provider = try LLMProviderRegistry.resolve(requireConfigured: false)
+            return try await LLMTools.decide(args, provider: provider)
+        } catch let error as LLMProviderError {
+            throw llmToolError(error)
+        }
+    }
+
+    /// Requires a configured provider (`MERIDIAN_LLM_API_URL` or an override).
+    static func chatLLM(_ args: [String: Value]) async throws -> Value {
+        do {
+            let provider = try LLMProviderRegistry.resolve(requireConfigured: true)
+            return try await LLMTools.chat(args, provider: provider)
+        } catch let error as LLMProviderError {
+            throw llmToolError(error)
+        }
     }
 
     static func readFile(_ args: [String: Value]) throws -> Value {
@@ -253,7 +263,7 @@ public extension ToolRegistry {
             case "http.delete": register(tool: toolID, .http(HTTPSpec(url: "{url}", method: "DELETE")))
             case "shell.run": register(tool: toolID, .subprocess(SubprocessSpec(binary: "/bin/sh", argTemplate: ["-c", "{command}"])))
             case "mcp.call": register(tool: toolID, .mcp(MCPSpec()))
-            case "llm.decide", "llm.judge":
+            case "llm.chat", "llm.decide", "llm.judge":
                 register(tool: toolID, .closure { args in
                     try await MeridianTools.invoke(toolID, args: args)
                 })

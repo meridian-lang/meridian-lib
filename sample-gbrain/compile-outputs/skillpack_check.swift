@@ -591,7 +591,9 @@ public struct SkillpackCheckInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -749,7 +751,9 @@ public struct WhenSkillpackcheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -780,7 +784,7 @@ public struct WhenSkillpackcheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/4af935c3cb65f2b3d8df7d6827af5084ae81fc2349e646a74693bf34c91c0192") {
             // L1
-            try await runtime.wait(.event("skillpackCheck", matching: nil))
+            try await runtime.wait(.event("skillpackCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSkillpackcheckFires/root/procedure/4af935c3cb65f2b3d8df7d6827af5084ae81fc2349e646a74693bf34c91c0192", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/5032906dc6438371d8c677935d9c989a977b6e292e5cdf5f12d2fbc9fbeaf5cc") {
@@ -822,7 +826,9 @@ public struct WhenIsgbrainhealthyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -853,7 +859,7 @@ public struct WhenIsgbrainhealthyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/f6ae73e0ff40005460c4785216ed41c8f6a4f645cafcb095a8c3bde95324e063") {
             // L1
-            try await runtime.wait(.event("isGbrainHealthy", matching: nil))
+            try await runtime.wait(.event("isGbrainHealthy", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIsgbrainhealthyFires/root/procedure/f6ae73e0ff40005460c4785216ed41c8f6a4f645cafcb095a8c3bde95324e063", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/e9c4ed6f84c7bb19850d60a75d26118a5ef4d9405116a71e0abe9cd6d8dc0a36") {
@@ -895,7 +901,9 @@ public struct WhenGbrainhealthFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -926,7 +934,7 @@ public struct WhenGbrainhealthFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/793231dc5dfebe2ebafaf518492074305c4a231f46c8bfe9872f4b942796c5e0") {
             // L1
-            try await runtime.wait(.event("gbrainHealth", matching: nil))
+            try await runtime.wait(.event("gbrainHealth", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainhealthFires/root/procedure/793231dc5dfebe2ebafaf518492074305c4a231f46c8bfe9872f4b942796c5e0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/833c5a3693cc9627d03c970d8b9ce7a7c94415d8f514b8e8a3dc70db356e8796") {
@@ -968,7 +976,9 @@ public struct WhenCheckbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -999,7 +1009,7 @@ public struct WhenCheckbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/b0b91416f11b7d1e7afbc999df748c5c0b9aae78f8457a7a46548d7f59414607") {
             // L1
-            try await runtime.wait(.event("checkBrain", matching: nil))
+            try await runtime.wait(.event("checkBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckbrainFires/root/procedure/b0b91416f11b7d1e7afbc999df748c5c0b9aae78f8457a7a46548d7f59414607", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/49dc55826fcf44354d35981411444c3f5f0cdbfc29958eb0e4b8f934b5bff2d7") {
@@ -1041,7 +1051,9 @@ public struct WhenIsbrainworkingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-check",
@@ -1072,7 +1084,7 @@ public struct WhenIsbrainworkingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/667be2063fa5293cd32080912d1f12b323c69fc2256684d4c6693738bbb0bcae") {
             // L1
-            try await runtime.wait(.event("isBrainWorking", matching: nil))
+            try await runtime.wait(.event("isBrainWorking", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIsbrainworkingFires/root/procedure/667be2063fa5293cd32080912d1f12b323c69fc2256684d4c6693738bbb0bcae", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/fc01aeaea77cfde83c6d7bb7e71de760fa499b521df2ad4b08e660245f4c9938") {

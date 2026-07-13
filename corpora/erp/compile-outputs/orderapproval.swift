@@ -544,7 +544,9 @@ public struct OrderApproval: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
@@ -598,7 +600,7 @@ public struct OrderApproval: MeridianWorkflow {
             state.bind("order", order)
                 if __meridianShouldRun("/OrderApproval/workflow-steps/procedure/iterate.body/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd") {
                     // L21
-                    try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "an account manager")))
+                    try await runtime.wait(.approval(of: state.get("order") ?? .null, by: RoleRef(identifier: "an account manager")), sourceRange: nil)
                     try await runtime.checkpoint(label: "/OrderApproval/workflow-steps/procedure/iterate.body/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd", state: state.snapshot())
                 }
                 if __meridianShouldRun("/OrderApproval/workflow-steps/procedure/iterate.body/3ca13de3a6b0257f1e26f050c347cc214f13f434d94e455ab1857c54f9972ba7") {
@@ -615,7 +617,7 @@ public struct OrderApproval: MeridianWorkflow {
                 }
                 if __meridianShouldRun("/OrderApproval/workflow-steps/procedure/iterate.body/87456516db8fd3d7789700b88ffb6f5f15c9ff945b64a482c642bf2682c7c780") {
                     // L22
-                    try await runtime.wait(.choice(prompt: "ask the user to choose between \"ship\", \"hold\"", options: ["ship", "hold"]))
+                    try await runtime.wait(.choice(prompt: "ask the user to choose between \"ship\", \"hold\"", options: ["ship", "hold"]), sourceRange: nil)
                     state.bind("choice", .string(await runtime.consumeChoiceSelection()))
                     try await runtime.checkpoint(label: "/OrderApproval/workflow-steps/procedure/iterate.body/87456516db8fd3d7789700b88ffb6f5f15c9ff945b64a482c642bf2682c7c780", state: state.snapshot())
                 }
@@ -636,8 +638,10 @@ public struct OrderApproval: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/OrderApproval/workflow-steps/procedure/branch.then/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/OrderApproval/workflow-steps/procedure/iterate.body/79ec3ea0526d1de4b3f3bd1c60b2a4c231bfab6542afdee27ed477079342b18a")
                 } else {
                     try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"choice\"), .string(\"ship\"))", into: "otherwise", step: "/OrderApproval/workflow-steps/procedure/iterate.body/79ec3ea0526d1de4b3f3bd1c60b2a4c231bfab6542afdee27ed477079342b18a")
+
                     if __meridianShouldRun("/OrderApproval/workflow-steps/procedure/branch.else/17a5d7fb4f04455aa17af8e1c8c9a7c3c04a81890279a1ce101f0d1f0305a642") {
                         // L26
                         try await runtime.emit(
@@ -649,6 +653,7 @@ public struct OrderApproval: MeridianWorkflow {
                         )
                         try await runtime.checkpoint(label: "/OrderApproval/workflow-steps/procedure/branch.else/17a5d7fb4f04455aa17af8e1c8c9a7c3c04a81890279a1ce101f0d1f0305a642", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/OrderApproval/workflow-steps/procedure/iterate.body/79ec3ea0526d1de4b3f3bd1c60b2a4c231bfab6542afdee27ed477079342b18a")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_1, state: state.snapshot())
@@ -694,7 +699,9 @@ public struct WhenApprovehighvalueordersFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
@@ -726,7 +733,7 @@ public struct WhenApprovehighvalueordersFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenApprovehighvalueordersFires/root/procedure/cd260f83ef63cd414d7feab7dfefc4183f116b95aaa60445f3682702e8e32f1a") {
             // L1
-            try await runtime.wait(.event("approveHighValueOrders", matching: nil))
+            try await runtime.wait(.event("approveHighValueOrders", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenApprovehighvalueordersFires/root/procedure/cd260f83ef63cd414d7feab7dfefc4183f116b95aaa60445f3682702e8e32f1a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenApprovehighvalueordersFires/root/procedure/c328c142b18cd8ae0ae0cac3e8d6a7f41b6d68e1274996d64debabd32f78b182") {
@@ -768,7 +775,9 @@ public struct WhenRouteordersapprovalFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
@@ -800,7 +809,7 @@ public struct WhenRouteordersapprovalFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRouteordersapprovalFires/root/procedure/7f2c0d0354a0f08f20e838020eaf7a6faea7c5b77bc2a6b8c2192f1b986a6b88") {
             // L1
-            try await runtime.wait(.event("routeOrdersApproval", matching: nil))
+            try await runtime.wait(.event("routeOrdersApproval", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRouteordersapprovalFires/root/procedure/7f2c0d0354a0f08f20e838020eaf7a6faea7c5b77bc2a6b8c2192f1b986a6b88", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRouteordersapprovalFires/root/procedure/82338257584e1c6d7a1e45272f46e3220d8544f392d6609f4805c6c8e38e0475") {

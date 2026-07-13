@@ -11,6 +11,7 @@ public protocol TraceStore: Sendable {
     func append(_ event: TraceRecord) async throws
     func query(
         scope: TraceScope,
+        scopeSkills: [String],
         runID: String?,
         skillName: String?,
         window: TraceWindow?,

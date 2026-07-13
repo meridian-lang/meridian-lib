@@ -366,6 +366,83 @@ struct LanguageSynonymTests {
 @Suite("EnglishLexicon — article helpers, morphology, and merging edge cases")
 struct EnglishLexiconEdgeCaseCoverageTests {
 
+    @Test("SuperlativeDirection ascending and needsBy buckets")
+    func superlativeDirectionBuckets() {
+        #expect(SuperlativeDirection.oldest.ascending == true)
+        #expect(SuperlativeDirection.newest.ascending == false)
+        #expect(SuperlativeDirection.smallest.needsBy == true)
+        #expect(SuperlativeDirection.largest.needsBy == true)
+        #expect(SuperlativeDirection.oldest.needsBy == false)
+    }
+
+    @Test("indefiniteArticlePrefix empty and vowel-initial branches")
+    func indefiniteArticlePrefixEdges() {
+        let base = EnglishLexicon.default
+        let onlyAn = EnglishLexicon(
+            articles: base.articles,
+            parameterArticles: ["an"],
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: base.comparisonMarkers,
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        #expect(onlyAn.indefiniteArticlePrefix(for: "") == "an ")
+        #expect(onlyAn.indefiniteArticlePrefix(for: "order") == "an ")
+        #expect(onlyAn.indefiniteArticlePrefix(for: "apple") == "an ")
+
+        let onlyA = EnglishLexicon(
+            articles: base.articles,
+            parameterArticles: ["a"],
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: base.comparisonMarkers,
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        #expect(onlyA.indefiniteArticlePrefix(for: "") == "a ")
+        #expect(onlyA.indefiniteArticlePrefix(for: "order") == "a ")
+    }
+
+    @Test("canonicalComparisonSurface prefers author markers and relational spellings")
+    func canonicalComparisonSurfaceRelational() {
+        let base = EnglishLexicon.default
+        let authorGT = EnglishLexicon(
+            articles: base.articles,
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: [(" exceeds ", .greaterThan)],
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        #expect(authorGT.canonicalComparisonSurface(.greaterThan) == "exceeds")
+
+        let spellingOnly = EnglishLexicon(
+            articles: base.articles,
+            prepositions: base.prepositions,
+            copulas: base.copulas,
+            participles: base.participles,
+            participleSuffixes: base.participleSuffixes,
+            comparisonMarkers: [],
+            durationUnits: base.durationUnits,
+            toolStopwords: base.toolStopwords
+        )
+        let less = spellingOnly.canonicalComparisonSurface(.lessThan)
+        #expect(less == "is less" || less == "is less than")
+        let equal = spellingOnly.canonicalComparisonSurface(.equal)
+        #expect(equal == "equals" || equal == "equal")
+        #expect(EnglishLexicon.default.canonicalComparisonSurface(.contains) == "contains")
+        #expect(EnglishLexicon.default.canonicalComparisonSurface(.oneOf) == "is one of")
+        #expect(EnglishLexicon.default.canonicalComparisonSurface(.isEmpty) == "is empty")
+        #expect(EnglishLexicon.default.canonicalComparisonSurface(.withinPast) == "is within the last")
+    }
+
     @Test("definiteArticle falls back to the sorted first article when \"the\" is absent from a custom lexicon")
     func definiteArticleFallsBackWhenTheIsAbsent() {
         let base = EnglishLexicon.default

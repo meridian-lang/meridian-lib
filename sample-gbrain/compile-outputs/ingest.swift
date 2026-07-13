@@ -592,7 +592,9 @@ public struct IngestInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ingest",
@@ -773,7 +775,9 @@ public struct WhenIngestthisFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ingest",
@@ -804,7 +808,7 @@ public struct WhenIngestthisFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIngestthisFires/root/procedure/cf788e98c219f22c187e3006dd53774364ad6ac0f2518cb74e05d2b5946ecbb3") {
             // L1
-            try await runtime.wait(.event("ingestThis", matching: nil))
+            try await runtime.wait(.event("ingestThis", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIngestthisFires/root/procedure/cf788e98c219f22c187e3006dd53774364ad6ac0f2518cb74e05d2b5946ecbb3", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIngestthisFires/root/procedure/a7b53e5bfd4b7b7785fbd2a0c644db486a23aa37700d6905bb97c2d44132f99e") {
@@ -846,7 +850,9 @@ public struct WhenSavethisbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ingest",
@@ -877,7 +883,7 @@ public struct WhenSavethisbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSavethisbrainFires/root/procedure/d651e9fd4121e377c713820c5e51dc4e1b1a8956c864f1197d2a38f762cc7330") {
             // L1
-            try await runtime.wait(.event("saveThisBrain", matching: nil))
+            try await runtime.wait(.event("saveThisBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSavethisbrainFires/root/procedure/d651e9fd4121e377c713820c5e51dc4e1b1a8956c864f1197d2a38f762cc7330", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSavethisbrainFires/root/procedure/b48833ee364874b98ba6e94899b93407ec6e88776bc98c88fef2e2665e76aff0") {
@@ -919,7 +925,9 @@ public struct WhenProcessthismeetingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ingest",
@@ -950,7 +958,7 @@ public struct WhenProcessthismeetingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenProcessthismeetingFires/root/procedure/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a") {
             // L1
-            try await runtime.wait(.event("processThisMeeting", matching: nil))
+            try await runtime.wait(.event("processThisMeeting", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenProcessthismeetingFires/root/procedure/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenProcessthismeetingFires/root/procedure/e483ecd4e3b85d83c94b15caf2a90bc911484ced741034cb163428f6c1a94953") {

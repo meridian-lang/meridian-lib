@@ -1,0 +1,189 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event checkOutThisRepo.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckoutthisrepoFires\/root\/procedure\/1e42c470882bd783c28a3a37e60db2da7a32dd0ffe920653aac9e59af14603df",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.checkOutThisRepo.fired with kind = \"keyword\", spec = \"check out this repo\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckoutthisrepoFires\/root\/procedure\/e4e423ceb4ffd552ba54480afe1741f442cf181c558720e46fd5f0759b375f8f",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.ingestItMyBrain.fired with kind = \"keyword\", spec = \"ingest it into my brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenIngestitmybrainFires\/root\/procedure\/56d0686c08291e704cfaedc9ce32ec56626920d0a6de0b3d978ad5d0f6a9427b",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event ingestItMyBrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenIngestitmybrainFires\/root\/procedure\/580dd5c9cbc00ae6789e34046383e7bea1b2520f52dce357808d2e629747afb7",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event ingestThisPdf.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenIngestthispdfFires\/root\/procedure\/2ab5eff7bbaa78ef4415d027274ab5c69eb152b3106e1f08dd1f6bd72c5f2198",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.ingestThisPdf.fired with kind = \"keyword\", spec = \"ingest this PDF\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenIngestthispdfFires\/root\/procedure\/b66b4d0f3761e36e4ada86ef556cf7c7c6c2c1ff31e8db97652d47632ab5859c",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event pdfBook.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPdfbookFires\/root\/procedure\/78c50365424f4880d5e35fd90b5c93596db23426b0261d039f0cd508743e50f5",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.pdfBook.fired with kind = \"keyword\", spec = \"PDF book\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPdfbookFires\/root\/procedure\/c40618b8beed63fef116702df5d7d1e22fec91f0ca1ea57317d8529975173181",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.processThisBook.fired with kind = \"keyword\", spec = \"process this book\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenProcessthisbookFires\/root\/procedure\/7311bba0f1aa0410c7d47dccbef915fde5e0b9d89ad27a05ed4ba67fed0d8820",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event processThisBook.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenProcessthisbookFires\/root\/procedure\/ea123c79f542240c485b45ef23eb6422bac24309e6ec35eb68f4157f481fcab7",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event processThisYoutubeLink.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenProcessthisyoutubelinkFires\/root\/procedure\/4c10e6c89ae096965cdb2db751a76f564713d2617a82188a7f101322f2ec927d",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.processThisYoutubeLink.fired with kind = \"keyword\", spec = \"process this YouTube link\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenProcessthisyoutubelinkFires\/root\/procedure\/f5cf2d3d226dc2a7b9835a1700e591dee0288101ac65504206a8c8635e1fb5ff",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event saveThisPodcast.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSavethispodcastFires\/root\/procedure\/41c3bf64d206c5bd709035e830e9facb08fc45d872690f67080d5ba6c3b75a7e",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.saveThisPodcast.fired with kind = \"keyword\", spec = \"save this podcast\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSavethispodcastFires\/root\/procedure\/f84bb7cf23d94dd2287850a88f39db2d12d01151c34d0ca30fb681a0e281ecc1",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event summarizeThisBook.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSummarizethisbookFires\/root\/procedure\/776d0203960709e3752f8be7a422adbac8a7acb57679c1387688ac2dc9432d67",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.summarizeThisBook.fired with kind = \"keyword\", spec = \"summarize this book\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSummarizethisbookFires\/root\/procedure\/e3a51d4275ace56ccb2da41f61ae66c99e9c1a504eb6ed1b33e5263c4003ff8e",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event watchThisVideo.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWatchthisvideoFires\/root\/procedure\/20e6334fb4deb45d52f5ececf370741a63fca60b8772e8f5582cd772f02ea7d6",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.watchThisVideo.fired with kind = \"ambient\", spec = \"watch this video\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWatchthisvideoFires\/root\/procedure\/50da80bfd8bf9fba3fd79b9305acc7016f79da3855ddf45baabf46aceed266c5",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "emit trigger.whatSInThisScreenshot.fired with kind = \"keyword\", spec = \"what's in this screenshot\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatsinthisscreenshotFires\/root\/procedure\/7f396967d80290526e5056a37f6aaa69e6f44042df9bb1cde1328b3b890bd7d4",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "wait for event whatSInThisScreenshot.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhatsinthisscreenshotFires\/root\/procedure\/c4be3bb0070b80e176a1f1629c8cd0e1aa005e5361f26f57f51188d57b430189",
+      "swift_line" : 1436
+    },
+    {
+      "canonical" : "`gbrain files upload-raw <file> --page <slug>` -- Save the original file for provenance.",
+      "meridian_line" : 76,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MediaIngestInput\/phase-2-upload-raw-source\/procedure\/166cc109ba073b6a412390c4b6ba7c836b00abe70c7c3387b981f69e4eaadf23",
+      "swift_line" : 635
+    },
+    {
+      "canonical" : "for each personAndCompanyMentioned in personandcompanymentioneds,",
+      "meridian_line" : 112,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps\/procedure\/bc00407b0c3c781417867bc5710ee759fc4391879b0994996299ae8cf9a05af4",
+      "swift_line" : 648
+    },
+    {
+      "canonical" : "bind health = invoke health.get.",
+      "meridian_line" : 113,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps\/procedure\/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0",
+      "swift_line" : 662
+    },
+    {
+      "canonical" : "bind link = invoke link.add with entity page = entity page, this media page = this media page.",
+      "meridian_line" : 117,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MediaIngestInput\/phase-4-entity-extraction-and-propagation-steps-2\/procedure\/40270ecb1065196a7336fbfba1f9706029c69a2857f833d075ce4f651f61cb86",
+      "swift_line" : 669
+    },
+    {
+      "canonical" : "`gbrain sync` -- to update the index.",
+      "meridian_line" : 120,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MediaIngestInput\/phase-5-sync\/procedure\/348fbaec8c046f667084c2ec1916bceee86d0867e8427cec1f6861b0ff7a3954",
+      "swift_line" : 684
+    },
+    {
+      "canonical" : "assert not (Filing raw ingest by format (all videos in `media\/videos\/`) instead of by subject. Note: format-prefixed paths under `media\/<format>\/<slug>` ARE sanctioned for synthesized one-of-one output like book-mirror's `media\/books\/<slug>-personalized.md`. The anti-pattern is for raw ingest, not for sui generis synthesis. See `skills\/_brain-filing-rules.md` \"Sanctioned exception: synthesis output is sui generis.\").",
+      "meridian_line" : 137,
+      "primitive" : "assert",
+      "stable_step_path" : "\/MediaIngestInput\/anti-patterns-steps\/prohibitions\/7d0be570ff1caa0c99bf1ec20405f4f149e74a528429d7870829cd6b2343e90b",
+      "swift_line" : 630
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "media_ingest.meri",
+  "swift_file" : "media_ingest.swift"
+}

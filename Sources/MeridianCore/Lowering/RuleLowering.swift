@@ -1,4 +1,5 @@
 import Foundation
+import MeridianRuntime
 
 // MARK: - ParsedRule
 
@@ -58,6 +59,9 @@ public enum ParsedRule: Sendable {
         sourceLine: Int,
         originalText: String
     )
+    case deonticProhibition(norm: NormIR)
+    case deonticObligation(norm: NormIR)
+    case deonticPermission(norm: NormIR)
 }
 
 public enum GateKind: Sendable {
@@ -120,13 +124,31 @@ public struct RuleAnalyzer {
         return startsWithParameterArticle || t.lowercased().hasPrefix(lexicon.grammar.topLevelRulePrefix)
     }
 
+    /// Reject non-norm modals and outcome-as-action phrasing before shape classification.
+    public func deonticRejection(for rule: RuleAST, sourceFile: String) -> Diagnostic? {
+        guard let base = DeonticLowering.deonticRejectionDiagnostic(for: rule.text, lexicon: lexicon) else {
+            return nil
+        }
+        return Diagnostic.error(
+            base.code,
+            message: base.message,
+            range: SourceRange(file: sourceFile, line: rule.sourceLine, column: 0),
+            help: base.help)
+    }
+
     /// Classify a single RuleAST into a typed ParsedRule. Returns nil if the
-    /// rule text does not match any known pattern.
-    public func classify(_ rule: RuleAST) -> ParsedRule? {
+    /// rule text does not match any known pattern. Throws when a matched
+    /// deontic norm carries a condition that cannot be lowered to checkable IR.
+    public func classify(_ rule: RuleAST) throws -> ParsedRule? {
         let text = rule.text.trimmingCharacters(in: .whitespaces)
         let lower = text.lowercased()
         let markers = lexicon.grammar.ruleMarkers
         trace.log(.lowering, "classify rule @L\(rule.sourceLine): \(ParserTrace.short(text))")
+
+        if let obligation = try classifyDeonticObligation(text, rule: rule) {
+            trace.log(.lowering, "  → deontic obligation")
+            return obligation
+        }
 
         // TRIGGER: "When ..."
         if lower.hasPrefix(markers.whenPrefix) {
@@ -144,18 +166,141 @@ public struct RuleAnalyzer {
 
         // INVARIANT / PARAMETER GUARD: "... must not ..."
         if lower.contains(markers.mustNotMarker) {
+            if let prohibition = try classifyDeonticProhibition(text, rule: rule) {
+                trace.log(.lowering, "  → deontic prohibition (invoke)")
+                return prohibition
+            }
             trace.log(.lowering, "  → must-not (invariant/parameter-guard)")
             return classifyMustNot(text, rule: rule)
         }
 
         // PERMISSION: "... may ..."
         if lower.contains(markers.mayMarker) {
+            if let permission = try classifyDeonticPermission(text, rule: rule) {
+                trace.log(.lowering, "  → deontic permission (invoke)")
+                return permission
+            }
             trace.log(.lowering, "  → permission")
             return classifyPermission(text, rule: rule)
         }
 
         trace.log(.lowering, "  → unclassified")
         return nil
+    }
+
+    // MARK: - Deontic invoke / obligation shapes
+
+    private func classifyDeonticObligation(_ text: String, rule: RuleAST) throws -> ParsedRule? {
+        let markers = lexicon.grammar.ruleMarkers
+        guard let holdRange = text.range(of: markers.mustHoldMarker, options: [.caseInsensitive]) else {
+            return nil
+        }
+        var conditionText = String(text[text.startIndex..<holdRange.lowerBound])
+            .trimmingCharacters(in: .whitespaces)
+        if conditionText.hasSuffix(".") { conditionText = String(conditionText.dropLast()) }
+        guard !conditionText.isEmpty else { return nil }
+
+        var blocking = false
+        var tail = String(text[holdRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+        if tail.hasSuffix(".") { tail = String(tail.dropLast()) }
+        for suffix in markers.blockingSuffixes where tail.lowercased() == suffix.trimmingCharacters(in: .whitespaces) {
+            blocking = true
+        }
+
+        let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
+        let condition = try lowerExprForDeontic(exprParser.parse(conditionText), sourceRange: sr)
+        let norm = NormIR(
+            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .obligation),
+            kind: .obligation,
+            scope: .skill,
+            actionPattern: nil,
+            condition: condition,
+            blocking: blocking,
+            sourceRange: sr,
+            originalText: rule.text
+        )
+        return .deonticObligation(norm: norm)
+    }
+
+    private func classifyDeonticProhibition(_ text: String, rule: RuleAST) throws -> ParsedRule? {
+        let markers = lexicon.grammar.ruleMarkers
+        guard let mustNotRange = text.range(of: markers.mustNotMarker, options: [.caseInsensitive]) else {
+            return nil
+        }
+        let subjectPart = String(text[text.startIndex..<mustNotRange.lowerBound])
+            .trimmingCharacters(in: .whitespaces)
+        var actionText = String(text[mustNotRange.upperBound...])
+            .trimmingCharacters(in: .whitespaces)
+        if actionText.hasSuffix(".") { actionText = String(actionText.dropLast()) }
+
+        guard let pattern = try DeonticLowering.parseInvokeActionPattern(
+            actionText, exprParser: exprParser, lexicon: lexicon) else { return nil }
+
+        let (subjectKind, _, _) = parseSubject(subjectPart)
+        let scope: NormScope = subjectKind.isEmpty ? .skill : .kind(subjectKind)
+        let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
+        let norm = NormIR(
+            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .prohibition),
+            kind: .prohibition,
+            scope: scope,
+            actionPattern: pattern,
+            condition: nil,
+            blocking: actionText.lowercased().contains(markers.blockingSpaceSuffix.trimmingCharacters(in: .whitespaces)),
+            sourceRange: sr,
+            originalText: rule.text
+        )
+        return .deonticProhibition(norm: norm)
+    }
+
+    private func classifyDeonticPermission(_ text: String, rule: RuleAST) throws -> ParsedRule? {
+        let markers = lexicon.grammar.ruleMarkers
+        guard let mayRange = text.range(of: markers.mayMarker, options: [.caseInsensitive]) else {
+            return nil
+        }
+        let subjectPart = String(text[text.startIndex..<mayRange.lowerBound])
+            .trimmingCharacters(in: .whitespaces)
+        var actionText = String(text[mayRange.upperBound...])
+            .trimmingCharacters(in: .whitespaces)
+        if actionText.hasSuffix(".") { actionText = String(actionText.dropLast()) }
+
+        var conditionExpr: IRExpression? = nil
+        if let onlyWhere = actionText.range(of: markers.onlyWhereMarker, options: [.caseInsensitive]) {
+            let condText = String(actionText[onlyWhere.upperBound...]).trimmingCharacters(in: .whitespaces)
+            actionText = String(actionText[actionText.startIndex..<onlyWhere.lowerBound])
+                .trimmingCharacters(in: .whitespaces)
+            let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
+            conditionExpr = try lowerExprForDeontic(exprParser.parse(condText), sourceRange: sr)
+        }
+
+        guard let pattern = try DeonticLowering.parseInvokeActionPattern(
+            actionText, exprParser: exprParser, lexicon: lexicon) else { return nil }
+
+        var constraints = pattern.argumentConstraints
+        if constraints.isEmpty, let onlyWhereExpr = conditionExpr {
+            constraints = [ActionArgumentConstraint(path: "_where", op: .equal, value: onlyWhereExpr)]
+        }
+
+        let (subjectKind, _, _) = parseSubject(subjectPart)
+        let scope: NormScope = subjectKind.isEmpty ? .skill : .kind(subjectKind)
+        let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
+        let norm = NormIR(
+            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .permission),
+            kind: .permission,
+            scope: scope,
+            actionPattern: ActionPatternIR(toolID: pattern.toolID, argumentConstraints: constraints),
+            condition: conditionExpr,
+            blocking: false,
+            sourceRange: sr,
+            originalText: rule.text
+        )
+        return .deonticPermission(norm: norm)
+    }
+
+    private func lowerExprForDeontic(_ expr: ExpressionAST, sourceRange: SourceRange) throws -> IRExpression {
+        try DeonticLowering.lowerCheckableDeonticExpr(
+            expr,
+            sourceRange: sourceRange,
+            symbols: exprParser.symbols)
     }
 
     // MARK: - Trigger

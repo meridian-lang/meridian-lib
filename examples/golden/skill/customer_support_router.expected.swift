@@ -744,7 +744,9 @@ public struct CustomerSupportRouterPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "customer support router",
@@ -841,6 +843,7 @@ public struct CustomerSupportRouterPullRequest: MeridianWorkflow {
             }
             await runtime.complete(reason: "vip_escalated", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/d754a94e724ae49d7d37531b5bd761f912be7fbfde610ff7ff27c19bd26da52e")
             return WorkflowResult(reason: "vip_escalated", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/a1efbdf6cdafaf1ae6abd3893f9d74beb30f6574f6eade454c9b736ad61e9c55")
         }
 
         if __meridianShouldRun("/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/ad4de0a9d8c1ebde36ba05d131d8bab53a6fd571ad0adc9dccd231af586d3433") {
@@ -848,7 +851,7 @@ public struct CustomerSupportRouterPullRequest: MeridianWorkflow {
             try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/ad4de0a9d8c1ebde36ba05d131d8bab53a6fd571ad0adc9dccd231af586d3433", state: state.snapshot())
         }
         if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/39ceac39010b40f597f3d6d8d7a2458776f7db9093011e658cc69aeb2b45a25b") {
-            try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "support lead")))
+            try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "support lead")), sourceRange: nil)
             try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/39ceac39010b40f597f3d6d8d7a2458776f7db9093011e658cc69aeb2b45a25b", state: state.snapshot())
         }
         if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/01ff76d3b20128ad25ae7ddaa78856c1d336855ba0f679752f5f8b3061c45bc5") {
@@ -903,7 +906,9 @@ public struct DraftResponse: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "customer support router",

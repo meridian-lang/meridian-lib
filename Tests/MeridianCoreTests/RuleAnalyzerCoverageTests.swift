@@ -10,12 +10,12 @@ struct RuleAnalyzerCoverageTests {
     private let analyzer = RuleAnalyzer(trace: .silent(), symbols: nil)
 
     @Test("parameter-guard predicates qualify nested property accesses")
-    func parameterGuardQualifiesPropertyAccess() {
+    func parameterGuardQualifiesPropertyAccess() throws {
         let rule = RuleAST(
             text: "A customer must not place an order whose order.status is suspended.",
             sourceLine: 4
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected parameter guard"); return
         }
         guard case .parameterGuard(_, _, let predicate, _, _) = parsed else {
@@ -36,12 +36,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("predicate identifiers containing possessive markers stay unqualified")
-    func possessiveMarkerIdentifierStaysBare() {
+    func possessiveMarkerIdentifierStaysBare() throws {
         let rule = RuleAST(
             text: "A customer must not place an order whose owner of record is blank.",
             sourceLine: 5
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected parameter guard"); return
         }
         guard case .parameterGuard(_, _, let predicate, _, _) = parsed else {
@@ -57,12 +57,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("subject filters fall back to first-token property splitting")
-    func subjectFilterFallbackSplit() {
+    func subjectFilterFallbackSplit() throws {
         let rule = RuleAST(
             text: "A customer with alpha beta {{ must not place orders.",
             sourceLine: 6
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(let kind, let filter, _, _, _) = parsed else {
@@ -75,12 +75,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("single-token subject filters lower to truthiness property access")
-    func singleTokenSubjectFilter() {
+    func singleTokenSubjectFilter() throws {
         let rule = RuleAST(
             text: "A customer with suspended must not place orders.",
             sourceLine: 7
         )
-        guard let parsed = analyzer.classify(rule),
+        guard let parsed = try analyzer.classify(rule),
               case .invariant(_, let filter, _, _, _) = parsed,
               let filter else {
             Issue.record("expected invariant with filter"); return
@@ -95,28 +95,28 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("malformed trigger rules without a comma separator classify as nil")
-    func triggerWithoutCommaIsNil() {
+    func triggerWithoutCommaIsNil() throws {
         let rule = RuleAST(text: "When payment clears do nothing.", sourceLine: 8)
-        #expect(analyzer.classify(rule) == nil)
+        #expect(try analyzer.classify(rule) == nil)
     }
 
     @Test("trigger rules with a blank condition or action classify as nil, not a garbage event")
-    func triggerWithBlankConditionOrActionIsNil() {
+    func triggerWithBlankConditionOrActionIsNil() throws {
         // A leading comma leaves the condition empty; without the
         // non-emptiness guard, `buildTriggerWorkflow` would happily mint a
         // `trigger..fired` event from an empty condition instead of this
         // routing to the real `MER1004: unparseable rule` diagnostic.
-        #expect(analyzer.classify(RuleAST(text: "When , escalate the request.", sourceLine: 10)) == nil)
-        #expect(analyzer.classify(RuleAST(text: "When the request is stale,.", sourceLine: 11)) == nil)
+        #expect(try analyzer.classify(RuleAST(text: "When , escalate the request.", sourceLine: 10)) == nil)
+        #expect(try analyzer.classify(RuleAST(text: "When the request is stale,.", sourceLine: 11)) == nil)
     }
 
     @Test("subject filters accept possessive multi-word values via greedy split")
-    func subjectFilterPossessiveMultiWordValue() {
+    func subjectFilterPossessiveMultiWordValue() throws {
         let rule = RuleAST(
             text: "A customer with note order's id must not place orders.",
             sourceLine: 9
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(_, let filter, _, _, _) = parsed,
@@ -164,7 +164,7 @@ struct RuleAnalyzerCoverageTests {
             text: "A patient whose active prescriptions include a contraindicated drug must not receive the new order.",
             sourceLine: 20
         )
-        guard let parsed = symbolAwareAnalyzer.classify(rule) else {
+        guard let parsed = try symbolAwareAnalyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(_, let filter, _, _, _) = parsed, let filter else {
@@ -176,12 +176,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("compound parameter guards qualify each property-access arm")
-    func compoundParameterGuardPropertyAccess() {
+    func compoundParameterGuardPropertyAccess() throws {
         let rule = RuleAST(
             text: "A customer must not place an order whose order's status is suspended and order's total amount is more than 1000.",
             sourceLine: 10
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected parameter guard"); return
         }
         guard case .parameterGuard(_, _, let predicate, _, _) = parsed,
@@ -192,12 +192,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("parameter guards pass literal predicates through qualifyPredicate default")
-    func literalPredicateParameterGuard() {
+    func literalPredicateParameterGuard() throws {
         let rule = RuleAST(
             text: "A customer must not place an order whose true.",
             sourceLine: 11
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected parameter guard"); return
         }
         guard case .parameterGuard(_, _, let predicate, _, _) = parsed else {
@@ -209,12 +209,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("\"without\" subject filter negates the clause")
-    func withoutSubjectFilterNegates() {
+    func withoutSubjectFilterNegates() throws {
         let rule = RuleAST(
             text: "A user without clearance must not access classified resources.",
             sourceLine: 11
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(let kind, let filter, let action, _, _) = parsed else {
@@ -231,12 +231,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("whitespace-only subject filters lower to nil")
-    func whitespaceOnlySubjectFilter() {
+    func whitespaceOnlySubjectFilter() throws {
         let rule = RuleAST(
             text: "A customer with    must not place orders.",
             sourceLine: 12
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(_, let filter, _, _, _) = parsed else {
@@ -246,12 +246,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("bounded permissions parse trailing whose conditions")
-    func boundedPermissionWithConditions() {
+    func boundedPermissionWithConditions() throws {
         let rule = RuleAST(
             text: "A customer with active may place orders whose total amount is less than 100.",
             sourceLine: 13
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
         guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
@@ -263,12 +263,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("bounded permissions parse trailing if conditions")
-    func boundedPermissionWithIfCondition() {
+    func boundedPermissionWithIfCondition() throws {
         let rule = RuleAST(
             text: "A customer may place orders if ALLOW_CHECKOUT is set.",
             sourceLine: 14
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
         guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
@@ -280,12 +280,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("bounded permissions parse trailing up to conditions")
-    func boundedPermissionWithUpToCondition() {
+    func boundedPermissionWithUpToCondition() throws {
         let rule = RuleAST(
             text: "A customer may place orders up to five times per day.",
             sourceLine: 15
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
         guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
@@ -297,12 +297,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("parameter guards qualify possessive-chain predicate bases")
-    func possessiveChainPredicateQualification() {
+    func possessiveChainPredicateQualification() throws {
         let rule = RuleAST(
             text: "A customer must not place an order whose order's status is suspended.",
             sourceLine: 16
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected parameter guard"); return
         }
         guard case .parameterGuard(_, _, let predicate, _, _) = parsed else {
@@ -328,21 +328,21 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("unrecognized rules log unclassified and return nil")
-    func unclassifiedRuleLogsAndReturnsNil() {
+    func unclassifiedRuleLogsAndReturnsNil() throws {
         let cap = ParserTrace.capturing(categories: [.lowering])
         let traced = RuleAnalyzer(trace: cap.trace, symbols: nil)
         let rule = RuleAST(text: "A customer should place orders freely.", sourceLine: 17)
-        #expect(traced.classify(rule) == nil)
+        #expect(try traced.classify(rule) == nil)
         #expect(cap.lines().contains { $0.contains("unclassified") })
     }
 
     @Test("subject filters parse comparison shorthand without a copula")
-    func comparisonShorthandSubjectFilter() {
+    func comparisonShorthandSubjectFilter() throws {
         let rule = RuleAST(
             text: "A customer with risk score more than 80 must not place an order.",
             sourceLine: 18
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected invariant"); return
         }
         guard case .invariant(_, let filter, _, _, _) = parsed,
@@ -360,12 +360,12 @@ struct RuleAnalyzerCoverageTests {
     }
 
     @Test("preconditions parse subject filters on the leading clause")
-    func preconditionWithSubjectFilter() {
+    func preconditionWithSubjectFilter() throws {
         let rule = RuleAST(
             text: "An order with status submitted must be approved by an account manager before fulfillment.",
             sourceLine: 19
         )
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected precondition"); return
         }
         guard case .precondition(let kind, let filter, _, let gate, _, _) = parsed else {

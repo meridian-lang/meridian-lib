@@ -591,7 +591,9 @@ public struct DailyTaskPrepInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-prep",
@@ -649,7 +651,9 @@ public struct WhenMorningprepFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-prep",
@@ -680,7 +684,7 @@ public struct WhenMorningprepFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMorningprepFires/root/procedure/904379e3eaeb5f79e70b305be58f5f93650c41d1617710bb8dca5eb932436003") {
             // L1
-            try await runtime.wait(.event("morningPrep", matching: nil))
+            try await runtime.wait(.event("morningPrep", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMorningprepFires/root/procedure/904379e3eaeb5f79e70b305be58f5f93650c41d1617710bb8dca5eb932436003", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMorningprepFires/root/procedure/96559b0bad72d476618a0a1900b0b4727f29f98a8e2e0e281837f8b927b001cd") {
@@ -722,7 +726,9 @@ public struct WhenPreparetodayFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-prep",
@@ -753,7 +759,7 @@ public struct WhenPreparetodayFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/c964efb2f32c62fb1bc874a8d4e306963fbffba8378b6ba6952d733de0471bfa") {
             // L1
-            try await runtime.wait(.event("prepareToday", matching: nil))
+            try await runtime.wait(.event("prepareToday", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPreparetodayFires/root/procedure/c964efb2f32c62fb1bc874a8d4e306963fbffba8378b6ba6952d733de0471bfa", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/01bcaf23fa9092efc343dce05f39e0631f681cb15f45f37a9cf20cea2fa43c92") {
@@ -795,7 +801,9 @@ public struct WhenWhatsmyplateFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-prep",
@@ -826,7 +834,7 @@ public struct WhenWhatsmyplateFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/82d0d328a9590e7b262f32f99448a322999449f261787da4aad16e87a749b22f") {
             // L1
-            try await runtime.wait(.event("whatSMyPlate", matching: nil))
+            try await runtime.wait(.event("whatSMyPlate", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatsmyplateFires/root/procedure/82d0d328a9590e7b262f32f99448a322999449f261787da4aad16e87a749b22f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/5babb21adbbfd8a38815ad86d5cca2a93cbcd3d50b442109b30828a9a3f62997") {
@@ -868,7 +876,9 @@ public struct WhenDayprepFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-prep",
@@ -899,7 +909,7 @@ public struct WhenDayprepFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDayprepFires/root/procedure/d083a64679ffc350427fd00a77fb7346f646b2087b6d535585a7bc79b0b1eb8b") {
             // L1
-            try await runtime.wait(.event("dayPrep", matching: nil))
+            try await runtime.wait(.event("dayPrep", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDayprepFires/root/procedure/d083a64679ffc350427fd00a77fb7346f646b2087b6d535585a7bc79b0b1eb8b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDayprepFires/root/procedure/430d264deefc6a29af404fbac2f1eee312cd55b28b2654ea9bd63a226c3ca6af") {

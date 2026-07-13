@@ -744,7 +744,9 @@ public struct LargeReleaseTrainPullRequest: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "large release train",
@@ -827,6 +829,7 @@ public struct LargeReleaseTrainPullRequest: MeridianWorkflow {
             }
             await runtime.complete(reason: "ci_blocked", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/8020d6744aaf38479797ba44ae6f355a3b8490ad460d96489e54c79009576b68")
             return WorkflowResult(reason: "ci_blocked", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/a04ec0ded6e2afe3cbcff3b749843c6e2d913bacf189455cbad21b9b5096150a")
         }
 
         if MeridianComparison.eq(state.get("mergeStatus"), .string("conflicting")) {
@@ -844,6 +847,7 @@ public struct LargeReleaseTrainPullRequest: MeridianWorkflow {
             }
             await runtime.complete(reason: "merge_conflicts", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/33c80b832fd0948dfe34030b4aa488519440fb3401d6921eca9494939259f20d")
             return WorkflowResult(reason: "merge_conflicts", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/b5e521c3ce7f1e224c76638e043bd7c3a7d95c4632601003c194267a82a88977")
         }
 
         if __meridianShouldRun("/LargeReleaseTrainPullRequest/plan-rollout-under-discretion/procedure/cddff5effeeea349b0ff2ac92044991d210dc45152b9d8efb401074761f2135c") {
@@ -892,7 +896,9 @@ public struct PlanReleaseRollout: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "large release train",
@@ -962,7 +968,9 @@ public struct AutonomouslyStabilizeRelease: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "large release train",

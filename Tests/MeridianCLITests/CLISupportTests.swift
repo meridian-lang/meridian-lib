@@ -147,6 +147,15 @@ struct TraceBootstrapTests {
         #expect(!trace.correlationID.isEmpty)
     }
 
+    @Test("MERIDIAN_TRACE env activates tracing and announces correlation id without --trace")
+    func envTraceAnnouncesCorrelationID() throws {
+        setenv("MERIDIAN_TRACE", "lowering", 1)
+        defer { unsetenv("MERIDIAN_TRACE") }
+        let trace = try makeCLITrace(spec: nil)
+        #expect(trace.isEnabled(.lowering))
+        #expect(!trace.correlationID.isEmpty)
+    }
+
     @Test("spec enables categories and a file sink is created")
     func specAndFile() throws {
         let t = TempDir()

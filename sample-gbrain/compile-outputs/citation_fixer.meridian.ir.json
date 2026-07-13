@@ -1,0 +1,154 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event checkCitations.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckcitationsFires\/root\/procedure\/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "emit trigger.checkCitations.fired with kind = \"keyword\", spec = \"check citations\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCheckcitationsFires\/root\/procedure\/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "wait for event citationAudit.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCitationauditFires\/root\/procedure\/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "emit trigger.citationAudit.fired with kind = \"keyword\", spec = \"citation audit\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCitationauditFires\/root\/procedure\/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "emit trigger.citationFixer.fired with kind = \"keyword\", spec = \"citation fixer\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenCitationfixerFires\/root\/procedure\/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "wait for event citationFixer.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCitationfixerFires\/root\/procedure\/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "wait for event fixBrokenCitations.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFixbrokencitationsFires\/root\/procedure\/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "emit trigger.fixBrokenCitations.fired with kind = \"keyword\", spec = \"fix broken citations\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFixbrokencitationsFires\/root\/procedure\/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "wait for event fixCitations.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenFixcitationsFires\/root\/procedure\/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "emit trigger.fixCitations.fired with kind = \"keyword\", spec = \"fix citations\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenFixcitationsFires\/root\/procedure\/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80",
+      "swift_line" : 1137
+    },
+    {
+      "canonical" : "for each one in ones,\n  bind pages = invoke page.list with filter = and read the one.",
+      "meridian_line" : 57,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/CitationFixerInput\/phases-steps\/procedure\/230b65cf4ad1ad52c8759e2cc152f776c46259d8f25f5644c87e3edb14d8428a",
+      "swift_line" : 636
+    },
+    {
+      "canonical" : "bind pages = invoke page.list with filter = and read the one.",
+      "meridian_line" : 57,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/phases-steps\/procedure\/iterate.body\/3c00fa3b45f9a23e8a3e27f8a5d2317adcb40d776f18b78f124a48c9286cb445",
+      "swift_line" : 636
+    },
+    {
+      "canonical" : "`[Source: ...]` -- citations.",
+      "meridian_line" : 58,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/phases-steps\/procedure\/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+      "swift_line" : 655
+    },
+    {
+      "canonical" : "`https:\/\/x.com\/<handle>\/status\/<tweet_id>` -- Construct the URL.",
+      "meridian_line" : 119,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/step-4-verify-and-extract-metadata-steps\/procedure\/0cd0e6fc08c332b69b9d28b49fec9fbd28e6b8cda68e57620092cc7221881556",
+      "swift_line" : 669
+    },
+    {
+      "canonical" : "`if [ \"$refs\" -gt 2 ] && [ \"$links\" -eq 0 ]; then`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/74a938d4a95d16076ab4f0e4cbd1a0f93e32a28ae71ab7f71e559dc3c093c987",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`refs=$(grep -ci \"tweet\\|posted\\|x post\\|RT\\|retweet\\|said on X\" \"$f\")`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/8b47abb4c6c4a0e65f403fe77453e5f3de98d2256a6e07b9a5446ab69332093a",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`links=$(grep -c \"x.com\/.*\/status\/\" \"$f\")`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/93adc6a3d212c3ccd00aed8cb20b8088ef6447478651be33b29e4f0599287493",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`fi`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`for f in $(find . -name \"*.md\" -not -path \".\/node_modules\/*\"); do`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/d59c98f9a8b33138a04f620c3c873ec6d67220f8ac6bd27b28ca98e705ca3c64",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`echo \"$f\"`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/df29fde1c09b3f50778511c97562b352c8329f263bce39a9398efc601555af50",
+      "swift_line" : 761
+    },
+    {
+      "canonical" : "`done`.",
+      "meridian_line" : 144,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/CitationFixerInput\/find-candidate-pages\/procedure\/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+      "swift_line" : 761
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "citation_fixer.meri",
+  "swift_file" : "citation_fixer.swift"
+}

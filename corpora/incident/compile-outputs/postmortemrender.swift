@@ -387,7 +387,9 @@ public struct PostmortemRender: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
@@ -516,7 +518,9 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
@@ -548,7 +552,7 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/3228d10ed1bf7522c418f729cbef647917a2021d948037613b8bc0b60fe5a138") {
             // L1
-            try await runtime.wait(.event("renderPostmortem", matching: nil))
+            try await runtime.wait(.event("renderPostmortem", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRenderpostmortemFires/root/procedure/3228d10ed1bf7522c418f729cbef647917a2021d948037613b8bc0b60fe5a138", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/c86054fb9aab2c72b3c867d091dbd38a998293a0fc771200d559115f6586ef61") {
@@ -590,7 +594,9 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
@@ -622,7 +628,7 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/f344cc497427edc4a1e56f1e921493dba0f3eb45c780947aeba7da0a17967db8") {
             // L1
-            try await runtime.wait(.event("publishIncidentPostmortem", matching: nil))
+            try await runtime.wait(.event("publishIncidentPostmortem", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPublishincidentpostmortemFires/root/procedure/f344cc497427edc4a1e56f1e921493dba0f3eb45c780947aeba7da0a17967db8", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/d23d5273233cdd6f1c067e5c3d6c791d61b6c7bfd6225eefd90ce58aa93c78c4") {
@@ -664,7 +670,9 @@ public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
@@ -696,7 +704,7 @@ public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/c2545bc330a76769379c529702f6de381966f10652c67c9992cac26f80b0c996") {
             // L1
-            try await runtime.wait(.event("runPostmortemRenderPass", matching: nil))
+            try await runtime.wait(.event("runPostmortemRenderPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpostmortemrenderpassFires/root/procedure/c2545bc330a76769379c529702f6de381966f10652c67c9992cac26f80b0c996", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/c6f30cd202a2a0cb159379aa78040e8c9d2dcb47111fb85c4edd79d7ff59a082") {

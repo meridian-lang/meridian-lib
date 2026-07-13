@@ -60,9 +60,12 @@ public final class SwiftPMPackageRunner {
         self.packageURL = packageURL.standardizedFileURL
     }
 
-    public static func temporary(prefix: String = "meridian-swiftpm") throws -> SwiftPMPackageRunner {
+    public static func temporary(
+        prefix: String = "meridian-swiftpm",
+        forceTempdirFailure: Bool = false
+    ) throws -> SwiftPMPackageRunner {
         #if DEBUG
-        if ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_TEMP_FAIL"] != nil {
+        if forceTempdirFailure {
             throw NSError(domain: "MeridianTest", code: 1,
                           userInfo: [NSLocalizedDescriptionKey: "simulated tempdir failure"])
         }
@@ -73,9 +76,13 @@ public final class SwiftPMPackageRunner {
         return SwiftPMPackageRunner(packageURL: url)
     }
 
-    public func writePackage(manifest: String, files: [SourceFile]) throws {
+    public func writePackage(
+        manifest: String,
+        files: [SourceFile],
+        forceScaffoldFailure: Bool = false
+    ) throws {
         #if DEBUG
-        if ProcessInfo.processInfo.environment["MERIDIAN_TEST_SWIFTPM_SCAFFOLD_FAIL"] != nil {
+        if forceScaffoldFailure {
             throw NSError(domain: "MeridianTest", code: 1,
                           userInfo: [NSLocalizedDescriptionKey: "simulated scaffold failure"])
         }
@@ -93,7 +100,10 @@ public final class SwiftPMPackageRunner {
         options: MeridianRunDriverOptions = .init()
     ) throws {
         try writePackage(
-            manifest: meridianRunPackageManifest(repoRoot: repoRoot),
+            manifest: PackageManifestBuilder.meridianRunDriverPackageManifest(
+                repoRoot: repoRoot,
+                includeMeridianTools: true
+            ),
             files: [
                 .init(relativePath: "Sources/GeneratedWorkflow/Generated.swift", contents: generatedSource),
                 .init(relativePath: "Sources/Driver/Driver.swift", contents: try meridianRunDriverSource(
@@ -160,41 +170,6 @@ public final class SwiftPMPackageRunner {
         let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
         let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
         return ProcessResult(stdout: stdout, stderr: stderr, exitCode: process.terminationStatus)
-    }
-
-    private func meridianRunPackageManifest(repoRoot: URL) -> String {
-        let packageIdentity = repoRoot.lastPathComponent
-        return """
-        // swift-tools-version: 6.0
-        import PackageDescription
-
-        let package = Package(
-            name: "MeridianRunDriver",
-            platforms: [.macOS(.v14)],
-            dependencies: [
-                .package(path: \"\(repoRoot.path)\")
-            ],
-            targets: [
-                .target(
-                    name: "GeneratedWorkflow",
-                    dependencies: [
-                        .product(name: "MeridianRuntime", package: "\(packageIdentity)")
-                    ],
-                    path: "Sources/GeneratedWorkflow"
-                ),
-                .executableTarget(
-                    name: "Driver",
-                    dependencies: [
-                        "GeneratedWorkflow",
-                        .product(name: "MeridianRuntime", package: "\(packageIdentity)"),
-                        .product(name: "MeridianTools", package: "\(packageIdentity)")
-                    ],
-                    path: "Sources/Driver"
-                )
-            ],
-            swiftLanguageModes: [.v5]
-        )
-        """
     }
 
     private func meridianRunDriverSource(

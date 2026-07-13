@@ -422,7 +422,9 @@ public struct ChecksumAudit: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
@@ -522,13 +524,16 @@ public struct ChecksumAudit: MeridianWorkflow {
                         )
                         try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.then/2ce0ebcf1ba1500309cdd4f507bf36cd9431d9ebbb03aea80a5daf2a171fb307", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
                 } else {
                     try await runtime.recordBranchTaken(condition: "(meridianDef_Record_drifted(state.get(\"record\"))) || (meridianDef_Record_duplicate(state.get(\"record\")))", into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
+
                     if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/branch.else/96aefe2f551abd1634ef8c884215eea2ba20fdbb016eda8ef5256f6ec2f799ed") {
                         // L28
                         try await runtime.assert(MeridianComparison.neq(state.get("record.status"), .string("is-blocked")), message: "Expected the record's status is not \"is-blocked\"")
                         try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.else/96aefe2f551abd1634ef8c884215eea2ba20fdbb016eda8ef5256f6ec2f799ed", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
@@ -574,7 +579,9 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
@@ -606,7 +613,7 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/c98fe355a8a86a36e10d6a18bb36e26c08527518250b2f1c3a17e2e6bf1cb831") {
             // L1
-            try await runtime.wait(.event("checksumAudit", matching: nil))
+            try await runtime.wait(.event("checksumAudit", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenChecksumauditFires/root/procedure/c98fe355a8a86a36e10d6a18bb36e26c08527518250b2f1c3a17e2e6bf1cb831", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/f26d1dc1cc0e863054d6472db9419883643991e5b743eacca41cde6c8d18849e") {
@@ -648,7 +655,9 @@ public struct WhenAuditrecorddriftFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
@@ -680,7 +689,7 @@ public struct WhenAuditrecorddriftFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/7ce0f7203de1f15c256a79ea42b11f7ddcba49164b007e4b2613bd3dba8f6e35") {
             // L1
-            try await runtime.wait(.event("auditRecordDrift", matching: nil))
+            try await runtime.wait(.event("auditRecordDrift", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAuditrecorddriftFires/root/procedure/7ce0f7203de1f15c256a79ea42b11f7ddcba49164b007e4b2613bd3dba8f6e35", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/635c05466cda45ab797722dacea515f3c14950882513f27685cfb5fbe656f5c7") {

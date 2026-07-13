@@ -411,7 +411,7 @@ public struct RevokeStaleAccess: MeridianWorkflow {
         "triggers": "\"revoke stale access\"\n\"sweep denied access\"\n\"run the access revocation sweep\"",
     ]
 
-    public static let skillVersionHash = "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+    public static let skillVersionHash = "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -424,11 +424,13 @@ public struct RevokeStaleAccess: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "revoke stale access",
-            versionHash: "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+            versionHash: "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -528,7 +530,7 @@ public struct RevokeStaleAccess: MeridianWorkflow {
 public struct WhenRevokestaleaccessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+    public static let skillVersionHash = "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -541,11 +543,13 @@ public struct WhenRevokestaleaccessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "revoke stale access",
-            versionHash: "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+            versionHash: "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -573,7 +577,7 @@ public struct WhenRevokestaleaccessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/737eb7ca44a17b97b66c4d676615376d28113ed8b85894048dab1d112c6219d2") {
             // L1
-            try await runtime.wait(.event("revokeStaleAccess", matching: nil))
+            try await runtime.wait(.event("revokeStaleAccess", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRevokestaleaccessFires/root/procedure/737eb7ca44a17b97b66c4d676615376d28113ed8b85894048dab1d112c6219d2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/11a30359dde81f3a35da975fe2ec0e09b9f572995d4a2a9f9b307aa1b77a4570") {
@@ -602,7 +606,7 @@ public struct WhenRevokestaleaccessFires: MeridianWorkflow {
 public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+    public static let skillVersionHash = "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -615,11 +619,13 @@ public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "revoke stale access",
-            versionHash: "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+            versionHash: "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -647,7 +653,7 @@ public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/3e11a67e4a6f2f8b3e8e9819e60842f6b3ee8683b8c64c557b26f6e6c8bafa6f") {
             // L1
-            try await runtime.wait(.event("sweepDeniedAccess", matching: nil))
+            try await runtime.wait(.event("sweepDeniedAccess", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSweepdeniedaccessFires/root/procedure/3e11a67e4a6f2f8b3e8e9819e60842f6b3ee8683b8c64c557b26f6e6c8bafa6f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/4f7dc9828f8bac257990bac5223f5d993c219383781f43c04960735e551046aa") {
@@ -676,7 +682,7 @@ public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
 public struct WhenRunaccessrevocationsweepFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+    public static let skillVersionHash = "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -689,11 +695,13 @@ public struct WhenRunaccessrevocationsweepFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "revoke stale access",
-            versionHash: "4bb0384d160896e4eb342c47f95329d632cb53c25e91d5c2cab99e2429185c21"
+            versionHash: "baaaeeccecf84591babbc06a623495675937bc2a21fce17e3471004a7befeb4f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -721,7 +729,7 @@ public struct WhenRunaccessrevocationsweepFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/c64904bdc5e91f9608f53d1984ec29b462507e01ed475d5c9d0d7ce59a89e2d0") {
             // L1
-            try await runtime.wait(.event("runAccessRevocationSweep", matching: nil))
+            try await runtime.wait(.event("runAccessRevocationSweep", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunaccessrevocationsweepFires/root/procedure/c64904bdc5e91f9608f53d1984ec29b462507e01ed475d5c9d0d7ce59a89e2d0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/c82e3ef9c2fa7ad908dbf337b2e0f1e03db1f3a95f6264baf13c98ceda8b6daf") {

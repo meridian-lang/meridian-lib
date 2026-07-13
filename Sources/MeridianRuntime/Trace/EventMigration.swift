@@ -35,8 +35,8 @@ private func legacyTraceMapping(for event: Event) -> LegacyTraceMapping {
             outcome = .success
         }
         return LegacyTraceMapping(tag: .judged, outcome: outcome, operationalDetail: nil, subject: legacySubject(for: event))
-    case .branchTaken:
-        return LegacyTraceMapping(tag: .branched, outcome: .success, operationalDetail: nil, subject: legacySubject(for: event))
+    case .branchTaken, .branchEnded:
+        return LegacyTraceMapping(tag: .branched, outcome: .success, operationalDetail: event.kind == .branchEnded ? event.kind.rawValue : nil, subject: legacySubject(for: event))
     case .iterateStart, .iterateIteration, .iterateEnd:
         return LegacyTraceMapping(tag: .iterated, outcome: .success, operationalDetail: nil, subject: legacySubject(for: event))
     case .assertPassed:
@@ -54,6 +54,9 @@ private func legacyTraceMapping(for event: Event) -> LegacyTraceMapping {
         return LegacyTraceMapping(tag: .committed, outcome: .success, operationalDetail: nil, subject: legacySubject(for: event))
     case .recoverEngaged:
         return LegacyTraceMapping(tag: .recovered, outcome: .success, operationalDetail: nil, subject: legacySubject(for: event))
+    case .violated:
+        let disposition = event.payload["disposition"]?.scalarDescription ?? "prevented"
+        return LegacyTraceMapping(tag: .violated, outcome: .failure, operationalDetail: disposition, subject: event.payload["tool_id"]?.scalarDescription ?? legacySubject(for: event))
     }
 }
 
@@ -143,6 +146,9 @@ public extension Event {
         case .assertFailed:
             return .assertFailed
         case .branched:
+            if record.operationalDetail == EventKind.branchEnded.rawValue {
+                return .branchEnded
+            }
             return .branchTaken
         case .iterated:
             return .iterateIteration
@@ -153,7 +159,9 @@ public extension Event {
         case .recovered:
             return .recoverEngaged
         case .violated:
-            return .emitError
+            return .violated
+        case .stateSnapshot:
+            return .commit
         }
     }
 }

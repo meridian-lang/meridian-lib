@@ -2,65 +2,49 @@
 
 import Foundation
 
-struct Corpus {
+struct CorpusRecord: Decodable {
     let id: String
+    let root: String
     let originals: String
-    let portedRoot: String
-    let output: String
+    let vocab: String
+    let rulebook: String
+    let skillsOut: String
+    let resolverOriginal: String
+    let resolverOut: String
+    let migrationDeviations: String
+    let modulePath: String?
 }
 
-let corpora = [
-    Corpus(
-        id: "gbrain",
-        originals: "sample-gbrain/original-skills",
-        portedRoot: "sample-gbrain",
-        output: "sample-gbrain/migration-deviations"
-    ),
-    Corpus(
-        id: "erp",
-        originals: "corpora/erp/original-skills",
-        portedRoot: "corpora/erp",
-        output: "corpora/erp/migration-deviations"
-    ),
-    Corpus(
-        id: "procedures",
-        originals: "corpora/procedures/original-skills",
-        portedRoot: "corpora/procedures",
-        output: "corpora/procedures/migration-deviations"
-    ),
-    Corpus(
-        id: "incident",
-        originals: "corpora/incident/original-skills",
-        portedRoot: "corpora/incident",
-        output: "corpora/incident/migration-deviations"
-    ),
-    Corpus(
-        id: "etl",
-        originals: "corpora/etl/original-skills",
-        portedRoot: "corpora/etl",
-        output: "corpora/etl/migration-deviations"
-    ),
-    Corpus(
-        id: "governance",
-        originals: "corpora/governance/original-skills",
-        portedRoot: "corpora/governance",
-        output: "corpora/governance/migration-deviations"
-    ),
-    Corpus(
-        id: "clinical",
-        originals: "corpora/clinical/original-skills",
-        portedRoot: "corpora/clinical",
-        output: "corpora/clinical/migration-deviations"
-    ),
-]
+struct CorpusCatalogFile: Decodable {
+    let corpora: [CorpusRecord]
+}
+
+func loadCorpusCatalog() throws -> CorpusCatalogFile {
+    let url = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent()
+        .appendingPathComponent("corpus-catalog.json")
+    return try JSONDecoder().decode(CorpusCatalogFile.self, from: Data(contentsOf: url))
+}
+
+func selectCorpora(id: String, catalog: CorpusCatalogFile) throws -> [CorpusRecord] {
+    if id == "all" { return catalog.corpora }
+    let matches = catalog.corpora.filter { $0.id == id }
+    guard !matches.isEmpty else {
+        let available = catalog.corpora.map(\.id).sorted().joined(separator: ", ")
+        throw NSError(domain: "CorpusCatalog", code: 1,
+                      userInfo: [NSLocalizedDescriptionKey: "unknown corpus: \(id) (available: \(available))"])
+    }
+    return matches
+}
 
 struct Options {
     var corpus = "all"
 }
 
-func usage() -> String {
-    """
-    usage: swift scripts/generate-deviations.swift [--corpus gbrain|erp|procedures|incident|etl|governance|clinical|all]
+func usage(catalog: CorpusCatalogFile) -> String {
+    let ids = catalog.corpora.map(\.id).sorted().joined(separator: "|")
+    return """
+    usage: swift scripts/generate-deviations.swift [--corpus \(ids)|all]
 
     Regenerates migration deviation reports with:
       swift run meridian skill-deviation <original-skills> <ported-root> --batch --index --out <migration-deviations>
@@ -88,10 +72,9 @@ func parseArgs() -> Options {
         case "--corpus":
             if let value = iterator.next() { options.corpus = value }
         case "-h", "--help":
-            print(usage())
-            exit(0)
+            return options
         default:
-            FileHandle.standardError.write(Data("unknown argument: \(arg)\n\(usage())\n".utf8))
+            FileHandle.standardError.write(Data("unknown argument: \(arg)\n".utf8))
             exit(2)
         }
     }
@@ -115,22 +98,6 @@ func run(_ executable: String, _ arguments: [String]) -> (status: Int32, output:
     return (process.terminationStatus, String(decoding: data, as: UTF8.self))
 }
 
-let options = parseArgs()
-let selected: [Corpus]
-if options.corpus == "all" {
-    selected = corpora
-} else {
-    selected = corpora.filter { $0.id == options.corpus }
-    if selected.isEmpty {
-        FileHandle.standardError.write(Data("unknown corpus: \(options.corpus)\n\(usage())\n".utf8))
-        exit(2)
-    }
-}
-
-/// The `## Summary` block is the deviation index proper (tiers, similarity,
-/// inert/operational-inert/unclassified counts) — print it inline so a run of
-/// this script is itself the thing to measure against, not just a confirmation
-/// that some file got written.
 func printSummary(of readmePath: String) {
     guard let text = try? String(contentsOfFile: readmePath, encoding: .utf8) else {
         print("(no README.md at \(readmePath) to summarize)")
@@ -148,10 +115,6 @@ func printSummary(of readmePath: String) {
     }
 }
 
-/// One row of the generated `## Per-skill` table, keyed to the columns:
-/// `skill | tier | similarity | lines | generated_loc | inert deviations |
-/// inert | operational inert | judgment | canonical_drift | frontmatter added |
-/// categories`.
 struct SkillRow {
     let name: String
     let operationalInert: Int
@@ -167,10 +130,8 @@ func parsePerSkillTable(of readmePath: String) -> [SkillRow] {
         guard line.hasPrefix("|") else { continue }
         let cells = line.split(separator: "|", omittingEmptySubsequences: false)
             .map { $0.trimmingCharacters(in: .whitespaces) }
-        // `| skill | tier | ... |` splits into [<empty>, skill, tier, ..., <empty>].
         guard cells.count >= 13 else { continue }
-        guard cells[2].allSatisfy(\.isNumber) else { continue }  // skip the `---|---|...` separator row
-        // `[skill](skill.md)` -> `skill`.
+        guard cells[2].allSatisfy(\.isNumber) else { continue }
         var name = cells[1]
         if let close = name.firstIndex(of: "]"), name.hasPrefix("[") {
             name = String(name[name.index(after: name.startIndex)..<close])
@@ -194,21 +155,43 @@ func printOperationalInertBreakdown(of readmePath: String) {
     }
 }
 
+let catalog: CorpusCatalogFile
+do {
+    catalog = try loadCorpusCatalog()
+} catch {
+    FileHandle.standardError.write(Data("\(error)\n".utf8))
+    exit(1)
+}
+
+let options = parseArgs()
+if CommandLine.arguments.contains("-h") || CommandLine.arguments.contains("--help") {
+    print(usage(catalog: catalog))
+    exit(0)
+}
+
+let selected: [CorpusRecord]
+do {
+    selected = try selectCorpora(id: options.corpus, catalog: catalog)
+} catch {
+    FileHandle.standardError.write(Data("\(error.localizedDescription)\n\(usage(catalog: catalog))\n".utf8))
+    exit(2)
+}
+
 var failures = 0
 for corpus in selected {
     print("=== \(corpus.id) ===")
     let args = [
         "swift", "run", "meridian", "skill-deviation",
-        corpus.originals, corpus.portedRoot,
+        corpus.originals, corpus.root,
         "--batch", "--index",
-        "--out", corpus.output,
+        "--out", corpus.migrationDeviations,
     ]
     let result = run("/usr/bin/env", args)
     if result.status == 0 {
-        print("generated \(corpus.output)")
-        printSummary(of: "\(corpus.output)/README.md")
+        print("generated \(corpus.migrationDeviations)")
+        printSummary(of: "\(corpus.migrationDeviations)/README.md")
         print("")
-        printOperationalInertBreakdown(of: "\(corpus.output)/README.md")
+        printOperationalInertBreakdown(of: "\(corpus.migrationDeviations)/README.md")
     } else {
         failures += 1
         print(result.output.trimmingCharacters(in: .newlines))

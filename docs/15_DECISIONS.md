@@ -151,3 +151,22 @@ Two failure modes used to fail quietly: a bad `--trace-file` path would drop tra
 - A domain that overrides `EnglishLexicon` markers without providing at least one entry per required category gets a compile-time MER5012 instead of a silently broken canonical form.
 
 **See also:** MER5011, MER5012
+
+## D3 — Deontic violation timing and conflict lattice
+
+**Status:** accepted
+
+Prohibitions are attempt-time: the executable projection inserts a guard before the matching invoke, and a blocked attempt emits `violated` with disposition `prevented` without running the tool. State obligations are effect-time: checked at commit points and section exits, with `violated (observed)` routed through recover on failure. Both dispositions are trace events so prevented violations stay auditable. Same-scope prohibition/permission overlap is a compile-time conflict; nested scopes use sticky deny so an inner permission cannot override an outer prohibition.
+
+**Alternatives considered:**
+
+- Let prohibition silently win over permission at runtime — hides authoring mistakes and makes audit replay ambiguous.
+- Treat obligations as attempt-time like prohibitions — rejects effect-time invariants that only make sense after state commits.
+- Allow inner permissions to override outer prohibitions — breaks the deny-sticky-downward lattice.
+
+**Consequences:**
+
+- MER-DEO-001..006 surface lattice and modal violations at compile time instead of picking a silent winner.
+- Prevented prohibition attempts still appear in the trace — the deontic layer is defensive and auditable.
+
+**See also:** MER-DEO-001, MER-DEO-002, MER-DEO-003, MER-DEO-004, MER-DEO-005, MER-DEO-006, MER-DEO-007

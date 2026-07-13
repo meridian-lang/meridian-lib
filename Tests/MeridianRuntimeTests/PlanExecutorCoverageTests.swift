@@ -84,6 +84,40 @@ struct PlanExecutorCoverageTests {
         )
     }
 
+    @Test("permission argument constraints reject mismatched planner actions")
+    func permissionArgumentConstraints() async {
+        let reg = ToolRegistry()
+        await reg.register(tool: "demo.tool", .closure { _ in .null })
+        let permissionRegistry = PermissionRegistry()
+        await permissionRegistry.register(toolPattern: ToolPermissionPattern(
+            toolID: "demo.tool",
+            argumentConstraints: [ToolArgumentConstraint(path: "channel", expected: .string("#alerts"))]
+        ))
+        let executor = PlanExecutor(toolRegistry: reg)
+        do {
+            try await executor.validate(
+                ProposedAction(toolID: "demo.tool", arguments: ["channel": .string("#general")]),
+                scopedTools: ["demo.tool"],
+                permissionRegistry: permissionRegistry
+            )
+            Issue.record("expected throw")
+        } catch {
+            expectPlanningCode(error, .toolOutOfScope)
+        }
+    }
+
+    @Test("legacy bare scopedTools pass when no permission patterns registered")
+    func legacyBareScopedTools() async throws {
+        let reg = ToolRegistry()
+        await reg.register(tool: "demo.tool", .closure { _ in .null })
+        let executor = PlanExecutor(toolRegistry: reg)
+        try await executor.validate(
+            ProposedAction(toolID: "demo.tool"),
+            scopedTools: ["demo.tool"],
+            permissionRegistry: .empty
+        )
+    }
+
     @Test("wrong argument types are rejected per schema slot")
     func wrongTypesRejected() async {
         let cases: [(String, String, Value)] = [

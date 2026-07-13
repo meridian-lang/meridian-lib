@@ -590,7 +590,9 @@ public struct SmokeTestInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -941,7 +943,9 @@ public struct WhenSmoketestFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -972,7 +976,7 @@ public struct WhenSmoketestFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSmoketestFires/root/procedure/b27bbd8aae844a49f6eb9feaa63e2fdff11fd7acb163c093040eff600c835c3b") {
             // L1
-            try await runtime.wait(.event("smokeTest", matching: nil))
+            try await runtime.wait(.event("smokeTest", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSmoketestFires/root/procedure/b27bbd8aae844a49f6eb9feaa63e2fdff11fd7acb163c093040eff600c835c3b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSmoketestFires/root/procedure/240944c5d0098e447d8bfca55544ee75038bb7a5a2c0d89dd86e9c6ed2fc1877") {
@@ -1014,7 +1018,9 @@ public struct WhenRunsmoketestsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -1045,7 +1051,7 @@ public struct WhenRunsmoketestsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/1050a8b23892de85f0e95164f75ea0c4b78fc3c00338a3f91f743daeaddb4da9") {
             // L1
-            try await runtime.wait(.event("runSmokeTests", matching: nil))
+            try await runtime.wait(.event("runSmokeTests", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunsmoketestsFires/root/procedure/1050a8b23892de85f0e95164f75ea0c4b78fc3c00338a3f91f743daeaddb4da9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/e3bdff15169e80bb53af5cca45e89f5c8adc41cb0ce5a11d2eb11fb5e6a1d4bc") {
@@ -1087,7 +1093,9 @@ public struct WhenContainerrestartcheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -1118,7 +1126,7 @@ public struct WhenContainerrestartcheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/ad16b7bc48e42dc150effc1f5b9b8a1d01f848af76c62f0b138a0ea7e12ff172") {
             // L1
-            try await runtime.wait(.event("containerRestartCheck", matching: nil))
+            try await runtime.wait(.event("containerRestartCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenContainerrestartcheckFires/root/procedure/ad16b7bc48e42dc150effc1f5b9b8a1d01f848af76c62f0b138a0ea7e12ff172", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/d1e5b9e7ede68c61816279f3c1e065745b2926656e98452c7680de33ad6dd336") {
@@ -1160,7 +1168,9 @@ public struct WhenHealthcheckFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -1191,7 +1201,7 @@ public struct WhenHealthcheckFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/bd863341395969c4de5867d2bfbcf78e7faebc826cf9932e40b49af00c72bcd4") {
             // L1
-            try await runtime.wait(.event("healthCheck", matching: nil))
+            try await runtime.wait(.event("healthCheck", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHealthcheckFires/root/procedure/bd863341395969c4de5867d2bfbcf78e7faebc826cf9932e40b49af00c72bcd4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/8718025f0f37238b5812637dda9e12a55c04dff2b34d8ca53fcd92b046dbe397") {
@@ -1233,7 +1243,9 @@ public struct WhenDidrestartbreakanythingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -1264,7 +1276,7 @@ public struct WhenDidrestartbreakanythingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/e6efaa0a0473c6d6e8691457eee608f711f133fba50696340a0e5b4d212db4bf") {
             // L1
-            try await runtime.wait(.event("didRestartBreakAnything", matching: nil))
+            try await runtime.wait(.event("didRestartBreakAnything", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDidrestartbreakanythingFires/root/procedure/e6efaa0a0473c6d6e8691457eee608f711f133fba50696340a0e5b4d212db4bf", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/6a35de64a6db2edbb8dd5a4cede09e6291afe549a2d9936d546099230457d467") {
@@ -1306,7 +1318,9 @@ public struct WhenDidcontainerrestartbreakanythingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "smoke-test",
@@ -1337,7 +1351,7 @@ public struct WhenDidcontainerrestartbreakanythingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/c11f6b4e234fba9c9d04e5ffb235f104559066d09d9bd157dce4fd7ec79c8807") {
             // L1
-            try await runtime.wait(.event("didContainerRestartBreakAnything", matching: nil))
+            try await runtime.wait(.event("didContainerRestartBreakAnything", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/c11f6b4e234fba9c9d04e5ffb235f104559066d09d9bd157dce4fd7ec79c8807", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/cebbb27064c132a3ef7d862ee034442eb039f064a16fba6e9bab746527d41712") {

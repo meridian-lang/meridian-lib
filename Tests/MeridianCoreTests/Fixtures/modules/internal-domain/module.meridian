@@ -1,0 +1,8 @@
+---
+module: internal-domain
+version: 1.0.0
+exports: internal
+---
+
+=== vocabulary ===
+An internal note is a kind of thing.

@@ -1,0 +1,63 @@
+{
+  "entries" : [
+    {
+      "canonical" : "emit trigger.importNotion.fired with kind = \"keyword\", spec = \"import from notion\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/be797a3595bb8e2d61f84c8fd20ff0c918a0dd71bc3c3dba03da9bbadf1bfdfa",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "wait for event importNotion.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/ceabc7195cb50612b353019188ac86b8d344562fff1cb59d330cb3a979dc1820",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "emit trigger.importObsidian.fired with kind = \"keyword\", spec = \"import from obsidian\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/3e842608038e4f4654a5100730eb5ea97bdb43c06b5b1fd8be75a51ef304e1bf",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "wait for event importObsidian.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/4070e3a1691fb8b704bb3d51bfede2075b5313ca9423f01052132c1810d61580",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "wait for event migrate.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/78078f829f73267ff97719f5e3dc962636aabe3c248e55d50d43243329c3038a",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "emit trigger.migrate.fired with kind = \"keyword\", spec = \"migrate from\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/fd1780b808564153980d9963579cc99d9b4e03c37be25d47badb9d6285a803ee",
+      "swift_line" : 860
+    },
+    {
+      "canonical" : "for each row in csv,",
+      "meridian_line" : 97,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/MigrateInput\/csv-migration-steps\/procedure\/553ec9d93b5b5667ff39946dd16894000b72cf8fc6a629066743088983a00a54",
+      "swift_line" : 626
+    },
+    {
+      "canonical" : "bind health = invoke health.get.",
+      "meridian_line" : 109,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/MigrateInput\/verification-steps\/procedure\/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0",
+      "swift_line" : 640
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "migrate.meri",
+  "swift_file" : "migrate.swift"
+}

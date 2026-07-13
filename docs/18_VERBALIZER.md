@@ -452,10 +452,8 @@ covered.
 ## Out Of Scope
 
 Wave 7 deliberately did not include temporal/statistical operators; Wave 8 now
-does. Still out of scope:
+does. Wave 9 deontic/obligation operators are in scope. Still out of scope:
 
-- deontic / obligation operators planned for later waves;
-- obligation id annotation beyond the reserved `meridian explain` hook;
 - an LLM canonicalization/proposal tool;
 - source-preserving Markdown/documentation round-trips;
 - generated Swift -> Meridian verbalization;

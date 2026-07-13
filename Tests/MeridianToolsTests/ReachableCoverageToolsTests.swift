@@ -63,7 +63,7 @@ struct ReachableCoverageToolsTests {
         guard case .string(let s) = u else { Issue.record("uuid"); return }
         #expect(!s.isEmpty)
         // llm.* arm → llm.decide returns the deterministic boolean stub
-        let d = try await reg.dispatch(tool: "llm.decide", args: [:])
+        let d = try await reg.dispatch(tool: "llm.decide", args: ["question": .string("proceed?")])
         #expect(d == .boolean(false))
     }
 }

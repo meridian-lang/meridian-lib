@@ -592,7 +592,9 @@ public struct ArticleEnrichmentInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -662,7 +664,9 @@ public struct WhenEnrichthisarticleFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -693,7 +697,7 @@ public struct WhenEnrichthisarticleFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/c0ae63b4f53f8b8c4e1053a1e8683699d4ec52cd37d5b1cfe9bfe963e5d097ee") {
             // L1
-            try await runtime.wait(.event("enrichThisArticle", matching: nil))
+            try await runtime.wait(.event("enrichThisArticle", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnrichthisarticleFires/root/procedure/c0ae63b4f53f8b8c4e1053a1e8683699d4ec52cd37d5b1cfe9bfe963e5d097ee", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/4fae7bf6118ef663b8bc7e805dfe577da6303df06379ac6072d8019f59821111") {
@@ -735,7 +739,9 @@ public struct WhenEnricharticleFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -766,7 +772,7 @@ public struct WhenEnricharticleFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/2a17a4b49146b34c5e78678c8f87fe6ab0f896d2aef1a2ef48d9295b992fd906") {
             // L1
-            try await runtime.wait(.event("enrichArticle", matching: nil))
+            try await runtime.wait(.event("enrichArticle", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnricharticleFires/root/procedure/2a17a4b49146b34c5e78678c8f87fe6ab0f896d2aef1a2ef48d9295b992fd906", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/83adff0c0101ed68c2f49642385e272aa225adb7b76ba25c5bc5c95839b502a7") {
@@ -808,7 +814,9 @@ public struct WhenEnrichingarticleFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -839,7 +847,7 @@ public struct WhenEnrichingarticleFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/ea9ee933cd66449bc52022581fa902da0bcaf37978a7d6500afed23d686ba7e6") {
             // L1
-            try await runtime.wait(.event("enrichingArticle", matching: nil))
+            try await runtime.wait(.event("enrichingArticle", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnrichingarticleFires/root/procedure/ea9ee933cd66449bc52022581fa902da0bcaf37978a7d6500afed23d686ba7e6", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/c7154d6a560ec815a536086ed8c1250f41940152e6bfe9b2d1fe22b21a2d09f5") {
@@ -881,7 +889,9 @@ public struct WhenEnrichbrainpagesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -912,7 +922,7 @@ public struct WhenEnrichbrainpagesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/932b033e0c533732804f94d31b418588805b29e32f014ab4a2155e0c5fd0233a") {
             // L1
-            try await runtime.wait(.event("enrichBrainPages", matching: nil))
+            try await runtime.wait(.event("enrichBrainPages", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnrichbrainpagesFires/root/procedure/932b033e0c533732804f94d31b418588805b29e32f014ab4a2155e0c5fd0233a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/c11d3c5938923fb2085efb027687e4530f55ce0e7e43482eab598483e99fc995") {
@@ -954,7 +964,9 @@ public struct WhenBatchenrichFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -985,7 +997,7 @@ public struct WhenBatchenrichFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/ab0f4af468eed458e1bd063e63d76854d22b789c3b6239d420cbffefc33a07f4") {
             // L1
-            try await runtime.wait(.event("batchEnrich", matching: nil))
+            try await runtime.wait(.event("batchEnrich", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBatchenrichFires/root/procedure/ab0f4af468eed458e1bd063e63d76854d22b789c3b6239d420cbffefc33a07f4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/dc6711522adbe842ef1d411b3292f5d3d18a68c7faa3d33251c5013cd1504e9a") {
@@ -1027,7 +1039,9 @@ public struct WhenEnrichpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -1058,7 +1072,7 @@ public struct WhenEnrichpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/415887cfce42837990d3b8b4da056605156097f5f60a8a48f99f43d273930ccc") {
             // L1
-            try await runtime.wait(.event("enrichPass", matching: nil))
+            try await runtime.wait(.event("enrichPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenEnrichpassFires/root/procedure/415887cfce42837990d3b8b4da056605156097f5f60a8a48f99f43d273930ccc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/0cf933c7599972e74f48e3f96bdf0a45adc07915e1782463402f0497b1783f5b") {
@@ -1100,7 +1114,9 @@ public struct WhenMakebrainpagesusefulFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "article-enrichment",
@@ -1131,7 +1147,7 @@ public struct WhenMakebrainpagesusefulFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/ee7ffcd98bd61b7856930771b2bab58b7e90a789e8b26228c523fe7152112613") {
             // L1
-            try await runtime.wait(.event("makeBrainPagesUseful", matching: nil))
+            try await runtime.wait(.event("makeBrainPagesUseful", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMakebrainpagesusefulFires/root/procedure/ee7ffcd98bd61b7856930771b2bab58b7e90a789e8b26228c523fe7152112613", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/d7dd75e92f13be28a2b059f58cbfa3d046d21b5c80163c28d9f5fa7cb6a0cae0") {

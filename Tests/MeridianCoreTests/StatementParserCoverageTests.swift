@@ -472,7 +472,7 @@ struct StatementParserCoverageTests {
         let parser = StatementParser(symbols: SymbolTable(), trace: .silent(), rewriteEngine: engine)
         let block = try parser.parseBlock(
             IndentTokenizer().tokenize("Run `echo hi` to say hello."),
-            file: "t.meridian"
+            sourceFile: "t.meridian"
         )
         guard case .phraseInvocation = block.statements.first else {
             Issue.record("expected rewritten shell phrase invocation"); return
@@ -708,7 +708,7 @@ struct StatementParserCoverageTests {
         let engine = RewriteEngine(rulebook: rulebook, trace: .silent())
         let parser = StatementParser(symbols: SymbolTable(), trace: .silent(), rewriteEngine: engine)
         let line = SourceLine(indent: 0, text: "If ready -> complete", raw: "If ready -> complete", number: 1)
-        let (stmt, _) = try parser.parseStatement([line], at: 0, file: "t.meridian")
+        let (stmt, _) = try parser.parseStatement([line], at: 0, sourceFile: "t.meridian")
         guard case .conditional = stmt else {
             Issue.record("expected rewritten conditional"); return
         }
@@ -727,7 +727,7 @@ struct StatementParserCoverageTests {
         let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
         let line = SourceLine(indent: 0, text: "Setup: \(sentinel)", raw: "", number: 1)
         #expect(throws: CompilerError.self) {
-            _ = try parser.parseStatement([line], at: 0, file: "t.meridian")
+            _ = try parser.parseStatement([line], at: 0, sourceFile: "t.meridian")
         }
     }
 
@@ -841,13 +841,18 @@ struct StatementParserCoverageTests {
         #expect(emit.eventID.contains("order.placed"))
     }
 
-    @Test("recover headers without a trailing colon attach to a placeholder")
+    @Test("recover headers without a trailing colon raise MER1003")
     func recoverHeaderWithoutColon() throws {
-        let block = try parse("recover from any")
-        guard case .recover(let rec) = block.statements.first else {
-            Issue.record("expected recover"); return
+        #expect(throws: CompilerError.self) {
+            _ = try parse("recover from any")
         }
-        #expect(rec.handler.statements.isEmpty)
+        do {
+            _ = try parse("recover from any")
+            Issue.record("expected malformed recover header to throw")
+        } catch let CompilerError.diagnostics(diags) {
+            #expect(diags.contains { $0.code == .unparseableStatement })
+            #expect(diags.first?.message.contains("malformed `recover` header") == true)
+        }
     }
 
     @Test("commit labels accept single-quoted strings")

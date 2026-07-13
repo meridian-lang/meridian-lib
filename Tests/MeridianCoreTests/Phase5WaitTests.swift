@@ -110,13 +110,13 @@ struct WaitCodegenTests {
     @Test("wait duration emits runtime.wait(.duration(...))")
     func waitDurationCodegen() throws {
         let out = try emitWait(.duration(.seconds(3600)))
-        #expect(out.contains("try await runtime.wait(.duration(.seconds(3600)))"))
+        #expect(out.contains("try await runtime.wait(.duration(.seconds(3600)), sourceRange: nil"))
     }
 
     @Test("wait signal emits runtime.wait(.signal(...))")
     func waitSignalCodegen() throws {
         let out = try emitWait(.signal("manual_review_complete"))
-        #expect(out.contains(#"try await runtime.wait(.signal("manual_review_complete"))"#))
+        #expect(out.contains(#"try await runtime.wait(.signal("manual_review_complete"), sourceRange: nil)"#))
     }
 
     @Test("wait approval emits RoleRef(identifier:) not bare string")
@@ -131,7 +131,7 @@ struct WaitCodegenTests {
     @Test("wait event with no matching emits matching: nil")
     func waitEventNilMatching() throws {
         let out = try emitWait(.event("order.shipped", matching: nil))
-        #expect(out.contains(#"try await runtime.wait(.event("order.shipped", matching: nil))"#))
+        #expect(out.contains(#"try await runtime.wait(.event("order.shipped", matching: nil), sourceRange: nil)"#))
     }
 
     @Test("wait event with matching emits closure { _event in … }")

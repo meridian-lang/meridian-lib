@@ -387,7 +387,9 @@ public struct HealthcheckSweep: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
@@ -554,7 +556,9 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
@@ -586,7 +590,7 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/1a37b06a701016d1fd15272964bed16a0d9e0a468c287c116ffef05d79c46bf5") {
             // L1
-            try await runtime.wait(.event("sweepServiceHealth", matching: nil))
+            try await runtime.wait(.event("sweepServiceHealth", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSweepservicehealthFires/root/procedure/1a37b06a701016d1fd15272964bed16a0d9e0a468c287c116ffef05d79c46bf5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/023baa0fcd8b674691a9164b50ddfd70a0346a425ac4420b312d47de78e185e4") {
@@ -628,7 +632,9 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
@@ -660,7 +666,7 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/27e56a5c712fa7aa35c1f1f5191ee9e375ad51fa279591f39d7d62543f72da7e") {
             // L1
-            try await runtime.wait(.event("runHealthcheckSweep", matching: nil))
+            try await runtime.wait(.event("runHealthcheckSweep", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunhealthchecksweepFires/root/procedure/27e56a5c712fa7aa35c1f1f5191ee9e375ad51fa279591f39d7d62543f72da7e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/860b65f11f44306fc9586ecdb55e289f710d1dba26bd3df2abeadff8cd5a2920") {
@@ -702,7 +708,9 @@ public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
@@ -734,7 +742,7 @@ public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/89e22be6e97a001acff385491f4d0f7cf041af0004fb5ddcf225b6513a32d089") {
             // L1
-            try await runtime.wait(.event("runHealthSweepPass", matching: nil))
+            try await runtime.wait(.event("runHealthSweepPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunhealthsweeppassFires/root/procedure/89e22be6e97a001acff385491f4d0f7cf041af0004fb5ddcf225b6513a32d089", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/b84be00764782bf63b7de3cfa8372c731b9fea9f892ba852bc9ccd20c539a520") {

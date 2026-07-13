@@ -1,0 +1,91 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event revertFailedDeploy.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRevertfaileddeployFires\/root\/procedure\/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "emit trigger.revertFailedDeploy.fired with kind = \"keyword\", spec = \"revert failed deploy\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRevertfaileddeployFires\/root\/procedure\/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "wait for event rollBackUnhealthyDeploys.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRollbackunhealthydeploysFires\/root\/procedure\/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "emit trigger.rollBackUnhealthyDeploys.fired with kind = \"keyword\", spec = \"roll back unhealthy deploys\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRollbackunhealthydeploysFires\/root\/procedure\/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "wait for event runDeployRollbackPass.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRundeployrollbackpassFires\/root\/procedure\/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "emit trigger.runDeployRollbackPass.fired with kind = \"keyword\", spec = \"run the deploy rollback pass\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRundeployrollbackpassFires\/root\/procedure\/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7",
+      "swift_line" : 692
+    },
+    {
+      "canonical" : "bind deploys = invoke deploy.list with status = \"failed\".",
+      "meridian_line" : 31,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/RollbackDeploy\/workflow-steps\/procedure\/787cb9662b3b02d753baedc00291e3ceb3b52b80799d646ad3a0a9fe9805deb1",
+      "swift_line" : 428
+    },
+    {
+      "canonical" : "assert any unhealthy deploys.",
+      "meridian_line" : 32,
+      "primitive" : "assert",
+      "stable_step_path" : "\/RollbackDeploy\/workflow-steps\/procedure\/fded44bcc90b31a83bd96f50c338b9435ec927b83512767500af77f4703e0ae6",
+      "swift_line" : 442
+    },
+    {
+      "canonical" : "for each deploy in deploys,\n  wait for approval of deploy from an oncall engineer.",
+      "meridian_line" : 33,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/RollbackDeploy\/workflow-steps\/procedure\/bff37b2ce7b3ca3ea3144f5e87f592e52ee5d791464900021666a6e3b664eead",
+      "swift_line" : 446
+    },
+    {
+      "canonical" : "wait for approval of deploy from an oncall engineer.",
+      "meridian_line" : 34,
+      "primitive" : "wait",
+      "stable_step_path" : "\/RollbackDeploy\/workflow-steps\/procedure\/iterate.body\/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60",
+      "swift_line" : 455
+    },
+    {
+      "canonical" : "emit incident.report with message = \"deploy rollback pass complete\".",
+      "meridian_line" : 40,
+      "primitive" : "emit",
+      "stable_step_path" : "\/RollbackDeploy\/workflow-steps-2\/procedure\/932cc610d4a861a1044047e721bc8719818096efaf1c09e86bee02b6d467f4d1",
+      "swift_line" : 465
+    },
+    {
+      "canonical" : "assert no deploys whose status equals \"failed\".",
+      "meridian_line" : 51,
+      "primitive" : "assert",
+      "stable_step_path" : "\/RollbackDeploy\/guarantees\/invariants\/1ecabfae0b4ee79fba416d72fb503b8a76e6eeeca73577efa9c747e1701fa5e9",
+      "swift_line" : 423
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "rollbackdeploy.meri",
+  "swift_file" : "rollbackdeploy.swift"
+}

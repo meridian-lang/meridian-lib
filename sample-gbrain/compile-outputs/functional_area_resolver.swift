@@ -593,7 +593,9 @@ public struct FunctionalAreaResolverInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -785,7 +787,9 @@ public struct WhenCompressagentsmdFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -816,7 +820,7 @@ public struct WhenCompressagentsmdFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCompressagentsmdFires/root/procedure/d58a903ff7e5f1fcac7082941365e697ccfd9b03f061836397c45fefecc0de04") {
             // L1
-            try await runtime.wait(.event("compressAgentsMd", matching: nil))
+            try await runtime.wait(.event("compressAgentsMd", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCompressagentsmdFires/root/procedure/d58a903ff7e5f1fcac7082941365e697ccfd9b03f061836397c45fefecc0de04", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCompressagentsmdFires/root/procedure/f7bb208a2172bf6e9feacaf6b4f45dbf497e80a737e149a54889b177cc2bb28b") {
@@ -858,7 +862,9 @@ public struct WhenCompressmyresolverFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -889,7 +895,7 @@ public struct WhenCompressmyresolverFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCompressmyresolverFires/root/procedure/c6823f8bc7cf53093d7210140ab2beab3eaf7feb12b995373f9ac1de14affdd4") {
             // L1
-            try await runtime.wait(.event("compressMyResolver", matching: nil))
+            try await runtime.wait(.event("compressMyResolver", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCompressmyresolverFires/root/procedure/c6823f8bc7cf53093d7210140ab2beab3eaf7feb12b995373f9ac1de14affdd4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCompressmyresolverFires/root/procedure/8ad73dbb84727144aac4250d45111783089be5e7d2b252ae074407064343a822") {
@@ -931,7 +937,9 @@ public struct WhenResolvertoobigFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -962,7 +970,7 @@ public struct WhenResolvertoobigFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenResolvertoobigFires/root/procedure/1310b556af52bfa590f2498e6cfbdd812a17e3190d01aa70065da1db8512d3ce") {
             // L1
-            try await runtime.wait(.event("resolverTooBig", matching: nil))
+            try await runtime.wait(.event("resolverTooBig", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenResolvertoobigFires/root/procedure/1310b556af52bfa590f2498e6cfbdd812a17e3190d01aa70065da1db8512d3ce", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenResolvertoobigFires/root/procedure/363c2fc8f779e0dbb8aef40b1c847c65e1ce19cc8a805040e2b7836bc9fb8dc0") {
@@ -1004,7 +1012,9 @@ public struct WhenResolvermdtoobigFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1035,7 +1045,7 @@ public struct WhenResolvermdtoobigFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenResolvermdtoobigFires/root/procedure/37987e8e723955ef706f9cc87182044933bc61d146b66620cc0576b7a1c1a6dc") {
             // L1
-            try await runtime.wait(.event("resolverMdTooBig", matching: nil))
+            try await runtime.wait(.event("resolverMdTooBig", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenResolvermdtoobigFires/root/procedure/37987e8e723955ef706f9cc87182044933bc61d146b66620cc0576b7a1c1a6dc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenResolvermdtoobigFires/root/procedure/2c98a32d4fabf4f783c7808f9678e02422f0f266a8682595a97625cbd8fe55e2") {
@@ -1077,7 +1087,9 @@ public struct WhenAgentsmdtoolargeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1108,7 +1120,7 @@ public struct WhenAgentsmdtoolargeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAgentsmdtoolargeFires/root/procedure/de7215bb3b935ae2744894db208bec2a78eec241c13c911b039bea86d7579c86") {
             // L1
-            try await runtime.wait(.event("agentsMdTooLarge", matching: nil))
+            try await runtime.wait(.event("agentsMdTooLarge", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAgentsmdtoolargeFires/root/procedure/de7215bb3b935ae2744894db208bec2a78eec241c13c911b039bea86d7579c86", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAgentsmdtoolargeFires/root/procedure/6c37af5530a8145feb74e6158403280aade3d8ff33aa4856131fab3f8d7faf5e") {
@@ -1150,7 +1162,9 @@ public struct WhenShrinkroutingtableFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1181,7 +1195,7 @@ public struct WhenShrinkroutingtableFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShrinkroutingtableFires/root/procedure/87123a44e970da5560bdf8bd9d0679d319c961ef962b18eaf4db4c56e32fc219") {
             // L1
-            try await runtime.wait(.event("shrinkRoutingTable", matching: nil))
+            try await runtime.wait(.event("shrinkRoutingTable", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShrinkroutingtableFires/root/procedure/87123a44e970da5560bdf8bd9d0679d319c961ef962b18eaf4db4c56e32fc219", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShrinkroutingtableFires/root/procedure/f8701142f41152c765902de7e4a8e5a17d423a1b3c45adc0f558ae053aaa87ad") {
@@ -1223,7 +1237,9 @@ public struct WhenSlimdownagentsmdFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1254,7 +1270,7 @@ public struct WhenSlimdownagentsmdFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSlimdownagentsmdFires/root/procedure/906a56971289035e87136a8d34c019ca96ca50e8fb3d5e5de79800769fc15b7b") {
             // L1
-            try await runtime.wait(.event("slimDownAgentsMd", matching: nil))
+            try await runtime.wait(.event("slimDownAgentsMd", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSlimdownagentsmdFires/root/procedure/906a56971289035e87136a8d34c019ca96ca50e8fb3d5e5de79800769fc15b7b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSlimdownagentsmdFires/root/procedure/a7dc31b6f08e7277971061b7aad9cfd228cfc8a1c8b28d8697709ce4e1149bad") {
@@ -1296,7 +1312,9 @@ public struct WhenFunctionalarearesolverFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1327,7 +1345,7 @@ public struct WhenFunctionalarearesolverFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFunctionalarearesolverFires/root/procedure/53cc48923e7883a3d7cd6bc2ca8984c382e61c88c88d243841ef235f40662c3a") {
             // L1
-            try await runtime.wait(.event("functionalAreaResolver", matching: nil))
+            try await runtime.wait(.event("functionalAreaResolver", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFunctionalarearesolverFires/root/procedure/53cc48923e7883a3d7cd6bc2ca8984c382e61c88c88d243841ef235f40662c3a", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFunctionalarearesolverFires/root/procedure/170893ce16fee91be2afd3c26c4c4f74fa167399017eee112d17ae5af54717b2") {
@@ -1369,7 +1387,9 @@ public struct WhenFunctionalareadispatcherFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1400,7 +1420,7 @@ public struct WhenFunctionalareadispatcherFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenFunctionalareadispatcherFires/root/procedure/6ee7a6570d0c4df4c69dd0239e62472f94e65c0afc5f351ee25efdda42ed4ce1") {
             // L1
-            try await runtime.wait(.event("functionalAreaDispatcher", matching: nil))
+            try await runtime.wait(.event("functionalAreaDispatcher", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenFunctionalareadispatcherFires/root/procedure/6ee7a6570d0c4df4c69dd0239e62472f94e65c0afc5f351ee25efdda42ed4ce1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenFunctionalareadispatcherFires/root/procedure/44e6ebc7ae065f1bddd462b16fa857a25a163367fb8f13f25d09d3dd4a94913b") {
@@ -1442,7 +1462,9 @@ public struct WhenContexthealthagentsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1473,7 +1495,7 @@ public struct WhenContexthealthagentsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenContexthealthagentsFires/root/procedure/038cb82d5844c531581f316701befe22b3e90ec99964ce59b43572d352ab7f65") {
             // L1
-            try await runtime.wait(.event("contextHealthAgents", matching: nil))
+            try await runtime.wait(.event("contextHealthAgents", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenContexthealthagentsFires/root/procedure/038cb82d5844c531581f316701befe22b3e90ec99964ce59b43572d352ab7f65", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenContexthealthagentsFires/root/procedure/634227eea797ed937d6e2f84f4c94265d95b0590491773f1d5bf88d980409c3f") {
@@ -1515,7 +1537,9 @@ public struct WhenContexthealthresolverFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1546,7 +1570,7 @@ public struct WhenContexthealthresolverFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenContexthealthresolverFires/root/procedure/c95dc709703282864c4cb8cd2304aa832de7c4745623158e32dee411b7289cd5") {
             // L1
-            try await runtime.wait(.event("contextHealthResolver", matching: nil))
+            try await runtime.wait(.event("contextHealthResolver", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenContexthealthresolverFires/root/procedure/c95dc709703282864c4cb8cd2304aa832de7c4745623158e32dee411b7289cd5", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenContexthealthresolverFires/root/procedure/6af9738899054a38678ba3a5f915d7c9cf9339e694a11e6d4c60bb8397fcf0a6") {
@@ -1588,7 +1612,9 @@ public struct WhenReducecontextbudgetFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "functional-area-resolver",
@@ -1619,7 +1645,7 @@ public struct WhenReducecontextbudgetFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenReducecontextbudgetFires/root/procedure/665ae551d8c0640b65d9bbb603ea285b9e90a47121826c03175a65e685326afb") {
             // L1
-            try await runtime.wait(.event("reduceContextBudget", matching: nil))
+            try await runtime.wait(.event("reduceContextBudget", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenReducecontextbudgetFires/root/procedure/665ae551d8c0640b65d9bbb603ea285b9e90a47121826c03175a65e685326afb", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenReducecontextbudgetFires/root/procedure/eaf9facfe3840f1437cb787092b966ec0be3db617f7a0e4fe490aaf2ada2bab4") {

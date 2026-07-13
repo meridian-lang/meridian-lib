@@ -413,7 +413,7 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
         "parameters": "resource",
     ]
 
-    public static let skillVersionHash = "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+    public static let skillVersionHash = "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -426,11 +426,13 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access review freshness",
-            versionHash: "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+            versionHash: "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -459,8 +461,8 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "AccessReviewFreshnessResource", parameters: [:])
 
         // L33
-        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, kind: .ever(TraceEventPatternQuery(subject: .step("access review"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, kind: .ever(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/2e6d63943fb0f5a4d055422654d15812f524e7382aaa27b1ef3cd6f288ce156a")
+        if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step("access review"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true) {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .acrossAllRuns, scopeSkills: [], kind: .ever(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/2e6d63943fb0f5a4d055422654d15812f524e7382aaa27b1ef3cd6f288ce156a")
             if __meridianShouldRun("/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/7cb05d6c8beb5f22f43a325de3c3e4aae55434998311155e3a31159ca625f6d6") {
                 // L34
                 try await runtime.emit(
@@ -472,14 +474,15 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/7cb05d6c8beb5f22f43a325de3c3e4aae55434998311155e3a31159ca625f6d6", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/2e6d63943fb0f5a4d055422654d15812f524e7382aaa27b1ef3cd6f288ce156a")
         }
 
         // L35
         if MeridianComparison.eq(state.get("resource.status"), .string("active")) {
             try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"resource.status\"), .string(\"active\"))", into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/ba2c3acb0e2774e6b8375cf865a677f809d9693da24514ff92888a71fa25bd0f")
             // L36
-            if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .withinWindow(TraceEventPatternQuery(subject: .step("access review"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true) {
-                try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
+            if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .withinWindow(TraceEventPatternQuery(subject: .step("access review"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true) {
+                try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
                 if __meridianShouldRun("/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/307447073c1d0b7208de2410f539fd5011d51d81bb411c552fcdf43ca32688d9") {
                     // L37
                     try await runtime.emit(
@@ -491,8 +494,10 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
                     )
                     try await runtime.checkpoint(label: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/307447073c1d0b7208de2410f539fd5011d51d81bb411c552fcdf43ca32688d9", state: state.snapshot())
                 }
+                try await runtime.recordBranchEnded(into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
             } else {
-                try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true)", into: "otherwise", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
+                try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .withinWindow(TraceEventPatternQuery(subject: .step(\"access review\"), outcome: .succeeded, subjectKey: nil, payloadContains: nil, negated: false), duration: .seconds(2592000))), evaluationInstant: await runtime.currentDate()) == .true)", into: "otherwise", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
+
                 if __meridianShouldRun("/AccessReviewFreshnessResource/workflow-steps/procedure/branch.else/3d90cfaa52e235b2afcf5d48a20a17a7e92a3e599d2704d112f87eb6071979f0") {
                     // L39
                     try await runtime.emit(
@@ -504,8 +509,10 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
                     )
                     try await runtime.checkpoint(label: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.else/3d90cfaa52e235b2afcf5d48a20a17a7e92a3e599d2704d112f87eb6071979f0", state: state.snapshot())
                 }
+                try await runtime.recordBranchEnded(into: "otherwise", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/branch.then/3a36420739eaba8e4625c3d5118decd95af76ffdbd8c2cd18c7beed1baa6dbc3")
             }
 
+            try await runtime.recordBranchEnded(into: "then", step: "/AccessReviewFreshnessResource/workflow-steps/procedure/ba2c3acb0e2774e6b8375cf865a677f809d9693da24514ff92888a71fa25bd0f")
         }
 
         if __meridianShouldRun("/AccessReviewFreshnessResource/workflow-steps/procedure/48a2589d48e26f8021d4dbd1b07453d6158189b72ec65e2d03a40664ff1caef4") {
@@ -533,7 +540,7 @@ public struct AccessReviewFreshnessResource: MeridianWorkflow {
 public struct WhenCheckaccessreviewfreshnessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+    public static let skillVersionHash = "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -546,11 +553,13 @@ public struct WhenCheckaccessreviewfreshnessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access review freshness",
-            versionHash: "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+            versionHash: "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -578,7 +587,7 @@ public struct WhenCheckaccessreviewfreshnessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCheckaccessreviewfreshnessFires/root/procedure/d37ea4c7661a40debb22745f437a6b83415e71af88785737a8187fe0978469f4") {
             // L1
-            try await runtime.wait(.event("checkAccessReviewFreshness", matching: nil))
+            try await runtime.wait(.event("checkAccessReviewFreshness", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCheckaccessreviewfreshnessFires/root/procedure/d37ea4c7661a40debb22745f437a6b83415e71af88785737a8187fe0978469f4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCheckaccessreviewfreshnessFires/root/procedure/c3490e80fd8c08bfc0e72bad6c9febebac30c3d9123a1ec8eae625995159076d") {
@@ -607,7 +616,7 @@ public struct WhenCheckaccessreviewfreshnessFires: MeridianWorkflow {
 public struct WhenRunaccessreviewfreshnessFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+    public static let skillVersionHash = "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -620,11 +629,13 @@ public struct WhenRunaccessreviewfreshnessFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access review freshness",
-            versionHash: "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+            versionHash: "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -652,7 +663,7 @@ public struct WhenRunaccessreviewfreshnessFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunaccessreviewfreshnessFires/root/procedure/385a8a8c566c9525328bd7f400ac647ec675e4c2709ba4502e2e0a172e088054") {
             // L1
-            try await runtime.wait(.event("runAccessReviewFreshness", matching: nil))
+            try await runtime.wait(.event("runAccessReviewFreshness", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunaccessreviewfreshnessFires/root/procedure/385a8a8c566c9525328bd7f400ac647ec675e4c2709ba4502e2e0a172e088054", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunaccessreviewfreshnessFires/root/procedure/ad2d84db0d3ce7221d6bc6e07db745db6df1b512ad254ddf87f3595d9008dbe1") {
@@ -681,7 +692,7 @@ public struct WhenRunaccessreviewfreshnessFires: MeridianWorkflow {
 public struct WhenVerifyresourcereviewcurrencyFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+    public static let skillVersionHash = "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -694,11 +705,13 @@ public struct WhenVerifyresourcereviewcurrencyFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(604800),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "access review freshness",
-            versionHash: "64f8e2ba84374de33b67069ca1d0470023a2af6a19b725095d2fdb6660135ea3"
+            versionHash: "e4014a2525cf1779c4de6ea188698927ef839a0bd9c0d5aae3e1901be308fb9f"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -726,7 +739,7 @@ public struct WhenVerifyresourcereviewcurrencyFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVerifyresourcereviewcurrencyFires/root/procedure/f5337c586d6d3ded70d8a113a59bc1e96a6d07f6a43bcba68a017de965c0eb4d") {
             // L1
-            try await runtime.wait(.event("verifyResourceReviewCurrency", matching: nil))
+            try await runtime.wait(.event("verifyResourceReviewCurrency", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVerifyresourcereviewcurrencyFires/root/procedure/f5337c586d6d3ded70d8a113a59bc1e96a6d07f6a43bcba68a017de965c0eb4d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVerifyresourcereviewcurrencyFires/root/procedure/6cde062bf046bf536150402d2b978695ff15420abeebf9b33fb6e3c44d43fce7") {

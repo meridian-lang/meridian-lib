@@ -591,7 +591,9 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -675,7 +677,9 @@ public struct WhenAddtaskFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -706,7 +710,7 @@ public struct WhenAddtaskFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenAddtaskFires/root/procedure/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738") {
             // L1
-            try await runtime.wait(.event("addTask", matching: nil))
+            try await runtime.wait(.event("addTask", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenAddtaskFires/root/procedure/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenAddtaskFires/root/procedure/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c") {
@@ -748,7 +752,9 @@ public struct WhenCompletetaskFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -779,7 +785,7 @@ public struct WhenCompletetaskFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2") {
             // L1
-            try await runtime.wait(.event("completeTask", matching: nil))
+            try await runtime.wait(.event("completeTask", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCompletetaskFires/root/procedure/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5") {
@@ -821,7 +827,9 @@ public struct WhenWhataremytasksFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -852,7 +860,7 @@ public struct WhenWhataremytasksFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319") {
             // L1
-            try await runtime.wait(.event("whatAreMyTasks", matching: nil))
+            try await runtime.wait(.event("whatAreMyTasks", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhataremytasksFires/root/procedure/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a") {
@@ -894,7 +902,9 @@ public struct WhenTasklistFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -925,7 +935,7 @@ public struct WhenTasklistFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTasklistFires/root/procedure/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4") {
             // L1
-            try await runtime.wait(.event("taskList", matching: nil))
+            try await runtime.wait(.event("taskList", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTasklistFires/root/procedure/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTasklistFires/root/procedure/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2") {
@@ -967,7 +977,9 @@ public struct WhenDefertaskFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "daily-task-manager",
@@ -998,7 +1010,7 @@ public struct WhenDefertaskFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenDefertaskFires/root/procedure/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71") {
             // L1
-            try await runtime.wait(.event("deferTask", matching: nil))
+            try await runtime.wait(.event("deferTask", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenDefertaskFires/root/procedure/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenDefertaskFires/root/procedure/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29") {

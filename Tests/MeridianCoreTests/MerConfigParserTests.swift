@@ -54,6 +54,26 @@ struct MerConfigLanguageSectionTests {
           ANY
         Shell-fence synonyms:
           fish
+        Vague-hedge synonyms:
+          kinda
+        Effectful-judgment synonyms:
+          scrub
+        Article synonyms:
+          da
+        Parameter-article synonyms:
+          ein
+        Preposition synonyms:
+          durch
+        Copula synonyms:
+          sein
+        Participle synonyms:
+          gekauft
+        Tool-stopword synonyms:
+          ausführen
+        Irregular-plural mapping:
+          maus = mäuse
+        Contract-reference synonyms:
+          bereits erzwungen
         Fence tool mapping:
           python = interpreter.run
         timestamp = lastTouchedAt
@@ -84,6 +104,16 @@ struct MerConfigLanguageSectionTests {
         // Wildcard captures the original (non-lowercased) token.
         #expect(syn.wildcardSynonyms.contains("ANY"))
         #expect(syn.shellFenceSynonyms.contains("fish"))
+        #expect(syn.conditionVagueHedgeSynonyms.contains("kinda"))
+        #expect(syn.effectfulJudgmentCueSynonyms.contains("scrub"))
+        #expect(syn.articleSynonyms.contains("da"))
+        #expect(syn.parameterArticleSynonyms.contains("ein"))
+        #expect(syn.prepositionSynonyms.contains("durch"))
+        #expect(syn.copulaSynonyms.contains("sein"))
+        #expect(syn.participleSynonyms.contains("gekauft"))
+        #expect(syn.toolStopwordSynonyms.contains("ausführen"))
+        #expect(syn.irregularPluralSynonyms["maus"] == "mäuse")
+        #expect(syn.contractReferenceSynonyms.contains("bereits erzwungen"))
         #expect(syn.fenceToolMapping["python"] == "interpreter.run")
         #expect(syn.timestampProperty == "lastTouchedAt")
     }
@@ -159,6 +189,53 @@ struct MerConfigLanguageSectionTests {
         let syn = try parse(src).languageSynonyms
         #expect(syn.aggregateSynonyms.contains { $0.0 == "tally" })
         #expect(!syn.aggregateSynonyms.contains { $0.0 == "bogus" })
+    }
+
+    @Test("guarded-fence, fallback-chain, and approval-tool synonym headers parse")
+    func fenceChainApprovalSynonyms() throws {
+        let syn = try parse("""
+        === language ===
+        Guarded-fence synonyms:
+          , proceed:
+        Fallback-chain synonyms:
+          try these in order:
+        Approval-tool synonyms:
+          signoff
+        """).languageSynonyms
+        #expect(syn.guardedFenceIntroducerSynonyms == [", proceed:"])
+        #expect(syn.fallbackChainIntroducerSynonyms == ["try these in order:"])
+        #expect(syn.approvalToolSynonyms == ["signoff"])
+    }
+
+    @Test("gradable adjectives parse property + direction; invalid rows are dropped")
+    func gradableAdjectives() throws {
+        let syn = try parse("""
+        === language ===
+        Gradable adjectives:
+          fresh = updatedAt ascending
+          stale = updatedAt desc
+          broken = sideways
+          onetoken = descending
+        """).languageSynonyms
+        #expect(syn.gradableAdjectiveSynonyms["fresh"] ==
+                GradableAdjectiveMetadata(property: "updatedat", ascending: true))
+        #expect(syn.gradableAdjectiveSynonyms["stale"] ==
+                GradableAdjectiveMetadata(property: "updatedat", ascending: false))
+        #expect(syn.gradableAdjectiveSynonyms["broken"] == nil)
+        #expect(syn.gradableAdjectiveSynonyms["onetoken"] == nil)
+    }
+
+    @Test("parseGradableDirection and resolveComparisonOp edge branches")
+    func languageHelperBranches() throws {
+        let parser = MerConfigParser(trace: .silent())
+        #expect(parser.parseGradableDirection("ascending") == true)
+        #expect(parser.parseGradableDirection("oldest") == true)
+        #expect(parser.parseGradableDirection("most") == false)
+        #expect(parser.parseGradableDirection("bogus") == nil)
+        #expect(parser.resolveComparisonOp("equal") == .equal)
+        #expect(parser.resolveComparisonOp("equals") == .equal)
+        #expect(parser.stripLeadingCopula("is less than") == "less than")
+        #expect(parser.stripLeadingCopula("less than") == "less than")
     }
 
     @Test("trace-auxiliary synonyms are captured as bare phrases, like assertion synonyms")
@@ -1153,6 +1230,50 @@ struct MerConfigTraceTests {
         }
     }
 
+    @Test("equivalent tools merge capture policy from overlay")
+    func toolCapturePolicyMerges() throws {
+        let base = MerConfigFile(tools: [
+            ToolDeclaration(displayName: "T", methodName: "t", parameters: [],
+                            returnType: "Void", sourceFile: "a.merconfig")
+        ])
+        let overlay = MerConfigFile(tools: [
+            ToolDeclaration(displayName: "T", methodName: "t", parameters: [],
+                            returnType: "Void", sourceFile: "b.merconfig",
+                            capturePolicy: .hashOnly)
+        ])
+        let merged = try base.merging(overlay)
+        #expect(merged.tools.first?.capturePolicy == .hashOnly)
+        #expect(merged.tools.count == 1)
+
+        let appended = try base.merging(MerConfigFile(tools: [
+            ToolDeclaration(displayName: "U", methodName: "u", parameters: [],
+                            returnType: "Void", sourceFile: "c.merconfig")
+        ]))
+        #expect(appended.tools.map(\.methodName).sorted() == ["t", "u"])
+    }
+
+    @Test("conflicting tool declaration surfaces MerConfigMergeError description")
+    func conflictingToolDeclaration() throws {
+        let lhs = MerConfigFile(tools: [
+            ToolDeclaration(displayName: "T", methodName: "t", parameters: [],
+                            returnType: "Void", sourceFile: "a.merconfig")
+        ])
+        let rhs = MerConfigFile(tools: [
+            ToolDeclaration(displayName: "T", methodName: "t", parameters: [],
+                            returnType: "String", sourceFile: "b.merconfig")
+        ])
+        do {
+            _ = try lhs.merging(rhs)
+            Issue.record("expected MerConfigMergeError")
+        } catch let error as MerConfigMergeError {
+            #expect(error.description.contains("conflicting tool declaration"))
+            #expect(error.description.contains("a.merconfig"))
+            #expect(error.description.contains("b.merconfig"))
+        } catch {
+            Issue.record("unexpected error: \(error)")
+        }
+    }
+
     @Test("every malformed trace setting value reports its own diagnostic and is skipped, not crashed on")
     func everyMalformedTraceSettingValueIsReportedAndSkipped() throws {
         let engine = DiagnosticEngine(trace: .silent())
@@ -1160,6 +1281,8 @@ struct MerConfigTraceTests {
         === trace ===
         this line has no colon
         store: carrier-pigeon
+        store path:
+        store endpoint:
         retention: banana days
         hash chaining: maybe
         payload limit: not-a-number
@@ -1167,11 +1290,14 @@ struct MerConfigTraceTests {
         default monitor cadence: banana days
         profile: staging
         store failure policy: shrug
+        state history: maybe
         some unknown key: whatever
         """, file: "trace.merconfig")
 
         // Every malformed setting is skipped (left nil), not defaulted or crashed on.
         #expect(cfg.traceConfiguration.store == nil)
+        #expect(cfg.traceConfiguration.storePath == nil)
+        #expect(cfg.traceConfiguration.storeEndpoint == nil)
         #expect(cfg.traceConfiguration.retention == nil)
         #expect(cfg.traceConfiguration.hashChaining == nil)
         #expect(cfg.traceConfiguration.payloadLimit == nil)
@@ -1179,9 +1305,12 @@ struct MerConfigTraceTests {
         #expect(cfg.traceConfiguration.defaultMonitorCadence == nil)
         #expect(cfg.traceConfiguration.profile == nil)
         #expect(cfg.traceConfiguration.storeFailurePolicy == nil)
+        #expect(cfg.traceConfiguration.stateHistoryRetention == nil)
 
         #expect(engine.errors.contains { $0.message.contains("malformed trace setting") })
         #expect(engine.errors.contains { $0.message.contains("unknown trace store") })
+        #expect(engine.errors.contains { $0.message.contains("store path cannot be empty") })
+        #expect(engine.errors.contains { $0.message.contains("store endpoint cannot be empty") })
         #expect(engine.errors.contains { $0.message.contains("invalid trace retention") })
         #expect(engine.errors.contains { $0.message.contains("invalid hash chaining setting") })
         #expect(engine.errors.contains { $0.message.contains("invalid payload limit") })
@@ -1189,7 +1318,23 @@ struct MerConfigTraceTests {
         #expect(engine.errors.contains { $0.message.contains("invalid monitor cadence") })
         #expect(engine.errors.contains { $0.message.contains("unknown trace profile") })
         #expect(engine.errors.contains { $0.message.contains("unknown trace store failure policy") })
+        #expect(engine.errors.contains { $0.message.contains("invalid state history setting") })
         #expect(engine.errors.contains { $0.message.contains("unknown trace setting") })
+    }
+
+    @Test("store path, store endpoint, and state history parse when well-formed")
+    func storePathEndpointAndStateHistory() throws {
+        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        === trace ===
+        store: sqlite
+        store path: /tmp/traces.sqlite
+        store endpoint: https://traces.example/v1
+        state history: enabled
+        """, file: "trace.merconfig")
+        #expect(cfg.traceConfiguration.store?.value == .sqlite)
+        #expect(cfg.traceConfiguration.storePath?.value == "/tmp/traces.sqlite")
+        #expect(cfg.traceConfiguration.storeEndpoint?.value == "https://traces.example/v1")
+        #expect(cfg.traceConfiguration.stateHistoryRetention?.value == true)
     }
 
     @Test("a malformed trace setting throws when no batch diagnostics engine is supplied")
@@ -1263,5 +1408,83 @@ struct MerConfigTraceTests {
         """, file: "trace.merconfig")
         #expect(cfg.tools.first?.capturePolicy == .redacted([]))
         #expect(engine.errors.contains { $0.message.contains("must list fields") })
+    }
+}
+
+@Suite("MerConfigParser — tools section")
+struct MerConfigToolsSectionTests {
+    private func parse(_ src: String, diagnostics: DiagnosticEngine? = nil) throws -> MerConfigFile {
+        try MerConfigParser(trace: .silent(), diagnostics: diagnostics).parse(src, file: "t.merconfig")
+    }
+
+    @Test("tool with description lines and omitted capture parses")
+    func descriptionAndOmittedCapture() throws {
+        let cfg = try parse("""
+        === tools ===
+        Charge Payment
+        ==============
+        -- Charges the customer via the processor.
+        -- Returns a payment result.
+        ~ chargePayment(order: Order, amount: Money) : PaymentResult
+          capture: omitted
+        """)
+        #expect(cfg.tools.count == 1)
+        #expect(cfg.tools[0].methodName == "chargePayment")
+        #expect(cfg.tools[0].parameters.count == 2)
+        #expect(cfg.tools[0].returnType == "PaymentResult")
+        #expect(cfg.tools[0].capturePolicy == .omitted)
+    }
+
+    @Test("missing signature line reports a diagnostic")
+    func missingSignatureReports() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        _ = try parse("""
+        === tools ===
+        Orphan Tool
+        ===========
+        -- description only, no tilde signature
+        """, diagnostics: engine)
+        #expect(engine.errors.contains { $0.message.contains("missing a `~ methodName") })
+    }
+
+    @Test("signature without return-type colon defaults to Any")
+    func signatureDefaultsReturnTypeToAny() throws {
+        let cfg = try parse("""
+        === tools ===
+        Ping
+        ====
+        ~ ping()
+        """)
+        #expect(cfg.tools.first?.returnType == "Any")
+        #expect(cfg.tools.first?.methodName == "ping")
+        #expect(cfg.tools.first?.parameters.isEmpty == true)
+    }
+
+    @Test("signature without parentheses is malformed")
+    func signatureWithoutParensMalformed() throws {
+        let engine = DiagnosticEngine(trace: .silent())
+        _ = try parse("""
+        === tools ===
+        Broken
+        ======
+        ~ noParensHere : String
+        """, diagnostics: engine)
+        #expect(engine.errors.contains { $0.message.contains("malformed tool signature") })
+    }
+}
+
+@Suite("MerConfigParser — vocabulary helper early exits")
+struct MerConfigVocabularyHelperCoverageTests {
+    @Test("property-block / relation-backing / verb / inverse guards return nil")
+    func helperEarlyExits() {
+        let p = MerConfigParser(trace: .silent())
+        #expect(p.parsePropertyBlockHeader(" has:", line: 1) == nil)
+        #expect(p.parsePropertyBlockHeader(" has properties:", line: 1) == nil)
+
+        #expect(p.parseRelationBacking("Mentions something unrelated.", line: 1) == nil)
+        #expect(p.parseRelationBacking(" is read from the page's title.", line: 1) == nil)
+
+        #expect(p.parseVerb("A page is a kind of thing.", line: 1) == nil)
+        #expect(p.parseInverse("A page is a kind of thing.", line: 1) == nil)
     }
 }

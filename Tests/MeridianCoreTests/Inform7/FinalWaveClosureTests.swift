@@ -1,0 +1,87 @@
+import Foundation
+import Testing
+@testable import MeridianCore
+
+@Suite("Final Wave closure conformance")
+struct FinalWaveClosureTests {
+    @Test("SEM_3_01 commit lowers to checkpoint boundary without implicit rollback")
+    func sem301CommitRecoverHonesty() throws {
+        let out = try Compiler(options: .init(trace: .silent())).compile(
+            meridianSource: """
+            ---
+            vocabulary: t.merconfig
+            ---
+            To inspect a service:
+              commit.
+              invoke demo tool with value = 1.
+              recover from any:
+                complete with reason "handled".
+            """,
+            meridianFile: "commit.meridian",
+            merconfigSource: """
+            === vocabulary ===
+            A service is a kind of thing.
+
+            === tools ===
+            Demo Tool
+            =========
+            ~ demoTool(value: Number) : String
+            """,
+            merconfigFile: "t.merconfig"
+        )
+        #expect(out.contains("runtime.checkpoint"), Comment(rawValue: out))
+        #expect(out.contains("catch let _recoveredError"), Comment(rawValue: out))
+        #expect(!out.contains("rollback"), Comment(rawValue: "no automatic external rollback"))
+    }
+
+    @Test("D11 unless and if not round-trip with authored-form metadata")
+    func d11UnlessAndIfNotRoundTrip() throws {
+        let unlessSource = """
+        ---
+        vocabulary: test.merconfig
+        ---
+        To guard a page:
+          complete with reason "ok" unless the page's status equals "blocked".
+        """
+        let (_, unlessCanonical, _) = try VerbalizerTestSupport.canonicalRoundTrip(unlessSource)
+        #expect(unlessCanonical.contains("unless"), Comment(rawValue: unlessCanonical))
+        #expect(!unlessCanonical.contains("if not"), Comment(rawValue: "suffix unless must not rewrite to if not"))
+
+        let ifNotSource = """
+        ---
+        vocabulary: test.merconfig
+        ---
+        To guard a page:
+          if not the page's status equals "blocked",
+            complete with reason "ok".
+        """
+        let (_, ifNotCanonical, _) = try VerbalizerTestSupport.canonicalRoundTrip(ifNotSource)
+        #expect(ifNotCanonical.contains("if not"), Comment(rawValue: ifNotCanonical))
+        #expect(!ifNotCanonical.contains("unless"), Comment(rawValue: "branch if not must not rewrite to unless"))
+    }
+
+    @Test("FW_CONF final-wave matrix rows marked done reference existing evidence")
+    func fwConfMatrixEvidencePathsExist() throws {
+        let url = VerbalizerTestSupport.repositoryRoot()
+            .appendingPathComponent("docs/coverage/final-wave-requirements.json")
+        let data = try Data(contentsOf: url)
+        let rows = try JSONDecoder().decode([FinalWaveRequirementRow].self, from: data)
+        let repo = VerbalizerTestSupport.repositoryRoot()
+        var missing: [String] = []
+        for row in rows where row.status == "done" {
+            for testPath in row.tests where testPath.hasSuffix(".swift") {
+                let fileURL = repo.appendingPathComponent(testPath)
+                if !FileManager.default.fileExists(atPath: fileURL.path) {
+                    missing.append("\(row.id): missing \(testPath)")
+                }
+            }
+        }
+        #expect(missing.isEmpty, Comment(rawValue: missing.joined(separator: "\n")))
+    }
+}
+
+private struct FinalWaveRequirementRow: Decodable {
+    let id: String
+    let status: String
+    let tests: [String]
+}

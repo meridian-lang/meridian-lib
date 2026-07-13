@@ -97,10 +97,14 @@ tool-scope summary (`tool_count`), and the explicit scoped-tool-id list
 
 ## 4. Stores, Persistence, And Integrity
 
-Wave 8 ships two store implementations:
+Wave 8 ships four local/remote store implementations:
 
 - `InMemoryTraceStore` for tests, replay fixtures, and direct runtime use
 - `JSONLTraceStore` for append-only local persistence and audit trails
+- `SQLiteTraceStore` for durable indexed storage (storage schema v1/v2, N-1 reader)
+- `HTTPTraceStoreClient` for remote append/query over the HTTP trace protocol
+
+See `docs/24_TRACE_STORAGE.md` for wire formats, OTLP export, signing, and D12 witness capture.
 
 The shared `TraceStore` protocol is:
 

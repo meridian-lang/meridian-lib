@@ -29,12 +29,7 @@ struct VerbalizerRoundTripTests {
         for fixture in fixtures {
             do {
                 let source = try String(contentsOf: fixture.file, encoding: .utf8)
-                let (_, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-                    source,
-                    vocabularies: fixture.vocabularies,
-                    rulebooks: fixture.rulebooks,
-                    file: fixture.file.lastPathComponent
-                )
+                let (_, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
                 let reparsedCanonical = try Verbalizer(model: second).verbalize()
                 if reparsedCanonical != canonical {
                     failures.append("""
@@ -55,12 +50,7 @@ struct VerbalizerRoundTripTests {
 
     private func assertRoundTrip(_ fixture: VerbalizerTestSupport.Fixture) throws {
         let source = try String(contentsOf: fixture.file, encoding: .utf8)
-        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(
-            source,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks,
-            file: fixture.file.lastPathComponent
-        )
+        let (first, canonical, second) = try VerbalizerTestSupport.canonicalRoundTrip(fixture, source: source)
 
         VerbalizerTestSupport.assertNoUnresolved(first, context: fixture.displayPath)
         VerbalizerTestSupport.assertNoUnresolved(second, context: "\(fixture.displayPath) canonical")

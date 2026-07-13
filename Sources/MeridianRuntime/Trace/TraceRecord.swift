@@ -13,6 +13,7 @@ public enum TraceTag: String, Sendable, Codable, CaseIterable {
     case committed
     case recovered
     case violated
+    case stateSnapshot
 }
 
 public enum TraceOutcome: String, Sendable, Codable, CaseIterable {
@@ -36,6 +37,7 @@ public struct TraceSkillIdentity: Sendable, Codable, Equatable {
 public enum TraceScope: String, Sendable, Codable, Equatable {
     case currentRun
     case acrossAllRuns
+    case acrossSkills
 }
 
 public struct TraceWindow: Sendable, Equatable {
@@ -160,6 +162,8 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
     public let profile: TraceProfile
     public let storeFailurePolicy: TraceStoreFailurePolicy
     public let deploymentZone: String
+    public let crossSkillAllowList: [String]
+    public let stateHistoryRetention: Bool
 
     public init(
         retention: Duration = .seconds(60 * 60 * 24 * 30),
@@ -171,7 +175,9 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
         defaultMonitorCadence: Duration = .seconds(60),
         profile: TraceProfile = .development,
         storeFailurePolicy: TraceStoreFailurePolicy = .failClosed,
-        deploymentZone: String = "UTC"
+        deploymentZone: String = "UTC",
+        crossSkillAllowList: [String] = [],
+        stateHistoryRetention: Bool = false
     ) {
         self.retention = retention
         self.hashChaining = hashChaining
@@ -183,13 +189,16 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
         self.profile = profile
         self.storeFailurePolicy = storeFailurePolicy
         self.deploymentZone = deploymentZone
+        self.crossSkillAllowList = crossSkillAllowList
+        self.stateHistoryRetention = stateHistoryRetention
     }
 
     public static let `default` = TraceConfiguration()
 }
 
 public struct TraceRecord: Sendable, Equatable, Codable {
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
+    public static let supportedSchemaVersions = [1, 2]
 
     public let schemaVersion: Int
     public let id: String

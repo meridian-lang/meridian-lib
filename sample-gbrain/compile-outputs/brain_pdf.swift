@@ -589,7 +589,9 @@ public struct BrainPdfInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -741,7 +743,9 @@ public struct WhenMakepdfbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -772,7 +776,7 @@ public struct WhenMakepdfbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenMakepdfbrainFires/root/procedure/5fba8ce1a21f2cef3bf5bbcf7d381a2c7f4ef9c2865babd9b12470a5ad28a9c9") {
             // L1
-            try await runtime.wait(.event("makePdfBrain", matching: nil))
+            try await runtime.wait(.event("makePdfBrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenMakepdfbrainFires/root/procedure/5fba8ce1a21f2cef3bf5bbcf7d381a2c7f4ef9c2865babd9b12470a5ad28a9c9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenMakepdfbrainFires/root/procedure/ea3a2c85729168d7bcd76a50f339f3771551940994ef99b6dc26b72afc60d83d") {
@@ -814,7 +818,9 @@ public struct WhenBrainpdfFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -845,7 +851,7 @@ public struct WhenBrainpdfFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenBrainpdfFires/root/procedure/00c6b5a2485f4cb47ba452556cdf6655ef59f556e6209c24c7c61ca242e629cc") {
             // L1
-            try await runtime.wait(.event("brainPdf", matching: nil))
+            try await runtime.wait(.event("brainPdf", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenBrainpdfFires/root/procedure/00c6b5a2485f4cb47ba452556cdf6655ef59f556e6209c24c7c61ca242e629cc", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenBrainpdfFires/root/procedure/e6c725821f55af86030c0e60316d483863e3ef49ab50da5ba1cbfed9c7882175") {
@@ -887,7 +893,9 @@ public struct WhenConvertbrainpagepdfFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -918,7 +926,7 @@ public struct WhenConvertbrainpagepdfFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenConvertbrainpagepdfFires/root/procedure/50b66e01f46b5133ee9adf234954aac42ba9046379ca5c6e375cff554917d393") {
             // L1
-            try await runtime.wait(.event("convertBrainPagePdf", matching: nil))
+            try await runtime.wait(.event("convertBrainPagePdf", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenConvertbrainpagepdfFires/root/procedure/50b66e01f46b5133ee9adf234954aac42ba9046379ca5c6e375cff554917d393", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenConvertbrainpagepdfFires/root/procedure/65ca10ad1555060760b7f41acfd3f53523153b445680a4b05b03672df55cab30") {
@@ -960,7 +968,9 @@ public struct WhenPublishthispageaspdfFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -991,7 +1001,7 @@ public struct WhenPublishthispageaspdfFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPublishthispageaspdfFires/root/procedure/726337e9cb249f5e2b76b4725835a350677123e53da404fc4a014383c912b49b") {
             // L1
-            try await runtime.wait(.event("publishThisPageAsPdf", matching: nil))
+            try await runtime.wait(.event("publishThisPageAsPdf", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPublishthispageaspdfFires/root/procedure/726337e9cb249f5e2b76b4725835a350677123e53da404fc4a014383c912b49b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPublishthispageaspdfFires/root/procedure/51d5439f34f1c94e3d3bc3e59534193ef9af20f8410375eedc24031a73736f06") {
@@ -1033,7 +1043,9 @@ public struct WhenExportbrainpageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "brain-pdf",
@@ -1064,7 +1076,7 @@ public struct WhenExportbrainpageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenExportbrainpageFires/root/procedure/8c4cf6b13869f7b29a32e31140c10a6266c2791ab971302b4ec2f10583734115") {
             // L1
-            try await runtime.wait(.event("exportBrainPage", matching: nil))
+            try await runtime.wait(.event("exportBrainPage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenExportbrainpageFires/root/procedure/8c4cf6b13869f7b29a32e31140c10a6266c2791ab971302b4ec2f10583734115", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenExportbrainpageFires/root/procedure/5e630ee2fd9dbde7a40862435e35ffc48958ee63e274a974845045192cdebdc8") {

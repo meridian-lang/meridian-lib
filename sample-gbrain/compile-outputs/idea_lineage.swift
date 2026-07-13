@@ -591,7 +591,9 @@ public struct IdeaLineageInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -661,7 +663,9 @@ public struct WhenIdealineageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -692,7 +696,7 @@ public struct WhenIdealineageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenIdealineageFires/root/procedure/980ac9cb62642f5ef738bd5213c28e07ca93733e7a7ca5e15f8eb11fa98c8757") {
             // L1
-            try await runtime.wait(.event("ideaLineage", matching: nil))
+            try await runtime.wait(.event("ideaLineage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenIdealineageFires/root/procedure/980ac9cb62642f5ef738bd5213c28e07ca93733e7a7ca5e15f8eb11fa98c8757", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenIdealineageFires/root/procedure/0a18e614631e49a88ee5dbdc2157b8cbd416ae7e4b93a749cdef5d0ada12e0f5") {
@@ -734,7 +738,9 @@ public struct WhenTracelineagethisideaFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -765,7 +771,7 @@ public struct WhenTracelineagethisideaFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTracelineagethisideaFires/root/procedure/673a75270ef2ed2dfc12be34dbf9df96ae125f0119d9808a0ada1a644be87000") {
             // L1
-            try await runtime.wait(.event("traceLineageThisIdea", matching: nil))
+            try await runtime.wait(.event("traceLineageThisIdea", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTracelineagethisideaFires/root/procedure/673a75270ef2ed2dfc12be34dbf9df96ae125f0119d9808a0ada1a644be87000", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTracelineagethisideaFires/root/procedure/b3d5cfe50a31eec14a64c45dda6b677bf15d17fc35676b6955844f72082bb1e3") {
@@ -807,7 +813,9 @@ public struct WhenHowmythinkingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -838,7 +846,7 @@ public struct WhenHowmythinkingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHowmythinkingFires/root/procedure/b9c70f2a4163e8f4a2c2800fa8bc1241a51ad9a566d3a8e08c5bdb701746d99e") {
             // L1
-            try await runtime.wait(.event("howMyThinking", matching: nil))
+            try await runtime.wait(.event("howMyThinking", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHowmythinkingFires/root/procedure/b9c70f2a4163e8f4a2c2800fa8bc1241a51ad9a566d3a8e08c5bdb701746d99e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHowmythinkingFires/root/procedure/3c62a8fc6cefaa579f35dd1403c5a80333ffdb5435349582d2d570ee3b980b8d") {
@@ -880,7 +888,9 @@ public struct WhenHowhasmythinkingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -911,7 +921,7 @@ public struct WhenHowhasmythinkingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHowhasmythinkingFires/root/procedure/81ec876e96d09bf38fbee0b2b73f24c81f3745566218b40620ddd38730e944ed") {
             // L1
-            try await runtime.wait(.event("howHasMyThinking", matching: nil))
+            try await runtime.wait(.event("howHasMyThinking", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHowhasmythinkingFires/root/procedure/81ec876e96d09bf38fbee0b2b73f24c81f3745566218b40620ddd38730e944ed", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHowhasmythinkingFires/root/procedure/69fb47cefea199d04f4b3e1aba83d19be96ee8593ccc2539d5e33735ce21f3f9") {
@@ -953,7 +963,9 @@ public struct WhenCurrentversionthisideaFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -984,7 +996,7 @@ public struct WhenCurrentversionthisideaFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenCurrentversionthisideaFires/root/procedure/999c1e3e6d0cf7f81029d24f25be8ee7e56d5bb3eb4d7b06294e2c7ed2190e01") {
             // L1
-            try await runtime.wait(.event("currentVersionThisIdea", matching: nil))
+            try await runtime.wait(.event("currentVersionThisIdea", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenCurrentversionthisideaFires/root/procedure/999c1e3e6d0cf7f81029d24f25be8ee7e56d5bb3eb4d7b06294e2c7ed2190e01", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenCurrentversionthisideaFires/root/procedure/fc6132a8751451c5f61b0cd086d0bdc0955d3a24c339163b296b6fca88a43e4f") {
@@ -1026,7 +1038,9 @@ public struct WhenWhatismycurrentversionFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -1057,7 +1071,7 @@ public struct WhenWhatismycurrentversionFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWhatismycurrentversionFires/root/procedure/2e300cba6a593a7be5dc2548eba67099c444df83994d190e8072e3221b15696d") {
             // L1
-            try await runtime.wait(.event("whatIsMyCurrentVersion", matching: nil))
+            try await runtime.wait(.event("whatIsMyCurrentVersion", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWhatismycurrentversionFires/root/procedure/2e300cba6a593a7be5dc2548eba67099c444df83994d190e8072e3221b15696d", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWhatismycurrentversionFires/root/procedure/b77d00fbb53a4ea0d97fd24c318b227fe2303b1d62b17e73433f2d744d3e2c71") {
@@ -1099,7 +1113,9 @@ public struct WhenShowreversalsinmythinkingFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -1130,7 +1146,7 @@ public struct WhenShowreversalsinmythinkingFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenShowreversalsinmythinkingFires/root/procedure/737248147f45ebca28b4311ae104ffe293d4a0373b10436b000e2c4886fa63ce") {
             // L1
-            try await runtime.wait(.event("showReversalsInMyThinking", matching: nil))
+            try await runtime.wait(.event("showReversalsInMyThinking", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenShowreversalsinmythinkingFires/root/procedure/737248147f45ebca28b4311ae104ffe293d4a0373b10436b000e2c4886fa63ce", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenShowreversalsinmythinkingFires/root/procedure/490b0f2db6e81611612b3fb70b9d9c74488dd683753a24ea69091c30dffec6d1") {
@@ -1172,7 +1188,9 @@ public struct WhenWheredidthisideacomeFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "idea-lineage",
@@ -1203,7 +1221,7 @@ public struct WhenWheredidthisideacomeFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenWheredidthisideacomeFires/root/procedure/fdefb25805edab707ee119a6ba070221c6124660d87761a36701f9bd44238096") {
             // L1
-            try await runtime.wait(.event("whereDidThisIdeaCome", matching: nil))
+            try await runtime.wait(.event("whereDidThisIdeaCome", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenWheredidthisideacomeFires/root/procedure/fdefb25805edab707ee119a6ba070221c6124660d87761a36701f9bd44238096", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenWheredidthisideacomeFires/root/procedure/7138d60a4274fa38e7588cafb9ae1e189aaeb2670735b94a3219ccba8be4dade") {

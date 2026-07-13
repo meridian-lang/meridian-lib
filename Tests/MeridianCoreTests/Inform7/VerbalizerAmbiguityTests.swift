@@ -47,7 +47,8 @@ struct VerbalizerAmbiguityTests {
                     source,
                     vocabularies: fixture.vocabularies,
                     rulebooks: fixture.rulebooks,
-                    file: fixture.file.lastPathComponent
+                    file: fixture.file.lastPathComponent,
+                    moduleSearchPaths: fixture.moduleSearchPaths
                 )
                 VerbalizerTestSupport.assertNoUnresolved(reparsed, context: fixture.displayPath)
                 // Only flag IR placeholder tokens — prose may legitimately

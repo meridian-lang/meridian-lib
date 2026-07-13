@@ -351,7 +351,9 @@ public struct PipelineTriage: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
@@ -433,8 +435,10 @@ public struct PipelineTriage: MeridianWorkflow {
 
                         try await runtime.checkpoint(label: "/PipelineTriage/replay-routing-steps/procedure/branch.then/9489f758eb0b0168e4d82853b92659b3d9aa110a10adfc79f28c1de3159b279a", state: state.snapshot())
                     }
+                    try await runtime.recordBranchEnded(into: "then", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
                 } else {
                     try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldReplay\"), .boolean(true))", into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
+
                     // L44
                     let __meridianProseResults_L44 = try await runtime.executeProsePlan(
                         prose: "classify the pipeline run and recommend a remediation, preferring a replay over a full backfill when the failure looks transient",
@@ -446,6 +450,7 @@ public struct PipelineTriage: MeridianWorkflow {
                     for (__key, __value) in __meridianProseResults_L44 {
                         state.bind(__key, __value)
                     }
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
@@ -491,7 +496,9 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
@@ -523,7 +530,7 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/434dfb9bc7f996b37850d70b3f1e78d8568dfe1b42e1bf68d52a77a451dcda11") {
             // L1
-            try await runtime.wait(.event("triageFailedPipelines", matching: nil))
+            try await runtime.wait(.event("triageFailedPipelines", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTriagefailedpipelinesFires/root/procedure/434dfb9bc7f996b37850d70b3f1e78d8568dfe1b42e1bf68d52a77a451dcda11", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/d2121c0745108ad55ae909d3a64017f4ec004b10f4cf42df47613bd9a6de3a72") {
@@ -565,7 +572,9 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
@@ -597,7 +606,7 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/7e78ef437b98323403b5b5f4622183fe44072a486d68bd67dc71922124160046") {
             // L1
-            try await runtime.wait(.event("triagePipelineFailures", matching: nil))
+            try await runtime.wait(.event("triagePipelineFailures", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTriagepipelinefailuresFires/root/procedure/7e78ef437b98323403b5b5f4622183fe44072a486d68bd67dc71922124160046", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/f53e1f18a582d0d9c586a07e99a81c778130ab19bae541d55620e14b60f4698f") {
@@ -639,7 +648,9 @@ public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
@@ -671,7 +682,7 @@ public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/ed0996b82ca6811fb665d78a279930fb773ff7d1d50dc0cb1ee76ea3b899f123") {
             // L1
-            try await runtime.wait(.event("runPipelineTriagePass", matching: nil))
+            try await runtime.wait(.event("runPipelineTriagePass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpipelinetriagepassFires/root/procedure/ed0996b82ca6811fb665d78a279930fb773ff7d1d50dc0cb1ee76ea3b899f123", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/a963a269db76436c2136c3ac4ac9733dd1accc529ac4c8d7768a77bc8994fb72") {

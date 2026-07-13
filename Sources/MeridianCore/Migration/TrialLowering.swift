@@ -142,7 +142,7 @@ struct TrialLowering {
         let sp = StatementParser(symbols: knowledge.symbols, trace: .silent(), lexicon: knowledge.lexicon,
                                  rewriteEngine: knowledge.rewriteEngine, diagnostics: nil)
         do {
-            let block = try sp.parseBlock(lines, file: "<probe>")
+            let block = try sp.parseBlock(lines, sourceFile: "<probe>")
             guard !block.statements.isEmpty else { return .failure([]) }
             let lowerer = ASTToIR(symbols: knowledge.symbols, sourceFile: "<probe>", trace: .silent(),
                                   lexicon: knowledge.lexicon, fallbackPolicy: .strict, rulebook: knowledge.rulebook)

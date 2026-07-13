@@ -422,7 +422,9 @@ public struct VacuumTables: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
@@ -586,7 +588,9 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
@@ -618,7 +622,7 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48") {
             // L1
-            try await runtime.wait(.event("vacuumBloatedTables", matching: nil))
+            try await runtime.wait(.event("vacuumBloatedTables", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenVacuumbloatedtablesFires/root/procedure/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/80117d45da4366a7307ddf4dfbf787161b067f3335b1e12cb16bb2beaf0265e3") {
@@ -660,7 +664,9 @@ public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
@@ -692,7 +698,7 @@ public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246") {
             // L1
-            try await runtime.wait(.event("runTableMaintenance", matching: nil))
+            try await runtime.wait(.event("runTableMaintenance", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRuntablemaintenanceFires/root/procedure/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/f97e22ee059002750ae9af05281a2a44c1f10683e8b4773bec42f750c3892a4b") {

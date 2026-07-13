@@ -53,7 +53,9 @@ enum TraceIdentityPlanner {
             defaultMonitorCadence: ast.defaultMonitorCadence?.value ?? .seconds(60 * 60 * 24),
             profile: ast.profile?.value ?? .development,
             storeFailurePolicy: resolvedPolicy,
-            deploymentZone: ast.deploymentZone?.value ?? "UTC"
+            deploymentZone: ast.deploymentZone?.value ?? "UTC",
+            crossSkillAllowList: ast.crossSkillAllowList?.value ?? [],
+            stateHistoryRetention: ast.stateHistoryRetention?.value ?? false
         )
         let toolPolicies = config.tools.reduce(into: ast.toolCapturePolicies.mapValues(\.value)) { result, tool in
             if let capture = tool.capturePolicy {
@@ -64,7 +66,9 @@ enum TraceIdentityPlanner {
             store: ast.store?.value ?? .memory,
             trace: trace,
             skillIdentity: TraceSkillIdentity(name: skillName, versionHash: skillVersionHash),
-            toolCapturePolicies: toolPolicies
+            toolCapturePolicies: toolPolicies,
+            storePath: ast.storePath?.value,
+            storeEndpoint: ast.storeEndpoint.flatMap { URL(string: $0.value) }
         )
     }
 
@@ -94,7 +98,8 @@ enum TraceIdentityPlanner {
                 allowsDiscretion: workflow.allowsDiscretion,
                 skillName: runtimeTraceConfiguration.skillIdentity.name,
                 skillVersionHash: runtimeTraceConfiguration.skillIdentity.versionHash,
-                runtimeTraceConfiguration: runtimeTraceConfiguration
+                runtimeTraceConfiguration: runtimeTraceConfiguration,
+                norms: workflow.norms
             )
         }
     }
@@ -180,6 +185,9 @@ enum TraceIdentityPlanner {
                     )
                 },
                 elseBlock: elseBlock,
+                unknownPolicy: ir.unknownPolicy,
+                authoredForm: ir.authoredForm,
+                deonticGuard: ir.deonticGuard,
                 sourceRange: ir.sourceRange,
                 stableStepPath: stableStepPath
             ))
@@ -214,6 +222,8 @@ enum TraceIdentityPlanner {
                 monitored: ir.monitored,
                 cadence: ir.cadence,
                 blocking: ir.blocking,
+                obligationId: ir.obligationId,
+                violationDisposition: ir.violationDisposition,
                 sourceRange: ir.sourceRange,
                 stableStepPath: stableStepPath
             ))
@@ -590,11 +600,23 @@ enum TraceIdentityPlanner {
                 "pattern": expressionValue(.eventPattern(pattern)),
                 "count": .number(Decimal(count)),
             ])
-        case .sinceLast(let anchor, let holds, _):
-            return .record([
+        case .sinceLast(let anchor, let holds, let holdsPattern, let usesStateHistory):
+            var record: [String: Value] = [
                 "kind": .string("sinceLast"),
                 "anchor": expressionValue(.eventPattern(anchor)),
                 "holds": expressionValue(holds),
+                "holdsUsesStateHistory": .boolean(usesStateHistory),
+            ]
+            if let holdsPattern {
+                record["holdsPattern"] = expressionValue(.eventPattern(holdsPattern))
+            }
+            return .record(record)
+        case .boundedFutureMonitor(let condition, let horizon, let mode):
+            return .record([
+                "kind": .string("boundedFutureMonitor"),
+                "condition": expressionValue(condition),
+                "horizon": durationValue(horizon),
+                "mode": .string(mode == .eventuallyWithin ? "eventuallyWithin" : "alwaysFor"),
             ])
         }
     }
@@ -711,6 +733,12 @@ enum TraceIdentityPlanner {
             return .record(["kind": .string("dateTime"), "value": .string(ISO8601DateFormatter.meridianFormatter.string(from: dateTime))])
         case .enumValue(let value, let kind):
             return .record(["kind": .string("enumValue"), "value": .string(value), "enum_kind": .string(kind)])
+        case .calendarAmount(let amount):
+            return .record([
+                "kind": .string("calendarAmount"),
+                "magnitude": .number(Decimal(amount.magnitude)),
+                "unit": .string(amount.unit.rawValue),
+            ])
         }
     }
 

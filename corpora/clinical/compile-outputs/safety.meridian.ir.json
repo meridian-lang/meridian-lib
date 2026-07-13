@@ -1,0 +1,77 @@
+{
+  "entries" : [
+    {
+      "canonical" : "assert either not the medication order's allergy check equals \"conflict\" or dose count is at most 2.",
+      "meridian_line" : 16,
+      "primitive" : "assert",
+      "stable_step_path" : "\/LetNurseAdministerMedicationOrder\/root\/procedure\/6ada11df40e29d982668f2d70854a9ded5d0e1696bd29d436464040a00a583aa",
+      "swift_line" : 454
+    },
+    {
+      "canonical" : "assert either dose count is at most 2 or dose count is at most 2.",
+      "meridian_line" : 18,
+      "primitive" : "assert",
+      "stable_step_path" : "\/HaveAttendingApproveAdministration\/root\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+      "swift_line" : 542
+    },
+    {
+      "canonical" : "assert either dose count is at most 2 or dose count is at most 2.",
+      "meridian_line" : 18,
+      "primitive" : "assert",
+      "stable_step_path" : "\/LetNurseAdministerMedicationOrder\/root\/procedure\/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4",
+      "swift_line" : 542
+    },
+    {
+      "canonical" : "wait for approval of attending approve from attending.",
+      "meridian_line" : 20,
+      "primitive" : "wait",
+      "stable_step_path" : "\/HaveAttendingApproveAdministration\/root\/procedure\/bd97e454cbde92c38d41052871bc6fdf7ac1b1107024553aa1f2ee9d4f4ddd30",
+      "swift_line" : 537
+    },
+    {
+      "canonical" : "wait for approval of nurse administer from attending.",
+      "meridian_line" : 20,
+      "primitive" : "wait",
+      "stable_step_path" : "\/LetNurseAdministerMedicationOrder\/root\/procedure\/a33027f751586c3ffa21a30c2bf832e68ae53d7aa92078ab88409ce515d5d09f",
+      "swift_line" : 537
+    },
+    {
+      "canonical" : "wait for event patientIsFlaggedAsUnmonitored.",
+      "meridian_line" : 22,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPatientIs\/root\/procedure\/253c5050ee8bded3201066d03b065e4684b5cd3305851809cd1a4198c277430f",
+      "swift_line" : 699
+    },
+    {
+      "canonical" : "emit trigger.patientIsFlaggedAsUnmonitored.fired with action = \"escalate the patient\", condition = \"a patient is flagged as unmonitored\".",
+      "meridian_line" : 22,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenPatientIs\/root\/procedure\/a8e86a99b5998adf00d6691e1660b325d76056bad8625e87caa3a27f99f21506",
+      "swift_line" : 699
+    },
+    {
+      "canonical" : "invoke medication.administer with order = medication order.",
+      "meridian_line" : 27,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/LetNurseAdministerMedicationOrder\/root\/procedure\/e1975c1661aa20a7fe48c1d7092ba11a2e725cba45cf1364965b445645538d5a",
+      "swift_line" : 459
+    },
+    {
+      "canonical" : "invoke audit.log with order = medication order.",
+      "meridian_line" : 30,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/HaveAttendingApproveAdministration\/root\/procedure\/f5e68a8a4ae16e8e898828c7568e9e311da97a0631d9874cf2102b374563482f",
+      "swift_line" : 547
+    },
+    {
+      "canonical" : "invoke patient.escalate with patient = patient.",
+      "meridian_line" : 33,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/EscalateUnmonitoredPatient\/root\/procedure\/71b4d558b61285c93dd0168c5bc5bcbe2f808ee109f93a0ed3b3f2514ad6acae",
+      "swift_line" : 622
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "safety.meridian",
+  "swift_file" : "safety.swift"
+}

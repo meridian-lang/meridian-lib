@@ -592,7 +592,9 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -648,6 +650,7 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
             // L129
             await runtime.complete(reason: nil, step: "/SkillpackHarvestInput/preconditions-steps/applicability/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
+            try await runtime.recordBranchEnded(into: "then", step: "/SkillpackHarvestInput/preconditions-steps/applicability/42408dd237297bcd426d5eb08cf5804fc560d1039a92faf02d8215fe5a02bdc5")
         }
 
         if __meridianShouldRun("/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/404352ea2c18277050837b214607e0334c0d8c5f3e39dd07a5fa728acf7fa1cf") {
@@ -731,7 +734,9 @@ public struct WhenHarvestthisskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -762,7 +767,7 @@ public struct WhenHarvestthisskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/6d51d575b70c2e965c95b54562d19846b70ed412a9e6ede298f0238f369f1f2c") {
             // L1
-            try await runtime.wait(.event("harvestThisSkill", matching: nil))
+            try await runtime.wait(.event("harvestThisSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHarvestthisskillFires/root/procedure/6d51d575b70c2e965c95b54562d19846b70ed412a9e6ede298f0238f369f1f2c", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/79539538224b189141220b1f09169ba47bb7235326bc90bcc8e4cd49aa189fc3") {
@@ -804,7 +809,9 @@ public struct WhenHarvestmyskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -835,7 +842,7 @@ public struct WhenHarvestmyskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/3d0ff4ba22fd90c220c61f90423d8576d9aa1d652e4da91aaeef904c8ca87417") {
             // L1
-            try await runtime.wait(.event("harvestMySkill", matching: nil))
+            try await runtime.wait(.event("harvestMySkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenHarvestmyskillFires/root/procedure/3d0ff4ba22fd90c220c61f90423d8576d9aa1d652e4da91aaeef904c8ca87417", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/bdd868af85a4b111617e753eb14ced1f4c05d2fdf89dac99c51816462913dc03") {
@@ -877,7 +884,9 @@ public struct WhenPublishthisskillgbrainFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -908,7 +917,7 @@ public struct WhenPublishthisskillgbrainFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/453f537b6a267cf6783f93067a12d88ece7dc0dc70b99fb4739dcbd768000d44") {
             // L1
-            try await runtime.wait(.event("publishThisSkillGbrain", matching: nil))
+            try await runtime.wait(.event("publishThisSkillGbrain", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPublishthisskillgbrainFires/root/procedure/453f537b6a267cf6783f93067a12d88ece7dc0dc70b99fb4739dcbd768000d44", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/97daa6fd8f015c84406d44a1728537477072fb7fd6d6e2724f74a1ca5b748802") {
@@ -950,7 +959,9 @@ public struct WhenLiftthisskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -981,7 +992,7 @@ public struct WhenLiftthisskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/5f4338015eb02e53d07bd4803d375c5990c41f147bf19b96f23db2d63032ad9f") {
             // L1
-            try await runtime.wait(.event("liftThisSkill", matching: nil))
+            try await runtime.wait(.event("liftThisSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenLiftthisskillFires/root/procedure/5f4338015eb02e53d07bd4803d375c5990c41f147bf19b96f23db2d63032ad9f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/e71c77f3fb240b935a0965c3daedd2356f93920f72b6fe7cbde057320af07eb6") {
@@ -1023,7 +1034,9 @@ public struct WhenSharethisskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1054,7 +1067,7 @@ public struct WhenSharethisskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/527b17190a8c926953a7a2e17ceed355c48642ff97d724c345a473c85636aa14") {
             // L1
-            try await runtime.wait(.event("shareThisSkill", matching: nil))
+            try await runtime.wait(.event("shareThisSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSharethisskillFires/root/procedure/527b17190a8c926953a7a2e17ceed355c48642ff97d724c345a473c85636aa14", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/cbafc55f35c130348e3930dbd651098f8ea8c69a00bd4c076f7c81482db92e88") {
@@ -1096,7 +1109,9 @@ public struct WhenPromotethisskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1127,7 +1142,7 @@ public struct WhenPromotethisskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/33cc994566ecf6fafe110639863c897832a8346b7d2446bbffe3379af605008e") {
             // L1
-            try await runtime.wait(.event("promoteThisSkill", matching: nil))
+            try await runtime.wait(.event("promoteThisSkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPromotethisskillFires/root/procedure/33cc994566ecf6fafe110639863c897832a8346b7d2446bbffe3379af605008e", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/f60e072d07279914bd4c52fa91c1f2be747f3354cea28fc2bb85f7baa5be46a1") {
@@ -1169,7 +1184,9 @@ public struct WhenPromotemyskillFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1200,7 +1217,7 @@ public struct WhenPromotemyskillFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/38a84bd5ae84dccb2f5390600dff804ac6687299885be212402ceb38c1a863e9") {
             // L1
-            try await runtime.wait(.event("promoteMySkill", matching: nil))
+            try await runtime.wait(.event("promoteMySkill", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenPromotemyskillFires/root/procedure/38a84bd5ae84dccb2f5390600dff804ac6687299885be212402ceb38c1a863e9", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/810afed61d9495ba02d7bc32b6daf7b9ee3789c252d58644ae6922eeaead8d7d") {
@@ -1242,7 +1259,9 @@ public struct WhenSkillupstreamFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1273,7 +1292,7 @@ public struct WhenSkillupstreamFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/7348b6f7045b600bd83e8cfd3287536fd4e23a1295fef1a5614c235df8e2d4a0") {
             // L1
-            try await runtime.wait(.event("skillUpstream", matching: nil))
+            try await runtime.wait(.event("skillUpstream", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenSkillupstreamFires/root/procedure/7348b6f7045b600bd83e8cfd3287536fd4e23a1295fef1a5614c235df8e2d4a0", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/927fc57900ca325980953d4e6f74372f1edef4f5420e586a8f331f320f5d121a") {
@@ -1315,7 +1334,9 @@ public struct WhenGbraincoreFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1346,7 +1367,7 @@ public struct WhenGbraincoreFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/2d0ed4a9bb33dfc72609df492304381c80e38bc901d7afee7239476bff393b34") {
             // L1
-            try await runtime.wait(.event("gbrainCore", matching: nil))
+            try await runtime.wait(.event("gbrainCore", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbraincoreFires/root/procedure/2d0ed4a9bb33dfc72609df492304381c80e38bc901d7afee7239476bff393b34", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/f1ca0d4f7b47929b69127290c7f8e0600cf1f6556d1d658a556a074f8b4d7a87") {
@@ -1388,7 +1409,9 @@ public struct WhenGbrainbundleFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "skillpack-harvest",
@@ -1419,7 +1442,7 @@ public struct WhenGbrainbundleFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/2007f69b2fd0c1f01f7cec6929ef579b27a1a6a66eff7551e35786bc25774b3f") {
             // L1
-            try await runtime.wait(.event("gbrainBundle", matching: nil))
+            try await runtime.wait(.event("gbrainBundle", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenGbrainbundleFires/root/procedure/2007f69b2fd0c1f01f7cec6929ef579b27a1a6a66eff7551e35786bc25774b3f", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/3b28a60eec9e161c136c75422f0d2786614d85dd269e9692bc3b5b53d5b64d09") {

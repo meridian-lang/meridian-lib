@@ -36,7 +36,8 @@ struct TraceTemporalEmitterTests {
             kind: .sinceLast(
                 anchor: EventPatternIR(subject: .step("deploy"), outcome: .succeeded),
                 holds: .eventPattern(EventPatternIR(subject: .step("deploy"), outcome: .succeeded)),
-                holdsPattern: EventPatternIR(subject: .step("deploy"), outcome: .succeeded)
+                holdsPattern: EventPatternIR(subject: .step("deploy"), outcome: .succeeded),
+                holdsUsesStateHistory: false
             )
         )
         let workflow = IRWorkflow(

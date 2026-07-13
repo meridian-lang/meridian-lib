@@ -110,14 +110,25 @@ struct CorporaTypecheckSlowTests {
     }
 
     private func compileAll() throws -> [(name: String, swift: String)] {
-        try Self.corpora().flatMap { corpus in
-            try corpus.files.map { file in
+        let packageRoot = SwiftTypecheckSupport.packageRoot(from: #file)
+        return try Self.corpora().flatMap { corpus in
+            var moduleSearchPaths: [URL] = []
+            if corpus.name == "governance" {
+                moduleSearchPaths = [
+                    packageRoot
+                        .appendingPathComponent("corpora")
+                        .appendingPathComponent(corpus.name)
+                        .appendingPathComponent("modules")
+                ]
+            }
+            return try corpus.files.map { file in
                 let source = try String(contentsOf: file, encoding: .utf8)
                 let opts = Compiler.Options(
                     emitterOptions: SwiftEmitter.Options(
                         namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(
                             file.deletingPathExtension().lastPathComponent)),
-                    trace: .silent()
+                    trace: .silent(),
+                    moduleSearchPaths: moduleSearchPaths
                 )
                 let swift = try Compiler(options: opts).compile(
                     meridianSource: source,

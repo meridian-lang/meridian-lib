@@ -351,7 +351,9 @@ public struct ExtractLoad: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
@@ -507,7 +509,9 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
@@ -539,7 +543,7 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/798a99e2009f5a0944f9745aa59f74142f296fd1de68aa5b1c6ec905557b91fa") {
             // L1
-            try await runtime.wait(.event("runExtractLoad", matching: nil))
+            try await runtime.wait(.event("runExtractLoad", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunextractloadFires/root/procedure/798a99e2009f5a0944f9745aa59f74142f296fd1de68aa5b1c6ec905557b91fa", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/7c7545a3f5448662ff30e23e18d473fc6c7a056f405ea128ef540d387512f55f") {
@@ -581,7 +585,9 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
@@ -613,7 +619,7 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/c9dcafda8706f4849e329905596efb6678c41044b9434c301356f961da3b0ec4") {
             // L1
-            try await runtime.wait(.event("extractAndLoadDatasets", matching: nil))
+            try await runtime.wait(.event("extractAndLoadDatasets", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenExtractandloaddatasetsFires/root/procedure/c9dcafda8706f4849e329905596efb6678c41044b9434c301356f961da3b0ec4", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/29b33e6a91c345f04c812bfc87a30b733c63dd01a2a21c3c0cc987e108dd0144") {
@@ -655,7 +661,9 @@ public struct WhenRunextractloadpassFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(86400),
             profile: .development,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
@@ -687,7 +695,7 @@ public struct WhenRunextractloadpassFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/425355ef9892abd7d8c8a7fa1340857aa92d48f7e0f0c2b242ab82903438b962") {
             // L1
-            try await runtime.wait(.event("runExtractLoadPass", matching: nil))
+            try await runtime.wait(.event("runExtractLoadPass", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunextractloadpassFires/root/procedure/425355ef9892abd7d8c8a7fa1340857aa92d48f7e0f0c2b242ab82903438b962", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/fbf466a7455483627187c97a6bdb852abc8edff8ca816d248a4876bd65acec1a") {

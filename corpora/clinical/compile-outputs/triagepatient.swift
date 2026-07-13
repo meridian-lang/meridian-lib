@@ -405,7 +405,9 @@ public struct TriagePatientPatient: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage patient",
@@ -479,6 +481,7 @@ public struct TriagePatientPatient: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/3338ed164c43cdfbe0ddfd6f77a704b8604992bc2cc8eaa7ebf0838d11b8c298")
         }
 
         // L35
@@ -509,10 +512,11 @@ public struct TriagePatientPatient: MeridianWorkflow {
             }
             if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394") {
                 // L37
-                try await runtime.wait(.choice(prompt: "ask the user to choose between \"admit\", \"observe\", \"discharge\"", options: ["admit", "observe", "discharge"]))
+                try await runtime.wait(.choice(prompt: "ask the user to choose between \"admit\", \"observe\", \"discharge\"", options: ["admit", "observe", "discharge"]), sourceRange: nil)
                 state.bind("choice", .string(await runtime.consumeChoiceSelection()))
                 try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394", state: state.snapshot())
             }
+            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/59e53558c7ea84daf93361c86a19bdd003c114d7ce06601adb40e47e2dcf9478")
         }
 
         if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122") {
@@ -553,7 +557,9 @@ public struct WhenTriagepatientFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage patient",
@@ -585,7 +591,7 @@ public struct WhenTriagepatientFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b") {
             // L1
-            try await runtime.wait(.event("triagePatient", matching: nil))
+            try await runtime.wait(.event("triagePatient", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenTriagepatientFires/root/procedure/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e") {
@@ -627,7 +633,9 @@ public struct WhenRunpatienttriageFires: MeridianWorkflow {
             defaultMonitorCadence: .seconds(14400),
             profile: .production,
             storeFailurePolicy: .failClosed,
-            deploymentZone: "UTC"
+            deploymentZone: "UTC",
+            crossSkillAllowList: [],
+            stateHistoryRetention: false
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage patient",
@@ -659,7 +667,7 @@ public struct WhenRunpatienttriageFires: MeridianWorkflow {
 
         if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1") {
             // L1
-            try await runtime.wait(.event("runPatientTriage", matching: nil))
+            try await runtime.wait(.event("runPatientTriage", matching: nil), sourceRange: nil)
             try await runtime.checkpoint(label: "/WhenRunpatienttriageFires/root/procedure/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1", state: state.snapshot())
         }
         if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b") {

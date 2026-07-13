@@ -1,0 +1,245 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event containerRestartCheck.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenContainerrestartcheckFires\/root\/procedure\/ad16b7bc48e42dc150effc1f5b9b8a1d01f848af76c62f0b138a0ea7e12ff172",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.containerRestartCheck.fired with kind = \"keyword\", spec = \"container restart check\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenContainerrestartcheckFires\/root\/procedure\/d1e5b9e7ede68c61816279f3c1e065745b2926656e98452c7680de33ad6dd336",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "wait for event didContainerRestartBreakAnything.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDidcontainerrestartbreakanythingFires\/root\/procedure\/c11f6b4e234fba9c9d04e5ffb235f104559066d09d9bd157dce4fd7ec79c8807",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.didContainerRestartBreakAnything.fired with kind = \"keyword\", spec = \"did the container restart break anything\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDidcontainerrestartbreakanythingFires\/root\/procedure\/cebbb27064c132a3ef7d862ee034442eb039f064a16fba6e9bab746527d41712",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.didRestartBreakAnything.fired with kind = \"keyword\", spec = \"did the restart break anything\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenDidrestartbreakanythingFires\/root\/procedure\/6a35de64a6db2edbb8dd5a4cede09e6291afe549a2d9936d546099230457d467",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "wait for event didRestartBreakAnything.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenDidrestartbreakanythingFires\/root\/procedure\/e6efaa0a0473c6d6e8691457eee608f711f133fba50696340a0e5b4d212db4bf",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.healthCheck.fired with kind = \"keyword\", spec = \"health check\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenHealthcheckFires\/root\/procedure\/8718025f0f37238b5812637dda9e12a55c04dff2b34d8ca53fcd92b046dbe397",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "wait for event healthCheck.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenHealthcheckFires\/root\/procedure\/bd863341395969c4de5867d2bfbcf78e7faebc826cf9932e40b49af00c72bcd4",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "wait for event runSmokeTests.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunsmoketestsFires\/root\/procedure\/1050a8b23892de85f0e95164f75ea0c4b78fc3c00338a3f91f743daeaddb4da9",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.runSmokeTests.fired with kind = \"keyword\", spec = \"run smoke tests\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunsmoketestsFires\/root\/procedure\/e3bdff15169e80bb53af5cca45e89f5c8adc41cb0ce5a11d2eb11fb5e6a1d4bc",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "emit trigger.smokeTest.fired with kind = \"keyword\", spec = \"smoke test\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSmoketestFires\/root\/procedure\/240944c5d0098e447d8bfca55544ee75038bb7a5a2c0d89dd86e9c6ed2fc1877",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "wait for event smokeTest.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSmoketestFires\/root\/procedure\/b27bbd8aae844a49f6eb9feaa63e2fdff11fd7acb163c093040eff600c835c3b",
+      "swift_line" : 1358
+    },
+    {
+      "canonical" : "`gbrain smoke-test`.",
+      "meridian_line" : 52,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/cli\/procedure\/dc1436f2d63e8dac32cb7bd45c78f571290d9856f6f499ecc222dc49a8ee5ef3",
+      "swift_line" : 627
+    },
+    {
+      "canonical" : "`bash scripts\/smoke-test.sh`.",
+      "meridian_line" : 57,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/direct\/procedure\/0f2b46f93b77d6866e2c20c67ab91a03e644285c15acdf3a447234d823848b43",
+      "swift_line" : 640
+    },
+    {
+      "canonical" : "`ensure-services.sh` -- Add to your  or equivalent.",
+      "meridian_line" : 62,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/from-openclaw-bootstrap\/procedure\/9b293e9e883689b9bc4d048bc2402f060f23b767e2bc25e4f1b9935e4452eea8",
+      "swift_line" : 653
+    },
+    {
+      "canonical" : "`bash \/path\/to\/gbrain\/scripts\/smoke-test.sh >> \/tmp\/bootstrap.log 2>&1`.",
+      "meridian_line" : 63,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/from-openclaw-bootstrap\/procedure\/3c9b34f38e33533bd5234d0937d5ade983a19c3292de9183f26958686a0a5a6a",
+      "swift_line" : 667
+    },
+    {
+      "canonical" : "`~\/.gbrain\/smoke-tests.d\/` -- Create executable scripts in.",
+      "meridian_line" : 83,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-custom-tests-steps\/procedure\/a0f796b7d38a1bbbdfaf22855ae31c56751c6d9ac490112e9c614affba168bbc",
+      "swift_line" : 680
+    },
+    {
+      "canonical" : "`redis-cli ping | grep -q PONG`.",
+      "meridian_line" : 85,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-custom-tests-steps\/procedure\/ae6f269cb5e883652db2d8ba52054eceac938f121a0e9d80d016ebe548ee6522",
+      "swift_line" : 694
+    },
+    {
+      "canonical" : "`scripts\/smoke-test.sh` -- Edit . Follow this pattern.",
+      "meridian_line" : 93,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/e99da60de730b6657567f6181e706df2b0edf542242dfcc9764944d83b1887d7",
+      "swift_line" : 707
+    },
+    {
+      "canonical" : "`else`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`else`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669~2",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`fixed \"[What was fixed]\"`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/74e1f2891e14d64d7d3ab9e2445d9887bd6a951dfcb50075f6cee026acd47eb2",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`pass \"[Service Name] (after fix)\"`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/8754d9b534d2e4155eba4745c5e7d8855313c81ed6ce11f795278eacd3a7b42a",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`if [re-test condition]; then`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/9eceb479c65e71e9b07dfc27a34dce2cfeca0c2f5a2ab7695ff5a3f89f7a5c36",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`pass \"[Service Name]\"`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/a1c4004bc5bd40a8d934d3c052bb71fcf058bf1fa181a6bcc81d98b6a9a68f8b",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`if [test condition]; then`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/b24ee19ccb2a7ff567f5e891e71915ba36e754b200548da1122649867a176686",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`fi`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`fi`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`fail \"[Service Name] — [error detail]\"`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/cf732deda7a336dd01b6648f4084b06736e83885388d4aa28bf9ab5d26a515c2",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`[fix command]`.",
+      "meridian_line" : 95,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/adding-built-in-tests\/procedure\/ee03698d2cbad2a7a33d38fc28c9f5d1d294fa93c05eab9729580a4ca90009ba",
+      "swift_line" : 851
+    },
+    {
+      "canonical" : "`timeout N` -- Timeout everything —  on any command that could hang.",
+      "meridian_line" : 124,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/design-rules-steps-2\/procedure\/390e72d50d1f38fa62fb3d805f9181230ce02f94d7a675815ba78bcb42665991",
+      "swift_line" : 864
+    },
+    {
+      "canonical" : "`Cannot find module '.\/core.cjs'` -- Symptom:  → all Codex ACP sessions fail.",
+      "meridian_line" : 145,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/codex-zod-core-cjs-missing-discovered-2026-04-23-steps\/procedure\/be30bb2a75d446aac5ef235ad0a463d2e7cb10fa62f2c95d993e88fc7b053b83",
+      "swift_line" : 878
+    },
+    {
+      "canonical" : "`core.cjs` -- Cause: Zod v4 npm package ships without  in some installs.",
+      "meridian_line" : 146,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/codex-zod-core-cjs-missing-discovered-2026-04-23-steps\/procedure\/0c8947f0396b23cbd307d9c3655ee0d9db0cfc02a92623f482dd1bf9a53205f7",
+      "swift_line" : 892
+    },
+    {
+      "canonical" : "`npm install zod@4 --force` -- Auto-fix:  in the codex extension's zod dir.",
+      "meridian_line" : 147,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SmokeTestInput\/codex-zod-core-cjs-missing-discovered-2026-04-23-steps\/procedure\/72cf25380f4e2aae6fd367f3decae4378ca69bcbf97925d10949cd281573e7a5",
+      "swift_line" : 906
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "smoke_test.meri",
+  "swift_file" : "smoke_test.swift"
+}

@@ -1,5 +1,30 @@
 import Foundation
 
+/// A static argument constraint for planner-time permission checks (`only where …`).
+public struct ToolArgumentConstraint: Sendable {
+    public let path: String
+    public let expected: Value
+
+    public init(path: String, expected: Value) {
+        self.path = path
+        self.expected = expected
+    }
+}
+
+/// A tool permission pattern registered for planner validation. When patterns
+/// exist for a tool, proposed actions must satisfy at least one pattern's
+/// static argument constraints. Tools with no registered patterns keep the
+/// legacy bare `scopedTools` membership check only.
+public struct ToolPermissionPattern: Sendable {
+    public let toolID: String
+    public let argumentConstraints: [ToolArgumentConstraint]
+
+    public init(toolID: String, argumentConstraints: [ToolArgumentConstraint] = []) {
+        self.toolID = toolID
+        self.argumentConstraints = argumentConstraints
+    }
+}
+
 /// Contextual snapshot passed to a permission predicate when evaluating
 /// whether a subject is allowed to perform an action.
 public struct PermissionScope: Sendable {

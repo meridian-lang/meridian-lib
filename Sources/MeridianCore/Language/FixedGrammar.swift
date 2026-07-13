@@ -11,9 +11,16 @@ public struct FixedStatementKeywords: Sendable {
     public let commit: String
     public let commitWithLabelPrefix: String
     public let waitPrefix: String
+    public let waitTimeoutMarker: String
+    public let waitRecoverOnTimeoutMarker: String
     public let emitPrefix: String
     public let ifPrefix: String
+    /// Block/suffix conditional introducer (`unless <condition>:`). D11.
+    public let unlessPrefix: String
     public let unknownWhetherPrefix: String
+    public let treatingUnknownAsMarker: String
+    public let unknownAsTrueKeyword: String
+    public let unknownAsFalseKeyword: String
     /// Fixed control-flow introducer for `BranchCondition.match` surfaces
     /// (`branch on <expr>:`). Kept in FixedGrammar (not the lexicon) because it
     /// is structural syntax, not domain-synonymisable vocabulary.
@@ -50,9 +57,15 @@ public struct FixedStatementKeywords: Sendable {
         commit: String = "commit",
         commitWithLabelPrefix: String = "commit with label ",
         waitPrefix: String = "wait ",
+        waitTimeoutMarker: String = " with timeout ",
+        waitRecoverOnTimeoutMarker: String = " recovering on timeout",
         emitPrefix: String = "emit ",
         ifPrefix: String = "if ",
+        unlessPrefix: String = "unless ",
         unknownWhetherPrefix: String = "if it is unknown whether ",
+        treatingUnknownAsMarker: String = " treating unknown as ",
+        unknownAsTrueKeyword: String = "true",
+        unknownAsFalseKeyword: String = "false",
         branchOnPrefix: String = "branch on ",
         matchBranchWildcardLabels: Set<String> = ["anything", "_"],
         matchBranchCanonicalWildcard: String = "anything",
@@ -80,9 +93,15 @@ public struct FixedStatementKeywords: Sendable {
         self.commit = commit
         self.commitWithLabelPrefix = commitWithLabelPrefix
         self.waitPrefix = waitPrefix
+        self.waitTimeoutMarker = waitTimeoutMarker
+        self.waitRecoverOnTimeoutMarker = waitRecoverOnTimeoutMarker
         self.emitPrefix = emitPrefix
         self.ifPrefix = ifPrefix
+        self.unlessPrefix = unlessPrefix
         self.unknownWhetherPrefix = unknownWhetherPrefix
+        self.treatingUnknownAsMarker = treatingUnknownAsMarker
+        self.unknownAsTrueKeyword = unknownAsTrueKeyword
+        self.unknownAsFalseKeyword = unknownAsFalseKeyword
         self.branchOnPrefix = branchOnPrefix
         self.matchBranchWildcardLabels = matchBranchWildcardLabels
         self.matchBranchCanonicalWildcard = matchBranchCanonicalWildcard
@@ -103,7 +122,7 @@ public struct FixedStatementKeywords: Sendable {
 
     public var primitivePrefixes: [String] {
         [
-            emitPrefix, bindPrefix, rebindPrefix, invokePrefix, ifPrefix, branchOnPrefix,
+            emitPrefix, bindPrefix, rebindPrefix, invokePrefix, ifPrefix, unlessPrefix, branchOnPrefix,
             whilePrefix, untilPrefix, waitPrefix, recoverPrefix, complete,
             commit, letPrefix, forEachPrefix, forEveryPrefix, simultaneouslyHeader,
         ]
@@ -188,6 +207,14 @@ public struct FixedRuleMarkers: Sendable {
     public let whoseMarker: String
     public let commaSeparator: String
     public let possessiveOfMarker: String
+    public let mustHoldMarker: String
+    public let blockingCommaSuffix: String
+    public let blockingSpaceSuffix: String
+    public let onlyWhereMarker: String
+    public let invokeActionHead: String
+    public let withinScopePrefix: String
+    public let nonNormModalMarkers: [String]
+    public let outcomeAsActionPhrases: [String]
 
     public init(
         whenPrefix: String = "when ",
@@ -198,7 +225,15 @@ public struct FixedRuleMarkers: Sendable {
         beforeMarker: String = " before ",
         whoseMarker: String = " whose ",
         commaSeparator: String = ", ",
-        possessiveOfMarker: String = " of "
+        possessiveOfMarker: String = " of ",
+        mustHoldMarker: String = " must hold",
+        blockingCommaSuffix: String = ", blocking",
+        blockingSpaceSuffix: String = " blocking",
+        onlyWhereMarker: String = " only where ",
+        invokeActionHead: String = "invoke ",
+        withinScopePrefix: String = "within ",
+        nonNormModalMarkers: [String] = [" should ", " ought to ", " probably must "],
+        outcomeAsActionPhrases: [String] = ["must not fail", "must not succeed"]
     ) {
         self.whenPrefix = whenPrefix
         self.mustBeMarker = mustBeMarker
@@ -209,6 +244,18 @@ public struct FixedRuleMarkers: Sendable {
         self.whoseMarker = whoseMarker
         self.commaSeparator = commaSeparator
         self.possessiveOfMarker = possessiveOfMarker
+        self.mustHoldMarker = mustHoldMarker
+        self.blockingCommaSuffix = blockingCommaSuffix
+        self.blockingSpaceSuffix = blockingSpaceSuffix
+        self.onlyWhereMarker = onlyWhereMarker
+        self.invokeActionHead = invokeActionHead
+        self.withinScopePrefix = withinScopePrefix
+        self.nonNormModalMarkers = nonNormModalMarkers
+        self.outcomeAsActionPhrases = outcomeAsActionPhrases
+    }
+
+    public var blockingSuffixes: [String] {
+        [blockingCommaSuffix, blockingSpaceSuffix]
     }
 }
 
@@ -379,6 +426,8 @@ public struct FixedChoiceBranchLabels: Sendable {
 public struct FixedIterationMarkers: Sendable {
     public let whoseMarker: String
     public let firstPrefix: String
+  /// Take-suffix marker (`the last 3 pages`) — not a temporal window.
+    public let lastTakePrefix: String
     public let collectionInMarker: String
     public let chainCommaAndMarker: String
     public let chainAndMarker: String
@@ -390,6 +439,7 @@ public struct FixedIterationMarkers: Sendable {
     public init(
         whoseMarker: String = " whose ",
         firstPrefix: String = "first ",
+        lastTakePrefix: String = "last ",
         collectionInMarker: String = " in ",
         chainCommaAndMarker: String = ", and ",
         chainAndMarker: String = " and ",
@@ -400,6 +450,7 @@ public struct FixedIterationMarkers: Sendable {
     ) {
         self.whoseMarker = whoseMarker
         self.firstPrefix = firstPrefix
+        self.lastTakePrefix = lastTakePrefix
         self.collectionInMarker = collectionInMarker
         self.chainCommaAndMarker = chainCommaAndMarker
         self.chainAndMarker = chainAndMarker
@@ -779,6 +830,16 @@ public final class FixedGrammar: Sendable {
     public let waitMatchingMarker: String
 
     public let traceAcrossAllRunsMarker: String
+    public let traceAcrossSkillsMarker: String
+    public let traceStatisticalWithConfidenceMarker: String
+    public let traceEventuallyWithinMarker: String
+    public let traceAlwaysForMarker: String
+    public let calendarBusinessDayUnit: String
+    public let calendarBusinessDaysUnit: String
+    public let calendarDayUnit: String
+    public let calendarDaysUnit: String
+    public let calendarMonthUnit: String
+    public let calendarMonthsUnit: String
     public let traceHasEverMarker: String
     /// Ever aliases (cookbook 18.1): `has previously failed` / `has failed
     /// before`. `traceHasEverAliasMarkers` splits subject/outcome the same way
@@ -964,6 +1025,16 @@ public final class FixedGrammar: Sendable {
         waitEventIntroducer: String = "for event ",
         waitMatchingMarker: String = " matching ",
         traceAcrossAllRunsMarker: String = "across all runs, ",
+        traceAcrossSkillsMarker: String = "across skills ",
+        traceStatisticalWithConfidenceMarker: String = " with ",
+        traceEventuallyWithinMarker: String = "eventually within ",
+        traceAlwaysForMarker: String = "always for ",
+        calendarBusinessDayUnit: String = "business day",
+        calendarBusinessDaysUnit: String = "business days",
+        calendarDayUnit: String = "calendar day",
+        calendarDaysUnit: String = "calendar days",
+        calendarMonthUnit: String = "calendar month",
+        calendarMonthsUnit: String = "calendar months",
         traceHasEverMarker: String = " has ever ",
         traceHasEverAliasMarkers: [String] = [" has previously "],
         traceEverBeforeSuffix: String = " before",
@@ -1077,6 +1148,16 @@ public final class FixedGrammar: Sendable {
         self.waitEventIntroducer = waitEventIntroducer
         self.waitMatchingMarker = waitMatchingMarker
         self.traceAcrossAllRunsMarker = traceAcrossAllRunsMarker
+        self.traceAcrossSkillsMarker = traceAcrossSkillsMarker
+        self.traceStatisticalWithConfidenceMarker = traceStatisticalWithConfidenceMarker
+        self.traceEventuallyWithinMarker = traceEventuallyWithinMarker
+        self.traceAlwaysForMarker = traceAlwaysForMarker
+        self.calendarBusinessDayUnit = calendarBusinessDayUnit
+        self.calendarBusinessDaysUnit = calendarBusinessDaysUnit
+        self.calendarDayUnit = calendarDayUnit
+        self.calendarDaysUnit = calendarDaysUnit
+        self.calendarMonthUnit = calendarMonthUnit
+        self.calendarMonthsUnit = calendarMonthsUnit
         self.traceHasEverMarker = traceHasEverMarker
         self.traceHasEverAliasMarkers = traceHasEverAliasMarkers
         self.traceEverBeforeSuffix = traceEverBeforeSuffix

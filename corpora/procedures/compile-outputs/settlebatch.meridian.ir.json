@@ -1,0 +1,84 @@
+{
+  "entries" : [
+    {
+      "canonical" : "wait for event batchSettlement.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenBatchsettlementFires\/root\/procedure\/cf8e19405f4b1d20bbd2997031b0a8a40507fd730dda7c3a00114ca986a959e0",
+      "swift_line" : 657
+    },
+    {
+      "canonical" : "emit trigger.batchSettlement.fired with kind = \"keyword\", spec = \"batch settlement\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBatchsettlementFires\/root\/procedure\/f2a2bee69a07f93b4deab6628d1f2bc9155f3973dbf74168f69a04feb355b3c3",
+      "swift_line" : 657
+    },
+    {
+      "canonical" : "emit trigger.settleReadyBatches.fired with kind = \"keyword\", spec = \"settle ready batches\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSettlereadybatchesFires\/root\/procedure\/6425eb2f15b2ec2224a2344b272e639d54513b0b3475a9e78d5f71aa8a4e8c86",
+      "swift_line" : 657
+    },
+    {
+      "canonical" : "wait for event settleReadyBatches.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSettlereadybatchesFires\/root\/procedure\/a3480bfa68e51e4af9ba6b4e8a0a55e5b29c8add30d2c8204bfb773f3a61eb48",
+      "swift_line" : 657
+    },
+    {
+      "canonical" : "bind batches = invoke batch.list with status = \"ready\".",
+      "meridian_line" : 22,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps\/procedure\/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
+      "swift_line" : 463
+    },
+    {
+      "canonical" : "assert all batches have a name.",
+      "meridian_line" : 23,
+      "primitive" : "assert",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps\/procedure\/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5",
+      "swift_line" : 477
+    },
+    {
+      "canonical" : "for each batch in batches,\n  settle batch unless batch is finalized.",
+      "meridian_line" : 24,
+      "primitive" : "iterate",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps\/procedure\/4ac085b8de74a277d4e5be1474e20c4317d3d06bfa39c99239bd86a7944e13a8",
+      "swift_line" : 481
+    },
+    {
+      "canonical" : "settle batch.",
+      "meridian_line" : 25,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps\/procedure\/branch.then\/dc4678ed66a134410ad34b0af6447612ec72ec98e4538ceffb000ccafeacecba",
+      "swift_line" : 493
+    },
+    {
+      "canonical" : "settle batch unless batch is finalized.",
+      "meridian_line" : 25,
+      "primitive" : "branch",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps\/procedure\/iterate.body\/866d10aec1839980429654c0afd9e59601620f597dbb2052a3212bd7cb5269e1",
+      "swift_line" : 493
+    },
+    {
+      "canonical" : "emit procedure.report with message = \"ready batches settled\".",
+      "meridian_line" : 29,
+      "primitive" : "emit",
+      "stable_step_path" : "\/SettleBatch\/batch-body-steps-2\/procedure\/b1f978adbfcb930e2d0bd8b89266f148e871d78de3ed51b3e731819f69c5913b",
+      "swift_line" : 506
+    },
+    {
+      "canonical" : "assert no batches whose status equals \"failed\".",
+      "meridian_line" : 32,
+      "primitive" : "assert",
+      "stable_step_path" : "\/SettleBatch\/postconditions\/invariants\/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd",
+      "swift_line" : 458
+    }
+  ],
+  "ir_version" : "1.1",
+  "source_file" : "settlebatch.meri",
+  "swift_file" : "settlebatch.swift"
+}

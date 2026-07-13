@@ -87,43 +87,8 @@ public enum CanonicalForms {
         return scalars.joined().split(separator: " ").joined(separator: " ")
     }
 
-    public static func comparison(_ op: ComparisonOp) -> String {
-        switch op {
-        case .equal:
-            return "equals"
-        case .notEqual:
-            return "is not"
-        case .lessThan:
-            return "is less than"
-        case .lessOrEqual:
-            return "is at most"
-        case .greaterThan:
-            return "is more than"
-        case .greaterOrEqual:
-            return "is at least"
-        case .oneOf:
-            return "is one of"
-        case .contains:
-            return "contains"
-        case .startsWith:
-            return "starts with"
-        case .endsWith:
-            return "ends with"
-        case .withinDuration:
-            return "is within"
-        case .withinPast:
-            return "is within the last"
-        case .withinFuture:
-            return "is in the next"
-        case .matchesPattern:
-            return "matches pattern"
-        case .isEmpty:
-            return "is empty"
-        case .isNotEmpty:
-            return "is not empty"
-        case .identifies:
-            return "identifies"
-        }
+    public static func comparison(_ op: ComparisonOp, lexicon: EnglishLexicon = .default) -> String {
+        lexicon.canonicalComparisonSurface(op)
     }
 
     public static func quantifier(_ kind: QuantifierKind, noun: String) -> String {
@@ -161,6 +126,15 @@ public enum CanonicalForms {
             return "$\(amount) \(currency)"
         case .duration(let value):
             return duration(value)
+        case .calendarAmount(let amount):
+            switch amount.unit {
+            case .businessDays:
+                return "\(amount.magnitude) business days"
+            case .calendarDays:
+                return "\(amount.magnitude) calendar days"
+            case .months:
+                return "\(amount.magnitude) months"
+            }
         case .date(let value):
             return date(value)
         case .dateTime(let value):

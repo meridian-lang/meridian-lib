@@ -55,6 +55,16 @@ not marketing terms.
 > [coverage/WAVE8_COMPLETION_EVIDENCE.md](coverage/WAVE8_COMPLETION_EVIDENCE.md).
 > The old Wave 6 statement that historical conditions were out of scope is
 > therefore historical context, not current language status.
+>
+> **Wave 9 addendum (deontic / obligations):** prohibitions (`must not invoke`),
+> obligations (`must hold`), and permissions (`may invoke`) lower to attempt-time
+> guards and effect-time asserts with trace-witnessed violations (SEM-7). Stable
+> `OBL-<hash>` obligation artifacts, `meridian obligations`, and `[OBL-…]`
+> explain annotations ship in Wave 9B–9D. Coherence between runtime violations
+> and proof obligations is established by **differential testing** (SEM-8-01),
+> not a formal machine-checked theorem — see [20_DEONTIC.md](20_DEONTIC.md) and
+> [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md). This is honest regression evidence,
+> not a proof of correctness for all traces.
 
 ## Corpus Status
 
@@ -105,7 +115,7 @@ typechecked generated Swift:
 | Tables | Resolver dispatch tables plus ERP invoice and procedure aging tables |
 | Templates | `[for each row in table] ... [end for]` rendering in report skills |
 | Rulebook syntax | `Step:`, `SQL:`, `Check:`, `Publish:`, `Emit:` desugar as data |
-| Swift validation | `MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests` passes |
+| Swift validation | `swift test --filter GeneratedSwiftTypecheckSlowTests` / `CorporaConformanceTests` passes |
 
 ## Worked Before/After
 
@@ -204,5 +214,6 @@ swift run meridian migrate-skill corpora/procedures/original-skills --batch --ou
 swift run meridian skill-deviation corpora/erp/original-skills corpora/erp --batch --index --out corpora/erp/migration-deviations
 swift run meridian skill-deviation corpora/procedures/original-skills corpora/procedures --batch --index --out corpora/procedures/migration-deviations
 
-MERIDIAN_CORPORA_TYPECHECK=1 swift test --filter CorporaConformanceTests
+swift test --filter GeneratedSwiftTypecheckSlowTests
+swift test --filter CorporaConformanceTests
 ```

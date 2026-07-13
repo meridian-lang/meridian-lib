@@ -21,12 +21,20 @@ public struct ExplainCommand: AsyncParsableCommand {
             help: "Path to a .merrules rulebook. May be supplied multiple times; auto-discovers when omitted.")
     var rulebook: [String] = []
 
+    @Option(name: .long, parsing: .singleValue,
+            help: "Directory searched for shared module packages. Repeatable.")
+    var modulePath: [String] = []
+
+    @Flag(name: .long, help: "Omit [OBL-…] obligation id annotations from canonical output.")
+    var noObligationIDs: Bool = false
+
     @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
-        let loaded = try loadCLIModelInput(input: input, merconfig: merconfig, rulebook: rulebook)
+        let loaded = try loadCLIModelInput(
+            input: input, merconfig: merconfig, rulebook: rulebook, modulePath: modulePath)
         let traceInstance = try cliTrace.makeTrace()
-        let compiler = Compiler(options: .init(trace: traceInstance))
+        let compiler = Compiler(options: compilerOptions(for: loaded, trace: traceInstance))
         do {
             let model = try compiler.compileToModel(
                 meridianSource: loaded.meridianSource,
@@ -35,9 +43,9 @@ public struct ExplainCommand: AsyncParsableCommand {
                 rulebooks: loaded.rulebooks
             )
             let canonical = try traceInstance.phase("verbalize") {
-                try Verbalizer(model: model, trace: traceInstance).verbalize()
+                try Verbalizer(model: model, trace: traceInstance)
+                    .verbalize(annotateObligationIDs: !noObligationIDs)
             }
-            // Wave 8/9 hook: attach future [OBL-...] annotations to canonical lines once obligation IDs exist.
             print(canonical)
         } catch {
             throw reportCompilerError(error, sources: loaded.diagnosticSources)

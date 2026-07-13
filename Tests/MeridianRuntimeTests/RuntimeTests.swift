@@ -241,6 +241,18 @@ struct RuntimeTests {
         #expect(event?.payload["step"] == .string("branch.step"))
     }
 
+    @Test("recordBranchEnded emits branchEnded with into/step payload")
+    func recordBranchEndedEmits() async throws {
+        let observer = InMemoryObserver()
+        let runtime = await makeRuntime(observer: observer)
+        try await runtime.recordBranchEnded(into: "then", step: "branch.step")
+        let events = await observer.events
+        let event = events.first { $0.kind == .branchEnded }
+        #expect(event != nil)
+        #expect(event?.payload["into"] == .string("then"))
+        #expect(event?.payload["step"] == .string("branch.step"))
+    }
+
     @Test("recordIterateStart/Iteration/End emit the paired iterate events")
     func recordIterateEmitsPairedEvents() async throws {
         let observer = InMemoryObserver()

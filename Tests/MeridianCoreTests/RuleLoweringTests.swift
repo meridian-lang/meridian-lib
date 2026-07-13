@@ -8,9 +8,9 @@ struct RuleLoweringTests {
     let analyzer = RuleAnalyzer(symbols: nil)
 
     @Test("must not → invariant")
-    func mustNotInvariant() {
+    func mustNotInvariant() throws {
         let rule = RuleAST(text: "A customer with status suspended must not place orders.", sourceLine: 8)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil")
             return
         }
@@ -23,9 +23,9 @@ struct RuleLoweringTests {
     }
 
     @Test("must not whose → parameterGuard")
-    func mustNotWhoseGuard() {
+    func mustNotWhoseGuard() throws {
         let rule = RuleAST(text: "A customer must not place an order whose total amount is more than their credit limit.", sourceLine: 10)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .parameterGuard(let kind, let action, _, _, _) = parsed {
@@ -37,9 +37,9 @@ struct RuleLoweringTests {
     }
 
     @Test("must be … by … before → precondition")
-    func mustBeApprovedBefore() {
+    func mustBeApprovedBefore() throws {
         let rule = RuleAST(text: "An order with total amount more than the high value threshold must be approved by an account manager before fulfillment.", sourceLine: 12)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .precondition(_, _, _, let gate, _, _) = parsed {
@@ -54,9 +54,9 @@ struct RuleLoweringTests {
     }
 
     @Test("when … (opaque external event) → trigger")
-    func whenTrigger() {
+    func whenTrigger() throws {
         let rule = RuleAST(text: "When a refund is requested, escalate the order to the account manager of the customer who placed the order.", sourceLine: 14)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .trigger(let cond, let action, _, _) = parsed {
@@ -68,9 +68,9 @@ struct RuleLoweringTests {
     }
 
     @Test("when … (self-evaluating duration predicate) → unsupportedTriggerCondition, not a silent event stub")
-    func whenTriggerWithDurationConditionIsRejected() {
+    func whenTriggerWithDurationConditionIsRejected() throws {
         let rule = RuleAST(text: "When an order has been on hold for more than 7 days, escalate the order to the account manager of the customer who placed the order.", sourceLine: 14)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .unsupportedTriggerCondition(let cond, let action, _, _) = parsed {
@@ -82,9 +82,9 @@ struct RuleLoweringTests {
     }
 
     @Test("when … (magnitude comparison, non-duration) → unsupportedTriggerCondition")
-    func whenTriggerWithMagnitudeComparisonIsRejected() {
+    func whenTriggerWithMagnitudeComparisonIsRejected() throws {
         let rule = RuleAST(text: "When the order total is more than 1000, notify finance.", sourceLine: 15)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .unsupportedTriggerCondition = parsed {
@@ -95,9 +95,9 @@ struct RuleLoweringTests {
     }
 
     @Test("may → permission")
-    func mayPermission() {
+    func mayPermission() throws {
         let rule = RuleAST(text: "A customer with status verified may place orders.", sourceLine: 20)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .permission(let kind, _, let action, let conditions, let bounded, _, _) = parsed {
@@ -111,16 +111,16 @@ struct RuleLoweringTests {
     }
 
     @Test("garbled rule → nil")
-    func garbledRule() {
+    func garbledRule() throws {
         let rule = RuleAST(text: "This is completely unparseable random text without structure.", sourceLine: 99)
-        let result = analyzer.classify(rule)
+        let result = try analyzer.classify(rule)
         #expect(result == nil)
     }
 
     @Test("bounded may → permission with isBounded=true")
-    func boundedPermission() {
+    func boundedPermission() throws {
         let rule = RuleAST(text: "An account manager may approve any order whose total amount is at most $10000.", sourceLine: 20)
-        guard let parsed = analyzer.classify(rule) else {
+        guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
         if case .permission(_, _, _, _, let bounded, _, _) = parsed {
@@ -187,9 +187,9 @@ struct RuleLoweringTests {
     }
 
     @Test("permission rule that matches no workflow still parses (may with no must-not)")
-    func standalonePermissionRule() {
+    func standalonePermissionRule() throws {
         let rule = RuleAST(text: "A customer with status premium may place orders.", sourceLine: 25)
-        let parsed = analyzer.classify(rule)
+        let parsed = try analyzer.classify(rule)
         #expect(parsed != nil, "Expected permission to parse")
         if case .permission(let kind, _, let action, _, let bounded, _, _) = parsed! {
             #expect(kind == "customer")
@@ -236,7 +236,7 @@ struct RuleLoweringTests {
     }
 
     @Test("trigger with a self-evaluating duration condition throws MER3017, not a silent event stub")
-    func triggerWithSelfEvaluatingConditionIsRejected() {
+    func triggerWithSelfEvaluatingConditionIsRejected() throws {
         let mer = """
         ---
         vocabulary: test.merconfig
@@ -272,7 +272,7 @@ struct RuleLoweringTests {
     }
 
     @Test("trigger with unresolved action throws by default")
-    func triggerWithUnresolvedActionThrows() {
+    func triggerWithUnresolvedActionThrows() throws {
         let mer = """
         ---
         vocabulary: test.merconfig
