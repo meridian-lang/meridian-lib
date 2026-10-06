@@ -502,8 +502,7 @@ path:
   parse/lower; named E2E + CLI zero-drift locks; match `otherwise:` ↔
   `thenBlock` ↔ Swift `default:`; FixedGrammar shared by parser and Verbalizer.
 
-Primary docs: [18_VERBALIZER.md](18_VERBALIZER.md) and
-[coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
+Primary docs: [18_VERBALIZER.md](18_VERBALIZER.md).
 
 ---
 
@@ -567,14 +566,13 @@ documented.
   1/2/3/7/8 and the north-star flagship — the first cross-cutting proof that
   the full grammar (quantifiers, definitions, templates, trace queries,
   branches) composes correctly end-to-end, not just per-feature.
-- Documentation/evidence closeout: `docs/19_TRACES_AND_TIME.md`,
-  `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`, and
-  `docs/coverage/VERBALIZER_EVIDENCE.md` reflect tested behavior with zero
-  open residuals.
+- Documentation closeout: `docs/19_TRACES_AND_TIME.md` reflects tested
+  behavior with zero open residuals.
 
 ### Requirements matrix
 
-`docs/coverage/WAVE8_REQUIREMENTS.md`: **55 done, 0 pending, 0 deferred.** The
+Wave 8 requirements matrix: **55 done, 0 pending, 0 deferred** (matrix retired
+in the 2026-10-07 docs cleanup; see `IMPLEMENTATION_LOG.md`). The
 STEP 1 A–D readiness report (Waves 0–7 evidence, D0–D12 decision matrix,
 architecture seams, next-wave rationale) is in `IMPLEMENTATION_LOG.md`
 (2026-07-11 baseline-gate entry). Wave 7 is signed off; no foundation gaps.
@@ -592,8 +590,7 @@ Full test suite, generated-Swift typecheck via
 `MERIDIAN_*_TYPECHECK` env vars), the fast and `--full` per-file coverage
 gates, and `scripts/strict-compile-report.swift` across all corpora are green.
 
-Primary docs: `docs/19_TRACES_AND_TIME.md`,
-`docs/coverage/WAVE8_REQUIREMENTS.md`, `docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`,
+Primary docs: `docs/19_TRACES_AND_TIME.md`
 and the oracle [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md).
 
 **Wave 9 / Final Wave (deontic/obligation surface) — complete.**
@@ -601,9 +598,9 @@ and the oracle [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTI
 Phases 9A–9D shipped: deontic lowering (`must not` / `must hold` / `may`),
 MER-DEO-* diagnostics, stable `OBL-<hash>` obligation artifacts,
 `meridian obligations` CLI, `[OBL-…]` explain annotations, coherence harness
-(SEM-8-01), and corpus/docs. See
-[`docs/coverage/FINAL_WAVE_REQUIREMENTS.md`](coverage/FINAL_WAVE_REQUIREMENTS.md)
-(all matrix rows `done`). Primary docs: [`docs/20_DEONTIC.md`](20_DEONTIC.md),
+(SEM-8-01), and corpus/docs. All Final Wave requirement rows closed `done`
+(matrix retired in the 2026-10-07 docs cleanup). Primary docs:
+[`docs/20_DEONTIC.md`](20_DEONTIC.md),
 [`docs/23_PROVER_READY_OBLIGATIONS.md`](23_PROVER_READY_OBLIGATIONS.md).
 
 ---

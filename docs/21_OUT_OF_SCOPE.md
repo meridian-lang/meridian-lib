@@ -3,8 +3,8 @@
 This document is the permanent boundary for capabilities Meridian deliberately does
 not implement. Everything **not** listed here that appeared in the v0.2 deferred
 ledger (`MERIDIAN_SEMANTICS.md` §9.3, `MERIDIAN_DESIGN_RISKS_AND_REVIEW.md` §8) is
-**Final Wave in-scope** and tracked in
-[`docs/coverage/FINAL_WAVE_REQUIREMENTS.md`](coverage/FINAL_WAVE_REQUIREMENTS.md).
+**Final Wave in-scope** — implemented (see `status.md` and
+`IMPLEMENTATION_LOG.md`).
 
 The kernel semantics oracle remains [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md).
 

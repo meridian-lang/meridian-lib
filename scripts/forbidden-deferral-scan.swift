@@ -38,11 +38,6 @@ let allowlist: [AllowRule] = [
     AllowRule(fileSuffix: "docs/21_OUT_OF_SCOPE.md", lineContains: nil, reason: "permanent boundary"),
 
     // Coverage / audit docs use status vocabulary intentionally.
-    AllowRule(fileSuffix: "docs/coverage/ZERO_DEFERRAL_AUDIT.md", lineContains: nil, reason: "audit evidence"),
-    AllowRule(fileSuffix: "docs/coverage/FINAL_WAVE_REQUIREMENTS.md", lineContains: nil, reason: "matrix legend"),
-    AllowRule(fileSuffix: "docs/coverage/WAVE8_REQUIREMENTS.md", lineContains: nil, reason: "wave8 matrix"),
-    AllowRule(fileSuffix: "docs/coverage/WAVE8_COMPLETION_EVIDENCE.md", lineContains: nil, reason: "wave8 evidence"),
-    AllowRule(fileSuffix: "docs/coverage/final-wave-requirements.json", lineContains: nil, reason: "matrix json"),
 
     // Exhaustive-switch maintenance lists (internal, non-user-facing).
     AllowRule(fileSuffix: "Sources/MeridianCore/Rulebook/Rulebook.swift",
@@ -172,8 +167,7 @@ func walk(repo: URL, directory: URL) -> [Hit] {
         }
         guard extensions.contains(url.pathExtension) else { continue }
         let rel = relativePath(repo: repo, file: url)
-        if rel.hasSuffix("scripts/forbidden-deferral-scan.swift")
-            || rel.hasSuffix("scripts/final-wave-traceability.swift") {
+        if rel.hasSuffix("scripts/forbidden-deferral-scan.swift") {
             continue
         }
         hits.append(contentsOf: scanFile(repo: repo, file: url))

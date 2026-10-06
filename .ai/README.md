@@ -1,19 +1,11 @@
-# Agent prompts and archives
+# Agent archives
 
-Historical implementation prompts and brainstorm archives for Meridian waves.
-
-## Wave implementation prompts
-
-| File | Scope |
-| --- | --- |
-| [meridian-cursor-master-prompt.md](meridian-cursor-master-prompt.md) | Master program prompt — oracle docs, phase gates, wave sequencing |
-| [meridian-wave7-verbalizer-prompt.md](meridian-wave7-verbalizer-prompt.md) | Wave 7 — canonical English verbalizer and drift audit |
-| [meridian-wave8-9-trace-deontic-prompt.md](meridian-wave8-9-trace-deontic-prompt.md) | Waves 8–9 — trace-backed time, statistics, deontic layer |
-| [meridian-inform7-cursor-prompt.md](meridian-inform7-cursor-prompt.md) | Inform-7-tier surface program (Waves 1–3 context) |
+Historical brainstorm archives and frozen implementation-log snapshots for the
+Meridian waves program.
 
 ## Normative oracle (human docs)
 
-The prompts reference the oracle under [`docs/cookbook/`](../docs/cookbook/) —
+The wave program's oracle lives under [`docs/cookbook/`](../docs/cookbook/) —
 semantics, syntax cookbook, north-star examples, and design-risk review.
 
 ## Archives

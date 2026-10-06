@@ -2,9 +2,7 @@
 
 Status: Wave 8 landed and the documentation now reflects **implemented,
 named-test-backed behavior**. Cross-reference
-`docs/cookbook/MERIDIAN_SEMANTICS.md`,
-`docs/coverage/WAVE8_REQUIREMENTS.md`, and
-`docs/coverage/WAVE8_COMPLETION_EVIDENCE.md`.
+`docs/cookbook/MERIDIAN_SEMANTICS.md`.
 
 ---
 
@@ -520,7 +518,6 @@ Pinned by `trace eval replays a whose-qualified event payload predicate`
 
 ### 12.3 Bench artifact and interpretation
 
-Committed benchmark output lives at `docs/coverage/bench-trace-wave8.json`.
 The runner measures:
 
 - dataset sizes `10_000` and `100_000`
@@ -599,5 +596,5 @@ a declared name (e.g. a typo like `deply` for a declared `deploy.rollback`
 tool, or `targt` for a declared `target` parameter) is rejected with a
 "declared step names in scope" / field-name suggestion, while a novel,
 self-consistent name with no near-miss compiles cleanly. Pinned by
-`GAP-TMP-14-15` (see `docs/coverage/WAVE8_REQUIREMENTS.md`) and directly by
+`GAP-TMP-14-15` and directly by
 `Tests/MeridianCoreTests/Inform7/TraceTemporalInform7Tests.swift`.

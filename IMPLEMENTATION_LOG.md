@@ -2899,3 +2899,106 @@ after coverage gate).
   `swiftpm-testing-helper` re-run aborted; clean re-run succeeded.
 - Observed: TraceTreeRenderer 82.24% → floor 81.50; EventMigration 80.26% →
   floor 79.00. Vocabulary jitter (99.21 vs 99.60) cleared on re-run (100%).
+
+## 2026-10-07 — Removed stale `inform v7/` duplicate folders
+
+**Action:** Deleted `inform v7/` and `inform v7 - wave 7 and 8/` per user request.
+Verified before deleting: every file in both folders had a same-or-newer copy in
+its canonical location — oracle/reference docs in `docs/cookbook/`
+(`MERIDIAN_SEMANTICS.md`, `MERIDIAN_SYNTAX_COOKBOOK.md`,
+`MERIDIAN_NORTHSTAR_EXAMPLE.md`, `MERIDIAN_DESIGN_RISKS_AND_REVIEW.md`,
+`INFORM7_DESIGN_NOTES.md`) and agent prompts in `.ai/`. All diffs were
+post-relocation path-reference updates already present in the canonical copies;
+no unique content was lost. Folders were untracked by git.
+
+**STATUS:** RESOLVED — completes the 2026-07-12 relocation entry.
+
+## 2026-10-07 — Pruned orphan implementation-evidence docs from `docs/coverage/`
+
+**Action:** Per user request, removed implementation-specific audit artifacts
+with no live references: `CLOSURE_PROOF.md`, `DX_TRACE_DIAGNOSTIC_REVIEW.md`,
+`INDEPENDENT_CLOSURE_REVIEWS.md`, `WAVE8_CORPUS_MATRIX.md`,
+`ZERO_DEFERRAL_AUDIT.md`, plus `docs/.DS_Store`. Dropped the stale
+`ZERO_DEFERRAL_AUDIT.md` allow rule from `forbidden-deferral-scan.swift` and
+the corpus-matrix row from `WAVE8_COMPLETION_EVIDENCE.md`.
+
+**Kept as load-bearing:** `final-wave-requirements.json` +
+`dx-trace-diagnostic-matrix.json` + `DX_TRACE_DIAGNOSTIC_MATRIX.md` +
+`VERBALIZER_EVIDENCE.md` + `LEXICON_VOCABULARY_ALLOWLIST.md` +
+`SILENT_FALLBACK_ALLOWLIST.md` + `COOK_EVIDENCE.md` + `WAVE8_REQUIREMENTS.md`
+are hard-loaded by tests (`FinalWaveClosureTests`, `DXTraceDiagnosticAuditTests`,
+`VerbalizerEvidenceTests`, audit suites) and `final-wave-traceability.swift`;
+`coverage-baseline.md`/`coverage-exclusions.md` feed `scripts/coverage.swift`.
+`FINAL_WAVE_REQUIREMENTS.md`, `WAVE8_COMPLETION_EVIDENCE.md`,
+`bench-trace-wave8.json` are cited by live docs (`status.md`, README index,
+07/16/19/21). Removing any of these breaks `swift test`/gate scripts or leaves
+dead doc links.
+
+**Validation:** `forbidden-deferral-scan.swift` → OK; zero live references to
+deleted files.
+
+**STATUS:** RESOLVED.
+
+## 2026-10-07 — Retired wave-specific evidence docs + their dedicated tooling
+
+**Action:** Per user request, removed all wave-specific tracking/evidence
+artifacts and the machinery that existed solely to enforce them:
+
+- Docs/artifacts: `docs/coverage/FINAL_WAVE_REQUIREMENTS.md`,
+  `final-wave-requirements.json`, `WAVE8_REQUIREMENTS.md`,
+  `WAVE8_COMPLETION_EVIDENCE.md`, `VERBALIZER_EVIDENCE.md`, `COOK_EVIDENCE.md`,
+  `bench-trace-wave8.json`.
+- Script: `scripts/final-wave-traceability.swift` (its only inputs were the
+  retired matrices; nothing else invoked it).
+- Test suite: `VerbalizerEvidenceTests.swift` (existed only to validate the
+  retired verbalizer matrix). `FinalWaveClosureTests` kept — dropped only its
+  `fwConfMatrixEvidencePathsExist` matrix test + `FinalWaveRequirementRow`;
+  the SEM-3-01/D11 conformance tests remain.
+- `forbidden-deferral-scan.swift`: removed four stale allow rules and the
+  `final-wave-traceability.swift` self-exclusion.
+- Dead links rewritten in `docs/README.md`, `status.md`, `07`, `09`, `16`,
+  `18`, `19`, `21`, `docs/cookbook/README.md`, `docs/coverage/README.md`;
+  AGENTS.md verbalizer norm no longer points at the retired matrix.
+
+**Incidental fix (pre-existing latent bug, exposed by clean rebuild):**
+`Tests/MeridianRuntimeTests/FinalWaveRuntimeCoverageCloseoutTests.swift`
+imported `MeridianCore` without a declared target dependency — raced and
+failed on clean parallel builds. The import was unused; removed.
+
+**Environment note:** `.build` was poisoned by artifacts from a
+`meridian-lib 2` checkout path (stale PCH module cache + macro link errors);
+`swift package clean` + rebuild resolved it.
+
+**Kept (standing, not wave-specific):** `coverage-baseline.md`,
+`coverage-exclusions.md`, `coverage/README.md` (gate machinery);
+`dx-trace-diagnostic-matrix.json` + `DX_TRACE_DIAGNOSTIC_MATRIX.md`
+(`DXTraceDiagnosticAuditTests` standing audit fixture);
+`LEXICON_VOCABULARY_ALLOWLIST.md`, `SILENT_FALLBACK_ALLOWLIST.md` (audit-test
+allowlists).
+
+**Validation:** full clean build; `FinalWaveClosureTests` 2/2 pass;
+`forbidden-deferral-scan.swift` OK; zero live references to removed files.
+
+**STATUS:** RESOLVED.
+
+## 2026-10-07 — Wave prompt files purged from working tree AND git history
+
+**Action:** Per user instruction, removed the four one-shot wave prompts
+(`meridian-cursor-master-prompt.md`, `meridian-inform7-cursor-prompt.md`,
+`meridian-wave7-verbalizer-prompt.md`,
+`meridian-wave8-9-trace-deontic-prompt.md`) and purged them from git history:
+they existed only in commit `25749f5`; `git filter-branch --index-filter`
+rewrote it + the 2 commits on top (new tip `85ad803`), then `refs/original`
+backups and the pre-rewrite stash were dropped, reflog expired, and
+`git gc --prune=now` removed the blobs. Verified: zero `*prompt*` paths in
+`rev-list --objects --all`; no unreachable blobs.
+
+**References updated:** `.ai/README.md` (rewritten), `AGENTS.md`,
+`docs/README.md`, `docs/cookbook/README.md` (removed "Agent prompts" section),
+`docs/cookbook/INFORM7_DESIGN_NOTES.md` (intro no longer names the prompt).
+
+**Follow-up required (user):** `origin/main` has diverged — syncing requires
+`git push --force origin main`. Any other clone/checkout (e.g. the sibling
+`meridian-lib 2`) is on the old history and must be re-cloned or rebased.
+
+**STATUS:** RESOLVED (local). Remote sync pending user force-push.

@@ -1,7 +1,6 @@
 import Foundation
 import Testing
 @testable import MeridianRuntime
-import MeridianCore
 
 @Suite("Final Wave runtime coverage closeout")
 struct FinalWaveRuntimeCoverageCloseoutTests {

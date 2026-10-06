@@ -44,15 +44,13 @@ not marketing terms.
 > compiling each port, verbalizing the lowered IR to Canonical English, and
 > comparing authored vs canonical lines. Deviation indexes now include
 > synonym/structure/desugar/meaning counts when regenerated with
-> `skill-deviation --batch --index`; see [18_VERBALIZER.md](18_VERBALIZER.md)
-> and [coverage/VERBALIZER_EVIDENCE.md](coverage/VERBALIZER_EVIDENCE.md).
+> `skill-deviation --batch --index`; see [18_VERBALIZER.md](18_VERBALIZER.md).
 >
 > **Wave 8 addendum (trace-backed time/statistics):** this report predates the
 > Wave 8 semantics pass. Retained-trace temporal/statistical conditions are now
 > implemented (`has ever`, `within the last`, `in a row`, `since the last`,
-> percentage frequency, monitored assertions), with coverage and residuals
-> tracked in [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md) and
-> [coverage/WAVE8_COMPLETION_EVIDENCE.md](coverage/WAVE8_COMPLETION_EVIDENCE.md).
+> percentage frequency, monitored assertions), documented in
+> [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
 > The old Wave 6 statement that historical conditions were out of scope is
 > therefore historical context, not current language status.
 >

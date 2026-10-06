@@ -13,8 +13,8 @@ runs against a small deterministic runtime.
 > verbalizer/drift audit surface, and the Wave 8 trace-backed time/statistics
 > gate are all complete. **Wave 9 / Final Wave (deontic norms, obligation
 > artifacts, modules, and closure) is complete** — see
-> [20_DEONTIC.md](20_DEONTIC.md), [coverage/FINAL_WAVE_REQUIREMENTS.md](coverage/FINAL_WAVE_REQUIREMENTS.md),
-> and [status.md](status.md). Generated Swift compiles, links, and runs against
+> [20_DEONTIC.md](20_DEONTIC.md) and [status.md](status.md). Generated Swift
+> compiles, links, and runs against
 > `MeridianRuntime`.
 > Replay-safe resume, all 13 IR primitives, Blueprint built-ins, full CLI,
 > MeridianTestKit, and DocC bundles are shipped. Every error is a stable
@@ -136,10 +136,6 @@ review — enforced by `COOK-*`, `SEM_*`, and Composition Gallery tests.
 | `MERIDIAN_NORTHSTAR_EXAMPLE.md` | Worked skills, lowering maps, Broken Twin acceptance fixtures |
 | `MERIDIAN_DESIGN_RISKS_AND_REVIEW.md` | Amendments, collisions, per-wave exit checklists |
 | `INFORM7_DESIGN_NOTES.md` | Inform 7 architecture context mapped onto Meridian |
-
-Wave implementation agent prompts are archived in [`.ai/`](../.ai/)
-(`meridian-wave7-verbalizer-prompt.md`, `meridian-wave8-9-trace-deontic-prompt.md`,
-`meridian-cursor-master-prompt.md`).
 
 ---
 

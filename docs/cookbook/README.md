@@ -18,8 +18,3 @@ Composition Gallery) enforce them; this folder is the human-readable source.
 - [../11_RULEBOOKS.md](../11_RULEBOOKS.md) — per-domain `.merrules` extensions
 - [../18_VERBALIZER.md](../18_VERBALIZER.md) — verbalizer API and round-trip law
 - [../19_TRACES_AND_TIME.md](../19_TRACES_AND_TIME.md) — operational Wave 8 trace/time write-up
-- [../coverage/WAVE8_REQUIREMENTS.md](../coverage/WAVE8_REQUIREMENTS.md) — requirements matrix keyed to these oracles
-
-## Agent prompts (historical)
-
-Wave implementation prompts live under [`.ai/`](../../.ai/) (`meridian-wave7-verbalizer-prompt.md`, `meridian-wave8-9-trace-deontic-prompt.md`, `meridian-cursor-master-prompt.md`, `meridian-inform7-cursor-prompt.md`).

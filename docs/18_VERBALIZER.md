@@ -5,8 +5,6 @@ prints Canonical English from compiled IR so humans can audit what the compiler
 actually understood, compare authored prose to the canonical form, and prove
 that the printed form can be compiled back to the same structure.
 
-Evidence and coverage live in
-[`coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md).
 The normative canonical surface oracle is
 [`cookbook/MERIDIAN_SYNTAX_COOKBOOK.md`](cookbook/MERIDIAN_SYNTAX_COOKBOOK.md).
 Wave 8 extends that same verbalizer surface to temporal/statistical conditions
@@ -441,13 +439,7 @@ Wave 7 coverage includes:
 - ambiguity/no-placeholder tests for representative examples and corpora;
 - named complex E2E locks (`VerbalizerEndToEndTests`) plus CLI capture/triagealert
   zero-drift (`drift --json` → `total == 0`);
-- `matchBranchIRRoundTrip` for `branch on` / `anything` / `otherwise:`;
-- evidence-matrix staleness coverage in
-  [`coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md).
-
-The current matrix reports every in-scope IR primitive, expression family,
-GrammarTable production, legacy statement form, and cookbook/gallery row as
-covered.
+- `matchBranchIRRoundTrip` for `branch on` / `anything` / `otherwise:`.
 
 ## Out Of Scope
 

@@ -414,11 +414,7 @@ Additional gates cover the rest of the verbalizer contract:
 - **Equality:** `IREquality` ignores source-location carriers but compares every
   semantic field that would change runtime behavior.
 
-The coverage inventory is documented in
-[`docs/coverage/VERBALIZER_EVIDENCE.md`](coverage/VERBALIZER_EVIDENCE.md), and
-`VerbalizerEvidenceTests` fails if an IR primitive or grammar-table production
-is missing from that matrix. See [18_VERBALIZER.md](18_VERBALIZER.md) for the
-public API and CLI workflow.
+See [18_VERBALIZER.md](18_VERBALIZER.md) for the public API and CLI workflow.
 
 ## Example: Formatter Idempotence
 

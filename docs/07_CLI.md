@@ -280,8 +280,6 @@ Behavior:
 - records `cold` and `warm` labels
 - benchmarks operator families `ever`, `window`, `count`, `streak`, `since`, and `statistical_frequency`
 
-Committed baseline: [`coverage/bench-trace-wave8.json`](coverage/bench-trace-wave8.json).
-
 ```bash
 # Human-readable summary
 meridian bench-trace

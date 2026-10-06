@@ -59,29 +59,4 @@ struct FinalWaveClosureTests {
         #expect(ifNotCanonical.contains("if not"), Comment(rawValue: ifNotCanonical))
         #expect(!ifNotCanonical.contains("unless"), Comment(rawValue: "branch if not must not rewrite to unless"))
     }
-
-    @Test("FW_CONF final-wave matrix rows marked done reference existing evidence")
-    func fwConfMatrixEvidencePathsExist() throws {
-        let url = VerbalizerTestSupport.repositoryRoot()
-            .appendingPathComponent("docs/coverage/final-wave-requirements.json")
-        let data = try Data(contentsOf: url)
-        let rows = try JSONDecoder().decode([FinalWaveRequirementRow].self, from: data)
-        let repo = VerbalizerTestSupport.repositoryRoot()
-        var missing: [String] = []
-        for row in rows where row.status == "done" {
-            for testPath in row.tests where testPath.hasSuffix(".swift") {
-                let fileURL = repo.appendingPathComponent(testPath)
-                if !FileManager.default.fileExists(atPath: fileURL.path) {
-                    missing.append("\(row.id): missing \(testPath)")
-                }
-            }
-        }
-        #expect(missing.isEmpty, Comment(rawValue: missing.joined(separator: "\n")))
-    }
-}
-
-private struct FinalWaveRequirementRow: Decodable {
-    let id: String
-    let status: String
-    let tests: [String]
 }

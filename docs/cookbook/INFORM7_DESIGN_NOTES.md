@@ -1,7 +1,7 @@
 # INFORM7_DESIGN_NOTES.md
 ## Inform 7 Architecture Lessons Mapped to Meridian
 
-Companion to `.ai/meridian-inform7-cursor-prompt.md`. This document explains the Inform 7 mechanisms the prompt references, what each one buys, how it maps onto Meridian's existing pipeline (Surface -> Phrases -> IR -> Swift), and what NOT to copy. Inform's source has been public since 2022 (ganelson/inform on GitHub) and its internals are documented in literate-programming form; consult it when implementation details here are insufficient.
+This document explains the Inform 7 mechanisms the wave program referenced, what each one buys, how it maps onto Meridian's existing pipeline (Surface -> Phrases -> IR -> Swift), and what NOT to copy. Inform's source has been public since 2022 (ganelson/inform on GitHub) and its internals are documented in literate-programming form; consult it when implementation details here are insufficient.
 
 Governing thesis, which all of this serves: **English-likeness emerges from kernel uniformity, not NLP cleverness.** Inform feels like English because a tiny number of uniform mechanisms (assertions relate values; descriptions denote sets; definitions extend vocabulary; rules respond to circumstances) compose without special cases. Every feature below is a uniformity mechanism, not a parsing trick.
 

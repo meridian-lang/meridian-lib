@@ -96,8 +96,7 @@ let out = try Compiler(options: opts).compile(
 - `docs/` — numbered docs (`01_OVERVIEW` … `19_TRACES_AND_TIME`, `coverage/`).
 - `docs/cookbook/` — **normative oracle** for Waves 7–8 (semantics, syntax
   cookbook, north-star example, design risks, Inform-7 architecture notes).
-- `.ai/` — agent implementation prompts (`meridian-wave*.md`,
-  `meridian-cursor-master-prompt.md`, brainstorm archives).
+- `.ai/` — brainstorm archives and frozen log snapshots.
 - `IMPLEMENTATION_LOG.md` — append-only decision log (recent entries only).
 - `.ai/implementation-log-archive/` — frozen older log snapshots + index
   (`README.md`). Search here when the active log does not cover the date/topic.
@@ -657,7 +656,7 @@ The verbalizer is also a totality surface: every in-scope `IRPrimitive` /
 `IRExpression` case must print concrete canonical text that reparses to
 structurally equal IR. Never add placeholder/TODO text, `_unresolved`, or
 "malformed" fallback strings to make a new case compile; wire the real canonical
-form and update `docs/coverage/VERBALIZER_EVIDENCE.md` plus the Wave 7 tests.
+form and cover it with verbalizer round-trip tests.
 
 ### 20. Verbalizer canonical surface lives in `FixedGrammar`
 
