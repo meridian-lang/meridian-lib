@@ -76,56 +76,6 @@ struct FinalWaveCLICoverageCloseoutTests {
         #expect(throws: (any Error).self) { try cmd.run() }
     }
 
-    // MARK: - ObligationsCommand
-
-    @Test("obligations --schema prints JSON schema")
-    func obligationsSchema() async throws {
-        let cmd = try ObligationsCommand.parse(["schema-placeholder.meridian", "--schema"])
-        try await cmd.run()
-    }
-
-    @Test("obligations summary and file output")
-    func obligationsSummaryAndOutput() async throws {
-        let t = TempDir()
-        let mer = t.write("guard.meridian", """
-        ---
-        vocabulary: t.merconfig
-        ---
-        A customer must not invoke time.now.
-
-        To notify a customer:
-          complete.
-        """)
-        let cfg = t.write("t.merconfig", """
-        === vocabulary ===
-        A customer is a kind of thing.
-        """)
-
-        let summary = try ObligationsCommand.parse([
-            mer.path, "--merconfig", cfg.path, "--summary"
-        ])
-        try await summary.run()
-
-        let outPath = t.path("obligations.json")
-        let full = try ObligationsCommand.parse([
-            mer.path, "--merconfig", cfg.path, "--output", outPath, "--no-include-proof-ir"
-        ])
-        try await full.run()
-        #expect(FileManager.default.fileExists(atPath: outPath))
-    }
-
-    @Test("obligations rejects broken source")
-    func obligationsBrokenSource() async {
-        let t = TempDir()
-        let bad = t.write("bad.meridian", "to frobnicate:\n  wibble the splork.\n")
-        let cmd = try? ObligationsCommand.parse([bad.path])
-        guard let cmd else {
-            Issue.record("parse failed")
-            return
-        }
-        await #expect(throws: (any Error).self) { try await cmd.run() }
-    }
-
     // MARK: - MCPCommand / MCPServeCommand
 
     @Test("MCP stdio transport round-trips framed messages")

@@ -26,7 +26,7 @@ struct CLICommandCatalogTests {
                 catalog drift — missing: \(Self.knownLeafPaths.subtracting(catalog).sorted())
                 extra: \(catalog.subtracting(Self.knownLeafPaths).sorted())
                 """))
-        #expect(paths.count == 31)
+        #expect(paths.count == 30)
     }
 
     @Test("top-level registration order matches MeridianCommandCatalog")
@@ -99,7 +99,7 @@ struct CLICommandCatalogTests {
                 .filter(\.supportsModulePath)
                 .map(\.path)
         )
-        #expect(withModule == ["canonicalize", "check", "compile", "explain", "obligations"])
+        #expect(withModule == ["canonicalize", "check", "compile", "explain"])
     }
 
     @Test("leafPaths mirrors leafCommands and entry(forPath:) resolves aliases")

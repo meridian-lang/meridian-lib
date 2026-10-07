@@ -12,9 +12,9 @@ closed; everything else reflects current `Sources/` reality.
 
 | Status | Count |
 | --- | ---: |
-| `done` | 55 |
+| `done` | 54 |
 | `pending` | 0 |
-| **Total rows** | **55** |
+| **Total rows** | **54** |
 
 All matrix rows are `done` as of 2026-07-12 (machine JSON:
 `dx-trace-diagnostic-matrix.json` `summary.pending == 0`). Residual follow-up
@@ -29,7 +29,7 @@ source/tests; see matrix row DX-DEO-002.
 | `Sources/MeridianCore/Lowering/DeonticLowering.swift` | Deontic IR application without dedicated trace spans (DX-DEO-002) |
 | `Sources/MeridianCore/Lowering/ASTToIR.swift:validateDefinitionProperties` | Strict `MER2004` among declared kind properties (DX-LOWER-002) |
 | `Sources/MeridianCore/Diagnostics/MeridianLinter.swift` | Lint-only anaphora heuristic + no trace (DX-LINT-002/003) |
-| `Sources/MeridianCore/Compiler.swift:compileWithManifest` | Post-lower `TraceIdentityPlanner` / `ObligationIdStamper` traced via `annotateAndStampObligations` (DX-TRACEID-002, DX-OBL-003 done) |
+| `Sources/MeridianCore/Compiler.swift:compileWithManifest` | Post-lower `TraceIdentityPlanner` / `NormIdStamper` traced via `annotateTraceIdentity` (DX-TRACEID-002, DX-OBL-003 done) |
 
 ---
 
@@ -94,13 +94,12 @@ source/tests; see matrix row DX-DEO-002.
 | DX-DEO-001 | lower | `DeonticLowering.swift` | `lowering` | MER-DEO | strict | structural help | trace secrets redacted | DeonticInform7Tests | done |
 | DX-DEO-002 | lower | `DeonticLowering.swift` | `lowering` | MER-DEO | strict | structural help on conflicts / sticky deny / tool outside permissions | trace secrets redacted | DeonticInform7Tests, DXMutationGateTests | done |
 
-## Obligations / trace identity / validation
+## Norm identity / trace identity / validation
 
 | ID | Phase | Code path(s) | ParserTrace | Diagnostic family | Fallback | Suggestions | Redaction | Tests | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DX-OBL-001 | post-lower | `ObligationDocument.swift`, `ObligationArtifact.swift` | — | MER-DEO-006 | strict | n/a | artifact JSON | ObligationArtifactTests | done |
-| DX-OBL-002 | post-lower | `ObligationId.swift:ObligationIdStamper` | — | MER-DEO-006 | strict | n/a | n/a | ObligationArtifactTests | done |
-| DX-OBL-003 | post-lower | `ObligationIdStamper`, `Compiler.compileWithManifest` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
+| DX-OBL-002 | post-lower | `IR/NormIdentity.swift:NormIdStamper` | — | MER-DEO-006 | strict | n/a | n/a | DeonticInform7Tests | done |
+| DX-OBL-003 | post-lower | `NormIdStamper`, `Compiler.annotateTraceIdentity` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
 | DX-TRACEID-001 | post-lower | `TraceIdentityPlanner.swift` | — | MER-TMP-020 | strict | structural help | n/a | TraceIdentityPlannerTests | done |
 | DX-TRACEID-002 | post-lower | `TraceIdentityPlanner.annotate`, `Compiler.compileWithManifest` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
 | DX-VAL-001 | validation | `IRValidator.swift` | `validation` | MER4002, MER3018 | none | help + `phase: validation` | trace secrets redacted | IRValidatorTests, ObservabilityFaultInjectionTests | done |
@@ -142,7 +141,7 @@ source/tests; see matrix row DX-DEO-002.
 | DX-RT-STORE-002 | runtime | `Runtime.swift`, `State.swift` | — | runtime.operational | none | n/a | tool payload policies + RuntimeSecretRedaction | RuntimeTests, ObserverTests, ObservabilityRuntimeCoverageTests, RuntimeObservabilityFaultInjectionTests | done |
 | DX-RT-TOOL-001 | runtime | `ToolRegistry.swift`, `MeridianTools.swift` | — | — | opt-in unknown-tools compile | n/a | auth header redaction | ToolRegistryTests | done |
 | DX-RT-TOOL-002 | runtime | `LLMTools.swift`, `HTTPLLMProvider.swift` | — | — | fail-closed `llm.not_configured` | n/a | API keys not echoed | PhaseHLLMProviderTests | done |
-| DX-RT-EVAL-001 | runtime | `TraceEvaluator.swift`, `ObligationEvaluator.swift` | — | — | none | n/a | reads stored records | TraceEvaluatorTests, CoherenceHarnessTests | done |
+| DX-RT-EVAL-001 | runtime | `TraceEvaluator.swift` | — | — | none | n/a | reads stored records | TraceEvaluatorTests, CoherenceHarnessTests | done |
 | DX-RT-EVAL-002 | runtime | `TraceTreeRenderer.swift`, `TraceRenderCommand.swift` | — | — | none | n/a | display-only | TraceTreeRendererTests | done |
 
 ## Cross-cutting

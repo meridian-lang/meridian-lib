@@ -8,14 +8,12 @@ public struct MCPServer: Sendable {
         case compile = "meridian_compile"
         case check = "meridian_check"
         case explain = "meridian_explain"
-        case obligations = "meridian_obligations"
 
         var description: String {
             switch self {
             case .compile: return "Compile a .meridian/.meri source string to Swift."
             case .check: return "Parse and lower a source string; return diagnostics."
             case .explain: return "Return canonical English for a source string."
-            case .obligations: return "Return the obligation artifact JSON for a source string."
             }
         }
 
@@ -111,14 +109,6 @@ public struct MCPServer: Sendable {
             )
             let text = try Verbalizer(model: model).verbalize()
             return toolResult(text: text)
-        case .obligations:
-            let model = try compiler.compileToModel(
-                meridianSource: source, meridianFile: file,
-                vocabularies: vocabularies, rulebooks: rulebooks
-            )
-            let document = try ObligationDocumentBuilder.build(from: model)
-            let json = try ObligationDocumentBuilder.emitJSON(document)
-            return toolResult(text: json)
         }
     }
 

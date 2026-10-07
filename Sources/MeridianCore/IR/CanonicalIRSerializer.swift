@@ -1,14 +1,10 @@
 import Foundation
 import MeridianRuntime
 
-/// Deterministic JSON for obligation identity hashing and proof-IR export.
+/// Deterministic JSON for norm identity hashing.
 /// Excludes source line/wording/status/build hash — semantic scope, kind,
 /// condition, and action pattern only.
 public enum CanonicalIRSerializer {
-
-    public static func normSemanticJSON(_ norm: NormIR) throws -> Data {
-        try CanonicalJSON.data(for: normSemanticPayload(norm))
-    }
 
     public static func normSemanticPayload(_ norm: NormIR) -> [String: Value] {
         var payload: [String: Value] = [
@@ -51,19 +47,6 @@ public enum CanonicalIRSerializer {
         ]
     }
 
-    public static func proofIRJSONString(_ value: Value) throws -> String {
-        String(data: try valueProofJSONData(value), encoding: .utf8) ?? "{}"
-    }
-
-    private static func valueProofJSONData(_ value: Value) throws -> Data {
-        switch value {
-        case .record(let record):
-            return try CanonicalJSON.data(for: record)
-        default:
-            return try CanonicalJSON.data(for: ["value": value])
-        }
-    }
-
     // MARK: - Scope
 
     private static func scopeValue(_ scope: NormScope) -> Value {
@@ -97,7 +80,7 @@ public enum CanonicalIRSerializer {
         ])
     }
 
-    // MARK: - Expressions (proof IR)
+    // MARK: - Expressions
 
     public static func expressionValue(_ expression: IRExpression) -> Value {
         switch expression {
@@ -227,7 +210,14 @@ public enum CanonicalIRSerializer {
     }
 
     private static func canonicalSortKey(_ value: Value) -> String {
-        (try? valueProofJSONData(value)).flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        let data: Data
+        switch value {
+        case .record(let record):
+            data = (try? CanonicalJSON.data(for: record)) ?? Data()
+        default:
+            data = (try? CanonicalJSON.data(for: ["value": value])) ?? Data()
+        }
+        return String(data: data, encoding: .utf8) ?? ""
     }
 
     private static func literalValue(_ literal: IRLiteral) -> Value {

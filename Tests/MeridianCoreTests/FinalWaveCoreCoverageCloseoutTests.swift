@@ -6,32 +6,9 @@ import MeridianRuntime
 @Suite("Final Wave core coverage closeout")
 struct FinalWaveCoreCoverageCloseoutTests {
 
-    // MARK: - ProofIRReader
-
-    @Test("ProofIRReader decodes action and trace query JSON")
-    func proofIRReader() {
-        let action = ProofIRReader.actionPattern(from: """
-        {"tool_id":"time.now","argument_constraints":[{"field":"x","kind":"string"}]}
-        """)
-        #expect(action?.toolID == "time.now")
-
-        let temporal = ProofIRReader.traceTemporalQuery(from: """
-        {"kind":"traceTemporal","scope":"currentRun","value":{"kind":"ever","pattern":{"kind":"eventPattern","value":{"subject":{"kind":"step","name":"deploy"},"outcome":"failed"}}}}
-        """)
-        #expect(temporal != nil)
-
-        let statistical = ProofIRReader.traceStatisticalQuery(from: """
-        {"kind":"traceStatistical","scope":"acrossAllRuns","value":{"pattern":{"subject":{"kind":"step","name":"deploy"}},"outcome":"succeeds","bound":{"kind":"atLeast","ratio":0.5},"denominator":"runs"}}
-        """)
-        #expect(statistical != nil)
-
-        #expect(ProofIRReader.actionPattern(from: nil) == nil)
-        #expect(ProofIRReader.actionPattern(from: "not json") == nil)
-    }
-
     // MARK: - CanonicalIRSerializer
 
-    @Test("CanonicalIRSerializer round-trips obligation proof fragments")
+    @Test("CanonicalIRSerializer norm semantic payload serializes deterministically")
     func canonicalIRSerializer() throws {
         let norm = NormIR(
             kind: .prohibition,
@@ -40,10 +17,10 @@ struct FinalWaveCoreCoverageCloseoutTests {
             sourceRange: SourceRange(file: "t.meridian", line: 1, column: 1),
             originalText: "must not invoke time.now"
         )
-        let data = try CanonicalIRSerializer.normSemanticJSON(norm)
+        let payload = CanonicalIRSerializer.normSemanticPayload(norm)
+        let data = try CanonicalJSON.data(for: payload)
         #expect(!data.isEmpty)
-        let proof = try CanonicalIRSerializer.proofIRJSONString(.record(["tool_id": .string("timeNow")]))
-        #expect(proof.contains("timeNow"))
+        #expect(payload["kind"] == .string("prohibition"))
     }
 
     // MARK: - DeonticLowering
@@ -161,46 +138,11 @@ struct FinalWaveCoreCoverageCloseoutTests {
         #expect(json.contains("greet.meridian"))
     }
 
-    // MARK: - ObligationEvaluator / Document / Artifact / Id
+    // MARK: - NormId
 
-    @Test("obligation pipeline builds evaluator-ready document")
-    func obligationPipeline() async throws {
-        let mer = """
-        ---
-        vocabulary: t.merconfig
-        ---
-        A customer must not invoke time.now.
-
-        To notify a customer:
-          complete.
-        """
-        let cfg = """
-        === vocabulary ===
-        A customer is a kind of thing.
-        """
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: mer,
-            meridianFile: "t.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
-        let document = try ObligationDocumentBuilder.build(from: model)
-        #expect(!document.obligations.isEmpty)
-        let json = try ObligationDocumentBuilder.emitJSON(document)
-        #expect(json.contains("obligations"))
-        let store = InMemoryTraceStore()
-        let context = TraceEvaluationContext(
-            runID: "run-1",
-            skillName: "test",
-            evaluationInstant: Date(timeIntervalSince1970: 100),
-            sampleFloor: 0
-        )
-        let results = try await ObligationEvaluator.evaluate(
-            document: document,
-            store: store,
-            context: context
-        )
-        #expect(!results.isEmpty)
-        var registry = ObligationIdRegistry()
+    @Test("norm id assignment is deterministic and registry-stable")
+    func normIdDeterminism() throws {
+        var registry = NormIdRegistry()
         let norm = NormIR(
             kind: .prohibition,
             scope: .skill,
@@ -208,8 +150,9 @@ struct FinalWaveCoreCoverageCloseoutTests {
             sourceRange: SourceRange(file: "t.meridian", line: 1, column: 1),
             originalText: "must not invoke time.now"
         )
-        let first = try ObligationId.make(from: norm, registry: &registry)
-        let second = try ObligationId.make(from: norm, registry: &registry)
+        let first = try NormId.make(from: norm, registry: &registry)
+        let second = try NormId.make(from: norm, registry: &registry)
         #expect(first == second)
+        #expect(first.hasPrefix("OBL-"))
     }
 }

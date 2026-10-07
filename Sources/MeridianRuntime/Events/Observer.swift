@@ -10,22 +10,16 @@ public protocol Observer: Sendable {
 
 /// Writes events as JSONL to stdout or a file.
 public struct JSONLObserver: Observer {
-    public enum Format: Sendable {
-        case legacy
-    }
-
     public enum Destination: Sendable {
         case standardOutput
         case file(URL)
     }
 
     private let destination: Destination
-    private let format: Format
     private let encoder: JSONEncoder
 
-    public init(destination: Destination = .standardOutput, format: Format = .legacy) {
+    public init(destination: Destination = .standardOutput) {
         self.destination = destination
-        self.format = format
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .iso8601
         enc.outputFormatting = []
@@ -33,11 +27,7 @@ public struct JSONLObserver: Observer {
     }
 
     public func record(_ event: Event) async throws {
-        let line: String
-        switch format {
-        case .legacy:
-            line = try formatEvent(event)
-        }
+        let line = try formatEvent(event)
         switch destination {
         case .standardOutput:
             print(line)

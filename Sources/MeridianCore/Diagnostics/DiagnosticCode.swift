@@ -403,9 +403,9 @@ extension DiagnosticCode {
         explanation: "Outcomes such as fail or succeed are not invokable actions. Prohibit a tool invoke or assert a condition instead.",
         kind: .structural, decision: DecisionRef("D3"))
 
-    public static let obligationIdCollision = DiagnosticCode(
-        id: "MER-DEO-006", title: "obligation id collision",
-        explanation: "Two distinct obligations hashed to the same OBL- prefix. Meridian rejects nondeterministic disambiguation instead of silently renumbering.",
+    public static let normIdCollision = DiagnosticCode(
+        id: "MER-DEO-006", title: "norm id collision",
+        explanation: "Two distinct norms hashed to the same OBL- prefix. Meridian rejects nondeterministic disambiguation instead of silently renumbering.",
         kind: .structural, decision: DecisionRef("D3"))
 
     public static let deonticUnlowerableCondition = DiagnosticCode(
@@ -589,7 +589,7 @@ extension DiagnosticCode {
         .statisticalConfidenceReserved, .statisticalVagueFrequency,
         .noteBindingUndeclared, .noteBindingNonText,
         .deonticSameScopeConflict, .deonticStickyDeny, .deonticNonNormModal,
-        .deonticToolOutsidePermissions, .deonticOutcomeAsAction, .obligationIdCollision,
+        .deonticToolOutsidePermissions, .deonticOutcomeAsAction, .normIdCollision,
         .deonticUnlowerableCondition,
         .moduleNotFound, .moduleImportCycle, .moduleExportCollision,
         .moduleSealedCollision, .duplicateModuleImport,

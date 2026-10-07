@@ -39,7 +39,7 @@ struct PhaseGTraceInfrastructureTests {
         )
         await #expect(throws: MeridianRuntimeError.self) {
             try await runtime.recordViolation(
-                obligationId: "no-shell",
+                normID: "no-shell",
                 disposition: "prevented",
                 blocking: true
             )

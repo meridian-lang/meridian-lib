@@ -98,13 +98,13 @@ struct RuntimeAssertCoverageTests {
         let observer = InMemoryObserver()
         let runtime = Runtime(toolRegistry: ToolRegistry(), observer: observer, runID: "viol-obs")
         try await runtime.recordViolation(
-            obligationId: "obl-1",
+            normID: "obl-1",
             disposition: "observed",
             blocking: false,
             toolID: "t1"
         )
         let hit = await observer.events.first { $0.kind == .violated }
-        #expect(hit?.payload["obligation_id"] == .string("obl-1"))
+        #expect(hit?.payload["norm_id"] == .string("obl-1"))
         #expect(hit?.payload["tool_id"] == .string("t1"))
     }
 

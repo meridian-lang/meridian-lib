@@ -25,8 +25,8 @@ public struct ExplainCommand: AsyncParsableCommand {
             help: "Directory searched for shared module packages. Repeatable.")
     var modulePath: [String] = []
 
-    @Flag(name: .long, help: "Omit [OBL-…] obligation id annotations from canonical output.")
-    var noObligationIDs: Bool = false
+    @Flag(name: .long, help: "Omit [OBL-…] norm id annotations from canonical output.")
+    var noNormIDs: Bool = false
 
     @OptionGroup var cliTrace: CLITraceOptions
 
@@ -44,7 +44,7 @@ public struct ExplainCommand: AsyncParsableCommand {
             )
             let canonical = try traceInstance.phase("verbalize") {
                 try Verbalizer(model: model, trace: traceInstance)
-                    .verbalize(annotateObligationIDs: !noObligationIDs)
+                    .verbalize(annotateNormIDs: !noNormIDs)
             }
             print(canonical)
         } catch {

@@ -323,7 +323,7 @@ public struct AssertIR: Sendable {
     public let monitored: Bool
     public let cadence: Duration?
     public let blocking: Bool
-    public let obligationId: String?
+    public let normID: String?
     public let violationDisposition: ViolationDisposition?
     public let sourceRange: SourceRange
     public let stableStepPath: String?
@@ -335,7 +335,7 @@ public struct AssertIR: Sendable {
         monitored: Bool = false,
         cadence: Duration? = nil,
         blocking: Bool = false,
-        obligationId: String? = nil,
+        normID: String? = nil,
         violationDisposition: ViolationDisposition? = nil,
         sourceRange: SourceRange = .unknown,
         stableStepPath: String? = nil
@@ -346,7 +346,7 @@ public struct AssertIR: Sendable {
         self.monitored = monitored
         self.cadence = cadence
         self.blocking = blocking
-        self.obligationId = obligationId
+        self.normID = normID
         self.violationDisposition = violationDisposition
         self.sourceRange = sourceRange
         self.stableStepPath = stableStepPath
@@ -910,18 +910,18 @@ public enum ViolationDisposition: String, Sendable, Hashable {
 }
 
 public struct DeonticGuardIR: Sendable {
-    public let obligationId: String
+    public let normID: String
     public let disposition: ViolationDisposition
     public let blocking: Bool
     public let actionPattern: ActionPatternIR
 
     public init(
-        obligationId: String,
+        normID: String,
         disposition: ViolationDisposition,
         blocking: Bool,
         actionPattern: ActionPatternIR
     ) {
-        self.obligationId = obligationId
+        self.normID = normID
         self.disposition = disposition
         self.blocking = blocking
         self.actionPattern = actionPattern

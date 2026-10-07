@@ -57,12 +57,10 @@ not marketing terms.
 > **Wave 9 addendum (deontic / obligations):** prohibitions (`must not invoke`),
 > obligations (`must hold`), and permissions (`may invoke`) lower to attempt-time
 > guards and effect-time asserts with trace-witnessed violations (SEM-7). Stable
-> `OBL-<hash>` obligation artifacts, `meridian obligations`, and `[OBL-…]`
-> explain annotations ship in Wave 9B–9D. Coherence between runtime violations
-> and proof obligations is established by **differential testing** (SEM-8-01),
-> not a formal machine-checked theorem — see [20_DEONTIC.md](20_DEONTIC.md) and
-> [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md). This is honest regression evidence,
-> not a proof of correctness for all traces.
+> `OBL-<hash>` norm ids and `[OBL-…]` explain annotations ship in Wave 9B–9D.
+> Formal prover discharge and a machine-checked coherence theorem remain out of
+> scope — see [20_DEONTIC.md](20_DEONTIC.md) and
+> [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md).
 
 ## Corpus Status
 

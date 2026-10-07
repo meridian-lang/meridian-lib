@@ -596,12 +596,10 @@ and the oracle [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTI
 **Wave 9 / Final Wave (deontic/obligation surface) — complete.**
 
 Phases 9A–9D shipped: deontic lowering (`must not` / `must hold` / `may`),
-MER-DEO-* diagnostics, stable `OBL-<hash>` obligation artifacts,
-`meridian obligations` CLI, `[OBL-…]` explain annotations, coherence harness
-(SEM-8-01), and corpus/docs. All Final Wave requirement rows closed `done`
+MER-DEO-* diagnostics, stable `OBL-<hash>` norm ids, `[OBL-…]` explain
+annotations, and corpus/docs. All Final Wave requirement rows closed `done`
 (matrix retired in the 2026-10-07 docs cleanup). Primary docs:
-[`docs/20_DEONTIC.md`](20_DEONTIC.md),
-[`docs/23_PROVER_READY_OBLIGATIONS.md`](23_PROVER_READY_OBLIGATIONS.md).
+[`docs/20_DEONTIC.md`](20_DEONTIC.md).
 
 ---
 

@@ -853,27 +853,20 @@ MeridianTools/MeridianTools.swift                            = 95.70
 # re-run `--full --gate` before tightening. Bucket-A: HTTP/SQLite/OTLP/subprocess/
 # LLM provider tails. Bucket-B: reachable in-process residual ratchet targets.
 
-# CLI / MCP (bucket A): stdio serve loop, process-spawn repair, obligations emit.
+# CLI / MCP (bucket A): stdio serve loop, process-spawn repair.
 MeridianCLIKit/Commands/ExplainSwiftCommand.swift            = 95.00
 MeridianCLIKit/Commands/ExplainDiagCommand.swift             = 89.50
 MeridianCLIKit/Commands/MCPCommand.swift                     = 47.00
 MeridianCLIKit/MCP/MCPServer.swift                           = 79.00
-MeridianCLIKit/Commands/ObligationsCommand.swift             = 94.00
 MeridianCLIKit/Commands/CanonicalizeCommand.swift            = 75.00
 MeridianCLIKit/Migration/SkillMigratorLLMRepair.swift        = 56.00
 
-# Obligations / deontic / modules (bucket B closeout ratchet).
-# 2026-07-13 ObligationsCoverageCloseoutTests — ProofIR temporal/action matrix,
-# CanonicalIRSerializer expression sweep, ObligationEvaluator helpers.
-# Observed: ProofIRReader 77.40%, CanonicalIRSerializer 72.47%,
-# ObligationEvaluator 52.74% (async evaluateCoverage/statistical arms remain).
-MeridianCore/Obligations/ProofIRReader.swift                 = 76.00
-MeridianCore/Obligations/CanonicalIRSerializer.swift         = 71.00
-MeridianCore/Obligations/ObligationEvaluator.swift           = 51.50
-MeridianCore/Obligations/ObligationDocument.swift            = 91.00
-MeridianCore/Obligations/ObligationArtifact.swift            = 81.00
-MeridianCore/Obligations/ObligationId.swift                  = 91.00
-MeridianCore/Obligations/CoherenceHarness.swift              = 62.00
+# Deontic / modules (bucket B closeout ratchet).
+# 2026-10-07 Phase 1b moved these two out of MeridianCore/Obligations/ and
+# deleted the artifact-layer tests that carried their old floors (71/91);
+# re-based to the observed post-move values minus ~1 point.
+MeridianCore/IR/CanonicalIRSerializer.swift                  = 10.50
+MeridianCore/IR/NormIdentity.swift                           = 16.00
 MeridianCore/Lowering/DeonticLowering.swift                  = 52.00
 MeridianCore/Codegen/IRSidecarEmitter.swift                  = 63.00
 MeridianCore/Modules/ModuleLockfile.swift                    = 58.00

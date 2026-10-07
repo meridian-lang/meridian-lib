@@ -27,7 +27,7 @@ struct CompilerPipelineParityTests {
         .init(name: "test", file: "test.merconfig", source: cfg)
     }
 
-    @Test("workflows, obligations, and verbalizer model agree across compile paths")
+    @Test("workflows, norms, and verbalizer model agree across compile paths")
     func compilePathsAgreeOnLoweredArtifacts() throws {
         let compiler = Compiler(options: .init(trace: .silent()))
         let model = try compiler.compileToModel(
@@ -42,10 +42,8 @@ struct CompilerPipelineParityTests {
         )
 
         #expect(model.workflows.map(\.structName) == manifestResult.manifest.workflows.map(\.structName))
-        #expect(model.workflows.flatMap(\.norms).count == manifestResult.manifest.obligations.count)
-
-        let modelDoc = try ObligationDocumentBuilder.build(from: model)
-        #expect(modelDoc.obligations.map(\.id) == manifestResult.manifest.obligations.map(\.id))
+        #expect(model.workflows.flatMap(\.norms).map(\.id)
+            == manifestResult.manifest.workflows.flatMap(\.norms).map(\.id))
 
         let verbalized = try Verbalizer(model: model).verbalize()
         let manifestVerbalized = try Verbalizer(model: VerbalizerModel(
@@ -67,7 +65,7 @@ struct CompilerPipelineParityTests {
 
 @Suite("CanonicalIRSerializer expression parity notes")
 struct TraceIdentityCanonicalIRParityTests {
-    @Test("obligation proof IR uses stable comparison op names, not enum descriptions")
+    @Test("norm identity payload uses stable comparison op names, not enum descriptions")
     func canonicalComparisonOpNamesAreStable() {
         let expr: IRExpression = .comparison(
             .identifierRef(name: "status"),
@@ -86,7 +84,7 @@ struct TraceIdentityCanonicalIRParityTests {
         #expect(op == "equal")
         // TraceIdentityPlanner's private workflow hasher uses `String(describing:)`
         // for comparison ops (`"equal"` for `.equal` today). Consolidation must
-        // not assume byte-identical serializers — obligation IDs rely on
+        // not assume byte-identical serializers — norm IDs rely on
         // CanonicalIRSerializer's explicit `comparisonOpName` table instead.
     }
 

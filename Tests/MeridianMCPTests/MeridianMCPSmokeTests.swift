@@ -33,10 +33,10 @@ struct MeridianMCPSmokeTests {
         let names = Set(tools.compactMap { $0["name"] as? String })
         #expect(names.contains("meridian_compile"))
         #expect(names.contains("meridian_explain"))
-        #expect(names.contains("meridian_obligations"))
+        #expect(names.count == 3)
     }
 
-    @Test("MCP routes check, explain, obligations, and error paths")
+    @Test("MCP routes check, explain, and error paths")
     func toolRouting() throws {
         let server = MCPServer()
         let source = """
@@ -50,7 +50,11 @@ struct MeridianMCPSmokeTests {
 
         let checkOK = try server.callTool([
             "name": "meridian_check",
-            "arguments": ["source": source, "file": "greet.meridian", "merconfig": merconfig, "merconfig_file": "t.merconfig"] as [String: Any],
+            "arguments": [
+                "source": source, "file": "greet.meridian",
+                "merconfig": merconfig, "merconfig_file": "t.merconfig",
+                "rulebook": "=== desugar ===\n", "rulebook_file": "t.merrules",
+            ] as [String: Any],
         ])
         #expect((checkOK["content"] as? [[String: Any]])?.first?["text"] as? String == "ok")
 
@@ -67,12 +71,16 @@ struct MeridianMCPSmokeTests {
         let explainText = (explain["content"] as? [[String: Any]])?.first?["text"] as? String ?? ""
         #expect(explainText.contains("greet"))
 
-        let obligations = try server.callTool([
-            "name": "meridian_obligations",
-            "arguments": ["source": source, "file": "greet.meridian", "merconfig": merconfig, "merconfig_file": "t.merconfig"] as [String: Any],
+        let routed = try server.handle([
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": [
+                "name": "meridian_explain",
+                "arguments": ["source": source, "file": "greet.meridian", "merconfig": merconfig, "merconfig_file": "t.merconfig"] as [String: Any],
+            ] as [String: Any],
         ])
-        let obligationText = (obligations["content"] as? [[String: Any]])?.first?["text"] as? String ?? ""
-        #expect(obligationText.contains("obligations") || obligationText.contains("OBL-"))
+        #expect(routed["result"] != nil)
 
         let missingMethod = try server.handle([
             "jsonrpc": "2.0",

@@ -15,7 +15,7 @@ meridian --version
 
 ### `--module-path` (shared module imports)
 
-Five compile-family commands accept repeatable `--module-path <dir>` to search
+Four compile-family commands accept repeatable `--module-path <dir>` to search
 for shared Meridian module packages (`import module …` in source). See
 [22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md).
 
@@ -24,7 +24,6 @@ for shared Meridian module packages (`import module …` in source). See
 | `compile` | yes |
 | `check` / `verify` | yes (`check` only; `verify` alias omits the flag) |
 | `explain` | yes |
-| `obligations` | yes |
 | `canonicalize` | yes |
 | All other subcommands (`drift`, `run`, `trace eval`, `migrate-skill`, …) | no |
 
@@ -68,7 +67,7 @@ meridian canonicalize skill.meri --propose --llm gpt-4o-mini
 
 ## `meridian mcp serve`
 
-Run a stdio Model Context Protocol server exposing Meridian compile/check/explain/obligations tools to MCP hosts.
+Run a stdio Model Context Protocol server exposing Meridian compile/check/explain tools to MCP hosts.
 
 ```bash
 meridian mcp serve [--once]
@@ -582,7 +581,7 @@ meridian explain <source> [options]
 | `--module-path <dir>` | (none) | Directory searched for shared module packages. Repeatable. |
 | `--trace <categories>` | (none) | Enable `ParserTrace`; canonical emission logs under `verbalizer`. |
 | `--trace-file <path>` | stderr | Write trace output to a file instead of stderr. |
-| `--no-obligation-ids` | false | Omit `[OBL-…]` obligation id annotations from canonical output. |
+| `--no-norm-ids` | false | Omit `[OBL-…]` norm id annotations from canonical output. |
 
 Example:
 
@@ -592,9 +591,8 @@ meridian explain corpora/erp/skills/placeorder.meri \
     --rulebook corpora/erp/erp.merrules
 ```
 
-Deontic norms and contract asserts are annotated with stable obligation ids by
-default (Wave 9). See [20_DEONTIC.md](20_DEONTIC.md) and
-[23_PROVER_READY_OBLIGATIONS.md](23_PROVER_READY_OBLIGATIONS.md).
+Deontic norms and contract asserts are annotated with stable norm ids by
+default (Wave 9). See [20_DEONTIC.md](20_DEONTIC.md).
 
 ---
 
@@ -616,45 +614,6 @@ Example:
 meridian compile skill.meridian --output build/
 meridian explain-swift build/skill.swift
 ```
-
----
-
-## `meridian obligations`
-
-Emit the prover-ready obligation artifact JSON for a compiled skill
-([SEM-8-02](cookbook/MERIDIAN_SEMANTICS.md)). Each norm and contract assert
-lowers to a versioned record with stable `OBL-<hash>` id, canonical English,
-and optional proof-IR projections.
-
-```bash
-meridian obligations <source> [options]
-```
-
-| Flag | Default | Description |
-|---|---|---|
-| `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. Repeatable. |
-| `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. Repeatable. |
-| `--module-path <dir>` | (none) | Directory searched for shared module packages. Repeatable. |
-| `--output <path>` | stdout | Write JSON to this file instead of stdout. |
-| `--summary` | false | Print a one-line obligation summary per skill. |
-| `--schema` | false | Print the obligation artifact schema and exit. |
-| `--no-include-proof-ir` | false | Omit condition/action proof IR from each obligation. |
-| `--trace <categories>` | (none) | Enable compile-time tracing for the obligations phase. |
-
-Examples:
-
-```bash
-meridian obligations corpora/governance/skills/grantaccess.meri \
-    --merconfig corpora/governance/governance.merconfig \
-    --rulebook corpora/governance/governance.merrules
-
-meridian obligations skill.meri --summary
-meridian obligations --schema
-```
-
-Non-empty obligation sets also appear under `meridian_obligations` in
-`*.meridian.manifest.json` from `meridian compile`. Formal prover discharge is
-out of scope — see [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md).
 
 ---
 

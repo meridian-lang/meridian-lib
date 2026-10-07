@@ -95,7 +95,7 @@ struct PhaseHCLITests {
         #expect(names.contains("meridian_compile"))
         #expect(names.contains("meridian_check"))
         #expect(names.contains("meridian_explain"))
-        #expect(names.contains("meridian_obligations"))
+        #expect(names.count == 3)
     }
 
     @Test("MCP compile tool returns Swift text")

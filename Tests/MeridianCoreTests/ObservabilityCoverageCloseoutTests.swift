@@ -205,7 +205,7 @@ struct ObservabilityCoverageCloseoutTests {
         #expect(fractional.contains("91.25"), Comment(rawValue: fractional))
     }
 
-    @Test("Verbalizer synthesizes deontic norms and obligation-ID annotations")
+    @Test("Verbalizer synthesizes deontic norms and norm-ID annotations")
     func verbalizerSynthesizedDeonticNorms() {
         let range = SourceRange(file: "t.meridian", line: 1, column: 1)
         let symbols = SymbolTable.build(from: MerConfigFile(tools: [
@@ -240,7 +240,7 @@ struct ObservabilityCoverageCloseoutTests {
             sourceRange: range,
             originalText: ""
         )
-        let prohibitionText = v.verbalize(prohibition, annotateObligationID: true)
+        let prohibitionText = v.verbalize(prohibition, annotateNormID: true)
         #expect(prohibitionText.contains("must not"))
         #expect(prohibitionText.contains("[OBL-P1]"))
 

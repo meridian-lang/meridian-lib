@@ -38,8 +38,7 @@ struct DXTraceExpansionTests {
         let joined = cap.lines().joined(separator: "\n")
         #expect(joined.contains("domainDecl:"))
         #expect(joined.contains("traceIdentity.annotate:"))
-        #expect(joined.contains("obligationStamp:"))
-        #expect(joined.contains("obligationDocument:"))
+        #expect(joined.contains("normIdStamp:"))
         #expect(joined.contains("manifestRules:"))
     }
 
@@ -61,9 +60,7 @@ struct DXTraceExpansionTests {
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("domain decl:") })
         #expect(lines.contains { $0.contains("trace identity: annotated") })
-        #expect(lines.contains { $0.contains("obligation stamp:") })
         #expect(lines.contains { $0.contains("manifest rules:") })
-        #expect(lines.contains { $0.contains("obligation document:") })
     }
 
     @Test("compileSkillpack mirrors single-file timing spans")

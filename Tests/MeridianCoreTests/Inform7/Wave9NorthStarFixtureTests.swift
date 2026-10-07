@@ -23,7 +23,7 @@ struct Wave9NorthStarFixtureTests {
         )
     }
 
-    @Test("release-sentinel-wave9 compiles with non-empty obligations and explain annotations")
+    @Test("release-sentinel-wave9 compiles with non-empty norms and explain annotations")
     func releaseSentinelWave9Obligations() throws {
         let mer = """
         ---
@@ -37,15 +37,15 @@ struct Wave9NorthStarFixtureTests {
           complete with reason "release sentinel wave9 pass complete".
         """
         let model = try compileModel(mer: mer, file: "release-sentinel-wave9.meri")
-        let document = try ObligationDocumentBuilder.build(from: model)
-        #expect(!document.obligations.isEmpty)
-        let annotated = try Verbalizer(model: model).verbalize(annotateObligationIDs: true)
+        let norms = model.workflows.flatMap(\.norms)
+        #expect(!norms.isEmpty)
+        let annotated = try Verbalizer(model: model).verbalize(annotateNormIDs: true)
         #expect(annotated.contains("[OBL-"))
-        #expect(document.obligations.contains { $0.kind == .unreachability })
-        #expect(document.obligations.contains { $0.kind == .coverage })
+        #expect(norms.contains { $0.kind == .prohibition })
+        #expect(norms.contains { $0.kind == .permission })
     }
 
-    @Test("ledger-recon-wave9 compiles with prohibition and invariant obligations")
+    @Test("ledger-recon-wave9 compiles with prohibition and obligation norms")
     func ledgerReconWave9Obligations() throws {
         let mer = """
         ---
@@ -58,11 +58,11 @@ struct Wave9NorthStarFixtureTests {
           complete with reason "ledger recon wave9 pass complete".
         """
         let model = try compileModel(mer: mer, file: "ledger-recon-wave9.meri")
-        let document = try ObligationDocumentBuilder.build(from: model)
-        #expect(document.obligations.count >= 2)
-        #expect(document.obligations.contains { $0.kind == .unreachability })
-        #expect(document.obligations.contains { $0.kind == .invariant || $0.kind == .statisticalMonitor })
-        let annotated = try Verbalizer(model: model).verbalize(annotateObligationIDs: true)
+        let norms = model.workflows.flatMap(\.norms)
+        #expect(norms.count >= 2)
+        #expect(norms.contains { $0.kind == .prohibition })
+        #expect(norms.contains { $0.kind == .obligation })
+        let annotated = try Verbalizer(model: model).verbalize(annotateNormIDs: true)
         #expect(annotated.contains("[OBL-"))
     }
 

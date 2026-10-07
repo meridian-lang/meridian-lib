@@ -210,7 +210,7 @@ extension Runtime {
     /// the guarded tool. PREVENTED dispositions block the invoke; OBSERVED
     /// dispositions accompany norm assert failures.
     public func recordViolation(
-        obligationId: String,
+        normID: String,
         disposition: String,
         blocking: Bool,
         toolID: String? = nil,
@@ -218,7 +218,7 @@ extension Runtime {
         sourceRange: SourceRange? = nil
     ) async throws {
         var payload: [String: Value] = [
-            "obligation_id": .string(obligationId),
+            "norm_id": .string(normID),
             "disposition": .string(disposition),
             "blocking": .boolean(blocking),
             "step": step.map(Value.string) ?? .null,
@@ -239,7 +239,7 @@ extension Runtime {
         )
         if blocking {
             throw MeridianRuntimeError.violation(
-                message: "deontic violation (\(disposition)) for obligation \(obligationId)",
+                message: "deontic violation (\(disposition)) for norm \(normID)",
                 sourceRange: sourceRange
             )
         }

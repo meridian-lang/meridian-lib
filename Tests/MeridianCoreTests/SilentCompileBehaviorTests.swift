@@ -49,14 +49,6 @@ struct SilentCompileBehaviorTests {
         }
     }
 
-    @Test("ProofIRReader logs validation warnings for malformed JSON input")
-    func proofIRReaderMalformedJSON() {
-        let cap = ParserTrace.capturing(categories: [.validation])
-        #expect(ProofIRReader.actionPattern(from: "not json", trace: cap.trace) == nil)
-        let lines = cap.lines()
-        #expect(lines.contains { $0.contains("proof-ir read warning") })
-    }
-
     @Test("ModuleResolver logs when meridian manifest cannot be read")
     func moduleResolverManifestReadWarning() throws {
         let fixturesRoot = URL(fileURLWithPath: #filePath)

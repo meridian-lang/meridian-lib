@@ -220,7 +220,7 @@ enum TraceIdentityPlanner {
                 monitored: ir.monitored,
                 cadence: ir.cadence,
                 blocking: ir.blocking,
-                obligationId: ir.obligationId,
+                normID: ir.normID,
                 violationDisposition: ir.violationDisposition,
                 sourceRange: ir.sourceRange,
                 stableStepPath: stableStepPath

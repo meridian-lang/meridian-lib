@@ -13,7 +13,7 @@ struct DocumentationParityTests {
             .deletingLastPathComponent()
     }
 
-    private static let numberedDocCount = 24
+    private static let numberedDocs: [Int] = Array(1 ... 22) + [24]
 
     private static let activeDocRoots: [String] = [
         "docs",
@@ -71,7 +71,7 @@ struct DocumentationParityTests {
         #expect(text.contains("branch.end"))
     }
 
-    @Test("numbered docs 01-24 exist and appear in docs/README.md reading-order table")
+    @Test("numbered docs 01-22 plus 24 exist and appear in docs/README.md reading-order table")
     func numberedDocsIndexed() throws {
         let root = repositoryRoot()
         let index = try String(
@@ -80,7 +80,7 @@ struct DocumentationParityTests {
         )
         var missingFiles: [String] = []
         var missingIndex: [String] = []
-        for n in 1 ... Self.numberedDocCount {
+        for n in Self.numberedDocs {
             let prefix = String(format: "%02d_", n)
             let docsDir = root.appendingPathComponent("docs")
             let matches = try FileManager.default.contentsOfDirectory(atPath: docsDir.path)

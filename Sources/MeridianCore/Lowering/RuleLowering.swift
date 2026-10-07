@@ -210,7 +210,7 @@ public struct RuleAnalyzer {
         let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
         let condition = try lowerExprForDeontic(exprParser.parse(conditionText), sourceRange: sr)
         let norm = NormIR(
-            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .obligation),
+            id: DeonticLowering.normID(sourceLine: rule.sourceLine, kind: .obligation),
             kind: .obligation,
             scope: .skill,
             actionPattern: nil,
@@ -240,7 +240,7 @@ public struct RuleAnalyzer {
         let scope: NormScope = subjectKind.isEmpty ? .skill : .kind(subjectKind)
         let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
         let norm = NormIR(
-            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .prohibition),
+            id: DeonticLowering.normID(sourceLine: rule.sourceLine, kind: .prohibition),
             kind: .prohibition,
             scope: scope,
             actionPattern: pattern,
@@ -284,7 +284,7 @@ public struct RuleAnalyzer {
         let scope: NormScope = subjectKind.isEmpty ? .skill : .kind(subjectKind)
         let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
         let norm = NormIR(
-            id: DeonticLowering.provisionalNormID(sourceLine: rule.sourceLine, kind: .permission),
+            id: DeonticLowering.normID(sourceLine: rule.sourceLine, kind: .permission),
             kind: .permission,
             scope: scope,
             actionPattern: ActionPatternIR(toolID: pattern.toolID, argumentConstraints: constraints),

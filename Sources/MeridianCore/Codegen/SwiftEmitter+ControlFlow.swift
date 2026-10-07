@@ -130,9 +130,9 @@ extension SwiftEmitter {
         let step = "\"\(escapeSwiftStringLiteral(stableStepPath ?? guardIR.actionPattern.toolID))\""
         let tool = escapeSwiftStringLiteral(guardIR.actionPattern.toolID)
         let disposition = escapeSwiftStringLiteral(guardIR.disposition.rawValue)
-        let obligation = escapeSwiftStringLiteral(guardIR.obligationId)
+        let normID = escapeSwiftStringLiteral(guardIR.normID)
         return StringTemplate {
-            "\(ctx.s)try await runtime.recordViolation(obligationId: \"\(obligation)\", disposition: \"\(disposition)\", blocking: \(guardIR.blocking), toolID: \"\(tool)\", step: \(step))"
+            "\(ctx.s)try await runtime.recordViolation(normID: \"\(normID)\", disposition: \"\(disposition)\", blocking: \(guardIR.blocking), toolID: \"\(tool)\", step: \(step))"
             if guardIR.blocking {
                 "\(ctx.s)throw MeridianRuntimeError.violation(message: \"deontic prohibition blocked invoke of \(tool)\")"
             }
@@ -235,19 +235,19 @@ extension SwiftEmitter {
                 "\(ctx.s)}"
             } else {
                 let step = "\"\(escapeSwiftStringLiteral(ir.stableStepPath ?? "assert"))\""
-                if let obligation = ir.obligationId {
+                if let normID = ir.normID {
                     if expressionMayBeIndeterminate(ir.condition) {
                         let truthVar = "__meridianAssertTruth_\(swiftIdentifierSuffix(path))"
                         "\(ctx.s)let \(truthVar) = \(emitTruthValueExpr(ir.condition))"
                         "\(ctx.s)if \(truthVar) != .true {"
-                        "\(ctx.in(1).s)try await runtime.recordViolation(obligationId: \"\(escapeSwiftStringLiteral(obligation))\", disposition: \"observed\", blocking: \(ir.blocking), toolID: nil, step: \(step))"
+                        "\(ctx.in(1).s)try await runtime.recordViolation(normID: \"\(escapeSwiftStringLiteral(normID))\", disposition: \"observed\", blocking: \(ir.blocking), toolID: nil, step: \(step))"
                         "\(ctx.in(1).s)try await runtime.assert(\(truthVar), message: \"\(msg)\", step: \(step))"
                         "\(ctx.s)} else {"
                         "\(ctx.in(1).s)try await runtime.assert(TruthValue.true, message: \"\(msg)\", step: \(step))"
                         "\(ctx.s)}"
                     } else {
                         "\(ctx.s)if !(\(emitExprUnchecked(ir.condition))) {"
-                        "\(ctx.in(1).s)try await runtime.recordViolation(obligationId: \"\(escapeSwiftStringLiteral(obligation))\", disposition: \"observed\", blocking: \(ir.blocking), toolID: nil, step: \(step))"
+                        "\(ctx.in(1).s)try await runtime.recordViolation(normID: \"\(escapeSwiftStringLiteral(normID))\", disposition: \"observed\", blocking: \(ir.blocking), toolID: nil, step: \(step))"
                         "\(ctx.in(1).s)try await runtime.assert(false, message: \"\(msg)\", step: \(step))"
                         "\(ctx.s)} else {"
                         "\(ctx.in(1).s)try await runtime.assert(true, message: \"\(msg)\", step: \(step))"

@@ -2,46 +2,46 @@ import CryptoKit
 import Foundation
 import MeridianRuntime
 
-public let OBLIGATION_ID_PREFIX_LENGTH = 16
+public let NORM_ID_PREFIX_LENGTH = 16
 
-public struct ObligationIdRegistry: Sendable {
+public struct NormIdRegistry: Sendable {
     private var prefixToFullHash: [String: String] = [:]
 
     public init() {}
 
     public mutating func register(id: String, fullHash: String) throws {
         let prefix = String(id.dropFirst("OBL-".count))
-        guard prefix.count == OBLIGATION_ID_PREFIX_LENGTH else { return }
+        guard prefix.count == NORM_ID_PREFIX_LENGTH else { return }
         if let existing = prefixToFullHash[prefix], existing != fullHash {
             throw CompilerError.diagnostics([
                 Diagnostic.error(
-                    .obligationIdCollision,
-                    message: "obligation id prefix collision: \(id)",
+                    .normIdCollision,
+                    message: "norm id prefix collision: \(id)",
                     range: .unknown,
-                    help: "Two distinct obligations hashed to the same OBL- prefix. Reword one obligation's scope or condition so the semantic hash differs.")
+                    help: "Two distinct norms hashed to the same OBL- prefix. Reword one norm's scope or condition so the semantic hash differs.")
             ])
         }
         prefixToFullHash[prefix] = fullHash
     }
 }
 
-public enum ObligationId {
+public enum NormId {
 
-    public static func make(from payload: [String: Value], registry: inout ObligationIdRegistry) throws -> String {
+    public static func make(from payload: [String: Value], registry: inout NormIdRegistry) throws -> String {
         let data = try CanonicalJSON.data(for: payload)
         let fullHash = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
-        let prefix = String(fullHash.prefix(OBLIGATION_ID_PREFIX_LENGTH))
+        let prefix = String(fullHash.prefix(NORM_ID_PREFIX_LENGTH))
         let id = "OBL-\(prefix)"
         try registry.register(id: id, fullHash: fullHash)
         return id
     }
 
-    public static func make(from norm: NormIR, registry: inout ObligationIdRegistry) throws -> String {
+    public static func make(from norm: NormIR, registry: inout NormIdRegistry) throws -> String {
         try make(from: CanonicalIRSerializer.normSemanticPayload(norm), registry: &registry)
     }
 
     public static func finalize(_ norms: [NormIR]) throws -> [NormIR] {
-        var registry = ObligationIdRegistry()
+        var registry = NormIdRegistry()
         return try norms.map { norm in
             let id = try make(from: norm, registry: &registry)
             return NormIR(
@@ -60,7 +60,7 @@ public enum ObligationId {
     public static func forDefaultDeny(
         toolID: String,
         scope: NormScope,
-        registry: inout ObligationIdRegistry
+        registry: inout NormIdRegistry
     ) throws -> String {
         try make(
             from: CanonicalIRSerializer.defaultDenySemanticPayload(toolID: toolID, scope: scope),
@@ -72,7 +72,7 @@ public enum ObligationId {
         condition: IRExpression,
         scope: NormScope,
         monitored: Bool,
-        registry: inout ObligationIdRegistry
+        registry: inout NormIdRegistry
     ) throws -> String {
         try make(
             from: CanonicalIRSerializer.contractAssertSemanticPayload(
@@ -85,9 +85,9 @@ public enum ObligationId {
     }
 }
 
-public enum ContractObligationDetector {
+public enum ContractAssertDetector {
 
-    public static func isContractObligation(_ assert: AssertIR) -> Bool {
+    public static func isContractAssert(_ assert: AssertIR) -> Bool {
         if assert.monitored { return true }
         return expressionQualifies(assert.condition)
     }
@@ -113,10 +113,10 @@ public enum ContractObligationDetector {
     }
 }
 
-public enum ObligationIdStamper {
+public enum NormIdStamper {
 
     public static func stampContractAsserts(in workflows: [IRWorkflow]) throws -> [IRWorkflow] {
-        var registry = ObligationIdRegistry()
+        var registry = NormIdRegistry()
         var seenNormIDs = Set<String>()
         for workflow in workflows {
             for norm in workflow.norms {
@@ -149,7 +149,7 @@ public enum ObligationIdStamper {
         _ block: IRBlock,
         scope: NormScope,
         seenNormIDs: Set<String>,
-        registry: inout ObligationIdRegistry
+        registry: inout NormIdRegistry
     ) throws -> IRBlock {
         let statements = try block.statements.map { stmt in
             try stampPrimitive(stmt, scope: scope, seenNormIDs: seenNormIDs, registry: &registry)
@@ -161,13 +161,13 @@ public enum ObligationIdStamper {
         _ primitive: IRPrimitive,
         scope: NormScope,
         seenNormIDs: Set<String>,
-        registry: inout ObligationIdRegistry
+        registry: inout NormIdRegistry
     ) throws -> IRPrimitive {
         switch primitive {
         case .assert(var assertIR):
-            if assertIR.obligationId == nil || !seenNormIDs.contains(assertIR.obligationId ?? ""),
-               ContractObligationDetector.isContractObligation(assertIR) {
-                let id = try ObligationId.forContractAssert(
+            if assertIR.normID == nil || !seenNormIDs.contains(assertIR.normID ?? ""),
+               ContractAssertDetector.isContractAssert(assertIR) {
+                let id = try NormId.forContractAssert(
                     condition: assertIR.condition,
                     scope: scope,
                     monitored: assertIR.monitored,
@@ -180,7 +180,7 @@ public enum ObligationIdStamper {
                     monitored: assertIR.monitored,
                     cadence: assertIR.cadence,
                     blocking: assertIR.blocking,
-                    obligationId: id,
+                    normID: id,
                     violationDisposition: assertIR.violationDisposition,
                     sourceRange: assertIR.sourceRange,
                     stableStepPath: assertIR.stableStepPath
@@ -196,7 +196,7 @@ public enum ObligationIdStamper {
                     monitored: assertIR.monitored,
                     cadence: assertIR.cadence,
                     blocking: assertIR.blocking,
-                    obligationId: assertIR.obligationId,
+                    normID: assertIR.normID,
                     violationDisposition: assertIR.violationDisposition,
                     sourceRange: assertIR.sourceRange,
                     stableStepPath: assertIR.stableStepPath

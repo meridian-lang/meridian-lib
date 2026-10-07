@@ -11,8 +11,8 @@ runs against a small deterministic runtime.
 > infrastructure (grammar table, screening, sentence breaker, problem messages),
 > Wave 6 validation/reporting across six corpus families, the Wave 7 canonical
 > verbalizer/drift audit surface, and the Wave 8 trace-backed time/statistics
-> gate are all complete. **Wave 9 / Final Wave (deontic norms, obligation
-> artifacts, modules, and closure) is complete** — see
+> gate are all complete. **Wave 9 / Final Wave (deontic norms, modules, and
+> closure) is complete** — see
 > [20_DEONTIC.md](20_DEONTIC.md) and [status.md](status.md). Generated Swift
 > compiles, links, and runs against
 > `MeridianRuntime`.
@@ -47,10 +47,9 @@ runs against a small deterministic runtime.
 | 17 | [17_MERIDIAN_PATTERNS.md](17_MERIDIAN_PATTERNS.md) | **Anyone about to "fix" a restriction** — recurring architectural patterns and why they're intentional, not gaps |
 | 18 | [18_VERBALIZER.md](18_VERBALIZER.md) | Wave 7 canonical English, round-trip law, drift audit, and verbalizer API |
 | 19 | [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, capture policy, and replay |
-| 20 | [20_DEONTIC.md](20_DEONTIC.md) | Wave 9 deontic norms, obligations, conflict lattice, artifacts, and coherence boundary |
+| 20 | [20_DEONTIC.md](20_DEONTIC.md) | Wave 9 deontic norms, obligations, conflict lattice, and guards |
 | 21 | [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md) | Permanent out-of-scope boundary (prover discharge, localization) |
 | 22 | [22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md) | Shared module imports, `--module-path`, lockfiles |
-| 23 | [23_PROVER_READY_OBLIGATIONS.md](23_PROVER_READY_OBLIGATIONS.md) | Obligation artifact schema without prover discharge |
 | 24 | [24_TRACE_STORAGE.md](24_TRACE_STORAGE.md) | Trace store backends (memory, JSONL, SQLite, HTTP) |
 | — | [cookbook/README.md](cookbook/README.md) | **Semantics oracle** — normative meaning/surface docs for Waves 7–9 / Final Wave (`MERIDIAN_*.md`) |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |

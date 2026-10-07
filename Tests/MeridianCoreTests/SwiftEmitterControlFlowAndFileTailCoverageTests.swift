@@ -28,7 +28,7 @@ struct SwiftEmitterControlFlowCoverageTests {
         #expect(empty.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
         let guardIR = DeonticGuardIR(
-            obligationId: "o1",
+            normID: "o1",
             disposition: .prevented,
             blocking: true,
             actionPattern: ActionPatternIR(toolID: "shell.run")
@@ -39,7 +39,7 @@ struct SwiftEmitterControlFlowCoverageTests {
 
         let soft = e.emitDeonticDeny(
             DeonticGuardIR(
-                obligationId: "o2",
+                normID: "o2",
                 disposition: .observed,
                 blocking: false,
                 actionPattern: ActionPatternIR(toolID: "http.get")

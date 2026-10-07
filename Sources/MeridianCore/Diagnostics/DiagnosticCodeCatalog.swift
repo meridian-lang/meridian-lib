@@ -140,7 +140,7 @@ extension DiagnosticCode {
         .init(.deonticToolOutsidePermissions, status: .active,
               emitters: ["DeonticLowering.swift:wrapInvokeIfNeeded"]),
         .init(.deonticOutcomeAsAction, status: .active, emitters: ["DeonticLowering.swift"]),
-        .init(.obligationIdCollision, status: .active, emitters: ["ObligationId.swift"]),
+        .init(.normIdCollision, status: .active, emitters: ["NormIdentity.swift"]),
         .init(.deonticUnlowerableCondition, status: .active,
               emitters: ["RuleLowering.swift:lowerExprForDeontic", "DeonticLowering.swift:lowerCheckableDeonticExpr"]),
 

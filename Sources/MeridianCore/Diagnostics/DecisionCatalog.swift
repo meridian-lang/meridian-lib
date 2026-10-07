@@ -203,7 +203,7 @@ public enum DecisionCatalog {
             seeAlso: [
                 .diag(.deonticSameScopeConflict), .diag(.deonticStickyDeny),
                 .diag(.deonticNonNormModal), .diag(.deonticToolOutsidePermissions),
-                .diag(.deonticOutcomeAsAction), .diag(.obligationIdCollision),
+                .diag(.deonticOutcomeAsAction), .diag(.normIdCollision),
                 .diag(.deonticUnlowerableCondition),
             ]),
     ]

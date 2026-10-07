@@ -3,7 +3,7 @@ import MeridianRuntime
 
 enum DeonticLowering {
 
-    static func provisionalNormID(sourceLine: Int, kind: NormKind) -> String {
+    static func normID(sourceLine: Int, kind: NormKind) -> String {
         "deontic:\(kind.rawValue):L\(sourceLine)"
     }
 
@@ -286,7 +286,7 @@ enum DeonticLowering {
         engine: DiagnosticEngine? = nil
     ) throws -> [IRWorkflow] {
         guard !norms.isEmpty else { return workflows }
-        var registry = ObligationIdRegistry()
+        var registry = NormIdRegistry()
         for norm in norms {
             let fullHash = try CanonicalJSON.sha256Hex(for: CanonicalIRSerializer.normSemanticPayload(norm))
             try registry.register(id: norm.id, fullHash: fullHash)
@@ -356,7 +356,7 @@ enum DeonticLowering {
         _ block: IRBlock,
         workflow: IRWorkflow,
         norms: [NormIR],
-        registry: inout ObligationIdRegistry,
+        registry: inout NormIdRegistry,
         engine: DiagnosticEngine?
     ) throws -> IRBlock {
         let statements = try block.statements.map { stmt -> IRPrimitive in
@@ -369,7 +369,7 @@ enum DeonticLowering {
         _ primitive: IRPrimitive,
         workflow: IRWorkflow,
         norms: [NormIR],
-        registry: inout ObligationIdRegistry,
+        registry: inout NormIdRegistry,
         engine: DiagnosticEngine?
     ) throws -> IRPrimitive {
         switch primitive {
@@ -432,7 +432,7 @@ enum DeonticLowering {
                     monitored: assertIR.monitored,
                     cadence: assertIR.cadence,
                     blocking: assertIR.blocking,
-                    obligationId: assertIR.obligationId,
+                    normID: assertIR.normID,
                     violationDisposition: assertIR.violationDisposition,
                     sourceRange: assertIR.sourceRange,
                     stableStepPath: assertIR.stableStepPath
@@ -448,7 +448,7 @@ enum DeonticLowering {
         _ invoke: InvokeIR,
         workflow: IRWorkflow,
         norms: [NormIR],
-        registry: inout ObligationIdRegistry,
+        registry: inout NormIdRegistry,
         engine: DiagnosticEngine?
     ) throws -> IRPrimitive {
         let prohibitions = norms.filter { $0.kind == .prohibition }
@@ -457,7 +457,7 @@ enum DeonticLowering {
             guard let pattern = prohibition.actionPattern else { return .invoke(invoke) }
             let allowed = invokeAllowedCondition(pattern: pattern, invoke: invoke, negate: true)
             let guardIR = DeonticGuardIR(
-                obligationId: prohibition.id,
+                normID: prohibition.id,
                 disposition: .prevented,
                 blocking: prohibition.blocking,
                 actionPattern: pattern
@@ -493,7 +493,7 @@ enum DeonticLowering {
                let pattern = conditioned.actionPattern {
                 let allowed = permissionAllowedCondition(pattern: pattern, invoke: invoke)
                 let guardIR = DeonticGuardIR(
-                    obligationId: conditioned.id,
+                    normID: conditioned.id,
                     disposition: .prevented,
                     blocking: conditioned.blocking,
                     actionPattern: pattern
@@ -522,7 +522,7 @@ enum DeonticLowering {
         invoke: InvokeIR,
         workflow: IRWorkflow,
         permissions: [NormIR],
-        registry: inout ObligationIdRegistry
+        registry: inout NormIdRegistry
     ) throws -> IRPrimitive {
         let patterns = permissions.compactMap(\.actionPattern)
         let allowedParts = patterns.map { permissionAllowedCondition(pattern: $0, invoke: invoke) }
@@ -530,18 +530,18 @@ enum DeonticLowering {
             ? allowedParts[0]
             : .logical(.or, allowedParts)
         let pattern = patterns.first ?? ActionPatternIR(toolID: invoke.toolID, argumentConstraints: [])
-        let obligationId: String
+        let normID: String
         if let firstID = permissions.first?.id {
-            obligationId = firstID
+            normID = firstID
         } else {
-            obligationId = try ObligationId.forDefaultDeny(
+            normID = try NormId.forDefaultDeny(
                 toolID: invoke.toolID,
                 scope: .workflow(workflow.structName),
                 registry: &registry
             )
         }
         let guardIR = DeonticGuardIR(
-            obligationId: obligationId,
+            normID: normID,
             disposition: .prevented,
             blocking: permissions.first?.blocking ?? false,
             actionPattern: pattern
@@ -639,7 +639,7 @@ enum DeonticLowering {
                 monitored: false,
                 cadence: nil,
                 blocking: norm.blocking,
-                obligationId: norm.id,
+                normID: norm.id,
                 violationDisposition: .observed,
                 sourceRange: norm.sourceRange
             ))

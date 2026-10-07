@@ -16,7 +16,7 @@ public struct Verbalizer: Sendable {
     var surface: FixedVerbalizerSurface { grammar.verbalizer }
     var statement: FixedStatementKeywords { grammar.statement }
 
-    public func verbalize(annotateObligationIDs: Bool = false) throws -> String {
+    public func verbalize(annotateNormIDs: Bool = false) throws -> String {
         try validateCanonicalLexiconMarkers()
         try IRValidator.validate(model.workflows, sourceFile: model.sourceFileName, trace: trace)
         trace.log(.verbalizer, "verbalizing \(model.workflows.count) workflow(s)")
@@ -31,20 +31,20 @@ public struct Verbalizer: Sendable {
             chunks.append(inlineDefinitions.map(verbalizeDefinition).joined(separator: "\n"))
         }
         chunks.append(contentsOf: emitWorkflows.map {
-            verbalizeWorkflow($0, annotateObligationIDs: annotateObligationIDs)
+            verbalizeWorkflow($0, annotateNormIDs: annotateNormIDs)
         })
         let norms = collectedNorms()
         if !norms.isEmpty {
-            chunks.append(norms.map { verbalize($0, annotateObligationID: annotateObligationIDs) }.joined(separator: "\n"))
+            chunks.append(norms.map { verbalize($0, annotateNormID: annotateNormIDs) }.joined(separator: "\n"))
         }
         return chunks.filter { !$0.isEmpty }.joined(separator: "\n\n")
     }
 
-    public func verbalize(_ norm: NormIR, annotateObligationID: Bool = false) -> String {
+    public func verbalize(_ norm: NormIR, annotateNormID: Bool = false) -> String {
         let authored = norm.originalText.trimmingCharacters(in: .whitespacesAndNewlines)
         if !authored.isEmpty {
             let base = CanonicalForms.sentence(authored)
-            return base + obligationAnnotation(norm.id, enabled: annotateObligationID)
+            return base + normAnnotation(norm.id, enabled: annotateNormID)
         }
         let markers = model.lexicon.grammar.ruleMarkers
         let head = normScopeSubject(norm.scope)
@@ -58,11 +58,11 @@ public struct Verbalizer: Sendable {
         case .permission:
             body = head + markers.mayMarker + invokeActionPattern(norm.actionPattern)
         }
-        return CanonicalForms.sentence(body) + obligationAnnotation(norm.id, enabled: annotateObligationID)
+        return CanonicalForms.sentence(body) + normAnnotation(norm.id, enabled: annotateNormID)
     }
 
-    public func verbalize(_ assertion: AssertIR, annotateObligationID: Bool = false) -> String {
-        verbalizeAssert(assertion, annotateObligationID: annotateObligationID)
+    public func verbalize(_ assertion: AssertIR, annotateNormID: Bool = false) -> String {
+        verbalizeAssert(assertion, annotateNormID: annotateNormID)
     }
 
     private func collectedNorms() -> [NormIR] {
@@ -80,7 +80,7 @@ public struct Verbalizer: Sendable {
         }
     }
 
-    private func obligationAnnotation(_ id: String?, enabled: Bool) -> String {
+    private func normAnnotation(_ id: String?, enabled: Bool) -> String {
         guard enabled, let id, !id.isEmpty else { return "" }
         return " [\(id)]"
     }
@@ -142,10 +142,10 @@ public struct Verbalizer: Sendable {
 
 
     public func verbalize(_ prim: IRPrimitive) -> String {
-        verbalize(prim, annotateObligationIDs: false)
+        verbalize(prim, annotateNormIDs: false)
     }
 
-    private func verbalize(_ prim: IRPrimitive, annotateObligationIDs: Bool) -> String {
+    private func verbalize(_ prim: IRPrimitive, annotateNormIDs: Bool) -> String {
         trace.log(.verbalizer, primitiveTraceLabel(prim))
         switch prim {
         case .invoke(let invoke):
@@ -173,7 +173,7 @@ public struct Verbalizer: Sendable {
         case .iterate(let iterate):
             return verbalizeIterate(iterate)
         case .assert(let assertion):
-            return verbalizeAssert(assertion, annotateObligationID: annotateObligationIDs)
+            return verbalizeAssert(assertion, annotateNormID: annotateNormIDs)
         case .emit(let emit):
             return verbalizeEmit(emit)
         case .wait(let wait):
@@ -220,7 +220,7 @@ public struct Verbalizer: Sendable {
                 + CanonicalForms.words(fromIdentifier: bind.name))
     }
 
-    private func verbalizeWorkflow(_ workflow: IRWorkflow, annotateObligationIDs: Bool = false) -> String {
+    private func verbalizeWorkflow(_ workflow: IRWorkflow, annotateNormIDs: Bool = false) -> String {
         let span = trace.push(.verbalizer, "workflow \(workflow.structName)")
         defer { trace.pop(span) }
         let header: String
@@ -236,7 +236,7 @@ public struct Verbalizer: Sendable {
         } else {
             header = surface.workflowHeaderPrefix + workflowFallbackName(workflow) + ":"
         }
-        let body = blockLines(workflow.body, annotateObligationIDs: annotateObligationIDs)
+        let body = blockLines(workflow.body, annotateNormIDs: annotateNormIDs)
         return ([header] + CanonicalForms.indented(body)).joined(separator: "\n")
     }
 
@@ -544,7 +544,7 @@ public struct Verbalizer: Sendable {
         model.lexicon.sortByMarkers.first ?? surface.sortByMarker
     }
 
-    private func verbalizeAssert(_ assertion: AssertIR, annotateObligationID: Bool = false) -> String {
+    private func verbalizeAssert(_ assertion: AssertIR, annotateNormID: Bool = false) -> String {
         // Checklist / contract asserts store the authored predicate in
         // `message` as `Expected <text>`. Prefer that surface only when the
         // lowered condition is opaque (would not reparse identically). Do not
@@ -572,7 +572,7 @@ public struct Verbalizer: Sendable {
             // statement inside a checklist/monitor section, not in the flat
             // procedure the verbalizer emits, so a prefix-less form would fall
             // through to phrase resolution (MER2001) and break the round trip.
-            return CanonicalForms.sentence(surface.assertPrefix + assertSurface) + obligationAnnotation(assertion.obligationId, enabled: annotateObligationID)
+            return CanonicalForms.sentence(surface.assertPrefix + assertSurface) + normAnnotation(assertion.normID, enabled: annotateNormID)
         }
         if let otherwise = assertion.otherwiseAction {
             // Authored/parser surface is `assert X otherwise:` (colon), not the
@@ -580,9 +580,9 @@ public struct Verbalizer: Sendable {
             let otherwiseLabel = statement.matchOtherwiseLabel
             var lines = [surface.assertPrefix + assertSurface + " \(otherwiseLabel)"]
             lines += CanonicalForms.indented(blockLines(otherwise))
-            return lines.joined(separator: "\n") + obligationAnnotation(assertion.obligationId, enabled: annotateObligationID)
+            return lines.joined(separator: "\n") + normAnnotation(assertion.normID, enabled: annotateNormID)
         }
-        return CanonicalForms.sentence(surface.assertPrefix + assertSurface) + obligationAnnotation(assertion.obligationId, enabled: annotateObligationID)
+        return CanonicalForms.sentence(surface.assertPrefix + assertSurface) + normAnnotation(assertion.normID, enabled: annotateNormID)
     }
 
     private func assertMessagePredicate(_ message: String) -> String? {
@@ -808,7 +808,7 @@ public struct Verbalizer: Sendable {
         }
     }
 
-    private func blockLines(_ block: IRBlock, annotateObligationIDs: Bool = false) -> [String] {
+    private func blockLines(_ block: IRBlock, annotateNormIDs: Bool = false) -> [String] {
         var lines: [String] = []
         var index = 0
         let statements = block.statements
@@ -832,7 +832,7 @@ public struct Verbalizer: Sendable {
                 index += 1
                 continue
             }
-            lines += verbalize(primitive, annotateObligationIDs: annotateObligationIDs).components(separatedBy: "\n")
+            lines += verbalize(primitive, annotateNormIDs: annotateNormIDs).components(separatedBy: "\n")
             index += 1
         }
         return lines

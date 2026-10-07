@@ -231,7 +231,7 @@ public struct ASTToIR {
                     originalText: norm.originalText
                 )
             }
-            let finalizedNorms = try ObligationId.finalize(norms)
+            let finalizedNorms = try NormId.finalize(norms)
             let conflictDiagnostics = DeonticLowering.detectConflicts(finalizedNorms)
             if !conflictDiagnostics.isEmpty {
                 if let engine {

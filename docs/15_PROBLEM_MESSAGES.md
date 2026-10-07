@@ -98,7 +98,7 @@ template directly.
 | `MER-DEO-003` | deontic non-norm modal | structural | yes |
 | `MER-DEO-004` | deontic tool outside permissions | structural | yes |
 | `MER-DEO-005` | deontic outcome as action | structural | yes |
-| `MER-DEO-006` | obligation id collision | structural | yes |
+| `MER-DEO-006` | norm id collision | structural | yes |
 | `MER-DEO-007` | deontic unlowerable condition | structural | yes |
 | `MER-MOD-001` | module not found | nameResolution | guided |
 | `MER-MOD-002` | module import cycle | structural | yes |

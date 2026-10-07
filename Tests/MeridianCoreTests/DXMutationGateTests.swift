@@ -189,18 +189,6 @@ struct DXMutationGateTests {
         #expect(joined.contains("<redacted>"))
     }
 
-    // MARK: - ProofIRReader decode warning
-
-    @Test("mutation gate: ProofIRReader warns on decode skip")
-    func proofIRDecodeSkipWarns() {
-        let cap = ParserTrace.capturing(categories: [.validation])
-        #expect(ProofIRReader.actionPattern(from: "not json", trace: cap.trace) == nil)
-        #expect(
-            cap.lines().contains { $0.contains("proof-ir read warning") },
-            Comment(rawValue: "silent skip would return nil with no trace line:\n\(cap.lines().joined(separator: "\n"))")
-        )
-    }
-
     // MARK: - Diagnostic catalog linkage (DXTraceDiagnosticAuditTests)
 
     @Test("mutation gate: active DiagnosticCode entries exist in catalog")
@@ -261,7 +249,10 @@ struct DXMutationGateTests {
         )
 
         let joined = cap.lines().joined(separator: "\n")
-        let required = ["traceIdentity.annotate:", "obligationStamp:", "trace identity: annotated"]
+        let required = [
+            "traceIdentity.annotate:", "trace identity: annotated",
+            "normIdStamp:", "norm id stamp: contract asserts stamped"
+        ]
         let absent = required.filter { !joined.contains($0) }
         #expect(
             absent.isEmpty,

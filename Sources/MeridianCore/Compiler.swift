@@ -156,7 +156,6 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            inputMode: .compile
         )
 
         let ast = try trace.phase("parse") {
@@ -213,7 +212,6 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            inputMode: .compile
         )
 
         let ast = try trace.phase("parse") {
@@ -296,7 +294,6 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            inputMode: .compile
         )
         return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
                                 rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
@@ -311,25 +308,17 @@ public struct Compiler {
         let engine: DiagnosticEngine
     }
 
-    private enum BootstrapInputMode {
-        case compile
-        case skillpack
-    }
-
-    private struct DuplicateInputHelp {
-        let rulebook: String
-        let vocabulary: String
-    }
-
     private func bootstrap(
         meridianSources: [(source: String, file: String)],
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput],
         trace: ParserTrace,
         engine: DiagnosticEngine,
-        inputMode: BootstrapInputMode
     ) throws -> BootstrapContext {
-        let duplicateHelp = duplicateInputHelp(for: inputMode)
+        let duplicateHelp = DuplicateInputHelp(
+            rulebook: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
+            vocabulary: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
+        )
         var lexicon = options.lexicon
         var rulebook = Rulebook.empty
         var seenRulebooks: Set<String> = []
@@ -454,7 +443,6 @@ public struct Compiler {
             rulebooks: rulebooks,
             trace: trace,
             engine: engine,
-            inputMode: .skillpack
         )
 
         // Parse every skill against the SHARED symbol table. Each file gets its
@@ -530,7 +518,6 @@ public struct Compiler {
         )
         let workflows = lowered.workflows
         let loweredDefinitions = lowered.loweredDefinitions
-        let skillName = lowered.skillName
 
         let constantsDecl: SwiftEmitter.ConstantsDecl? = config.constants.isEmpty ? nil :
             SwiftEmitter.ConstantsDecl(entries: config.constants.map { c in
@@ -618,36 +605,7 @@ public struct Compiler {
         // Assemble the COMPLETE manifest Input as part of every compile. The
         // rich data computed here (workflows, outline, recorded sections) is no
         // longer discarded — the host emits the manifest from this Input.
-        let verbalizerModel = VerbalizerModel(
-            workflows: workflows,
-            loweredDefinitions: definitionInfos(
-                symbols: symbols,
-                loweredDefinitions: loweredDefinitions,
-                inlineDefinitions: ast.definitions
-            ),
-            inlineDefinitions: ast.definitions,
-            symbols: symbols,
-            lexicon: lexicon,
-            sourceFileName: meridianFile,
-            authoredSource: authoredSource,
-            metadata: ast.metadata,
-            outline: ast.outline,
-            skillSections: ast.skillSections,
-            toolsUsed: ast.toolsUsed
-        )
-        let skillVersionHash = try TraceIdentityPlanner.skillVersionHash(
-            meridianSource: authoredSource,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
-        let obligationDocument = try trace.phase("obligationDocument") {
-            try ObligationDocumentBuilder.build(
-                from: verbalizerModel,
-                options: .init(skillName: skillName, skillVersionHash: skillVersionHash)
-            )
-        }
-        trace.log(.codegen,
-                  "obligation document: \(obligationDocument.obligations.count) obligation(s)")
+        let skillVersionHash = lowered.skillVersionHash
         let manifestInput = ManifestEmitter.Input(
             sourceFiles: [meridianFile] + vocabularies.map(\.file),
             workflows: workflows,
@@ -692,25 +650,9 @@ public struct Compiler {
                         base: $0.base, thirdPerson: $0.thirdPerson,
                         pastParticiple: $0.pastParticiple, relation: $0.relation, line: $0.sourceLine)
                 },
-            skillVersionHash: skillVersionHash,
-            obligations: obligationDocument.obligations
+            skillVersionHash: skillVersionHash
         )
         return (swift, multiFile, manifestInput)
-    }
-
-    private func duplicateInputHelp(for mode: BootstrapInputMode) -> DuplicateInputHelp {
-        switch mode {
-        case .compile:
-            return DuplicateInputHelp(
-                rulebook: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
-                vocabulary: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
-            )
-        case .skillpack:
-            return DuplicateInputHelp(
-                rulebook: "Supply each rulebook only once or rename the duplicate.",
-                vocabulary: "Supply each vocabulary only once or rename the duplicate."
-            )
-        }
     }
 
     private func effectiveFallbackPolicy(
@@ -738,6 +680,11 @@ public struct Compiler {
         return effectivePolicy
     }
 
+    private struct DuplicateInputHelp {
+        let rulebook: String
+        let vocabulary: String
+    }
+
     private struct LoweringContext {
         let lowerer: ASTToIR
         let frontmatter: SkillFrontmatter
@@ -748,9 +695,10 @@ public struct Compiler {
         let loweredDefinitions: [LoweredDefinition]
         let frontmatter: SkillFrontmatter
         let skillName: String
+        let skillVersionHash: String
     }
 
-    /// Shared parse→lower→trigger→obligation path for `compileToModel` and
+    /// Shared parse→lower→trigger→trace-identity path for `compileToModel` and
     /// `lowerAndEmit`. Preserves `preRegistered`, trace phases, and diagnostics.
     private func lowerParsedAST(
         ast: MeridianFile,
@@ -802,7 +750,7 @@ public struct Compiler {
         let skillName = frontmatter.name
             ?? meridianFile.replacingOccurrences(of: ".meridian", with: "")
                 .replacingOccurrences(of: ".meri", with: "")
-        workflows = try annotateAndStampObligations(
+        let annotated = try annotateTraceIdentity(
             workflows: workflows,
             skillSections: ast.skillSections,
             config: config,
@@ -813,10 +761,11 @@ public struct Compiler {
             trace: trace
         )
         return LoweredCompileUnit(
-            workflows: workflows,
+            workflows: annotated.workflows,
             loweredDefinitions: loweredDefinitions,
             frontmatter: frontmatter,
-            skillName: skillName
+            skillName: skillName,
+            skillVersionHash: annotated.skillVersionHash
         )
     }
 
@@ -872,7 +821,7 @@ public struct Compiler {
             .synthesize(triggers, sourceFile: sourceFile)
     }
 
-    private func annotateAndStampObligations(
+    private func annotateTraceIdentity(
         workflows: [IRWorkflow],
         skillSections: [SkillSectionRecord],
         config: MerConfigFile,
@@ -881,7 +830,7 @@ public struct Compiler {
         vocabularies: [VocabularyInput],
         rulebooks: [RulebookInput],
         trace: ParserTrace
-    ) throws -> [IRWorkflow] {
+    ) throws -> (workflows: [IRWorkflow], skillVersionHash: String) {
         let skillVersionHash = try trace.phase("traceIdentity.hash") {
             try TraceIdentityPlanner.skillVersionHash(
                 meridianSource: authoredSource,
@@ -895,7 +844,7 @@ public struct Compiler {
             skillVersionHash: skillVersionHash,
             workflows: workflows
         )
-        var annotated = try trace.phase("traceIdentity.annotate") {
+        let annotated = try trace.phase("traceIdentity.annotate") {
             try TraceIdentityPlanner.annotate(
                 workflows: workflows,
                 skillSections: skillSections,
@@ -903,11 +852,11 @@ public struct Compiler {
             )
         }
         trace.log(.codegen, "trace identity: annotated \(annotated.count) workflow(s)")
-        annotated = try trace.phase("obligationStamp") {
-            try ObligationIdStamper.stampContractAsserts(in: annotated)
+        let stamped = try trace.phase("normIdStamp") {
+            try NormIdStamper.stampContractAsserts(in: annotated)
         }
-        trace.log(.codegen, "obligation stamp: contract asserts stamped")
-        return annotated
+        trace.log(.codegen, "norm id stamp: contract asserts stamped")
+        return (stamped, skillVersionHash)
     }
 
     /// Build the meridian-line → swift-line source map from the generated Swift
@@ -1194,12 +1143,6 @@ public struct Compiler {
                                  against vocabularies: [VocabularyInput],
                                  file: String) throws {
         let vocabularyImports = imports.filter { $0.kind == .vocabulary }
-        let moduleImports = imports.filter { $0.kind == .module }
-        if !moduleImports.isEmpty && options.moduleSearchPaths.isEmpty
-            && options.anchorDirectory == nil {
-            // Module imports are resolved during bootstrap; validation here only
-            // checks legacy vocabulary references.
-        }
         if vocabularies.isEmpty {
             guard let imp = vocabularyImports.first else { return }
             let raw = imp.path.trimmingCharacters(in: .whitespacesAndNewlines)

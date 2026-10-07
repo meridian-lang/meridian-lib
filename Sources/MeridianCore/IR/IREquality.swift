@@ -61,7 +61,7 @@ public enum IREquality {
                 && lhs.monitored == rhs.monitored
                 && lhs.cadence == rhs.cadence
                 && lhs.blocking == rhs.blocking
-                && lhs.obligationId == rhs.obligationId
+                && lhs.normID == rhs.normID
                 && lhs.violationDisposition == rhs.violationDisposition
         case .emit(let lhs):
             guard case .emit(let rhs) = b else { return false }
@@ -649,7 +649,7 @@ public enum IREquality {
     }
 
     public static func structurallyEqual(_ a: DeonticGuardIR, _ b: DeonticGuardIR) -> Bool {
-        a.obligationId == b.obligationId
+        a.normID == b.normID
             && a.disposition == b.disposition
             && a.blocking == b.blocking
             && structurallyEqual(a.actionPattern, b.actionPattern)

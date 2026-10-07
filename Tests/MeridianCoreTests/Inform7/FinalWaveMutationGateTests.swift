@@ -43,60 +43,10 @@ struct FinalWaveMutationGateTests {
         #expect(!canonical.contains("if not"))
     }
 
-    // MARK: - Deontic guard / coherence gate
+    // MARK: - Deontic guard gate
 
-    @Test("mutation gate: invoke without prevented witness fails coherence harness")
-    func deonticGuardCoherenceGate() async throws {
-        let mer = """
-        ---
-        vocabulary: test.merconfig
-        ---
-        A customer must not invoke time.now.
-
-        To notify a customer:
-          complete.
-        """
-        let compiler = Compiler(options: .init(trace: .silent()))
-        let model = try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: "mutated.meridian",
-            vocabularies: [.init(name: "test", file: "test.merconfig", source: cfg)]
-        )
-        let document = try ObligationDocumentBuilder.build(from: model)
-        let prohibition = try #require(document.obligations.first)
-
-        let store = InMemoryTraceStore()
-        try await store.append(TraceRecord(
-            id: "mut-invoke",
-            at: Date(timeIntervalSince1970: 10),
-            ingestOrder: 10,
-            run: "run-1",
-            step: "timeNow",
-            skillName: "test",
-            skillVersionHash: "v1",
-            tag: .invoked,
-            subject: "timeNow",
-            payload: ["tool_id": .string("timeNow")],
-            payloadHash: "payload-mut-invoke"
-        ))
-
-        let report = try await CoherenceHarness.check(
-            document: document,
-            store: store,
-            context: TraceEvaluationContext(
-                runID: "run-1",
-                skillName: "test",
-                evaluationInstant: Date(timeIntervalSince1970: 100),
-                sampleFloor: 0
-            )
-        )
-        #expect(!report.isCoherent, Comment(rawValue: "mutated trace must trip coherence gate"))
-    }
-
-    // MARK: - Obligation id gate
-
-    @Test("mutation gate: semantic norm edit changes obligation id")
-    func obligationIdGate() throws {
+    @Test("mutation gate: semantic norm edit changes norm id")
+    func normIdGate() throws {
         let baseline = """
         ---
         vocabulary: test.merconfig
@@ -116,7 +66,7 @@ struct FinalWaveMutationGateTests {
                 meridianFile: "mutated.meridian",
                 vocabularies: [.init(name: "test", file: "test.merconfig", source: cfg)]
             )
-            return try #require(ObligationDocumentBuilder.build(from: model).obligations.first?.id)
+            return try #require(model.workflows.flatMap(\.norms).first?.id)
         }
         #expect(try id(for: baseline) != id(for: mutated))
     }

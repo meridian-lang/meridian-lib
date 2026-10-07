@@ -558,14 +558,14 @@ Expression parsing for `has ever`, `since the last`, `usually`, and statistical
 forms logs under `.expression`; lowering failures for unsupported `since` state
 predicates surface as `MER-TMP-019` before codegen.
 
-### Obligations / post-lower (`MER-DEO-006`, `MER-TMP-020`)
+### Norm ids / post-lower (`MER-DEO-006`, `MER-TMP-020`)
 
 ```bash
-meridian compile skill.meri --trace timing,codegen,diagnostics 2>&1 | rg 'obligation|traceIdentity'
+meridian compile skill.meri --trace timing,codegen,diagnostics 2>&1 | rg 'norm|traceIdentity'
 ```
 
 Post-lower phases stamp `OBL-…` ids and annotate trace-capture policy.
-`MER-DEO-006` is a strict collision on obligation id prefixes;
+`MER-DEO-006` is a strict collision on norm id prefixes;
 `MER-TMP-020` means a production trace capture policy is missing from
 `.merconfig`.
 

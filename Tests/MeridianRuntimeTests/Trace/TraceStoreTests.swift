@@ -68,6 +68,55 @@ struct TraceUtilityTests {
         #expect(try CanonicalJSON.sha256Hex(for: left) == CanonicalJSON.sha256Hex(for: right))
     }
 
+    @Test("canonical JSON serializes every Value shape and escapes control characters")
+    func canonicalJSONValueShapes() throws {
+        let payload: [String: Value] = [
+            "money": .money(Money(amount: Decimal(string: "12.50")!, currency: "USD")),
+            "duration": .duration(.seconds(90)),
+            "date": .date(Date(timeIntervalSince1970: 1_700_000_000)),
+            "dateTime": .dateTime(Date(timeIntervalSince1970: 1_700_000_000)),
+            "enum": .enumValue("open", kind: "status"),
+            "reference": .reference("order-7"),
+            "list": .list([.string("a\tb"), .null, .boolean(false)]),
+            "opaque": .opaque(AnyHashableSendable(7)),
+            "controls": .string("quote\" back\\ slash\u{08}\u{0C}\r\n\t\u{01}"),
+        ]
+        let json = String(data: try CanonicalJSON.data(for: payload), encoding: .utf8) ?? ""
+        #expect(json.contains("12.5 USD"))
+        #expect(json.contains("open"))
+        #expect(json.contains("order-7"))
+        #expect(json.contains("\\b"))
+        #expect(json.contains("\\f"))
+        #expect(json.contains("\\r"))
+        #expect(json.contains("\\t"))
+        #expect(json.contains("\\u0001"))
+    }
+
+    @Test("canonical JSON record serialization includes optional fields")
+    func canonicalJSONRecordOptionalFields() throws {
+        let record = TraceRecord(
+            id: "A",
+            at: Date(timeIntervalSince1970: 1_700_000_000),
+            ingestOrder: 1,
+            run: "run-1",
+            step: "step",
+            skillName: "skill",
+            skillVersionHash: "hash",
+            tag: .violated,
+            subject: "subject",
+            subjectKey: "key",
+            payload: ["a": .string("b")],
+            payloadHash: "payload",
+            outcome: .failure,
+            operationalDetail: "detail",
+            legacyKind: "legacy"
+        )
+        let json = String(data: try CanonicalJSON.data(for: record), encoding: .utf8) ?? ""
+        #expect(json.contains("\"subjectKey\":\"key\""))
+        #expect(json.contains("\"operationalDetail\":\"detail\""))
+        #expect(json.contains("\"legacyKind\":\"legacy\""))
+    }
+
     @Test("monotonic ULID stays lexicographically ordered")
     func monotonicULID() async {
         let fixedDate = Date(timeIntervalSince1970: 1_700_000_000)

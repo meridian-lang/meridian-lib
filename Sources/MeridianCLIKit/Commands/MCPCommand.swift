@@ -16,7 +16,7 @@ public struct MCPServeCommand: AsyncParsableCommand {
 
     public static let configuration = CommandConfiguration(
         commandName: "serve",
-        abstract: "Run a stdio MCP server exposing compile/check/explain/obligations tools."
+        abstract: "Run a stdio MCP server exposing compile/check/explain tools."
     )
 
     @Flag(name: .long, help: "Handle one request from stdin and exit (for tests).")

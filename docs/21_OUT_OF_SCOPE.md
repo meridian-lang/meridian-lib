@@ -12,20 +12,17 @@ The kernel semantics oracle remains [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cook
 
 ## 1. Formal prover discharge / machine-checked coherence theorem
 
-Meridian defines a verification projection (`⟦·⟧_proof`) and emits **prover-ready**
-obligation artifacts (SEM-8-02). The coherence requirement (SEM-8-01) is
-established in this repository by **differential testing**: replay instrumented
-traces through an independent obligation evaluator and assert agreement with
-runtime `violated` / `assert-failed` events.
+Meridian defines a verification projection (`⟦·⟧_proof`) and a stable
+compile-time **norm identity** (`OBL-<hash>`) that correlates runtime `violated`
+/ `assert-failed` events with the lowered norms they falsify.
 
 **Out of scope:** integrating Z3, Soufflé, Datalog, or any external proof engine;
-discharging obligations automatically; proving a machine-checked theorem that
+discharging proof obligations automatically; proving a machine-checked theorem that
 `⟦·⟧_exec` and `⟦·⟧_proof` agree for all traces. That work belongs to the
 ModelHike formal-engine program, not `meridian-lib`.
 
-**In scope (not out of scope):** structured obligation JSON, stable obligation ids,
-canonical IR + English in artifacts, witness hashes, capture-policy metadata, and
-CI harnesses that validate artifacts against traces.
+**In scope (not out of scope):** stable norm ids, canonical IR + English for
+lowered norms, witness hashes, and capture-policy metadata.
 
 ---
 

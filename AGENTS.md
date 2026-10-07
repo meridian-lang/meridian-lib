@@ -110,11 +110,10 @@ leaf paths and `--module-path` support.
 | Command | Purpose |
 |---|---|
 | `canonicalize` | Authored vs canonical English drift audit; optional `--propose` LLM rewrites (dry-run). |
-| `mcp serve` | Stdio MCP server (compile/check/explain/obligations tools); `--once` for tests. |
+| `mcp serve` | Stdio MCP server (compile/check/explain tools); `--once` for tests. |
 | `compile` | `.meridian`/`.meri` → Swift + `.meridian.manifest.json`. Repeatable `--rulebook`; `--namespace auto\|none`; `--module-path`. |
 | `explain` | Canonical English verbalization of compiled IR (Wave 7). Not diagnostic codes — use `explain-diag`. |
 | `explain-swift` | Explain generated Swift via `.meridian.ir.json` sidecar. |
-| `obligations` | Emit prover-ready obligation artifact JSON (`--module-path` supported). |
 | `drift` | Compare authored source to canonical verbalized form (no `--module-path`). |
 | `grammar-doc` | Emit live grammar-table Markdown reference. |
 | `lint` | `MeridianLinter` authoring diagnostics without compiling. |

@@ -88,7 +88,6 @@ the compiler computes it during bootstrap.
 meridian compile skill.meridian --module-path ./modules
 meridian check skill.meridian --module-path ./modules
 meridian explain skill.meri --module-path ./modules
-meridian obligations skill.meri --module-path ./modules
 ```
 
 ## API

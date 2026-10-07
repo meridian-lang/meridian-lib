@@ -8,7 +8,6 @@ public enum MeridianCLIRegistration {
         CompileCommand.self,
         ExplainCommand.self,
         ExplainSwiftCommand.self,
-        ObligationsCommand.self,
         DriftCommand.self,
         GrammarDocCommand.self,
         LintCommand.self,
