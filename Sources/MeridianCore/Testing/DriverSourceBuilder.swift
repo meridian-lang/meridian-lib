@@ -102,6 +102,7 @@ enum DriverSourceBuilder {
                 "\(indent)            .appendingPathComponent(\"meridian-trace-\(escapeSwiftStringLiteral(runID)).jsonl\")",
                 "\(indent)    }",
                 "\(indent)    __meridianTraceStore = try JSONLTraceStore(fileURL: url, configuration: __meridianTraceConfig.trace)",
+                "\(indent)}",
                 "\(indent)let runtime = Runtime(",
                 "\(indent)    toolRegistry: registry,",
                 "\(indent)    observer: \(observerExpr),",

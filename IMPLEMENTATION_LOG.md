@@ -3066,3 +3066,48 @@ prover-artifact layer (`ObligationArtifact`, `ObligationDocument`,
 `ProofIRReader`, `ObligationEvaluator`, `CoherenceHarness`, the
 `obligations` CLI/MCP surface, and `meridian_obligations` manifest entries)
 is deleted.
+
+## 2026-10-07 — Simplification Phase 1 complete (1b obligations, 1c dead code, gate)
+
+**1b (committed 07adb73):** prover-obligation artifact layer removed, norm
+identity kept (see the previous entry's note). `obligationId` → `normID`
+everywhere; `recordViolation(normID:)` with the `norm_id` payload key; the
+verbalizer flag is `--no-norm-ids`; MER-DEO-006 is `normIdCollision`.
+Contract-assert norm-ID stamping was **restored after review**: the delegated
+run had dropped the `NormIdStamper.stampContractAsserts` call, which would
+have silently disabled observed-violation recording for contract asserts
+(the codegen `if let normID` branches were intact). `annotateTraceIdentity`
+now stamps and returns the single `skillVersionHash` per compile.
+
+**1c:** the empty `if` in `validateImports`, the
+`BootstrapInputMode`/`DuplicateInputHelp` switch, and `JSONLObserver.Format`
+are gone.
+
+**Two planned removals were cancelled after verification — the survey was
+wrong:**
+- `InformRulebookParser` is live: `RulebookParser` calls it to parse
+  `=== conventions ===` sections. Kept (and its test file).
+- `ProblemMessage` is live: `StatementParser+Bindings` emits
+  `Diagnostic.problem(...)`, and two audit tests pin
+  `docs/15_PROBLEM_MESSAGES.md` to `ProblemMessageCatalog.renderMarkdown()`.
+  Kept (and its test file + doc).
+
+**Bug found by the slow gate and fixed:** the Phase 1a edit to
+`DriverSourceBuilder.runtimeBootstrap` removed the trace-store `switch`'s
+closing brace along with the deleted `.sqlite`/`.http` arms, so every
+generated `.meridian.test` / gallery driver failed to compile. Restored.
+
+**Environment note:** the machine was saturated for hours by another
+project's Swift build/test runs (load 8–21); long `swift test` invocations
+were SIGKILLed repeatedly. Slow suites were therefore run one at a time
+(CLIRunAndTest 9, DXCorpusFixture 6, gallery 6, RuntimeExecutor 22,
+TraceReplay 5, TraceVerify 3, VerbalizerE2E 10, GeneratedSwiftTypecheck 3 =
+64 tests) — all pass. Fast suite: 2728 tests, 0 failures. Coverage gate
+green (90.14% region). Generated-Swift typecheck green.
+
+**Confidence: 96%.** Residual 4%: the slow target was exercised suite-by-suite
+rather than as one `swift test` invocation (environment kills, not code);
+`Phase 4 Golden Diff` was regenerated in 1b and is byte-identical.
+
+**STATUS:** Phase 1 DONE — awaiting user sign-off before Phase 2 (IR
+serialization/equality).
