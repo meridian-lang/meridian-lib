@@ -5,63 +5,63 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCascadecloseFires\/root\/procedure\/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111",
-      "swift_line" : 647
+      "swift_line" : 644
     },
     {
       "canonical" : "wait for event cascadeClose.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCascadecloseFires\/root\/procedure\/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0",
-      "swift_line" : 647
+      "swift_line" : 644
     },
     {
       "canonical" : "emit trigger.orphanedAuditRows.fired with kind = \"keyword\", spec = \"orphaned audit rows\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenOrphanedauditrowsFires\/root\/procedure\/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3",
-      "swift_line" : 647
+      "swift_line" : 644
     },
     {
       "canonical" : "wait for event orphanedAuditRows.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenOrphanedauditrowsFires\/root\/procedure\/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f",
-      "swift_line" : 647
+      "swift_line" : 644
     },
     {
       "canonical" : "`psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv` -- snapshot orphaned audit rows.",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/CascadeClose\/transaction-body\/procedure\/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480",
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "canonical" : "bind auditRows = invoke audit_row.list with status = \"orphaned\".",
       "meridian_line" : 17,
       "primitive" : "invoke",
       "stable_step_path" : "\/CascadeClose\/transaction-body\/procedure\/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c",
-      "swift_line" : 472
+      "swift_line" : 471
     },
     {
       "canonical" : "assert any orphaned audit rows.",
       "meridian_line" : 18,
       "primitive" : "assert",
       "stable_step_path" : "\/CascadeClose\/transaction-body\/procedure\/ec2289974229065919e891c39d1f0ce0f89fe732af798834d2ee8307b4c42e59",
-      "swift_line" : 486
+      "swift_line" : 485
     },
     {
       "canonical" : "assert at most 200 orphaned audit rows.",
       "meridian_line" : 19,
       "primitive" : "assert",
       "stable_step_path" : "\/CascadeClose\/transaction-body\/procedure\/baa143e9b9beb2018f7f8b44003a07c6a50aa6df2403a206725de5f1963db949",
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "canonical" : "emit procedure.report with message = \"orphaned audit rows recorded for deterministic close\".",
       "meridian_line" : 20,
       "primitive" : "emit",
       "stable_step_path" : "\/CascadeClose\/transaction-body\/procedure\/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e",
-      "swift_line" : 496
+      "swift_line" : 495
     }
   ],
   "ir_version" : "1.1",

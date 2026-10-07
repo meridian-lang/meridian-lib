@@ -14,14 +14,13 @@ struct TraceVerifyCLISlowTests {
         ])
         #expect(verify.exitCode == 0, Comment(rawValue: verify.stderr + verify.stdout))
         #expect(verify.stdout.contains("Trace verification passed"), Comment(rawValue: verify.stdout))
-        #expect(verify.stdout.contains("chain hashes: ok"), Comment(rawValue: verify.stdout))
         #expect(verify.stdout.contains("content: ok"), Comment(rawValue: verify.stdout))
     }
 
     @Test("trace-verify reports tampering and exits non-zero")
     func tamperFailure() async throws {
         let fixture = try await makeTraceVerifyFixture()
-        try tamperTraceRecordHash(in: fixture.fileURL, targetLine: 2)
+        try tamperTracePayload(in: fixture.fileURL, targetLine: 2)
 
         let bin = try slowLocateMeridianBinary()
         let verify = try slowRunMeridian(bin, [
@@ -29,8 +28,7 @@ struct TraceVerifyCLISlowTests {
         ])
         #expect(verify.exitCode == 1, Comment(rawValue: verify.stderr + verify.stdout))
         #expect(verify.stdout.contains("Trace verification failed"), Comment(rawValue: verify.stdout))
-        #expect(verify.stdout.contains("line_checksum_mismatch") || verify.stdout.contains("record_hash_mismatch"),
-                Comment(rawValue: verify.stdout))
+        #expect(verify.stdout.contains("line_checksum_mismatch"), Comment(rawValue: verify.stdout))
     }
 
     @Test("trace verify --json emits the stable schema fields")
@@ -53,7 +51,6 @@ struct TraceVerifyCLISlowTests {
         #expect(report.checks.checksums)
         #expect(report.checks.order)
         #expect(report.checks.content)
-        #expect(report.checks.chainHashes)
         #expect(!report.quarantine.present)
     }
 }
@@ -63,15 +60,6 @@ private struct TraceVerifyJSONChecks: Decodable {
     var checksums: Bool
     var order: Bool
     var content: Bool
-    var chainHashes: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case schema
-        case checksums
-        case order
-        case content
-        case chainHashes = "chain_hashes"
-    }
 }
 
 private struct TraceVerifyJSONQuarantine: Decodable {
@@ -155,9 +143,6 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payload: validatePayload,
         payloadHash: try CanonicalJSON.sha256Hex(for: validatePayload),
         outcome: .success,
-        witness: nil,
-        previousHash: nil,
-        recordHash: nil,
         operationalDetail: nil,
         legacyKind: "invoke.start"
     ))
@@ -179,9 +164,6 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payload: riskPayload,
         payloadHash: try CanonicalJSON.sha256Hex(for: riskPayload),
         outcome: .success,
-        witness: "approve",
-        previousHash: nil,
-        recordHash: nil,
         operationalDetail: nil,
         legacyKind: "plan.end"
     ))
@@ -202,9 +184,6 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payload: completePayload,
         payloadHash: try CanonicalJSON.sha256Hex(for: completePayload),
         outcome: .success,
-        witness: nil,
-        previousHash: nil,
-        recordHash: nil,
         operationalDetail: nil,
         legacyKind: "workflow.completed"
     ))
@@ -212,7 +191,7 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
     return TraceVerifyFixture(dir: t, fileURL: fileURL, runID: runID)
 }
 
-private func tamperTraceRecordHash(in fileURL: URL, targetLine: Int) throws {
+private func tamperTracePayload(in fileURL: URL, targetLine: Int) throws {
     var lines = try String(contentsOf: fileURL, encoding: .utf8)
         .split(separator: "\n", omittingEmptySubsequences: false)
         .map(String.init)
@@ -225,6 +204,8 @@ private func tamperTraceRecordHash(in fileURL: URL, targetLine: Int) throws {
     encoder.outputFormatting = [.sortedKeys]
 
     var envelope = try decoder.decode(TestTraceLineEnvelope.self, from: Data(lines[targetLine - 1].utf8))
+    var payload = envelope.record.payload ?? [:]
+    payload["tampered"] = .boolean(true)
     envelope.record = TraceRecord(
         schemaVersion: envelope.record.schemaVersion,
         id: envelope.record.id,
@@ -237,12 +218,9 @@ private func tamperTraceRecordHash(in fileURL: URL, targetLine: Int) throws {
         tag: envelope.record.tag,
         subject: envelope.record.subject,
         subjectKey: envelope.record.subjectKey,
-        payload: envelope.record.payload,
+        payload: payload,
         payloadHash: envelope.record.payloadHash,
         outcome: envelope.record.outcome,
-        witness: envelope.record.witness,
-        previousHash: envelope.record.previousHash,
-        recordHash: String(repeating: "f", count: 64),
         operationalDetail: envelope.record.operationalDetail,
         legacyKind: envelope.record.legacyKind
     )

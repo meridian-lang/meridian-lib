@@ -374,12 +374,11 @@ public struct MitigateIncident: MeridianWorkflow {
         "triggers": "\"mitigate open incidents\"\n\"apply incident mitigation\"\n\"run the incident mitigation pass\"",
     ]
 
-    public static let skillVersionHash = "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+    public static let skillVersionHash = "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct MitigateIncident: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
-            versionHash: "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+            versionHash: "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
         ),
         toolCapturePolicies: [:]
     )
@@ -501,12 +500,11 @@ public struct MitigateIncident: MeridianWorkflow {
 public struct WhenMitigateopenincidentsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+    public static let skillVersionHash = "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -520,7 +518,7 @@ public struct WhenMitigateopenincidentsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
-            versionHash: "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+            versionHash: "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
         ),
         toolCapturePolicies: [:]
     )
@@ -577,12 +575,11 @@ public struct WhenMitigateopenincidentsFires: MeridianWorkflow {
 public struct WhenApplyincidentmitigationFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+    public static let skillVersionHash = "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -596,7 +593,7 @@ public struct WhenApplyincidentmitigationFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
-            versionHash: "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+            versionHash: "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
         ),
         toolCapturePolicies: [:]
     )
@@ -653,12 +650,11 @@ public struct WhenApplyincidentmitigationFires: MeridianWorkflow {
 public struct WhenRunincidentmitigationpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+    public static let skillVersionHash = "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -672,7 +668,7 @@ public struct WhenRunincidentmitigationpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "mitigate incident",
-            versionHash: "aeaafeb508c6a2634e20ecc4f2ac63cc9f22e61556a7c649454c778d2dc82fdb"
+            versionHash: "8b4a33fb6535a3e56f98e412b1504daf3a656c22e0821bb8382b474479666f40"
         ),
         toolCapturePolicies: [:]
     )

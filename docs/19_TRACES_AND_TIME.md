@@ -43,9 +43,6 @@ The persisted record is `TraceRecord`
 | `payload` | `[String: Value]`? | Structured payload when capture policy keeps it. |
 | `payloadHash` | String | Always present; canonical-JSON SHA-256. |
 | `outcome` | `TraceOutcome`? | `success`, `failure`, or `indeterminate`. |
-| `witness` | String? | Optional witness reference. |
-| `previousHash` | String? | Previous hash in the per-run chain when enabled. |
-| `recordHash` | String? | Canonical hash of this record when chaining is enabled. |
 | `operationalDetail` | String? | Non-semantic runtime detail retained for audit. |
 | `legacyKind` | String? | Source `EventKind.rawValue` for legacy round-trip. |
 
@@ -95,14 +92,12 @@ tool-scope summary (`tool_count`), and the explicit scoped-tool-id list
 
 ## 4. Stores, Persistence, And Integrity
 
-Wave 8 ships four local/remote store implementations:
+Wave 8 ships two store implementations:
 
 - `InMemoryTraceStore` for tests, replay fixtures, and direct runtime use
 - `JSONLTraceStore` for append-only local persistence and audit trails
-- `SQLiteTraceStore` for durable indexed storage (storage schema v1/v2, N-1 reader)
-- `HTTPTraceStoreClient` for remote append/query over the HTTP trace protocol
 
-See `docs/24_TRACE_STORAGE.md` for wire formats, OTLP export, signing, and D12 witness capture.
+See `docs/24_TRACE_STORAGE.md` for the JSONL envelope, capture policies, and shell-hole redaction.
 
 The shared `TraceStore` protocol is:
 
@@ -152,17 +147,6 @@ Both stores support the same observable query behavior:
 `JSONLTraceStore` maintains simple in-memory indexes for `run`, `tag`,
 `subject`, and cross-run time order. Behavioral parity with the in-memory store
 is pinned by `RISK-W8-05 in-memory and JSONL stores stay behaviorally aligned`.
-
-### 4.4 Hash chaining and verification
-
-When `hashChaining` is enabled:
-
-- `previousHash` links each record to the previous record in the same run
-- `recordHash` stores the canonical hash of the record
-- `verifyChain(runID:)` checks presence, predecessor matching, and record-hash correctness
-
-`hash chain verifies and detects tampering` pins successful verification and
-tamper detection. This is tamper evidence, not immutability or remote attestation.
 
 ---
 

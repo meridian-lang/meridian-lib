@@ -584,7 +584,6 @@ public struct AcademicVerifyInput: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -656,7 +655,6 @@ public struct WhenVerifythisacademicclaimFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -731,7 +729,6 @@ public struct WhenCheckthisstudyFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -806,7 +803,6 @@ public struct WhenAcademicverifyFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -881,7 +877,6 @@ public struct WhenValidatecitationFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -956,7 +951,6 @@ public struct WhenIsthisstudyrealFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1031,7 +1025,6 @@ public struct WhenRetractionwatchFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,

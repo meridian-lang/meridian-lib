@@ -782,7 +782,8 @@ MeridianRuntime/Planning/PlanExecutor.swift                  = 97.90
 # Observed: Runtime 100%, +Diagnostics 100%, +Emit 91.03%.
 MeridianRuntime/Runtime.swift                                = 99.50
 MeridianRuntime/Runtime+Planning.swift                       = 94.50
-MeridianRuntime/Runtime+Assert.swift                         = 88.50
+# 2026-10-07 simplification phase 1a (witness-capture removal): observed 88.10%.
+MeridianRuntime/Runtime+Assert.swift                         = 87.00
 MeridianRuntime/Runtime+Wait.swift                           = 89.50
 MeridianRuntime/Runtime+Tools.swift                          = 92.50
 MeridianRuntime/Runtime+Events.swift                         = 99.50
@@ -805,11 +806,11 @@ MeridianRuntime/Tools/ToolRegistry.swift                     = 91.00
 # TraceStoreTests, TraceEvaluatorTests, TraceReplayTests, and trace CLI tests.
 # Remaining regions are defensive hash/JSON/corruption and rare tag/legacy
 # projection edges; temporary floors from the 2026-07-11 full coverage run.
-MeridianRuntime/Trace/CanonicalJSON.swift                    = 81.60
-# 2026-07-13 EventMigrationCoverageTests / HashChainCoverageTests + branch.end
-# projection. Observed: EventMigration 80.26%, HashChain 84.38%.
+# 2026-10-07 simplification phase 1a (chain-hash fields removed): observed 79.03%.
+MeridianRuntime/Trace/CanonicalJSON.swift                    = 78.50
+# 2026-07-13 EventMigrationCoverageTests + branch.end projection.
+# Observed: EventMigration 80.26%.
 MeridianRuntime/Trace/EventMigration.swift                   = 79.00
-MeridianRuntime/Trace/HashChain.swift                        = 83.00
 MeridianRuntime/Trace/InMemoryTraceStore.swift               = 93.90
 MeridianRuntime/Trace/JSONLTraceStore.swift                  = 84.30
 MeridianRuntime/Trace/RuntimeTraceConfiguration.swift        = 33.20
@@ -884,20 +885,13 @@ MeridianCore/Language/BuiltinScalarTypes.swift               = 85.00
 MeridianCore/Testing/DriverSourceBuilder.swift               = 91.00
 MeridianCore/Lowering/LiteralLowering.swift                  = 97.00
 MeridianCore/Verbalizer/CanonicalForms.swift                 = 97.00
-MeridianRuntime/Trace/CalendarAmountEvaluator.swift          = 78.00
 MeridianRuntime/Trace/BoundedFutureCondition.swift           = 55.00
 MeridianRuntime/Trace/WilsonScore.swift                      = 89.00
-MeridianRuntime/Trace/WitnessCapture.swift                   = 63.00
 MeridianRuntime/Trace/ShellHoleRedaction.swift               = 69.00
-MeridianRuntime/Trace/TraceBatchSigner.swift                 = 83.00
-MeridianRuntime/Trace/TraceStoreHelpers.swift                = 93.00
+# 2026-10-07 simplification phase 1a (chain helpers removed; payload-limit truncation
+# moved in): observed 90.57%.
+MeridianRuntime/Trace/TraceStoreHelpers.swift                = 89.50
 MeridianRuntime/Errors/MeridianRuntimeError.swift            = 96.00
-
-# Trace store integration (bucket A): SQLite process, HTTP client, OTLP export.
-MeridianRuntime/Trace/SQLiteTraceDatabase.swift              = 76.00
-MeridianRuntime/Trace/SQLiteTraceStore.swift                 = 85.00
-MeridianRuntime/Trace/HTTPTraceStoreClient.swift             = 58.00
-MeridianRuntime/Trace/OTLPTraceExporter.swift                = 65.00
 
 # LLM tooling (bucket A): live HTTP provider + env wiring; DeterministicLLM is
 # in-process but shares planner/parser tails with HTTP paths.

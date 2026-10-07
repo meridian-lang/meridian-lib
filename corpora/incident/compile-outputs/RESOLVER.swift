@@ -368,12 +368,11 @@ private static func meridianDef_Slo_breached(_ __subjectValue: Value?) -> Bool {
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6ac22aa37fc734c7dbf893a79024994355481631b43dcca86d40dbab934e4622"
+    public static let skillVersionHash = "de6a6ce9053b7be91eb925249c0ee7e07fc32362adca76135f5ff0ef3f89f9be"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -387,7 +386,7 @@ public struct Entry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "6ac22aa37fc734c7dbf893a79024994355481631b43dcca86d40dbab934e4622"
+            versionHash: "de6a6ce9053b7be91eb925249c0ee7e07fc32362adca76135f5ff0ef3f89f9be"
         ),
         toolCapturePolicies: [:]
     )

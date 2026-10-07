@@ -583,7 +583,6 @@ public struct CrossModalReviewInput: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -674,7 +673,6 @@ public struct WhenSecondopinionFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -749,7 +747,6 @@ public struct WhenCrossmodalreviewFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -824,7 +821,6 @@ public struct WhenDoublecheckthisFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -899,7 +895,6 @@ public struct WhenGetanotherperspectiveFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -974,7 +969,6 @@ public struct WhenChallengethiscodeFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1049,7 +1043,6 @@ public struct WhenAdversarialreviewFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,

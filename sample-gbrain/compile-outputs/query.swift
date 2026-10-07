@@ -583,7 +583,6 @@ public struct QueryInput: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -665,7 +664,6 @@ public struct WhenWhatdoweknowFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -740,7 +738,6 @@ public struct WhenTellmeFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -815,7 +812,6 @@ public struct WhenWhoisFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -890,7 +886,6 @@ public struct WhenWhathappenedFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -965,7 +960,6 @@ public struct WhenSearchFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1040,7 +1034,6 @@ public struct WhenLookupFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1115,7 +1108,6 @@ public struct WhenBackgroundFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1190,7 +1182,6 @@ public struct WhenNotesFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1265,7 +1256,6 @@ public struct WhenWhoknowswhoFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1340,7 +1330,6 @@ public struct WhenRelationshipFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1415,7 +1404,6 @@ public struct WhenConnectionsFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -1490,7 +1478,6 @@ public struct WhenGraphqueryFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,

@@ -5,308 +5,308 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAgentprogressFires\/root\/procedure\/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event agentProgress.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAgentprogressFires\/root\/procedure\/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.backgroundTask.fired with kind = \"keyword\", spec = \"background task\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBackgroundtaskFires\/root\/procedure\/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event backgroundTask.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBackgroundtaskFires\/root\/procedure\/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event changeDirection.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenChangedirectionFires\/root\/procedure\/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.changeDirection.fired with kind = \"keyword\", spec = \"change direction\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenChangedirectionFires\/root\/procedure\/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event checkAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckagentFires\/root\/procedure\/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.checkAgent.fired with kind = \"event\", spec = \"check on agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckagentFires\/root\/procedure\/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.deterministicBackgroundTask.fired with kind = \"keyword\", spec = \"deterministic background task\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event deterministicBackgroundTask.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.doTheseInParallel.fired with kind = \"keyword\", spec = \"do these in parallel\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenDotheseinparallelFires\/root\/procedure\/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event doTheseInParallel.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenDotheseinparallelFires\/root\/procedure\/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.fanOut.fired with kind = \"keyword\", spec = \"fan out\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenFanoutFires\/root\/procedure\/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event fanOut.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenFanoutFires\/root\/procedure\/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event gbrainJobsSubmit.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGbrainjobssubmitFires\/root\/procedure\/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.gbrainJobsSubmit.fired with kind = \"keyword\", spec = \"gbrain jobs submit\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGbrainjobssubmitFires\/root\/procedure\/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event parallelTasks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenParalleltasksFires\/root\/procedure\/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.parallelTasks.fired with kind = \"keyword\", spec = \"parallel tasks\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenParalleltasksFires\/root\/procedure\/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event pauseAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPauseagentFires\/root\/procedure\/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.pauseAgent.fired with kind = \"keyword\", spec = \"pause agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPauseagentFires\/root\/procedure\/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event resumeAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenResumeagentFires\/root\/procedure\/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.resumeAgent.fired with kind = \"keyword\", spec = \"resume agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenResumeagentFires\/root\/procedure\/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event runInBackground.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRuninbackgroundFires\/root\/procedure\/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.runInBackground.fired with kind = \"keyword\", spec = \"run in background\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRuninbackgroundFires\/root\/procedure\/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.runShellCommandInBackground.fired with kind = \"keyword\", spec = \"run shell command in background\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event runShellCommandInBackground.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event shellJob.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenShelljobFires\/root\/procedure\/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.shellJob.fired with kind = \"keyword\", spec = \"shell job\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenShelljobFires\/root\/procedure\/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.spawnAgent.fired with kind = \"keyword\", spec = \"spawn agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSpawnagentFires\/root\/procedure\/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event spawnAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSpawnagentFires\/root\/procedure\/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event steerAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSteeragentFires\/root\/procedure\/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.steerAgent.fired with kind = \"keyword\", spec = \"steer agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSteeragentFires\/root\/procedure\/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event stopAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenStopagentFires\/root\/procedure\/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.stopAgent.fired with kind = \"keyword\", spec = \"stop agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenStopagentFires\/root\/procedure\/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event submitGbrainJob.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSubmitgbrainjobFires\/root\/procedure\/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.submitGbrainJob.fired with kind = \"keyword\", spec = \"submit a gbrain job\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSubmitgbrainjobFires\/root\/procedure\/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event submitShellJob.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSubmitshelljobFires\/root\/procedure\/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.submitShellJob.fired with kind = \"keyword\", spec = \"submit a shell job\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSubmitshelljobFires\/root\/procedure\/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.tellAgent.fired with kind = \"keyword\", spec = \"tell the agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenTellagentFires\/root\/procedure\/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event tellAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenTellagentFires\/root\/procedure\/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "wait for event whatSRunning.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhatsrunningFires\/root\/procedure\/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "emit trigger.whatSRunning.fired with kind = \"keyword\", spec = \"what's running\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhatsrunningFires\/root\/procedure\/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee",
-      "swift_line" : 2214
+      "swift_line" : 2192
     },
     {
       "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when User asks for deterministic command\/script run, Shell job (CLI: `gbrain jobs submit shell ...`)\n  when User asks to \"run in minions\" + explicit command\/argv, Shell job (CLI, `--params` with `cmd` or `argv`)\n  when User asks for research\/reasoning\/iterative agent, Subagent job (CLI: `gbrain agent run`)\n  when User asks to steer\/pause\/resume an agent, Subagent job lifecycle tools (MCP-callable)\n  when Single simple operation under ~30s, Consider inline execution first\n  when Needs restart durability\/observability, Submit as Minion job\n  when Parallel work (2+ streams), `gbrain agent run --fanout-manifest` or parent + child subagents",
       "meridian_line" : 75,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/MinionOrchestratorInput\/route-the-request-shell-job-vs-subagent-steps\/procedure\/a9bdb95c38fa78e7d4539345c2f01c8acbd97969515f436d01f7104ed677b80f",
-      "swift_line" : 627
+      "swift_line" : 626
     },
     {
       "canonical" : "use judgment to follow the Shell Jobs (Deterministic Scripts) — steps guidance:\n  Use for reproducible command execution, ETL steps, cron work, and scriptable\n  tasks where no LLM reasoning loop is needed\n  `GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment\n  Without it, the shell handler refuses to register and submissions sit in\n  `waiting` silently. Gate lives in `src\/core\/minions\/handlers\/shell.ts`\n  Verify setup: after configuration, run `gbrain jobs stats` (CLI) to\n  confirm the worker is registered and consuming the queue\n  Check structured result fields (exit code, stdout\/stderr tails, attempts,\n  timings) from `get_job`. Use `gbrain jobs stats` (CLI) for worker\/queue\n  health dashboard\n  use judgment to follow the Subagent Jobs (LLM Orchestration) — steps guidance:\n  Use for open-ended reasoning, tool-using research, and fan-out synthesis\n  User-facing entrypoint: `gbrain agent run <prompt>` is the canonical way\n  and `subagent_aggregator` are both in `PROTECTED_JOB_NAMES`, so direct MCP\n  submission requires `{allowProtectedSubmit: true}`, which `gbrain agent run`\n  supplies\n  Flags (from `src\/commands\/agent.ts`):\n  `--subagent-def <name>` — named subagent definition\n  `--model <id>` — override model\n  `--max-turns <N>` — cap the LLM loop\n  `--tools <csv>` — allow-listed brain tools (see above)\n  `--timeout-ms <N>` — hard timeout per job\n  `--fanout-manifest <file>` — N children + 1 aggregator\n  `--detach` — submit and return immediately\n  Queue\/priority\/retry tuning is not exposed by `gbrain agent run`; submit the\n  raw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\n  need those knobs\n  codeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc\/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\n  Progress includes: step count, total steps, message, token usage, last tool called\n  Send a message to redirect a running agent:\n  codeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\n  The agent handler reads inbox messages on each iteration and injects them as\n  context. Messages are acknowledged (read receipts tracked)\n  Only the parent job or admin can send messages (sender validation)\n  codeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==\n  All lifecycle ops are MCP-callable\n  Child tokens roll up to parent automatically on completion",
       "meridian_line" : 90,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/MinionOrchestratorInput\/shell-jobs-deterministic-scripts-steps\/procedure\/5bd8387a5814b44e311fd909779e7863b89268df16c770c914d193c0fd7d0062",
-      "swift_line" : 638
+      "swift_line" : 637
     }
   ],
   "ir_version" : "1.1",

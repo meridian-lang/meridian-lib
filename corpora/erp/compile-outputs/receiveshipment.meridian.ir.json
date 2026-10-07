@@ -5,49 +5,49 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReceiveinboundshipmentFires\/root\/procedure\/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438",
-      "swift_line" : 750
+      "swift_line" : 747
     },
     {
       "canonical" : "emit trigger.receiveInboundShipment.fired with kind = \"ambient\", spec = \"receive inbound shipment\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReceiveinboundshipmentFires\/root\/procedure\/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df",
-      "swift_line" : 750
+      "swift_line" : 747
     },
     {
       "canonical" : "wait for event shipmentReceived.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenShipmentreceivedFires\/root\/procedure\/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225",
-      "swift_line" : 750
+      "swift_line" : 747
     },
     {
       "canonical" : "emit trigger.shipmentReceived.fired with kind = \"event\", spec = \"shipment received\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenShipmentreceivedFires\/root\/procedure\/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43",
-      "swift_line" : 750
+      "swift_line" : 747
     },
     {
       "canonical" : "`ofbiz warehouse receive --today --json` -- snapshot inbound manifests.",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/ReceiveShipment\/workflow\/procedure\/8600e4b2a6c7ab3066aa8db7faba8faede862fff9dee1ec354cf2c6b6db68de9",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "wait for signal \"manifest_confirmed\".",
       "meridian_line" : 17,
       "primitive" : "wait",
       "stable_step_path" : "\/ReceiveShipment\/workflow\/procedure\/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028",
-      "swift_line" : 594
+      "swift_line" : 593
     },
     {
       "canonical" : "emit erp.report with message = \"warehouse receiving manifest captured\".",
       "meridian_line" : 18,
       "primitive" : "emit",
       "stable_step_path" : "\/ReceiveShipment\/workflow\/procedure\/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd",
-      "swift_line" : 599
+      "swift_line" : 598
     }
   ],
   "ir_version" : "1.1",

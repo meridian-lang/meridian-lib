@@ -419,7 +419,6 @@ public struct ReviewRequestsReviewerAccessRequest: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -554,7 +553,6 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -630,7 +628,6 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -706,7 +703,6 @@ public struct WhenWorkrequestqueueFires: MeridianWorkflow {
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,

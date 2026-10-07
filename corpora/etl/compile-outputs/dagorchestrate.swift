@@ -338,12 +338,11 @@ public struct DagOrchestrate: MeridianWorkflow {
         "triggers": "\"orchestrate pipeline dag\"\n\"run dag orchestration\"\n\"run the dag orchestration pass\"",
     ]
 
-    public static let skillVersionHash = "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+    public static let skillVersionHash = "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct DagOrchestrate: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
-            versionHash: "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+            versionHash: "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
         ),
         toolCapturePolicies: [:]
     )
@@ -477,12 +476,11 @@ public struct DagOrchestrate: MeridianWorkflow {
 public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+    public static let skillVersionHash = "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -496,7 +494,7 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
-            versionHash: "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+            versionHash: "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
         ),
         toolCapturePolicies: [:]
     )
@@ -553,12 +551,11 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
 public struct WhenRundagorchestrationFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+    public static let skillVersionHash = "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -572,7 +569,7 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
-            versionHash: "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+            versionHash: "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
         ),
         toolCapturePolicies: [:]
     )
@@ -629,12 +626,11 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
 public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+    public static let skillVersionHash = "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -648,7 +644,7 @@ public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dag orchestrate",
-            versionHash: "c4f97c198befba720002fc43150b04b534ef3b0897691e1e7fa0efdc503911cb"
+            versionHash: "16929739237e519b1bd2576d34bb294deb66be5e36985d87ba971c68ff4a040b"
         ),
         toolCapturePolicies: [:]
     )

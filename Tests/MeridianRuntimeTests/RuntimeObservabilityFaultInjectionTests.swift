@@ -157,20 +157,14 @@ struct RuntimeObservabilityFaultInjectionTests {
         #expect(diagnostic?.message.contains("abc.def.ghi") == false)
     }
 
-    @Test("ShellHoleRedaction and WitnessCapture still redact sensitive payloads")
-    func shellAndWitnessRedaction() throws {
+    @Test("ShellHoleRedaction still redacts sensitive payloads")
+    func shellRedaction() throws {
         let shellArgs = ShellHoleRedaction.redactInvokeArgs(
             toolID: "shell.run",
             args: ["command": .string("curl -H 'Authorization: Bearer token123'")],
             capturePolicy: nil
         )
         #expect(shellArgs["command"] == .string("<redacted>"))
-
-        let witness = try WitnessCapture.buildEnvelope(
-            body: ["password": .string("hunter2"), "status": .string("failed")],
-            mode: .redacted
-        )
-        #expect(witness.body?["password"] == .string("<redacted>"))
     }
 
     @Test("torn trace JSONL line surfaces trace-store.read warning through runtime evaluate")
@@ -195,9 +189,6 @@ struct RuntimeObservabilityFaultInjectionTests {
             payload: [:],
             payloadHash: "payload",
             outcome: .success,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: nil,
             legacyKind: nil
         ))
@@ -237,10 +228,7 @@ private actor FailingAppendTraceStore: TraceStore {
     var capabilities: TraceStoreCapabilities {
         TraceStoreCapabilities(
             isPersistent: false,
-            supportsHashChaining: false,
-            supportsCompaction: false,
-            indexedFields: [],
-            supportedSchemaVersions: [1])
+            supportsCompaction: false)
     }
 
     func append(_ event: TraceRecord) async throws {
@@ -257,8 +245,4 @@ private actor FailingAppendTraceStore: TraceStore {
     ) async throws -> [TraceRecord] { [] }
 
     func compact(retention: Duration, now: Date) async throws {}
-
-    func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
-        TraceChainVerificationResult(runID: runID, verifiedCount: 0, isValid: true, failure: nil)
-    }
 }

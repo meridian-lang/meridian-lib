@@ -5,119 +5,119 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBraintaxonomistFires\/root\/procedure\/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event brainTaxonomist.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBraintaxonomistFires\/root\/procedure\/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event createBrainPage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCreatebrainpageFires\/root\/procedure\/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.createBrainPage.fired with kind = \"keyword\", spec = \"create brain page\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCreatebrainpageFires\/root\/procedure\/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.fileThisInBrain.fired with kind = \"keyword\", spec = \"file this in the brain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenFilethisinbrainFires\/root\/procedure\/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event fileThisInBrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenFilethisinbrainFires\/root\/procedure\/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event refileBrainPage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRefilebrainpageFires\/root\/procedure\/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.refileBrainPage.fired with kind = \"keyword\", spec = \"refile brain page\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRefilebrainpageFires\/root\/procedure\/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.taxonomyCheck.fired with kind = \"keyword\", spec = \"taxonomy check\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenTaxonomycheckFires\/root\/procedure\/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event taxonomyCheck.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenTaxonomycheckFires\/root\/procedure\/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event whereDoesThisBrainPage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWheredoesthisbrainpageFires\/root\/procedure\/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.whereDoesThisBrainPage.fired with kind = \"keyword\", spec = \"where does this brain page go\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWheredoesthisbrainpageFires\/root\/procedure\/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.whichDirectoryDoesThisGo.fired with kind = \"keyword\", spec = \"which directory does this go\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhichdirectorydoesthisgoFires\/root\/procedure\/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event whichDirectoryDoesThisGo.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhichdirectorydoesthisgoFires\/root\/procedure\/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "emit trigger.whichDirectoryDoesThisPage.fired with kind = \"keyword\", spec = \"which directory does this page go\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhichdirectorydoesthispageFires\/root\/procedure\/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "wait for event whichDirectoryDoesThisPage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhichdirectorydoesthispageFires\/root\/procedure\/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329",
-      "swift_line" : 1228
+      "swift_line" : 1219
     },
     {
       "canonical" : "use judgment to follow the Purpose — steps guidance:\n  **Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\n  A user who runs `gbrain schema use gbrain-recommended` gets the full\n  recommended directory set (deal, meeting, concept, project, source,\n  daily, personal, civic, original, place, trip, conversation, writing,\n  plus all gbrain-base types)\n  A user who authored a custom pack via `gbrain schema init` + edit gets\n  filing recommendations based on THEIR taxonomy, not gbrain's defaults\n  Per-source overrides (tier 3 in the 7-tier resolution chain) are honored\n  when `--source <id>` is passed to brain-taxonomist\n  Is the primary subject a NAMED PERSON? → person-typed directory\n  Is the primary subject a NAMED ORGANIZATION? → company-typed directory\n  Is it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\n  Is it a REUSABLE MENTAL MODEL? → concept-typed directory\n  Is it RAW MEDIA (article, video, book, PDF)? → media-typed directory\n  Is it BULK SOURCE DATA? → source-typed directory\n  codeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\n  kebab-case, descriptive\n  no author name unless disambiguation is needed\n  match the canonical path prefix exactly (no leading slash)\n  Path follows the active pack's `page_types[].path_prefixes`\n  Slug is kebab-case, descriptive\n  Frontmatter includes `type:` matching one of the pack's `page_types[].name`\n  Cross-links to related pages are included\n  `eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n  `ingest` — article\/media ingestion consults brain-taxonomist for filing\n  `repo-architecture` — delegates the filing decision to this skill\n  `book-mirror` — after generating a mirror, files it via brain-taxonomist\n  codeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s\/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg\/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=\n  Hardcoded directory table REMOVED. Every decision now reads the active\n  schema pack via `gbrain schema show --json`. Single source of truth\n  `--source <id>` propagation documented for multi-brain users (Persona B)",
       "meridian_line" : 31,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/BrainTaxonomistInput\/purpose-steps\/procedure\/45ffc00b4ccc9b19d93f512a314e1b218299363e8c9a9a18b513c5d26c8b292f",
-      "swift_line" : 627
+      "swift_line" : 626
     }
   ],
   "ir_version" : "1.1",

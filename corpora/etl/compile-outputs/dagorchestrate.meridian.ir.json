@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenOrchestratepipelinedagFires\/root\/procedure\/c608c27563c2ff4b6c45ef36dd006b87a602a75d7cce8a700d3086c7624c525f",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "wait for event orchestratePipelineDag.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenOrchestratepipelinedagFires\/root\/procedure\/cfd7f5b729dd6e469931fa349173aa78bebc47acc40beb7697782bcd062f6b9b",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "emit trigger.runDagOrchestration.fired with kind = \"keyword\", spec = \"run dag orchestration\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRundagorchestrationFires\/root\/procedure\/db7cc172255699c896c0d9a9fce03bea205ea911fd9cc0f37845124087989a8b",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "wait for event runDagOrchestration.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRundagorchestrationFires\/root\/procedure\/ec33e3d1c357d110ec5b13871e32ae286b9646f54c653e2bff5809ac16a2d2c8",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "wait for event runDagOrchestrationPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRundagorchestrationpassFires\/root\/procedure\/6f9f3f1b65e933afc53b29b46e941cd591e1669f10404b6ea31dca3b5947cc9a",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "emit trigger.runDagOrchestrationPass.fired with kind = \"keyword\", spec = \"run the dag orchestration pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRundagorchestrationpassFires\/root\/procedure\/a82ab44ed67f9c228679e9da80ada33997838fee523e264ffedf7f121bdded7b",
-      "swift_line" : 683
+      "swift_line" : 679
     },
     {
       "canonical" : "bind datasets = invoke dataset.list.",
       "meridian_line" : 27,
       "primitive" : "invoke",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
-      "swift_line" : 387
+      "swift_line" : 386
     },
     {
       "canonical" : "for each dataset in datasets,\n  wait for event upstream.done matching the event's dataset name equals the dataset's name.\n  wait for signal \"pipeline.ready\".\n  simultaneously:\n    bind dataset = invoke extract with source = the object store source.\n    bind qualityCheck = invoke quality.run with dataset = dataset.",
       "meridian_line" : 28,
       "primitive" : "iterate",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/c3add5a7ddf90c1aeeb795d2293f870e50f46e6bf9fad30a82443ab08a237b5a",
-      "swift_line" : 393
+      "swift_line" : 392
     },
     {
       "canonical" : "wait for event upstream.done matching the event's dataset name equals the dataset's name.",
       "meridian_line" : 29,
       "primitive" : "wait",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/iterate.body\/e97d6d62915aa5a14e38fce37cc16ce331dfcf1f42eaf6b992e63bbc6a9eb947",
-      "swift_line" : 402
+      "swift_line" : 401
     },
     {
       "canonical" : "wait for signal \"pipeline.ready\".",
       "meridian_line" : 30,
       "primitive" : "wait",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/iterate.body\/4d8bbad64f8a11541500b07b80756aad882b1e27d1090a78152c83bf8fd3970e",
-      "swift_line" : 407
+      "swift_line" : 406
     },
     {
       "canonical" : "simultaneously:\n  bind dataset = invoke extract with source = the object store source.\n  bind qualityCheck = invoke quality.run with dataset = dataset.",
       "meridian_line" : 31,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/iterate.body\/c073039618f0b4d09d9be8f411336ef338f4bbe5191fa7e1514fb14d1385cfa7",
-      "swift_line" : 411
+      "swift_line" : 410
     },
     {
       "canonical" : "bind dataset = invoke extract with source = the object store source.",
       "meridian_line" : 32,
       "primitive" : "invoke",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/simultaneously.branch\/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285",
-      "swift_line" : 416
+      "swift_line" : 415
     },
     {
       "canonical" : "bind qualityCheck = invoke quality.run with dataset = dataset.",
       "meridian_line" : 33,
       "primitive" : "invoke",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/simultaneously.branch\/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a",
-      "swift_line" : 433
+      "swift_line" : 432
     },
     {
       "canonical" : "emit etl.report with message = \"dag orchestration pass complete\".",
       "meridian_line" : 34,
       "primitive" : "emit",
       "stable_step_path" : "\/DagOrchestrate\/workflow\/procedure\/cf442419782f6f7bf9c230cd514c9d5be05198235d8cdf4815975e9ec554f54b",
-      "swift_line" : 456
+      "swift_line" : 455
     }
   ],
   "ir_version" : "1.1",

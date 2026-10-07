@@ -259,59 +259,59 @@
   "source_map" : [
     {
       "meridian_line" : 26,
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "meridian_line" : 16,
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 470
+      "swift_line" : 469
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 483
+      "swift_line" : 482
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 487
+      "swift_line" : 486
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 496
+      "swift_line" : 495
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 517
+      "swift_line" : 516
     },
     {
       "meridian_line" : 22,
-      "swift_line" : 525
+      "swift_line" : 524
     },
     {
       "meridian_line" : 22,
-      "swift_line" : 529
+      "swift_line" : 528
     },
     {
       "meridian_line" : 23,
-      "swift_line" : 554
+      "swift_line" : 553
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 624
+      "swift_line" : 622
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 629
+      "swift_line" : 627
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 700
+      "swift_line" : 697
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 705
+      "swift_line" : 702
     }
   ],
   "tools_used" : [
@@ -324,7 +324,7 @@
 
       ],
       "skill_name" : "vacuum tables",
-      "skill_version_hash" : "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb",
+      "skill_version_hash" : "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083",
       "source_name" : "vacuum tables",
       "step_paths" : [
         "\/VacuumTables\/guarantees\/invariants\/1e4742e040a0503ef480cf9189203f3eb2270fe142b1491d1257065977405a88",
@@ -346,7 +346,7 @@
 
       ],
       "skill_name" : "vacuum tables",
-      "skill_version_hash" : "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb",
+      "skill_version_hash" : "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083",
       "source_name" : "when vacuumBloatedTables fires",
       "step_paths" : [
         "\/WhenVacuumbloatedtablesFires\/root\/procedure\/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48",
@@ -360,7 +360,7 @@
 
       ],
       "skill_name" : "vacuum tables",
-      "skill_version_hash" : "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb",
+      "skill_version_hash" : "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083",
       "source_name" : "when runTableMaintenance fires",
       "step_paths" : [
         "\/WhenRuntablemaintenanceFires\/root\/procedure\/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246",

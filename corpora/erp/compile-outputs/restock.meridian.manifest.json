@@ -264,51 +264,51 @@
   "source_map" : [
     {
       "meridian_line" : 24,
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "meridian_line" : 25,
-      "swift_line" : 585
+      "swift_line" : 584
     },
     {
       "meridian_line" : 16,
-      "swift_line" : 590
+      "swift_line" : 589
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 604
+      "swift_line" : 603
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 609
+      "swift_line" : 608
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 613
+      "swift_line" : 612
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 622
+      "swift_line" : 621
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 641
+      "swift_line" : 640
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 711
+      "swift_line" : 709
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 716
+      "swift_line" : 714
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 787
+      "swift_line" : 784
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 792
+      "swift_line" : 789
     }
   ],
   "tools_used" : [
@@ -321,7 +321,7 @@
 
       ],
       "skill_name" : "restock",
-      "skill_version_hash" : "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332",
+      "skill_version_hash" : "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af",
       "source_name" : "restock",
       "step_paths" : [
         "\/Restock\/guarantees\/invariants\/1818a40b149394a20a5a04be622639fbea2e7254bf5a4087d5bd62f809ced4a9",
@@ -341,7 +341,7 @@
 
       ],
       "skill_name" : "restock",
-      "skill_version_hash" : "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332",
+      "skill_version_hash" : "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af",
       "source_name" : "when restockShortProducts fires",
       "step_paths" : [
         "\/WhenRestockshortproductsFires\/root\/procedure\/02ff9f22af1969cc3ed7639df7a20ce24743313640092b472a514998ddfd8395",
@@ -355,7 +355,7 @@
 
       ],
       "skill_name" : "restock",
-      "skill_version_hash" : "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332",
+      "skill_version_hash" : "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af",
       "source_name" : "when inventoryBelowReorderPoint fires",
       "step_paths" : [
         "\/WhenInventorybelowreorderpointFires\/root\/procedure\/78842fbb941cffde905375c4332721956b1085cc8da84ed8315937e64417d9d6",

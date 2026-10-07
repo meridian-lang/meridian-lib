@@ -376,12 +376,11 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
         "parameters": "service",
     ]
 
-    public static let skillVersionHash = "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+    public static let skillVersionHash = "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -395,7 +394,7 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
-            versionHash: "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+            versionHash: "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
         ),
         toolCapturePolicies: [:]
     )
@@ -554,12 +553,11 @@ public struct ReleaseHealthSentinelService: MeridianWorkflow {
 public struct WhenRunreleasehealthsentinelFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+    public static let skillVersionHash = "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -573,7 +571,7 @@ public struct WhenRunreleasehealthsentinelFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
-            versionHash: "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+            versionHash: "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
         ),
         toolCapturePolicies: [:]
     )
@@ -630,12 +628,11 @@ public struct WhenRunreleasehealthsentinelFires: MeridianWorkflow {
 public struct WhenCheckreleasehealthFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+    public static let skillVersionHash = "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -649,7 +646,7 @@ public struct WhenCheckreleasehealthFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
-            versionHash: "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+            versionHash: "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
         ),
         toolCapturePolicies: [:]
     )
@@ -706,12 +703,11 @@ public struct WhenCheckreleasehealthFires: MeridianWorkflow {
 public struct WhenInspectdeployfailurehistoryFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+    public static let skillVersionHash = "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -725,7 +721,7 @@ public struct WhenInspectdeployfailurehistoryFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "release health sentinel",
-            versionHash: "9d143ca7d6edcc26b43acd0656287fd742d887879669e14971205dc0d9672f11"
+            versionHash: "97d7622ceee9994c1fb05c3e0685f0a22bccbcbc450578abc092b3f9031a2d9c"
         ),
         toolCapturePolicies: [:]
     )

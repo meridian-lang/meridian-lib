@@ -5,126 +5,126 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAddtestsandevalsthisFires\/root\/procedure\/8709c0a4b52861b25898af339bdc2c6a0b621be232e388424be06fa44e550737",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event addTestsAndEvalsThis.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAddtestsandevalsthisFires\/root\/procedure\/ed2d2c4e07f6554daf0177d2952c3980c74162546ef7124eacd2d48ddcd88928",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event checkSkillCompleteness.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckskillcompletenessFires\/root\/procedure\/532da96f148d46d081865e11c3eb323e99fe74d6e5e31c23d9c11b0b7003f419",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "emit trigger.checkSkillCompleteness.fired with kind = \"keyword\", spec = \"check skill completeness\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckskillcompletenessFires\/root\/procedure\/f68128ef96b05c317be5a1de4ae12bcda55050d12c43a2e88f08ef48f43a0eb2",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event isThisSkill.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenIsthisskillFires\/root\/procedure\/c8af8cdb14eac8031476a2794b29a4e4e545cdec33cd453433638d3da1af86a3",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "emit trigger.isThisSkill.fired with kind = \"keyword\", spec = \"is this a skill?\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenIsthisskillFires\/root\/procedure\/c9257bd820809c9ac7d0e66b8a7f3e301745151f93b39f818f8d44fafe662095",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event makeThisProper.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMakethisproperFires\/root\/procedure\/38f8bf73ced2815408d8cbcb8b231d8fa0aabf3d08e3859a57ab912ffbdc15ff",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "emit trigger.makeThisProper.fired with kind = \"keyword\", spec = \"make this proper\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMakethisproperFires\/root\/procedure\/ac749c5245b4a9c1d7287723ece41ec243b5549994533eed0a7b8ac3f4056ebf",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "emit trigger.skillify.fired with kind = \"keyword\", spec = \"skillify\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSkillifyFires\/root\/procedure\/90915da24941c1ea4aa944a7c1c32bcce1a2c2f21624e674d51210b4dec9f5b1",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event skillify.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSkillifyFires\/root\/procedure\/de00f4ea281d04a83d1b2cf41883b5cd3ce3a2cf429fef815ae9ab9805e78aa3",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "emit trigger.skillifyThis.fired with kind = \"keyword\", spec = \"skillify this\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSkillifythisFires\/root\/procedure\/5e8c11621a3c731a67660915bf0cff245c3a2ae6d668a203f6e12bccd534ff39",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "wait for event skillifyThis.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSkillifythisFires\/root\/procedure\/ad4f6df960dacd829d0162e9398e3e06155ea61fd851500048d2abab4ab9515e",
-      "swift_line" : 1144
+      "swift_line" : 1137
     },
     {
       "canonical" : "`gbrain config            # set keys`.",
       "meridian_line" : 214,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/provider-configuration-steps\/procedure\/282253db6186a675fa62e950ea86321a7b0dcbecb4a8d347be8a38df7435aea4",
-      "swift_line" : 641
+      "swift_line" : 640
     },
     {
       "canonical" : "`gbrain providers test    # see what's configured`.",
       "meridian_line" : 214,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/provider-configuration-steps\/procedure\/7df67723a3ff4efd8d826d7c3a4c1bea3dae8bb7fa2c74c1b78fe0d7859f6df3",
-      "swift_line" : 641
+      "swift_line" : 640
     },
     {
       "canonical" : "`bun test test\/<skill>.test.ts                    # unit tests`.",
       "meridian_line" : 259,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/phase-7-verify\/procedure\/2ae0aaff3206e8d3d66ae937bb794df6aca7ce006b10fb5d611f8e24dec29020",
-      "swift_line" : 693
+      "swift_line" : 692
     },
     {
       "canonical" : "`gbrain check-resolvable --json | jq .ok          # resolver clean`.",
       "meridian_line" : 259,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/phase-7-verify\/procedure\/3523710f6eefd058626762600c262819846e98cb5908880f8db03963be66150a",
-      "swift_line" : 693
+      "swift_line" : 692
     },
     {
       "canonical" : "`gbrain skillify check skills\/<slug>\/scripts\/<slug>.mjs --json | jq '.[] | .items[] | select(.name | contains(\"Cross-modal\"))'`.",
       "meridian_line" : 259,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/phase-7-verify\/procedure\/aa9299d03537e3fb84b1096984b2993b4c387605212b7979049bd58dc2dc1b34",
-      "swift_line" : 693
+      "swift_line" : 692
     },
     {
       "canonical" : "`ls ~\/.gbrain\/.gbrain\/eval-receipts\/              # receipt landed`.",
       "meridian_line" : 259,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillifyInput\/phase-7-verify\/procedure\/c088e940aeea91ea48cbea5f211c7f0ca5518ea78fae8dbbc57263fff13e2c77",
-      "swift_line" : 693
+      "swift_line" : 692
     }
   ],
   "ir_version" : "1.1",

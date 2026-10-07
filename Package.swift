@@ -58,8 +58,7 @@ let package = Package(
         .target(
             name: "MeridianRuntime",
             dependencies: [],
-            path: "Sources/MeridianRuntime",
-            linkerSettings: [.linkedLibrary("sqlite3")]
+            path: "Sources/MeridianRuntime"
         ),
 
         // MARK: - MeridianCore — compiler (parser, IR, lowering, codegen)

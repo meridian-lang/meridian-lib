@@ -409,12 +409,11 @@ public struct ReconcileLedger: MeridianWorkflow {
         "triggers": "\"reconcile ledger\"\n\"settle ledger batches\"",
     ]
 
-    public static let skillVersionHash = "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+    public static let skillVersionHash = "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct ReconcileLedger: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
-            versionHash: "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+            versionHash: "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
         ),
         toolCapturePolicies: [:]
     )
@@ -591,12 +590,11 @@ public struct ReconcileLedger: MeridianWorkflow {
 public struct WhenReconcileledgerFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+    public static let skillVersionHash = "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -610,7 +608,7 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
-            versionHash: "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+            versionHash: "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
         ),
         toolCapturePolicies: [:]
     )
@@ -667,12 +665,11 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
 public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+    public static let skillVersionHash = "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -686,7 +683,7 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "reconcile ledger",
-            versionHash: "50c40b85b28d3140d8cc8f638f4a48b25d26dd045a84b960d9cd7b165fe60afe"
+            versionHash: "5e5b8a6c3cba844f0f136f0e6e55f744645f923818e6808e10349adacc369ff4"
         ),
         toolCapturePolicies: [:]
     )

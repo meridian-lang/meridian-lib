@@ -121,7 +121,7 @@ struct DependencyDiscoveryTests {
 
 // MARK: - makeCLITrace
 
-@Suite("CLI support — trace bootstrap")
+@Suite("CLI support — trace bootstrap", .serialized)
 struct TraceBootstrapTests {
     @Test("nil spec yields a trace with no categories enabled")
     func noSpec() throws {

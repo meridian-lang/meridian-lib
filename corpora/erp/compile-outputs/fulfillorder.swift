@@ -531,12 +531,11 @@ public struct FulfillOrder: MeridianWorkflow {
         "triggers": "\"fulfill ERP orders\"\n\"release shipments\"",
     ]
 
-    public static let skillVersionHash = "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+    public static let skillVersionHash = "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct FulfillOrder: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
-            versionHash: "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+            versionHash: "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
         ),
         toolCapturePolicies: [:]
     )
@@ -700,12 +699,11 @@ public struct FulfillOrder: MeridianWorkflow {
 public struct WhenFulfillerpordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+    public static let skillVersionHash = "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -719,7 +717,7 @@ public struct WhenFulfillerpordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
-            versionHash: "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+            versionHash: "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
         ),
         toolCapturePolicies: [:]
     )
@@ -776,12 +774,11 @@ public struct WhenFulfillerpordersFires: MeridianWorkflow {
 public struct WhenReleaseshipmentsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+    public static let skillVersionHash = "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -795,7 +792,7 @@ public struct WhenReleaseshipmentsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "fulfill order",
-            versionHash: "bb491b931ee96005c6f2357a568659861820a78fd62bdfd31ff53e262cdb017d"
+            versionHash: "a7df5d090cf5810d7553d847ce1ab77ebbcdaa4f899f2abedb5439ccac307dda"
         ),
         toolCapturePolicies: [:]
     )

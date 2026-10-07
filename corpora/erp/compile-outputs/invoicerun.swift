@@ -531,12 +531,11 @@ public struct InvoiceRun: MeridianWorkflow {
         "triggers": "\"run invoices\"\n\"billing batch\"",
     ]
 
-    public static let skillVersionHash = "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+    public static let skillVersionHash = "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct InvoiceRun: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
-            versionHash: "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+            versionHash: "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
         ),
         toolCapturePolicies: [:]
     )
@@ -646,12 +645,11 @@ public struct InvoiceRun: MeridianWorkflow {
 public struct WhenRuninvoicesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+    public static let skillVersionHash = "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -665,7 +663,7 @@ public struct WhenRuninvoicesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
-            versionHash: "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+            versionHash: "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
         ),
         toolCapturePolicies: [:]
     )
@@ -722,12 +720,11 @@ public struct WhenRuninvoicesFires: MeridianWorkflow {
 public struct WhenBillingbatchFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+    public static let skillVersionHash = "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -741,7 +738,7 @@ public struct WhenBillingbatchFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "invoice run",
-            versionHash: "c14748299d4515b5bc269695ffb4abc58f61ed8abc65fc931d4127ea27748ac1"
+            versionHash: "7153980b9195c511fa453fdb7f3ef6c790d2d579e7d5f16c05fcb949bfe7fbc1"
         ),
         toolCapturePolicies: [:]
     )

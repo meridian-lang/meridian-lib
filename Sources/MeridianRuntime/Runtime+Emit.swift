@@ -19,8 +19,8 @@ extension Runtime {
         _monitorTasks.removeAll()
     }
 
-    func emitOrThrow(event: Event, hashedPayload: [String: Value]? = nil, witness: String? = nil) async throws {
-        await emit(event: event, hashedPayload: hashedPayload, witness: witness)
+    func emitOrThrow(event: Event, hashedPayload: [String: Value]? = nil) async throws {
+        await emit(event: event, hashedPayload: hashedPayload)
         try rethrowOperationalFailureIfNeeded()
     }
 
@@ -72,10 +72,10 @@ extension Runtime {
         }
     }
 
-    func emit(event: Event, hashedPayload: [String: Value]? = nil, witness: String? = nil) async {
+    func emit(event: Event, hashedPayload: [String: Value]? = nil) async {
         if let traceStore {
             do {
-                let record = try await semanticTraceRecord(for: event, hashedPayload: hashedPayload, witness: witness)
+                let record = try await semanticTraceRecord(for: event, hashedPayload: hashedPayload)
                 try await traceStore.append(record)
                 if _degradedTraceMarkerPending {
                     let degradedRecord = try await degradedTraceRecoveryRecord()
@@ -163,16 +163,13 @@ extension Runtime {
             payload: payload,
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .failure,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: "prevented",
             legacyKind: nil
         )
         try await traceStore.append(record)
     }
 
-    private func semanticTraceRecord(for event: Event, hashedPayload: [String: Value]?, witness: String? = nil) async throws -> TraceRecord {
+    private func semanticTraceRecord(for event: Event, hashedPayload: [String: Value]?) async throws -> TraceRecord {
         let workflowName = event.payload["workflow"]?.scalarDescription
         let skillIdentity = workflowName.map { TraceSkillIdentity(name: $0, versionHash: _traceSkillIdentity.versionHash) } ?? _traceSkillIdentity
         let step = event.payload["step"]?.scalarDescription ?? event.kind.rawValue
@@ -186,8 +183,7 @@ extension Runtime {
             ingestOrder: event.sequence,
             subjectKey: subjectKey,
             payload: event.payload,
-            hashedPayload: hashedPayload,
-            witness: witness
+            hashedPayload: hashedPayload
         )
     }
 
@@ -210,9 +206,6 @@ extension Runtime {
             payload: payload,
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .failure,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: "degraded-witnessing-marker",
             legacyKind: nil
         )

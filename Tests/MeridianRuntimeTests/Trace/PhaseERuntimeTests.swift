@@ -133,40 +133,6 @@ struct PhaseERuntimeTests {
         #expect(afterHorizon == .true)
     }
 
-    @Test("SEM_2_13 calendar days respect deployment time zone")
-    func sem213CalendarDays() {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "America/New_York") ?? .gmt
-        let start = calendar.date(from: DateComponents(year: 2026, month: 3, day: 7, hour: 12))!
-        let end = CalendarAmountEvaluator.add(.calendarDays, count: 1, to: start, timeZone: calendar.timeZone)
-        let delta = calendar.dateComponents([.day], from: start, to: end).day
-        #expect(delta == 1)
-    }
-
-    @Test("SEM_2_13 DST spring-forward advances one calendar day across gap")
-    func sem213DSTSpringForward() {
-        var calendar = Calendar(identifier: .gregorian)
-        let tz = TimeZone(identifier: "America/New_York")!
-        calendar.timeZone = tz
-        let start = calendar.date(from: DateComponents(year: 2026, month: 3, day: 8, hour: 1, minute: 30))!
-        let end = CalendarAmountEvaluator.add(.calendarDays, count: 1, to: start, timeZone: tz)
-        let startDay = calendar.component(.day, from: start)
-        let endDay = calendar.component(.day, from: end)
-        #expect(endDay == startDay + 1)
-    }
-
-    @Test("SEM_2_13 leap day February adds one calendar month")
-    func sem213LeapMonth() {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC")!
-        let start = calendar.date(from: DateComponents(year: 2024, month: 1, day: 31))!
-        let end = CalendarAmountEvaluator.add(.months, count: 1, to: start, timeZone: calendar.timeZone)
-        let components = calendar.dateComponents([.year, .month, .day], from: end)
-        #expect(components.year == 2024)
-        #expect(components.month == 2)
-        #expect(components.day == 29)
-    }
-
     @Test("SEM_4_11 trace ordering breaks ties by ingest order then id")
     func sem411ClockSkewOrdering() {
         let instant = Date(timeIntervalSince1970: 1_700_000_000)

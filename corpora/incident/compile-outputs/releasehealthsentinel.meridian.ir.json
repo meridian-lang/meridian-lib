@@ -5,112 +5,112 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckreleasehealthFires\/root\/procedure\/1f386bd5eef9c8396f042d5e951e30dad139d87c75f66e141c57da99cff1b15a",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "emit trigger.checkReleaseHealth.fired with kind = \"keyword\", spec = \"check release health\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckreleasehealthFires\/root\/procedure\/bf644aaeab63e8667ef54aab02d1cec770a0250d23bab529b8a14d663c10a0ae",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "wait for event inspectDeployFailureHistory.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenInspectdeployfailurehistoryFires\/root\/procedure\/7ad7541f745402ff5fe13cd45701d638c4c66159c4acd87d2c9dfd0d47a93e3f",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "emit trigger.inspectDeployFailureHistory.fired with kind = \"keyword\", spec = \"inspect deploy failure history\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenInspectdeployfailurehistoryFires\/root\/procedure\/f33a96a5a88095984b98f6843aba4a8f0a8259ba5b796fa7a0217f451c4ecf86",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "wait for event runReleaseHealthSentinel.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunreleasehealthsentinelFires\/root\/procedure\/77e2c8fa5a836c4e875842a662b30b051897265150238dc401b3501d2661956d",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "emit trigger.runReleaseHealthSentinel.fired with kind = \"keyword\", spec = \"run release health sentinel\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunreleasehealthsentinelFires\/root\/procedure\/e3fd67141b9f1f803997f6cf681458cd11fe114898837e8ee8dbc547cbb94df5",
-      "swift_line" : 760
+      "swift_line" : 756
     },
     {
       "canonical" : "if the deploy step has ever failed,\n  emit incident.report with message = \"release health saw a prior deploy failure\".",
       "meridian_line" : 40,
       "primitive" : "branch",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/a66cad2a4664a07342fe722cc64e7161e47ca0e2b66b7e49b5303bc279c4d043",
-      "swift_line" : 426
+      "swift_line" : 425
     },
     {
       "canonical" : "emit incident.report with message = \"release health saw a prior deploy failure\".",
       "meridian_line" : 41,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/8725cae94698ebd7d8fed2aaa8773c00a0af30adc8ff3b3ddee8d1f3a4989a80",
-      "swift_line" : 430
+      "swift_line" : 429
     },
     {
       "canonical" : "if the deploy step failed within the last 604800 seconds,\n  emit incident.report with message = \"release health saw a recent deploy failure\".",
       "meridian_line" : 42,
       "primitive" : "branch",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/77f4be022cf08f6ac6e8418cb1f824b0cb23d8cee1bd20dffd4fe1056ea8bd69",
-      "swift_line" : 443
+      "swift_line" : 442
     },
     {
       "canonical" : "emit incident.report with message = \"release health saw a recent deploy failure\".",
       "meridian_line" : 43,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/a621626a7d2c26180092613b88530eeb8914f144ecf19640c3e04fa97f40c912",
-      "swift_line" : 447
+      "swift_line" : 446
     },
     {
       "canonical" : "if the deploy step failed at least 2 times within the last 604800 seconds,\n  emit incident.report with message = \"release health saw repeated recent deploy failures\".",
       "meridian_line" : 44,
       "primitive" : "branch",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/99d73e2cd39f5c5a36f91b6379dcb31d0f8e7d713318463e9c46273be2ba2718",
-      "swift_line" : 460
+      "swift_line" : 459
     },
     {
       "canonical" : "emit incident.report with message = \"release health saw repeated recent deploy failures\".",
       "meridian_line" : 45,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/af20d61858db2c49c4e96690d2c2f5ef3b58a383ca657c346dec5c4ffbc473aa",
-      "swift_line" : 464
+      "swift_line" : 463
     },
     {
       "canonical" : "if the deploy step failed 2 times in a row,\n  emit incident.report with message = \"release health saw an active deploy failure streak\".",
       "meridian_line" : 46,
       "primitive" : "branch",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/d5dcaab4a203848fd7cb6a76bd2563acc6805bc9f9c9908157fc12949dc00332",
-      "swift_line" : 477
+      "swift_line" : 476
     },
     {
       "canonical" : "emit incident.report with message = \"release health saw an active deploy failure streak\".",
       "meridian_line" : 47,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/49746a92b99116c089fff2ec8571f1ef100a79ac6c583b3d5131b987ef554d8f",
-      "swift_line" : 481
+      "swift_line" : 480
     },
     {
       "canonical" : "if across all runs, the deploy step has ever failed,\n  emit incident.report with message = \"release health saw a cross-run deploy failure\".\nif it is unknown whether:\n  emit incident.report with message = \"release health has no successful deploy anchor yet\".",
       "meridian_line" : 48,
       "primitive" : "branch",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/2e1c111d4704853da710bb171aa81bf8f071a97dd79e09a7febb681eacff6ccc",
-      "swift_line" : 494
+      "swift_line" : 493
     },
     {
       "canonical" : "emit incident.report with message = \"release health saw a cross-run deploy failure\".",
       "meridian_line" : 49,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps\/procedure\/branch.then\/0c070a42ab112288055e58d62bfd2cf48839b81a1aa8bd3a2aad43f88b475e0f",
-      "swift_line" : 498
+      "swift_line" : 497
     },
     {
       "canonical" : "emit incident.report with message = \"release health has no successful deploy anchor yet\".",
@@ -123,21 +123,21 @@
       "meridian_line" : 58,
       "primitive" : "assert",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/9c6e52d1eb1d62d83652d85f2c6068c0e39618af1b1b24631873f34c0bafaee5",
-      "swift_line" : 512
+      "swift_line" : 511
     },
     {
       "canonical" : "emit incident.report with message = \"release health blocking guard fell back because the service is unhealthy or the deploy history has no successful anchor\".",
       "meridian_line" : 59,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/assert.otherwise\/23a502cf4f4aff4dd1f8dc50d768d8d63c4b66f4d124e92deb2aa93e752bc053",
-      "swift_line" : 517
+      "swift_line" : 516
     },
     {
       "canonical" : "emit incident.report with message = \"release health sentinel pass complete\".",
       "meridian_line" : 60,
       "primitive" : "emit",
       "stable_step_path" : "\/ReleaseHealthSentinelService\/workflow-steps-3\/procedure\/e166d2e7c47034bc2d2d49c4e30fd667d5cec3e1e82c83e94a68e7fd209ca856",
-      "swift_line" : 533
+      "swift_line" : 532
     }
   ],
   "ir_version" : "1.1",

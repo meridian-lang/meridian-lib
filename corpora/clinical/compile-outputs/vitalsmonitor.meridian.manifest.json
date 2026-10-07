@@ -349,43 +349,43 @@
   "source_map" : [
     {
       "meridian_line" : 44,
-      "swift_line" : 443
+      "swift_line" : 442
     },
     {
       "meridian_line" : 37,
-      "swift_line" : 447
+      "swift_line" : 446
     },
     {
       "meridian_line" : 38,
-      "swift_line" : 456
+      "swift_line" : 455
     },
     {
       "meridian_line" : 39,
-      "swift_line" : 461
+      "swift_line" : 460
     },
     {
       "meridian_line" : 40,
-      "swift_line" : 480
+      "swift_line" : 479
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 561
+      "swift_line" : 559
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 566
+      "swift_line" : 564
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 637
+      "swift_line" : 634
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 642
+      "swift_line" : 639
     }
   ],
   "tools_used" : [
@@ -401,7 +401,7 @@
         }
       ],
       "skill_name" : "vitals monitor",
-      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
+      "skill_version_hash" : "0695b631bd9738b2afb380b8c8918c0af51516ad6cffe5664e59fa70994b79a3",
       "source_name" : "vitals monitor a patient",
       "step_paths" : [
         "\/VitalsMonitorPatient\/guarantees\/invariants\/726fdf8c8503e31fe37ab32d0724601f9a897bf85fa419937388662120c64364",
@@ -419,7 +419,7 @@
 
       ],
       "skill_name" : "vitals monitor",
-      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
+      "skill_version_hash" : "0695b631bd9738b2afb380b8c8918c0af51516ad6cffe5664e59fa70994b79a3",
       "source_name" : "when monitorPatientVitals fires",
       "step_paths" : [
         "\/WhenMonitorpatientvitalsFires\/root\/procedure\/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715",
@@ -433,7 +433,7 @@
 
       ],
       "skill_name" : "vitals monitor",
-      "skill_version_hash" : "73948e69078495537d1cbda8ce63451112688601b44aa34c207a180e91278889",
+      "skill_version_hash" : "0695b631bd9738b2afb380b8c8918c0af51516ad6cffe5664e59fa70994b79a3",
       "source_name" : "when runVitalsWatch fires",
       "step_paths" : [
         "\/WhenRunvitalswatchFires\/root\/procedure\/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7",

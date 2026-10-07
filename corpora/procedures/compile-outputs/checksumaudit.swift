@@ -409,12 +409,11 @@ public struct ChecksumAudit: MeridianWorkflow {
         "triggers": "\"checksum audit\"\n\"audit record drift\"",
     ]
 
-    public static let skillVersionHash = "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+    public static let skillVersionHash = "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct ChecksumAudit: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
-            versionHash: "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+            versionHash: "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
         ),
         toolCapturePolicies: [:]
     )
@@ -566,12 +565,11 @@ public struct ChecksumAudit: MeridianWorkflow {
 public struct WhenChecksumauditFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+    public static let skillVersionHash = "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -585,7 +583,7 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
-            versionHash: "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+            versionHash: "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
         ),
         toolCapturePolicies: [:]
     )
@@ -642,12 +640,11 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
 public struct WhenAuditrecorddriftFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+    public static let skillVersionHash = "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -661,7 +658,7 @@ public struct WhenAuditrecorddriftFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "checksum audit",
-            versionHash: "1e73a7658df572608c24227f433e71a0b51bc4d570ac1529e20b5fd8a5fdb3c0"
+            versionHash: "d52491fec2a901ebd5f817fd92d83e61f9104e9e6f8f48aa43190586dd61a184"
         ),
         toolCapturePolicies: [:]
     )

@@ -5,70 +5,70 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCancelblockedordersFires\/root\/procedure\/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce",
-      "swift_line" : 774
+      "swift_line" : 771
     },
     {
       "canonical" : "wait for event cancelBlockedOrders.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCancelblockedordersFires\/root\/procedure\/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6",
-      "swift_line" : 774
+      "swift_line" : 771
     },
     {
       "canonical" : "wait for event voidErpOrders.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenVoiderpordersFires\/root\/procedure\/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a",
-      "swift_line" : 774
+      "swift_line" : 771
     },
     {
       "canonical" : "emit trigger.voidErpOrders.fired with kind = \"keyword\", spec = \"void ERP orders\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenVoiderpordersFires\/root\/procedure\/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9",
-      "swift_line" : 774
+      "swift_line" : 771
     },
     {
       "canonical" : "bind orders = invoke order.list with status = \"open\".",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "assert any orders whose status equals \"blocked\".",
       "meridian_line" : 17,
       "primitive" : "assert",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/1457777b2eb2e5aa855444a0a6397b8b79c577bc3937a766b70ef5e47c6a90cf",
-      "swift_line" : 594
+      "swift_line" : 593
     },
     {
       "canonical" : "for each orders whose status equals \"blocked\",\n  cancel order unless order is fulfilled.",
       "meridian_line" : 18,
       "primitive" : "iterate",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/855b7dcf6fe0d3332a40f552f72875baf4a9e5242ecec82f6c9941e668accfee",
-      "swift_line" : 598
+      "swift_line" : 597
     },
     {
       "canonical" : "cancel order.",
       "meridian_line" : 19,
       "primitive" : "invoke",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/branch.then\/1027eb6ca41ff4e59032a179e1a66bac52cefbf73f91884908bc9084b6d467c5",
-      "swift_line" : 610
+      "swift_line" : 609
     },
     {
       "canonical" : "cancel order unless order is fulfilled.",
       "meridian_line" : 19,
       "primitive" : "branch",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/iterate.body\/a96c6b385a5f5d99daee95aeba636d2e9c4d3e883db949194fc6bbad29b777c6",
-      "swift_line" : 610
+      "swift_line" : 609
     },
     {
       "canonical" : "emit erp.report with message = \"blocked orders cancelled\".",
       "meridian_line" : 20,
       "primitive" : "emit",
       "stable_step_path" : "\/CancelOrder\/workflow\/procedure\/3f2374f851aedafb79249e16714950880d27179d82679e26d9dcd9863eef1982",
-      "swift_line" : 623
+      "swift_line" : 622
     }
   ],
   "ir_version" : "1.1",

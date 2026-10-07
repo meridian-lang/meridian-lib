@@ -338,12 +338,11 @@ public struct ExtractLoad: MeridianWorkflow {
         "triggers": "\"run extract load\"\n\"extract and load datasets\"\n\"run the extract-load pass\"",
     ]
 
-    public static let skillVersionHash = "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+    public static let skillVersionHash = "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct ExtractLoad: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
-            versionHash: "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+            versionHash: "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
         ),
         toolCapturePolicies: [:]
     )
@@ -496,12 +495,11 @@ public struct ExtractLoad: MeridianWorkflow {
 public struct WhenRunextractloadFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+    public static let skillVersionHash = "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -515,7 +513,7 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
-            versionHash: "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+            versionHash: "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
         ),
         toolCapturePolicies: [:]
     )
@@ -572,12 +570,11 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
 public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+    public static let skillVersionHash = "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -591,7 +588,7 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
-            versionHash: "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+            versionHash: "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
         ),
         toolCapturePolicies: [:]
     )
@@ -648,12 +645,11 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
 public struct WhenRunextractloadpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+    public static let skillVersionHash = "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -667,7 +663,7 @@ public struct WhenRunextractloadpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "extract load",
-            versionHash: "fa32d9b65962b0abd1245848a5b77ad5beecaebd8310dab90959abe48d7809b1"
+            versionHash: "a407adb56e6b11f37f0ce8be38d385239cc6de273ed0fd1a4546cfa9817cb3f8"
         ),
         toolCapturePolicies: [:]
     )

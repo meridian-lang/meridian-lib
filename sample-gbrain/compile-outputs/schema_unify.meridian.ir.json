@@ -5,238 +5,238 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/When94types14Fires\/root\/procedure\/b66c3e3b1b857686431f8f97c8c28baf13cf3404c87e096c15c53ab2f232c792",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.94Types14.fired with kind = \"keyword\", spec = \"94 types to 14\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/When94types14Fires\/root\/procedure\/c21e505b72341f6014c8a19e172e7da9e2d36565fcc0dece364a886b80fb5aab",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.applyCanonicalTaxonomy.fired with kind = \"keyword\", spec = \"apply canonical taxonomy\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenApplycanonicaltaxonomyFires\/root\/procedure\/7b33538819a9179fbb141b22cf79d362b0a08fc78e33fec9838a25bbf6d7a40b",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event applyCanonicalTaxonomy.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenApplycanonicaltaxonomyFires\/root\/procedure\/d35c71c59694b4108e3d797ad9eaac2192f524fd8a71eedc6e94a4c9c4765f66",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.cleanUpMyPageTypes.fired with kind = \"keyword\", spec = \"clean up my page types\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCleanupmypagetypesFires\/root\/procedure\/dca970841ecfdef643430e8f7974c106323a2d6b195ffece626d496bef83dfd3",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event cleanUpMyPageTypes.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCleanupmypagetypesFires\/root\/procedure\/f7fb556cc61ad6822789230511314473302a6f225066bf8ef417bc8fcb58b17f",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.consolidatePageTypes.fired with kind = \"keyword\", spec = \"consolidate page types\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenConsolidatepagetypesFires\/root\/procedure\/0ae6581e925092d336fcb4fc7ed332c0d1b623b8d4ecf2a2ffd70b9b345280d1",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event consolidatePageTypes.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenConsolidatepagetypesFires\/root\/procedure\/26e1119293a7d728a31f4f02bd70ec225c5e86c7cfed096eb31319760d21b2a7",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event migrateGbrainBaseV2.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMigrategbrainbasev2Fires\/root\/procedure\/677dfae02028344ef67ecfd95ef8bcfd81bf8301f408561e8b039d08a110054e",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.migrateGbrainBaseV2.fired with kind = \"keyword\", spec = \"migrate to gbrain-base-v2\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMigrategbrainbasev2Fires\/root\/procedure\/68a8cc4391c5a77d002075dcb80ef60769d453ad92c61695f14ecb9f60bc0f75",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event packUpgrade.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPackupgradeFires\/root\/procedure\/574f4b9f035a620708fd5c9812524cfda7df6c838525a3ecb3b215417f6ddf49",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.packUpgrade.fired with kind = \"keyword\", spec = \"pack upgrade\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPackupgradeFires\/root\/procedure\/6dcddd9d316f95b2ea6ab2cc8c94f3438fce5731772ef1919988eeabaece6e32",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event retypePagesCanonical.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRetypepagescanonicalFires\/root\/procedure\/217fb4997aa9db8cc22686f6ceb4442a30d2181a29e580132b16a083365d2962",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.retypePagesCanonical.fired with kind = \"keyword\", spec = \"retype pages to canonical\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRetypepagescanonicalFires\/root\/procedure\/d4a21088a3721ec30feebd30d27f5de8e9a032b09de38fa37ba4f0612c0eebd3",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event shrinkTypeProliferation.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenShrinktypeproliferationFires\/root\/procedure\/ca1c31dcf7824e50470517244dd3d7a0905e5015cb8edc9e6cf2e45b062832da",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.shrinkTypeProliferation.fired with kind = \"keyword\", spec = \"shrink type proliferation\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenShrinktypeproliferationFires\/root\/procedure\/ea04b51ee3275ef40f45955891f98e286611e10e76aa0c3a5be5e28d86a6a81e",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.unifyMyTypes.fired with kind = \"keyword\", spec = \"unify my types\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenUnifymytypesFires\/root\/procedure\/27a6558daa816e3ff759824aee7735738da954f8458c12a0dd00bac28c67a6b5",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event unifyMyTypes.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenUnifymytypesFires\/root\/procedure\/95e20390572d686c1231bd6f1e14f0d10d1352b487a2278c165ce3bd77f2eeac",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "emit trigger.whatDoesCanonicalTaxonomyLook.fired with kind = \"keyword\", spec = \"what does the canonical taxonomy look like\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhatdoescanonicaltaxonomylookFires\/root\/procedure\/6c8614ae8faa47c5276f5dc11cb75ca9619e248554b0e482b04bb7a4f8af371e",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "wait for event whatDoesCanonicalTaxonomyLook.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhatdoescanonicaltaxonomylookFires\/root\/procedure\/f56ac8767bc1f405984d20a5caddb56596560e59ab06d342e36bd2e65637acc0",
-      "swift_line" : 1554
+      "swift_line" : 1543
     },
     {
       "canonical" : "`gbrain-base` -- Confirm the brain is actually on  (not already on v2).",
       "meridian_line" : 61,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-1-discovery-steps\/procedure\/cd0cc85aaf2207ef4561bac0864e1d17b9ba93617f20ea1e31af9051f96f053f",
-      "swift_line" : 627
+      "swift_line" : 626
     },
     {
       "canonical" : "`gbrain schema active --json | jq -r '.identity'`.",
       "meridian_line" : 63,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-1-discovery-steps\/procedure\/baf34aeac46921570202c8ced1157ad0eb6dd6d56a9cf60e3232037bc3432b8b",
-      "swift_line" : 641
+      "swift_line" : 640
     },
     {
       "canonical" : "`gbrain onboard --check`.",
       "meridian_line" : 72,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-1-discovery-steps-2\/procedure\/4e9b92f35a0eee8158f426e823b5a399927b2b206629ff32256ef08576614b9d",
-      "swift_line" : 654
+      "swift_line" : 653
     },
     {
       "canonical" : "`gbrain onboard --check --explain`.",
       "meridian_line" : 90,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-2-preview-steps\/procedure\/6e03c330d9c58eeb4240889c04fdc78de9c2797472569b74ce788722fb19599b",
-      "swift_line" : 667
+      "swift_line" : 666
     },
     {
       "canonical" : "`unify-types` -- This invokes the  handler in dry-run mode and prints.",
       "meridian_line" : 94,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-2-preview-steps\/procedure\/9cafb50decdcc1fbf1999766be8a41e5d802733fff1cf04879e70e1d105ffa7d",
-      "swift_line" : 680
+      "swift_line" : 679
     },
     {
       "canonical" : "`gbrain-unify` -- Acquire  db-lock (60min TTL).",
       "meridian_line" : 127,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-3-apply-steps-2\/procedure\/aaeda0c89a33008c967b7884545d999a62adda83c660c7639ba63c673872f4c2",
-      "swift_line" : 694
+      "swift_line" : 693
     },
     {
       "canonical" : "bind verdict = invoke verify with claim = + celebration summary.",
       "meridian_line" : 131,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-3-apply-steps-3\/procedure\/4e2bfbc6006b5960b3118705bcd85951910abc0098d2cb02fe60474867cda146",
-      "swift_line" : 708
+      "swift_line" : 707
     },
     {
       "canonical" : "`gbrain onboard --check`.",
       "meridian_line" : 142,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-4-verify-steps\/procedure\/4e9b92f35a0eee8158f426e823b5a399927b2b206629ff32256ef08576614b9d",
-      "swift_line" : 735
+      "swift_line" : 734
     },
     {
       "canonical" : "`gbrain schema stats`.",
       "meridian_line" : 142,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-4-verify-steps\/procedure\/acf888ee306192e6abc1cd98592f8b6d708dddc038dbc2813d110b935d24cd37",
-      "swift_line" : 735
+      "swift_line" : 734
     },
     {
       "canonical" : "`gbrain schema stats` -- shows ≤16 distinct types.",
       "meridian_line" : 150,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-4-verify-steps-2\/procedure\/acf888ee306192e6abc1cd98592f8b6d708dddc038dbc2813d110b935d24cd37",
-      "swift_line" : 748
+      "swift_line" : 747
     },
     {
       "canonical" : "bind results = invoke page.search with query = search explain`.",
       "meridian_line" : 159,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/phase-5-post-migration-steps\/procedure\/890ec529af8ed940a13488189b0444d0934e0111e304dc566c6921ccde62d9d0",
-      "swift_line" : 762
+      "swift_line" : 761
     },
     {
       "canonical" : "`frontmatter.legacy_type = <original>` -- Every retyped page preserves  per D8. Restore types via.",
       "meridian_line" : 171,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/rollback-steps\/procedure\/cde9870a77d7d9f1f1428b3852a1d79d38ffe7c2f2182e32fa56391c5412aeb8",
-      "swift_line" : 776
+      "swift_line" : 775
     },
     {
       "canonical" : "`gbrain pages restore <slug>`.",
       "meridian_line" : 178,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/rollback-steps-2\/procedure\/254990e85b9f34abd53079d4990a261e9750a5dca536f0f21c5255395d08a92a",
-      "swift_line" : 790
+      "swift_line" : 789
     },
     {
       "canonical" : "`gbrain schema use gbrain-base`.",
       "meridian_line" : 184,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaUnifyInput\/rollback-steps-2\/procedure\/366990c5580a098ade6dcc9f66f49876e99d12333d488337097ec98fe5c4b214",
-      "swift_line" : 803
+      "swift_line" : 802
     }
   ],
   "ir_version" : "1.1",

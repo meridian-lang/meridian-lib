@@ -189,7 +189,6 @@ public struct TraceConfigValue<T: Sendable & Equatable>: Sendable, Equatable {
 public struct TraceConfigurationAST: Sendable, Equatable {
     public let store: TraceConfigValue<TraceStoreKind>?
     public let retention: TraceConfigValue<Duration>?
-    public let hashChaining: TraceConfigValue<Bool>?
     public let payloadLimit: TraceConfigValue<Int>?
     public let usuallyThreshold: TraceConfigValue<Double>?
     public let rarelyThreshold: TraceConfigValue<Double>?
@@ -201,13 +200,11 @@ public struct TraceConfigurationAST: Sendable, Equatable {
     public let crossSkillAllowList: TraceConfigValue<[String]>?
     public let stateHistoryRetention: TraceConfigValue<Bool>?
     public let storePath: TraceConfigValue<String>?
-    public let storeEndpoint: TraceConfigValue<String>?
     public let toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>]
 
     public init(
         store: TraceConfigValue<TraceStoreKind>? = nil,
         retention: TraceConfigValue<Duration>? = nil,
-        hashChaining: TraceConfigValue<Bool>? = nil,
         payloadLimit: TraceConfigValue<Int>? = nil,
         usuallyThreshold: TraceConfigValue<Double>? = nil,
         rarelyThreshold: TraceConfigValue<Double>? = nil,
@@ -219,12 +216,10 @@ public struct TraceConfigurationAST: Sendable, Equatable {
         crossSkillAllowList: TraceConfigValue<[String]>? = nil,
         stateHistoryRetention: TraceConfigValue<Bool>? = nil,
         storePath: TraceConfigValue<String>? = nil,
-        storeEndpoint: TraceConfigValue<String>? = nil,
         toolCapturePolicies: [String: TraceConfigValue<TraceCapturePolicy>] = [:]
     ) {
         self.store = store
         self.retention = retention
-        self.hashChaining = hashChaining
         self.payloadLimit = payloadLimit
         self.usuallyThreshold = usuallyThreshold
         self.rarelyThreshold = rarelyThreshold
@@ -236,7 +231,6 @@ public struct TraceConfigurationAST: Sendable, Equatable {
         self.crossSkillAllowList = crossSkillAllowList
         self.stateHistoryRetention = stateHistoryRetention
         self.storePath = storePath
-        self.storeEndpoint = storeEndpoint
         self.toolCapturePolicies = toolCapturePolicies
     }
 }
@@ -372,7 +366,6 @@ public extension TraceConfigurationAST {
         try TraceConfigurationAST(
             store: mergeValue(store, other.store, key: "store"),
             retention: mergeValue(retention, other.retention, key: "retention"),
-            hashChaining: mergeValue(hashChaining, other.hashChaining, key: "hash chaining"),
             payloadLimit: mergeValue(payloadLimit, other.payloadLimit, key: "payload limit"),
             usuallyThreshold: mergeValue(usuallyThreshold, other.usuallyThreshold, key: "usually at least"),
             rarelyThreshold: mergeValue(rarelyThreshold, other.rarelyThreshold, key: "rarely at most"),
@@ -384,7 +377,6 @@ public extension TraceConfigurationAST {
             crossSkillAllowList: mergeValue(crossSkillAllowList, other.crossSkillAllowList, key: "cross-skill allow-list"),
             stateHistoryRetention: mergeValue(stateHistoryRetention, other.stateHistoryRetention, key: "state history"),
             storePath: mergeValue(storePath, other.storePath, key: "store path"),
-            storeEndpoint: mergeValue(storeEndpoint, other.storeEndpoint, key: "store endpoint"),
             toolCapturePolicies: try mergeToolCapturePolicies(other.toolCapturePolicies)
         )
     }

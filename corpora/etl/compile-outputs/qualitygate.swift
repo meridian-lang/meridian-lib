@@ -338,12 +338,11 @@ public struct QualityGate: MeridianWorkflow {
         "triggers": "\"run quality gate\"\n\"check data quality\"\n\"run the quality gate pass\"",
     ]
 
-    public static let skillVersionHash = "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+    public static let skillVersionHash = "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct QualityGate: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
-            versionHash: "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+            versionHash: "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
         ),
         toolCapturePolicies: [:]
     )
@@ -467,12 +466,11 @@ public struct QualityGate: MeridianWorkflow {
 public struct WhenRunqualitygateFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+    public static let skillVersionHash = "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -486,7 +484,7 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
-            versionHash: "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+            versionHash: "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
         ),
         toolCapturePolicies: [:]
     )
@@ -543,12 +541,11 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
 public struct WhenCheckdataqualityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+    public static let skillVersionHash = "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -562,7 +559,7 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
-            versionHash: "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+            versionHash: "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
         ),
         toolCapturePolicies: [:]
     )
@@ -619,12 +616,11 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
 public struct WhenRunqualitygatepassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+    public static let skillVersionHash = "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -638,7 +634,7 @@ public struct WhenRunqualitygatepassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "quality gate",
-            versionHash: "7e3e2d89297c210e06f880cd937d61dbf9454993db9fd76d37863001a08b69a4"
+            versionHash: "d1bd5aa77aefb5812144a4e24ce2374cc1457cfd32436f69f48f703bf26d33a0"
         ),
         toolCapturePolicies: [:]
     )

@@ -361,47 +361,47 @@
   "source_map" : [
     {
       "meridian_line" : 66,
-      "swift_line" : 439
+      "swift_line" : 438
     },
     {
       "meridian_line" : 41,
-      "swift_line" : 444
+      "swift_line" : 443
     },
     {
       "meridian_line" : 42,
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "meridian_line" : 43,
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "meridian_line" : 44,
-      "swift_line" : 467
+      "swift_line" : 466
     },
     {
       "meridian_line" : 45,
-      "swift_line" : 469
+      "swift_line" : 468
     },
     {
       "meridian_line" : 49,
-      "swift_line" : 472
+      "swift_line" : 471
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 542
+      "swift_line" : 540
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 547
+      "swift_line" : 545
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 618
+      "swift_line" : 615
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 623
+      "swift_line" : 620
     }
   ],
   "tools_used" : [
@@ -414,7 +414,7 @@
 
       ],
       "skill_name" : "shift handoff",
-      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
+      "skill_version_hash" : "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e",
       "source_name" : "shift handoff",
       "step_paths" : [
         "\/ShiftHandoff\/guarantees\/invariants\/c99c862c0c449cd9d82a4f389a3298d5b6a8d434e3984f901c824acfbe634f05",
@@ -433,7 +433,7 @@
 
       ],
       "skill_name" : "shift handoff",
-      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
+      "skill_version_hash" : "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e",
       "source_name" : "when runShiftHandoff fires",
       "step_paths" : [
         "\/WhenRunshifthandoffFires\/root\/procedure\/50e1533b84681226573568422f14c9089fdc897b6aad00c7ad92f15e0847d637",
@@ -447,7 +447,7 @@
 
       ],
       "skill_name" : "shift handoff",
-      "skill_version_hash" : "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f",
+      "skill_version_hash" : "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e",
       "source_name" : "when renderShiftHandoffReport fires",
       "step_paths" : [
         "\/WhenRendershifthandoffreportFires\/root\/procedure\/411abbdcf1835eb201ca5d7e2f64b932112e8418a575654b44c45cda797771ae",

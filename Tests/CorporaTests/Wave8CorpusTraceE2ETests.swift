@@ -80,7 +80,6 @@ struct Wave8CorpusTraceE2ETests {
         )
         for needle in [
             "profile: .production",
-            "hashChaining: true",
             "\"request.list\": .hashOnly"
         ] {
             #expect(swift.contains(needle), Comment(rawValue: "Missing `\(needle)` in:\n\(swift)"))

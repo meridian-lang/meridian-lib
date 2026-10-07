@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenClassifyresourcesFires\/root\/procedure\/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "emit trigger.classifyResources.fired with kind = \"keyword\", spec = \"classify resources\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenClassifyresourcesFires\/root\/procedure\/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "emit trigger.classifyUnclassifiedResources.fired with kind = \"keyword\", spec = \"classify unclassified resources\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenClassifyunclassifiedresourcesFires\/root\/procedure\/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "wait for event classifyUnclassifiedResources.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenClassifyunclassifiedresourcesFires\/root\/procedure\/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "wait for event runClassificationSweep.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunclassificationsweepFires\/root\/procedure\/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "emit trigger.runClassificationSweep.fired with kind = \"keyword\", spec = \"run the classification sweep\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunclassificationsweepFires\/root\/procedure\/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3",
-      "swift_line" : 762
+      "swift_line" : 758
     },
     {
       "canonical" : "bind accessRequests = invoke request.list with status = \"pending\".",
       "meridian_line" : 26,
       "primitive" : "invoke",
       "stable_step_path" : "\/ClassifyResource\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
-      "swift_line" : 460
+      "swift_line" : 459
     },
     {
       "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when the resource's status is \"unclassified\", escalate to the security team\n  otherwise, monitor the resource",
       "meridian_line" : 29,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/ClassifyResource\/workflow\/procedure\/bd0e2ee52b8e17b4ba11b38b2605b907055de74789ad06d96acd04d9033c5335",
-      "swift_line" : 473
+      "swift_line" : 472
     },
     {
       "canonical" : "for each accessRequest in accessrequests,\n  bind shouldClassify = decide whether the access request's resource looks sensitive.\n  if should classify equals true,\n    bind auditEntry = invoke audit.log with request = access request.\n  otherwise,\n    use judgment to classify the access request and recommend a classification:",
       "meridian_line" : 38,
       "primitive" : "iterate",
       "stable_step_path" : "\/ClassifyResource\/classification-routing-steps\/procedure\/b2bc0292f924bfaa28487cc5f0016a3f8aa49d3de1f037f3492a08eadce578c9",
-      "swift_line" : 484
+      "swift_line" : 483
     },
     {
       "canonical" : "bind shouldClassify = decide whether the access request's resource looks sensitive.",
       "meridian_line" : 39,
       "primitive" : "bind",
       "stable_step_path" : "\/ClassifyResource\/classification-routing-steps\/procedure\/iterate.body\/9efe00f620810583460737d4c7a1aef01529a7771c5471677637543585908098",
-      "swift_line" : 492
+      "swift_line" : 491
     },
     {
       "canonical" : "if should classify equals true,\n  bind auditEntry = invoke audit.log with request = access request.\notherwise,\n  use judgment to classify the access request and recommend a classification:",
       "meridian_line" : 40,
       "primitive" : "branch",
       "stable_step_path" : "\/ClassifyResource\/classification-routing-steps\/procedure\/iterate.body\/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a",
-      "swift_line" : 494
+      "swift_line" : 493
     },
     {
       "canonical" : "bind auditEntry = invoke audit.log with request = access request.",
       "meridian_line" : 41,
       "primitive" : "invoke",
       "stable_step_path" : "\/ClassifyResource\/classification-routing-steps\/procedure\/branch.then\/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6",
-      "swift_line" : 498
+      "swift_line" : 497
     },
     {
       "canonical" : "use judgment to classify the access request and recommend a classification:",
       "meridian_line" : 43,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/ClassifyResource\/classification-routing-steps\/procedure\/branch.else\/70b51ec4674f69691dbb197588a5b53f0b794bd44ac62b815eebc6da680bf2f2",
-      "swift_line" : 515
+      "swift_line" : 514
     },
     {
       "canonical" : "emit governance.report with message = \"classify resource pass complete\".",
       "meridian_line" : 46,
       "primitive" : "emit",
       "stable_step_path" : "\/ClassifyResource\/completion\/procedure\/7f3ab3607c8d33dbacbc002970b5f9f778a089129cb7bc8619bc6c9e25a3c01c",
-      "swift_line" : 535
+      "swift_line" : 534
     }
   ],
   "ir_version" : "1.1",

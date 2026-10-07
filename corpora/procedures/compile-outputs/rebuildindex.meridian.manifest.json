@@ -270,51 +270,51 @@
   "source_map" : [
     {
       "meridian_line" : 24,
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "meridian_line" : 25,
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "meridian_line" : 16,
-      "swift_line" : 468
+      "swift_line" : 467
     },
     {
       "meridian_line" : 17,
-      "swift_line" : 482
+      "swift_line" : 481
     },
     {
       "meridian_line" : 18,
-      "swift_line" : 487
+      "swift_line" : 486
     },
     {
       "meridian_line" : 19,
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "meridian_line" : 20,
-      "swift_line" : 500
+      "swift_line" : 499
     },
     {
       "meridian_line" : 21,
-      "swift_line" : 519
+      "swift_line" : 518
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 589
+      "swift_line" : 587
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 594
+      "swift_line" : 592
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 665
+      "swift_line" : 662
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 670
+      "swift_line" : 667
     }
   ],
   "tools_used" : [
@@ -327,7 +327,7 @@
 
       ],
       "skill_name" : "rebuild index",
-      "skill_version_hash" : "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765",
+      "skill_version_hash" : "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14",
       "source_name" : "rebuild index",
       "step_paths" : [
         "\/RebuildIndex\/assertions\/invariants\/29304f21d5aded8d37a7031930ed505633eb21ffb52801475f9cf13206fc09b2",
@@ -347,7 +347,7 @@
 
       ],
       "skill_name" : "rebuild index",
-      "skill_version_hash" : "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765",
+      "skill_version_hash" : "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14",
       "source_name" : "when rebuildLaggingIndexes fires",
       "step_paths" : [
         "\/WhenRebuildlaggingindexesFires\/root\/procedure\/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008",
@@ -361,7 +361,7 @@
 
       ],
       "skill_name" : "rebuild index",
-      "skill_version_hash" : "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765",
+      "skill_version_hash" : "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14",
       "source_name" : "when indexJobStale fires",
       "step_paths" : [
         "\/WhenIndexjobstaleFires\/root\/procedure\/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8",

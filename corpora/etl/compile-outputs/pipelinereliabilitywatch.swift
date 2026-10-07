@@ -338,12 +338,11 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
         "triggers": "\"run pipeline reliability watch\"\n\"check pipeline reliability\"\n\"monitor extract load reliability\"",
     ]
 
-    public static let skillVersionHash = "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+    public static let skillVersionHash = "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
-            versionHash: "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+            versionHash: "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
         ),
         toolCapturePolicies: [:]
     )
@@ -568,12 +567,11 @@ public struct PipelineReliabilityWatch: MeridianWorkflow {
 public struct WhenRunpipelinereliabilitywatchFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+    public static let skillVersionHash = "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -587,7 +585,7 @@ public struct WhenRunpipelinereliabilitywatchFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
-            versionHash: "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+            versionHash: "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
         ),
         toolCapturePolicies: [:]
     )
@@ -644,12 +642,11 @@ public struct WhenRunpipelinereliabilitywatchFires: MeridianWorkflow {
 public struct WhenCheckpipelinereliabilityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+    public static let skillVersionHash = "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -663,7 +660,7 @@ public struct WhenCheckpipelinereliabilityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
-            versionHash: "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+            versionHash: "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
         ),
         toolCapturePolicies: [:]
     )
@@ -720,12 +717,11 @@ public struct WhenCheckpipelinereliabilityFires: MeridianWorkflow {
 public struct WhenMonitorextractloadreliabilityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+    public static let skillVersionHash = "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -739,7 +735,7 @@ public struct WhenMonitorextractloadreliabilityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline reliability watch",
-            versionHash: "24c8bbeb0f069967d24026a0c26a37862c21ced7fc844865571ebbe687d8be0c"
+            versionHash: "a83d9121f6a32eb5015d88a2ae04cae48c79a0036b75d86d1572cc4967e21dde"
         ),
         toolCapturePolicies: [:]
     )

@@ -409,12 +409,11 @@ public struct ValidateConstraints: MeridianWorkflow {
         "triggers": "\"validate constraints\"\n\"constraint violated\"",
     ]
 
-    public static let skillVersionHash = "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+    public static let skillVersionHash = "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct ValidateConstraints: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "validate constraints",
-            versionHash: "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+            versionHash: "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
         ),
         toolCapturePolicies: [:]
     )
@@ -543,12 +542,11 @@ public struct ValidateConstraints: MeridianWorkflow {
 public struct WhenValidateconstraintsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+    public static let skillVersionHash = "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -562,7 +560,7 @@ public struct WhenValidateconstraintsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "validate constraints",
-            versionHash: "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+            versionHash: "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
         ),
         toolCapturePolicies: [:]
     )
@@ -619,12 +617,11 @@ public struct WhenValidateconstraintsFires: MeridianWorkflow {
 public struct WhenConstraintviolatedFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+    public static let skillVersionHash = "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -638,7 +635,7 @@ public struct WhenConstraintviolatedFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "validate constraints",
-            versionHash: "ffa2e0b7f5bb0fd9b502616e157a3b1720c97e0d07c06c63579f2367687f58e4"
+            versionHash: "594a0207315c50fd2bf763a8a1c144256053910a125ded52e270d4c22c3baad5"
         ),
         toolCapturePolicies: [:]
     )

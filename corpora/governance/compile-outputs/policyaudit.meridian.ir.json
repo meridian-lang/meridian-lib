@@ -5,91 +5,91 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAuditpolicycoverageFires\/root\/procedure\/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "emit trigger.auditPolicyCoverage.fired with kind = \"keyword\", spec = \"audit policy coverage\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAuditpolicycoverageFires\/root\/procedure\/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "wait for event checkPolicyCoverage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckpolicycoverageFires\/root\/procedure\/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "emit trigger.checkPolicyCoverage.fired with kind = \"keyword\", spec = \"check policy coverage\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckpolicycoverageFires\/root\/procedure\/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "wait for event runPolicyAudit.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunpolicyauditFires\/root\/procedure\/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "emit trigger.runPolicyAudit.fired with kind = \"keyword\", spec = \"run policy audit\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunpolicyauditFires\/root\/procedure\/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1",
-      "swift_line" : 735
+      "swift_line" : 731
     },
     {
       "canonical" : "!!! table (( data: coverageThresholds ))\n| environment | minimum policies |\n| ----------- | ---------------- |\n| \"production\" | 3 |\n| \"staging\" | 1 |",
       "meridian_line" : 27,
       "primitive" : "bind",
       "stable_step_path" : "\/PolicyAudit\/tables\/tables\/9b2373aba8cd7f38e9edff8e176e5309cd55ba907e6997936dcb92317e0bc85b",
-      "swift_line" : 464
+      "swift_line" : 463
     },
     {
       "canonical" : "bind verdict = invoke policy.evaluate with environment = the identity provider.",
       "meridian_line" : 42,
       "primitive" : "invoke",
       "stable_step_path" : "\/PolicyAudit\/workflow-steps\/procedure\/9d45de9e5e1931383b39193fe3a8c646012fb51e5c91b5dee53c5dfe8c0b25de",
-      "swift_line" : 467
+      "swift_line" : 466
     },
     {
       "canonical" : "bind verdict = invoke policy.evaluate with environment = the audit sink.",
       "meridian_line" : 43,
       "primitive" : "invoke",
       "stable_step_path" : "\/PolicyAudit\/workflow-steps\/procedure\/d61e2c86a111a229adf70313ab908bf2353a49f7b3a0c433fdca1d94a564a960",
-      "swift_line" : 481
+      "swift_line" : 480
     },
     {
       "canonical" : "bind evaluatedCount = the number of environments whose status equals \"active\".",
       "meridian_line" : 44,
       "primitive" : "bind",
       "stable_step_path" : "\/PolicyAudit\/workflow-steps\/procedure\/1056bd68d501ae8a6eb5f7140826671cee6bf7ec45f0c8eb48fb9b916f1f4827",
-      "swift_line" : 494
+      "swift_line" : 493
     },
     {
       "canonical" : "emit governance.report with body = audit report.",
       "meridian_line" : 48,
       "primitive" : "emit",
       "stable_step_path" : "\/PolicyAudit\/workflow-steps-2\/procedure\/65b4ec046ebc12c2b1303ebae19297f9ce19d6e40ff8b5267bb45b4bead0f815",
-      "swift_line" : 497
+      "swift_line" : 496
     },
     {
       "canonical" : "emit governance.report with message = \"policy audit pass complete\".",
       "meridian_line" : 49,
       "primitive" : "emit",
       "stable_step_path" : "\/PolicyAudit\/workflow-steps-2\/procedure\/b2b5061cbdd82ba38cefba5e3f20536466f4e7a36b9548cf3d34ec6f2ef78ccd",
-      "swift_line" : 508
+      "swift_line" : 507
     },
     {
       "canonical" : "assert audit report contains \"policy-audit\".",
       "meridian_line" : 60,
       "primitive" : "assert",
       "stable_step_path" : "\/PolicyAudit\/guarantees\/invariants\/9e85c76bbbe232dcdb704838b0f2e9530cf19a96d1a39bf343649328a5148e5f",
-      "swift_line" : 460
+      "swift_line" : 459
     }
   ],
   "ir_version" : "1.1",

@@ -87,8 +87,7 @@ public extension TraceRecord {
         subject: String? = nil,
         subjectKey: String? = nil,
         payload: [String: Value]? = nil,
-        hashedPayload: [String: Value]? = nil,
-        witness: String? = nil
+        hashedPayload: [String: Value]? = nil
     ) throws {
         let mapping = legacyTraceMapping(for: event)
         let persistedPayload = payload ?? event.payload
@@ -107,61 +106,8 @@ public extension TraceRecord {
             payload: persistedPayload.isEmpty ? nil : persistedPayload,
             payloadHash: try CanonicalJSON.sha256Hex(for: canonicalPayload),
             outcome: mapping.outcome,
-            witness: witness,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: mapping.operationalDetail,
             legacyKind: event.kind.rawValue
         )
-    }
-}
-
-public extension Event {
-    init(fromSemantic record: TraceRecord) {
-        let kind = EventKind(rawValue: record.legacyKind ?? "") ?? Event.projectedKind(from: record)
-        self.init(
-            timestamp: record.at,
-            runID: record.run,
-            sequence: record.ingestOrder,
-            kind: kind,
-            payload: record.payload ?? [:],
-            sourceRange: nil,
-            parentRunID: nil,
-            parentSequence: nil
-        )
-    }
-
-    private static func projectedKind(from record: TraceRecord) -> EventKind {
-        switch record.tag {
-        case .invoked:
-            return .invokeStart
-        case .completed:
-            return record.subject == "workflow" ? .workflowCompleted : .invokeEnd
-        case .failed:
-            return record.subject == "workflow" ? .workflowFailed : .invokeError
-        case .emitted:
-            return .emit
-        case .asserted:
-            return .assertPassed
-        case .assertFailed:
-            return .assertFailed
-        case .branched:
-            if record.operationalDetail == EventKind.branchEnded.rawValue {
-                return .branchEnded
-            }
-            return .branchTaken
-        case .iterated:
-            return .iterateIteration
-        case .judged:
-            return .planEnd
-        case .committed:
-            return .commit
-        case .recovered:
-            return .recoverEngaged
-        case .violated:
-            return .violated
-        case .stateSnapshot:
-            return .commit
-        }
     }
 }

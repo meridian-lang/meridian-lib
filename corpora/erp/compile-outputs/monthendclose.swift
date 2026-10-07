@@ -531,12 +531,11 @@ public struct MonthEndClose: MeridianWorkflow {
         "triggers": "\"month-end close\"\n\"close accounting period\"",
     ]
 
-    public static let skillVersionHash = "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+    public static let skillVersionHash = "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct MonthEndClose: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
-            versionHash: "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+            versionHash: "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
         ),
         toolCapturePolicies: [:]
     )
@@ -646,12 +645,11 @@ public struct MonthEndClose: MeridianWorkflow {
 public struct WhenMonthendcloseFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+    public static let skillVersionHash = "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -665,7 +663,7 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
-            versionHash: "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+            versionHash: "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
         ),
         toolCapturePolicies: [:]
     )
@@ -722,12 +720,11 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
 public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+    public static let skillVersionHash = "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -741,7 +738,7 @@ public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "month end close",
-            versionHash: "eff6237ed1641ed77719e3eb1dbbfe749e7be22508037f0d82baaa7020876aec"
+            versionHash: "83309bdbf5ea72f9a5c4081a3101395cefaf247331ac0b5bb4d1783473ae2069"
         ),
         toolCapturePolicies: [:]
     )

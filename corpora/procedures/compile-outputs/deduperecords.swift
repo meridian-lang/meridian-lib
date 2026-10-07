@@ -409,12 +409,11 @@ public struct DedupeRecords: MeridianWorkflow {
         "triggers": "\"dedupe records\"\n\"duplicate rows detected\"",
     ]
 
-    public static let skillVersionHash = "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+    public static let skillVersionHash = "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct DedupeRecords: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
-            versionHash: "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+            versionHash: "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
         ),
         toolCapturePolicies: [:]
     )
@@ -579,12 +578,11 @@ public struct DedupeRecords: MeridianWorkflow {
 public struct WhenDeduperecordsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+    public static let skillVersionHash = "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -598,7 +596,7 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
-            versionHash: "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+            versionHash: "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
         ),
         toolCapturePolicies: [:]
     )
@@ -655,12 +653,11 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
 public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+    public static let skillVersionHash = "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -674,7 +671,7 @@ public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe records",
-            versionHash: "921e14c130f3fea351150831939fe25f19332cce64da6bbce02e454cda14efd2"
+            versionHash: "cbd563c1807fe9639151e4d17cd214a81b16219714a6e92a71f2207db2f989fc"
         ),
         toolCapturePolicies: [:]
     )

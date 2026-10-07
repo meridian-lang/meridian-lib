@@ -5,70 +5,70 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCloseaccountingperiodFires\/root\/procedure\/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "emit trigger.closeAccountingPeriod.fired with kind = \"keyword\", spec = \"close accounting period\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCloseaccountingperiodFires\/root\/procedure\/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "wait for event monthEndClose.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMonthendcloseFires\/root\/procedure\/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "emit trigger.monthEndClose.fired with kind = \"keyword\", spec = \"month-end close\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMonthendcloseFires\/root\/procedure\/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "bind invoices = invoke invoice.list with status = \"unpaid\".",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "assert no invoices whose balance is more than 0.",
       "meridian_line" : 17,
       "primitive" : "assert",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/fcf060af720d98266a2900779404a0f843459d2aacdf4d9ade160e4d78afd0f5",
-      "swift_line" : 594
+      "swift_line" : 593
     },
     {
       "canonical" : "bind orders = invoke order.list with status = \"open\".",
       "meridian_line" : 18,
       "primitive" : "invoke",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
-      "swift_line" : 599
+      "swift_line" : 598
     },
     {
       "canonical" : "assert no orders whose lifecycle equals \"blocked\".",
       "meridian_line" : 19,
       "primitive" : "assert",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/1c5d5bc825d7ebf3c6f0b9d4629c5f4f3f0c2d4b88379885b31b68845a284d4a",
-      "swift_line" : 613
+      "swift_line" : 612
     },
     {
       "canonical" : "bind accountingPeriod = invoke period.close.",
       "meridian_line" : 20,
       "primitive" : "invoke",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/0ae359e86883905f0947f38251ae5c2f10c9eb702568153975b9420cc874104e",
-      "swift_line" : 618
+      "swift_line" : 617
     },
     {
       "canonical" : "emit erp.report with message = \"accounting period closed\".",
       "meridian_line" : 21,
       "primitive" : "emit",
       "stable_step_path" : "\/MonthEndClose\/close-sequence\/procedure\/c6bd182d5fe75d3fa72023223bd4d5bb6b133e477f2f5dfc8766994aa453cd9a",
-      "swift_line" : 625
+      "swift_line" : 624
     }
   ],
   "ir_version" : "1.1",

@@ -77,52 +77,11 @@ struct RuntimeBuilderTraceStoreTests {
             payload: [:],
             payloadHash: "payload",
             outcome: .success,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: nil,
             legacyKind: nil
         ))
         let temporal = TraceTemporalQuery(kind: .ever(
             TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded)))
         #expect(try await runtime.evaluateTrace(temporal, evaluationInstant: Date(timeIntervalSince1970: 10)) == .true)
-    }
-
-    @Test("setRuntimeTraceConfiguration auto-wires SQLite when store path is configured")
-    func autoWiresSQLiteStore() async throws {
-        let path = FileManager.default.temporaryDirectory
-            .appendingPathComponent("builder-auto-sqlite-\(UUID().uuidString).sqlite")
-            .path
-        let runtime = try Runtime.Builder()
-            .setObserver(InMemoryObserver())
-            .setRunID("builder-auto-sqlite")
-            .setRuntimeTraceConfiguration(RuntimeTraceConfiguration(
-                store: .sqlite,
-                trace: TraceConfiguration(sampleFloor: 1),
-                skillIdentity: TraceSkillIdentity(name: "sqlite", versionHash: "v1"),
-                storePath: path
-            ))
-            .build()
-        let temporal = TraceTemporalQuery(kind: .ever(
-            TraceEventPatternQuery(subject: .step("probe"), outcome: .emitted)))
-        #expect(try await runtime.evaluateTrace(temporal, evaluationInstant: Date()) == .false)
-    }
-
-    @Test("sqlite auto-wire fails closed without store path")
-    func sqliteWithoutPathFailsClosed() throws {
-        #expect(throws: (any Error).self) {
-            _ = try Runtime.Builder()
-                .setRuntimeTraceConfiguration(RuntimeTraceConfiguration(store: .sqlite))
-                .build()
-        }
-    }
-
-    @Test("http auto-wire fails closed without store endpoint")
-    func httpWithoutEndpointFailsClosed() throws {
-        #expect(throws: (any Error).self) {
-            _ = try Runtime.Builder()
-                .setRuntimeTraceConfiguration(RuntimeTraceConfiguration(store: .http))
-                .build()
-        }
     }
 }

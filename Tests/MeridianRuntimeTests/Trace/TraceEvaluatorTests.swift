@@ -257,9 +257,6 @@ struct TraceEvaluatorTests {
             payload: payload,
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: operationalDetail,
             legacyKind: nil
         )
@@ -420,11 +417,7 @@ private struct PermissiveTraceStore: TraceStore {
     func compact(retention: Duration, now: Date) async throws {}
 
     var capabilities: TraceStoreCapabilities {
-        TraceStoreCapabilities(isPersistent: false, supportsHashChaining: false, supportsCompaction: false, indexedFields: [], supportedSchemaVersions: [1])
-    }
-
-    func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
-        TraceChainVerificationResult(runID: runID, verifiedCount: 0, isValid: true, failure: nil)
+        TraceStoreCapabilities(isPersistent: false, supportsCompaction: false)
     }
 }
 
@@ -732,9 +725,6 @@ struct TraceStatisticalEvaluatorTests {
             payload: [:],
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: nil,
             legacyKind: nil
         )

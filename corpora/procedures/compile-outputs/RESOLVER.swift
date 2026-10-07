@@ -403,12 +403,11 @@ private static func meridianDef_Record_stale(_ __subjectValue: Value?) -> Bool {
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "aa99aa8841610188c2df10e8f1a73d6dec82d53b477d254b7e6b317e500404a0"
+    public static let skillVersionHash = "9ea2321af27766b50bfef8d620d7d76fd54c0fbfdabe9638ee6541740b59f681"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -422,7 +421,7 @@ public struct Entry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "aa99aa8841610188c2df10e8f1a73d6dec82d53b477d254b7e6b317e500404a0"
+            versionHash: "9ea2321af27766b50bfef8d620d7d76fd54c0fbfdabe9638ee6541740b59f681"
         ),
         toolCapturePolicies: [:]
     )

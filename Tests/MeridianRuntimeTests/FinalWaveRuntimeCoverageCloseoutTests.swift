@@ -19,20 +19,6 @@ struct FinalWaveRuntimeCoverageCloseoutTests {
         #expect(WilsonScore.interval(successes: -1, sampleSize: 10, confidencePercent: 95) == nil)
     }
 
-    @Test("CalendarAmountEvaluator business and calendar units")
-    func calendarAmountEvaluator() {
-        let tz = TimeZone(secondsFromGMT: 0)!
-        let start = Date(timeIntervalSince1970: 1_704_067_200) // Monday
-        let business = CalendarAmountEvaluator.add(.businessDays, count: 1, to: start, timeZone: tz)
-        #expect(business > start)
-        let months = CalendarAmountEvaluator.add(.months, count: 1, to: start, timeZone: tz)
-        #expect(months > start)
-        let days = CalendarAmountEvaluator.add(.calendarDays, count: 2, to: start, timeZone: tz)
-        #expect(days > start)
-        #expect(CalendarAmountEvaluator.timeZone(fromDeploymentZone: "America/New_York").identifier == "America/New_York")
-        #expect(CalendarAmountEvaluator.timeZone(fromDeploymentZone: "Not/AZone").secondsFromGMT() == 0)
-    }
-
     @Test("BoundedFutureCondition decodes event and state shapes")
     func boundedFutureCondition() {
         let event = BoundedFutureCondition.decode("""
@@ -69,8 +55,6 @@ struct FinalWaveRuntimeCoverageCloseoutTests {
         var next = 1
         let prepared = try TraceStoreHelpers.prepareForAppend(
             record,
-            supportedSchemaVersions: [TraceRecord.currentSchemaVersion],
-            previousHash: nil,
             configuration: .default,
             nextIngestOrder: &next
         )
@@ -110,16 +94,6 @@ struct FinalWaveRuntimeCoverageCloseoutTests {
         for err in cases {
             #expect(!String(describing: err).isEmpty)
         }
-    }
-
-    @Test("WitnessCapture records evaluation witnesses")
-    func witnessCapture() throws {
-        let envelope = try WitnessCapture.buildEnvelope(
-            body: ["email": .string("secret@example.com"), "status": .string("failed")],
-            mode: .redacted
-        )
-        #expect(envelope.failingCount == 1)
-        #expect(envelope.body?["email"] == .string("<redacted>"))
     }
 
     @Test("ShellHoleRedaction masks sensitive shell fragments")

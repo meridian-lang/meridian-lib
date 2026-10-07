@@ -14,7 +14,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
     private var subjectIndex: [String: [Int]] = [:]
     private var timeIndex: [Int] = []
     private var nextIngestOrder: Int = 1
-    private var tailHashByRun: [String: String] = [:]
     private var hasLoaded = false
     private var pendingReadWarnings: [RuntimeArtifactWarning] = []
     private let encoder: JSONEncoder
@@ -40,11 +39,8 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
     public var capabilities: TraceStoreCapabilities {
         TraceStoreCapabilities(
             isPersistent: true,
-            supportsHashChaining: configuration.hashChaining,
             supportsCompaction: true,
-            payloadRetention: true,
-            indexedFields: ["run", "tag", "subject", "at"],
-            supportedSchemaVersions: [TraceRecord.currentSchemaVersion, TraceRecord.currentSchemaVersion - 1]
+            payloadRetention: true
         )
     }
 
@@ -52,8 +48,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         try await ensureLoaded()
         let normalized = try TraceStoreHelpers.prepareForAppend(
             event,
-            supportedSchemaVersions: capabilities.supportedSchemaVersions,
-            previousHash: tailHashByRun[event.run],
             configuration: configuration,
             nextIngestOrder: &nextIngestOrder
         )
@@ -110,11 +104,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         replaceInMemory(with: retained)
     }
 
-    public func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
-        try await ensureLoaded()
-        return HashChain.verify(records: records, runID: runID)
-    }
-
     public func consumeArtifactWarnings() async -> [RuntimeArtifactWarning] {
         let warnings = pendingReadWarnings
         pendingReadWarnings = []
@@ -137,7 +126,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         tagIndex = [:]
         subjectIndex = [:]
         timeIndex = []
-        tailHashByRun = [:]
         nextIngestOrder = 1
 
         let data = try Data(contentsOf: fileURL)
@@ -206,7 +194,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         runIndex = [:]
         tagIndex = [:]
         subjectIndex = [:]
-        tailHashByRun = [:]
         nextIngestOrder = 1
         timeIndex = Array(records.indices)
 
@@ -222,12 +209,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         timeIndex.sort { lhs, rhs in
             TraceRecordOrdering.crossRun(records[lhs], records[rhs])
         }
-
-        for record in records.sorted(by: TraceRecordOrdering.runLocal) {
-            if let recordHash = record.recordHash {
-                tailHashByRun[record.run] = recordHash
-            }
-        }
     }
 
     private func storeInMemory(_ record: TraceRecord) {
@@ -240,9 +221,6 @@ public actor JSONLTraceStore: TraceStore, ArtifactWarningSource {
         }
         insertIntoTimeIndex(index)
         nextIngestOrder = max(nextIngestOrder, record.ingestOrder + 1)
-        if let recordHash = record.recordHash {
-            tailHashByRun[record.run] = recordHash
-        }
     }
 
     private func insertIntoTimeIndex(_ index: Int) {

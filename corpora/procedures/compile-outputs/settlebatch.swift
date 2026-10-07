@@ -409,12 +409,11 @@ public struct SettleBatch: MeridianWorkflow {
         "triggers": "\"settle ready batches\"\n\"batch settlement\"",
     ]
 
-    public static let skillVersionHash = "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+    public static let skillVersionHash = "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct SettleBatch: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
-            versionHash: "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+            versionHash: "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
         ),
         toolCapturePolicies: [:]
     )
@@ -527,12 +526,11 @@ public struct SettleBatch: MeridianWorkflow {
 public struct WhenSettlereadybatchesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+    public static let skillVersionHash = "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -546,7 +544,7 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
-            versionHash: "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+            versionHash: "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
         ),
         toolCapturePolicies: [:]
     )
@@ -603,12 +601,11 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
 public struct WhenBatchsettlementFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+    public static let skillVersionHash = "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -622,7 +619,7 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "settle batch",
-            versionHash: "4b673e068fb3dffc77c2198669154dc162d9ae7c5713fcfba41d587b877d9894"
+            versionHash: "2565c7df34557a0ab2b4ff48dc394a0f3d0efa19838f9dbdcaaa0af71d8828ef"
         ),
         toolCapturePolicies: [:]
     )

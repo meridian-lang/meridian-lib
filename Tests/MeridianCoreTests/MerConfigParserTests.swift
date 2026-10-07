@@ -1071,7 +1071,6 @@ struct MerConfigTraceTests {
         === trace ===
         store: file
         retention: 30 days
-        hash chaining: enabled
         payload limit: 8192
         usually at least: 90%
         rarely at most: 10%
@@ -1282,9 +1281,7 @@ struct MerConfigTraceTests {
         this line has no colon
         store: carrier-pigeon
         store path:
-        store endpoint:
         retention: banana days
-        hash chaining: maybe
         payload limit: not-a-number
         sample floor: not-a-number
         default monitor cadence: banana days
@@ -1297,9 +1294,7 @@ struct MerConfigTraceTests {
         // Every malformed setting is skipped (left nil), not defaulted or crashed on.
         #expect(cfg.traceConfiguration.store == nil)
         #expect(cfg.traceConfiguration.storePath == nil)
-        #expect(cfg.traceConfiguration.storeEndpoint == nil)
         #expect(cfg.traceConfiguration.retention == nil)
-        #expect(cfg.traceConfiguration.hashChaining == nil)
         #expect(cfg.traceConfiguration.payloadLimit == nil)
         #expect(cfg.traceConfiguration.sampleFloor == nil)
         #expect(cfg.traceConfiguration.defaultMonitorCadence == nil)
@@ -1310,9 +1305,7 @@ struct MerConfigTraceTests {
         #expect(engine.errors.contains { $0.message.contains("malformed trace setting") })
         #expect(engine.errors.contains { $0.message.contains("unknown trace store") })
         #expect(engine.errors.contains { $0.message.contains("store path cannot be empty") })
-        #expect(engine.errors.contains { $0.message.contains("store endpoint cannot be empty") })
         #expect(engine.errors.contains { $0.message.contains("invalid trace retention") })
-        #expect(engine.errors.contains { $0.message.contains("invalid hash chaining setting") })
         #expect(engine.errors.contains { $0.message.contains("invalid payload limit") })
         #expect(engine.errors.contains { $0.message.contains("invalid sample floor") })
         #expect(engine.errors.contains { $0.message.contains("invalid monitor cadence") })
@@ -1322,18 +1315,16 @@ struct MerConfigTraceTests {
         #expect(engine.errors.contains { $0.message.contains("unknown trace setting") })
     }
 
-    @Test("store path, store endpoint, and state history parse when well-formed")
-    func storePathEndpointAndStateHistory() throws {
+    @Test("store path and state history parse when well-formed")
+    func storePathAndStateHistory() throws {
         let cfg = try MerConfigParser(trace: .silent()).parse("""
         === trace ===
-        store: sqlite
-        store path: /tmp/traces.sqlite
-        store endpoint: https://traces.example/v1
+        store: file
+        store path: /tmp/traces.jsonl
         state history: enabled
         """, file: "trace.merconfig")
-        #expect(cfg.traceConfiguration.store?.value == .sqlite)
-        #expect(cfg.traceConfiguration.storePath?.value == "/tmp/traces.sqlite")
-        #expect(cfg.traceConfiguration.storeEndpoint?.value == "https://traces.example/v1")
+        #expect(cfg.traceConfiguration.store?.value == .file)
+        #expect(cfg.traceConfiguration.storePath?.value == "/tmp/traces.jsonl")
         #expect(cfg.traceConfiguration.stateHistoryRetention?.value == true)
     }
 

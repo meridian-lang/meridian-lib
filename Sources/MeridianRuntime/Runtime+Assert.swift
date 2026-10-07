@@ -208,17 +208,12 @@ extension Runtime {
 
     /// Records a deontic violation witness (`TraceTag.violated`) without invoking
     /// the guarded tool. PREVENTED dispositions block the invoke; OBSERVED
-    /// dispositions accompany obligation assert failures.
+    /// dispositions accompany norm assert failures.
     public func recordViolation(
         obligationId: String,
         disposition: String,
         blocking: Bool,
         toolID: String? = nil,
-        witness: [String: Value] = [:],
-        witnessCapture: WitnessCaptureMode = .full,
-        witnessRedactedFields: [String] = WitnessCaptureMode.defaultPIIKeys,
-        witnessSubjectKey: String? = nil,
-        failingCount: Int = 1,
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
@@ -231,15 +226,6 @@ extension Runtime {
         if let toolID {
             payload["tool_id"] = .string(toolID)
         }
-        let witnessBody = witness.isEmpty ? payload : witness
-        let envelope = try WitnessCapture.buildEnvelope(
-            body: witnessBody,
-            mode: witnessCapture,
-            redactedFields: witnessRedactedFields,
-            subjectKey: witnessSubjectKey,
-            failingCount: failingCount
-        )
-        let witnessJSON = try envelope.encodedJSON()
         try await emitOrThrow(
             event: Event(
                 timestamp: clock.now(),
@@ -249,8 +235,7 @@ extension Runtime {
                 payload: payload,
                 sourceRange: sourceRange
             ),
-            hashedPayload: witnessBody,
-            witness: witnessJSON
+            hashedPayload: payload
         )
         if blocking {
             throw MeridianRuntimeError.violation(

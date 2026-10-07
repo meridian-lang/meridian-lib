@@ -531,12 +531,11 @@ public struct BackorderReplenish: MeridianWorkflow {
         "triggers": "\"replenish backorders\"\n\"prioritize short inventory\"",
     ]
 
-    public static let skillVersionHash = "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+    public static let skillVersionHash = "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct BackorderReplenish: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
-            versionHash: "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+            versionHash: "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
         ),
         toolCapturePolicies: [:]
     )
@@ -651,12 +650,11 @@ public struct BackorderReplenish: MeridianWorkflow {
 public struct WhenReplenishbackordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+    public static let skillVersionHash = "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -670,7 +668,7 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
-            versionHash: "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+            versionHash: "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
         ),
         toolCapturePolicies: [:]
     )
@@ -727,12 +725,11 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
 public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+    public static let skillVersionHash = "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -746,7 +743,7 @@ public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backorder replenish",
-            versionHash: "257437117e4f8f1e16d5b0f2cc4026671e89a0e12989269cfd31dfde5084c15d"
+            versionHash: "9fb69f687677e54110b6cf2da6d588a863eaa7913385be0040657dc577fa4fc1"
         ),
         toolCapturePolicies: [:]
     )

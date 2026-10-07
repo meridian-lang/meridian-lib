@@ -374,12 +374,11 @@ public struct TriageAlert: MeridianWorkflow {
         "triggers": "\"triage firing alerts\"\n\"triage alerts\"\n\"run alert triage\"",
     ]
 
-    public static let skillVersionHash = "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+    public static let skillVersionHash = "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct TriageAlert: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
-            versionHash: "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+            versionHash: "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
         ),
         toolCapturePolicies: [:]
     )
@@ -516,12 +515,11 @@ public struct TriageAlert: MeridianWorkflow {
 public struct WhenTriagefiringalertsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+    public static let skillVersionHash = "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -535,7 +533,7 @@ public struct WhenTriagefiringalertsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
-            versionHash: "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+            versionHash: "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
         ),
         toolCapturePolicies: [:]
     )
@@ -592,12 +590,11 @@ public struct WhenTriagefiringalertsFires: MeridianWorkflow {
 public struct WhenTriagealertsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+    public static let skillVersionHash = "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -611,7 +608,7 @@ public struct WhenTriagealertsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
-            versionHash: "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+            versionHash: "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
         ),
         toolCapturePolicies: [:]
     )
@@ -668,12 +665,11 @@ public struct WhenTriagealertsFires: MeridianWorkflow {
 public struct WhenRunalerttriageFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+    public static let skillVersionHash = "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -687,7 +683,7 @@ public struct WhenRunalerttriageFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "triage alert",
-            versionHash: "22cba280daa216a02d74e969d5d4bcf1ca5f6f4206472aba04629a3e76c3b7cd"
+            versionHash: "ce6d558103519b5f1a1b519a62c3b178e5dbaeb68f759b88ce3619b7e0de5d07"
         ),
         toolCapturePolicies: [:]
     )

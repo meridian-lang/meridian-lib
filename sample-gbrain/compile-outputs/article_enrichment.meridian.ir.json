@@ -5,105 +5,105 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBatchenrichFires\/root\/procedure\/ab0f4af468eed458e1bd063e63d76854d22b789c3b6239d420cbffefc33a07f4",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.batchEnrich.fired with kind = \"keyword\", spec = \"batch enrich\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBatchenrichFires\/root\/procedure\/dc6711522adbe842ef1d411b3292f5d3d18a68c7faa3d33251c5013cd1504e9a",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event enrichArticle.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEnricharticleFires\/root\/procedure\/2a17a4b49146b34c5e78678c8f87fe6ab0f896d2aef1a2ef48d9295b992fd906",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.enrichArticle.fired with kind = \"keyword\", spec = \"enrich the article\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEnricharticleFires\/root\/procedure\/83adff0c0101ed68c2f49642385e272aa225adb7b76ba25c5bc5c95839b502a7",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event enrichBrainPages.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEnrichbrainpagesFires\/root\/procedure\/932b033e0c533732804f94d31b418588805b29e32f014ab4a2155e0c5fd0233a",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.enrichBrainPages.fired with kind = \"keyword\", spec = \"enrich brain pages\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEnrichbrainpagesFires\/root\/procedure\/c11d3c5938923fb2085efb027687e4530f55ce0e7e43482eab598483e99fc995",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.enrichingArticle.fired with kind = \"keyword\", spec = \"enriching the article\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEnrichingarticleFires\/root\/procedure\/c7154d6a560ec815a536086ed8c1250f41940152e6bfe9b2d1fe22b21a2d09f5",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event enrichingArticle.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEnrichingarticleFires\/root\/procedure\/ea9ee933cd66449bc52022581fa902da0bcaf37978a7d6500afed23d686ba7e6",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.enrichPass.fired with kind = \"keyword\", spec = \"enrich pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEnrichpassFires\/root\/procedure\/0cf933c7599972e74f48e3f96bdf0a45adc07915e1782463402f0497b1783f5b",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event enrichPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEnrichpassFires\/root\/procedure\/415887cfce42837990d3b8b4da056605156097f5f60a8a48f99f43d273930ccc",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.enrichThisArticle.fired with kind = \"keyword\", spec = \"enrich this article\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEnrichthisarticleFires\/root\/procedure\/4fae7bf6118ef663b8bc7e805dfe577da6303df06379ac6072d8019f59821111",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event enrichThisArticle.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEnrichthisarticleFires\/root\/procedure\/c0ae63b4f53f8b8c4e1053a1e8683699d4ec52cd37d5b1cfe9bfe963e5d097ee",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "emit trigger.makeBrainPagesUseful.fired with kind = \"keyword\", spec = \"make brain pages useful\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMakebrainpagesusefulFires\/root\/procedure\/d7dd75e92f13be28a2b059f58cbfa3d046d21b5c80163c28d9f5fa7cb6a0cae0",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "wait for event makeBrainPagesUseful.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMakebrainpagesusefulFires\/root\/procedure\/ee7ffcd98bd61b7856930771b2bab58b7e90a789e8b26228c523fe7152112613",
-      "swift_line" : 1154
+      "swift_line" : 1146
     },
     {
       "canonical" : "use judgment to follow the When to invoke — steps guidance:\n  An LLM-judge brain-quality eval fails on quotability or actionability for\n  an article page\n  codeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n  ✅ `## Executive Summary` (2-3 sentences)\n  ✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n  ✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\n  table:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\n  use judgment to follow the Model selection — steps 2 guidance:\n  Rule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with\n  the LLM-judge brain-quality eval. If quotes are paraphrased, switch to\n  Opus for that batch\n  NEVER use `[[wiki-links]]` — they don't render on GitHub\n  `skills\/media-ingest\/SKILL.md` — creates the raw article pages this skill enriches\n  `skills\/idea-ingest\/SKILL.md` — link\/article ingestion with author people-page enforcement\n  `skills\/conventions\/quality.md` — citation + back-link rules",
       "meridian_line" : 57,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/ArticleEnrichmentInput\/when-to-invoke-steps\/procedure\/0b6f40d2d02020a73e09b1ae298210601165e40f71f05230436ae0beba4ecd56",
-      "swift_line" : 628
+      "swift_line" : 627
     }
   ],
   "ir_version" : "1.1",

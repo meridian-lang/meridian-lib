@@ -338,12 +338,11 @@ public struct BackfillPartitions: MeridianWorkflow {
         "triggers": "\"backfill dataset partitions\"\n\"run partition backfill\"\n\"run the backfill pass\"",
     ]
 
-    public static let skillVersionHash = "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+    public static let skillVersionHash = "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct BackfillPartitions: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
-            versionHash: "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+            versionHash: "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
         ),
         toolCapturePolicies: [:]
     )
@@ -501,12 +500,11 @@ public struct BackfillPartitions: MeridianWorkflow {
 public struct WhenBackfilldatasetpartitionsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+    public static let skillVersionHash = "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -520,7 +518,7 @@ public struct WhenBackfilldatasetpartitionsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
-            versionHash: "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+            versionHash: "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
         ),
         toolCapturePolicies: [:]
     )
@@ -577,12 +575,11 @@ public struct WhenBackfilldatasetpartitionsFires: MeridianWorkflow {
 public struct WhenRunpartitionbackfillFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+    public static let skillVersionHash = "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -596,7 +593,7 @@ public struct WhenRunpartitionbackfillFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
-            versionHash: "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+            versionHash: "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
         ),
         toolCapturePolicies: [:]
     )
@@ -653,12 +650,11 @@ public struct WhenRunpartitionbackfillFires: MeridianWorkflow {
 public struct WhenRunbackfillpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+    public static let skillVersionHash = "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -672,7 +668,7 @@ public struct WhenRunbackfillpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "backfill partitions",
-            versionHash: "191491fcd191ae1e2b32cb438640879ffb9f08af84545ad16c3af815d26525a6"
+            versionHash: "4fa976f9fe87352143f5f6c3644ae657bc41fcb21250c2d8f475036313d62c4a"
         ),
         toolCapturePolicies: [:]
     )

@@ -19,5 +19,4 @@ public protocol TraceStore: Sendable {
     ) async throws -> [TraceRecord]
     func compact(retention: Duration, now: Date) async throws
     var capabilities: TraceStoreCapabilities { get async }
-    func verifyChain(runID: String) async throws -> TraceChainVerificationResult
 }

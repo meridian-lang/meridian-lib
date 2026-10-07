@@ -5,70 +5,70 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBillingbatchFires\/root\/procedure\/63cd5ab3498d25654e3bf00dc0d6cfd59839797caa5d48bee01b4b134345fdfa",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "emit trigger.billingBatch.fired with kind = \"keyword\", spec = \"billing batch\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBillingbatchFires\/root\/procedure\/d5051e5b12a4b80abb3d8a326d14eb09c41ec2e8bb13f16f18efffbd7bfa7fe7",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "wait for event runInvoices.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRuninvoicesFires\/root\/procedure\/c262d025300a1b3981996e9dcc99cb70938d45813ee6abadaf3744af92bcfa33",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "emit trigger.runInvoices.fired with kind = \"keyword\", spec = \"run invoices\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRuninvoicesFires\/root\/procedure\/edbd7e1703f783eaf87dc04bdfbe441797d14eb61cbb40d77852279c908a9a3a",
-      "swift_line" : 776
+      "swift_line" : 773
     },
     {
       "canonical" : "!!! table (( data: table ))\n| status | queue |\n| ------ | ----- |\n| \"unpaid\" | \"collections\" |\n| \"fulfilled\" | \"archive\" |",
       "meridian_line" : 16,
       "primitive" : "bind",
       "stable_step_path" : "\/InvoiceRun\/tables\/tables\/9163e718693bc1229cb756fc9391f05147dd6cd96552cbb4f9dcc39f57ce3df7",
-      "swift_line" : 579
+      "swift_line" : 578
     },
     {
       "canonical" : "bind orders = invoke order.list with status = \"open\".",
       "meridian_line" : 34,
       "primitive" : "invoke",
       "stable_step_path" : "\/InvoiceRun\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
-      "swift_line" : 582
+      "swift_line" : 581
     },
     {
       "canonical" : "for each order in orders,\n  bind invoice = invoke invoice.create with order = order.",
       "meridian_line" : 35,
       "primitive" : "iterate",
       "stable_step_path" : "\/InvoiceRun\/workflow-steps\/procedure\/75b299aef50710d1ea74359def637cc34ba2e4f3e887a229c169ee838a32cb07",
-      "swift_line" : 595
+      "swift_line" : 594
     },
     {
       "canonical" : "bind invoice = invoke invoice.create with order = order.",
       "meridian_line" : 36,
       "primitive" : "invoke",
       "stable_step_path" : "\/InvoiceRun\/workflow-steps\/procedure\/iterate.body\/19d6a9f3ce6c07cd11b6761da4fb8aa91a7ee64ff104faf5d68265d32ab9eeb2",
-      "swift_line" : 604
+      "swift_line" : 603
     },
     {
       "canonical" : "bind selectedQueue = the queue corresponding to the status \"unpaid\" in the table.",
       "meridian_line" : 37,
       "primitive" : "bind",
       "stable_step_path" : "\/InvoiceRun\/workflow-steps\/procedure\/b533ff19213ec12a69f3067685e4b11977e7122b3f1c79740073d21a6b4729cc",
-      "swift_line" : 622
+      "swift_line" : 621
     },
     {
       "canonical" : "emit erp.invoice_receipt with body = invoice receipt.",
       "meridian_line" : 41,
       "primitive" : "emit",
       "stable_step_path" : "\/InvoiceRun\/workflow-steps-2\/procedure\/bca2d422078e7f99a6a411e8797160a0418026d0f419384451b3e94ce4c45625",
-      "swift_line" : 625
+      "swift_line" : 624
     }
   ],
   "ir_version" : "1.1",

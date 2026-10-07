@@ -77,9 +77,6 @@ extension Runtime {
             payload: payload,
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .success,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: operation,
             legacyKind: nil
         )

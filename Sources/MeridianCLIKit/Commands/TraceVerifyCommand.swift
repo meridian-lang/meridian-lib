@@ -7,7 +7,7 @@ public struct TraceVerifyCommand: ParsableCommand {
 
     public static let configuration = CommandConfiguration(
         commandName: "trace-verify",
-        abstract: "Verify a semantic trace store JSONL file for tampering and chain integrity."
+        abstract: "Verify a semantic trace store JSONL file for tampering and corruption."
     )
 
     @Argument(help: "Path to a semantic trace-store .jsonl file.")
@@ -41,15 +41,6 @@ enum TraceVerifyRunner {
         let checksums: Bool
         let order: Bool
         let content: Bool
-        let chainHashes: Bool
-
-        enum CodingKeys: String, CodingKey {
-            case schema
-            case checksums
-            case order
-            case content
-            case chainHashes = "chain_hashes"
-        }
     }
 
     private struct QuarantineStatus: Encodable {
@@ -205,18 +196,6 @@ enum TraceVerifyRunner {
             issues.append(firstOrderIssue)
         }
 
-        let chainResult = HashChain.verify(records: parsed.map(\.record), runID: runID)
-        if !chainResult.isValid, let failure = chainResult.failure {
-            let sortedRunLines = runLines.sorted { isRunLocalBefore($0.record, $1.record) }
-            let lineNumber = failure.index < sortedRunLines.count ? sortedRunLines[failure.index].lineNumber : nil
-            issues.append(Issue(
-                kind: chainIssueKind(for: failure.reason),
-                message: chainIssueMessage(for: failure.reason),
-                line: lineNumber,
-                recordID: failure.recordID
-            ))
-        }
-
         let quarantineFiles = try quarantineFilenames(for: fileURL)
         if !quarantineFiles.isEmpty {
             issues.append(Issue(
@@ -231,13 +210,6 @@ enum TraceVerifyRunner {
         let checksumsOK = !issues.contains(where: { $0.kind == "line_checksum_mismatch" || $0.kind == "corrupted_line" })
         let orderOK = !issues.contains(where: { $0.kind == "record_order_mismatch" || $0.kind == "run_not_found" })
         let contentOK = !issues.contains(where: { $0.kind == "payload_hash_mismatch" || $0.kind == "run_not_found" })
-        let chainOK = !issues.contains(where: {
-            $0.kind == "missing_record_hash"
-                || $0.kind == "previous_hash_mismatch"
-                || $0.kind == "record_hash_mismatch"
-                || $0.kind == "run_not_found"
-        })
-
         return Report(
             file: fileURL.path,
             runID: runID,
@@ -249,8 +221,7 @@ enum TraceVerifyRunner {
                 schema: schemaOK,
                 checksums: checksumsOK,
                 order: orderOK,
-                content: contentOK,
-                chainHashes: chainOK
+                content: contentOK
             ),
             quarantine: QuarantineStatus(
                 present: !quarantineFiles.isEmpty,
@@ -295,28 +266,6 @@ enum TraceVerifyRunner {
         return lhs.id < rhs.id
     }
 
-    private static func chainIssueKind(for reason: TraceChainFailureReason) -> String {
-        switch reason {
-        case .missingRecordHash:
-            return "missing_record_hash"
-        case .previousHashMismatch:
-            return "previous_hash_mismatch"
-        case .recordHashMismatch:
-            return "record_hash_mismatch"
-        }
-    }
-
-    private static func chainIssueMessage(for reason: TraceChainFailureReason) -> String {
-        switch reason {
-        case .missingRecordHash:
-            return "Record is missing record_hash, so the run chain cannot be verified."
-        case .previousHashMismatch:
-            return "previous_hash does not match the preceding record_hash for this run."
-        case .recordHashMismatch:
-            return "record_hash does not match the canonical hash of this record."
-        }
-    }
-
     private static func quarantineFilenames(for fileURL: URL) throws -> [String] {
         let directory = fileURL.deletingLastPathComponent()
         let prefix = fileURL.lastPathComponent + ".quarantine-"
@@ -345,7 +294,6 @@ enum TraceVerifyRunner {
         lines.append("  checksums: \(statusWord(report.checks.checksums))")
         lines.append("  order: \(statusWord(report.checks.order))")
         lines.append("  content: \(statusWord(report.checks.content))")
-        lines.append("  chain hashes: \(statusWord(report.checks.chainHashes))")
         lines.append("  quarantine: \(report.quarantine.present ? "present" : "none")")
         if !report.quarantine.files.isEmpty {
             for name in report.quarantine.files {

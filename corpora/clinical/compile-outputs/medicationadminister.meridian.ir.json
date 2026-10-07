@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAdministermedicationFires\/root\/procedure\/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5",
-      "swift_line" : 689
+      "swift_line" : 686
     },
     {
       "canonical" : "emit trigger.administerMedication.fired with kind = \"keyword\", spec = \"administer medication\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAdministermedicationFires\/root\/procedure\/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163",
-      "swift_line" : 689
+      "swift_line" : 686
     },
     {
       "canonical" : "wait for event giveMedicationOrder.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGivemedicationorderFires\/root\/procedure\/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38",
-      "swift_line" : 689
+      "swift_line" : 686
     },
     {
       "canonical" : "emit trigger.giveMedicationOrder.fired with kind = \"keyword\", spec = \"give medication order\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGivemedicationorderFires\/root\/procedure\/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c",
-      "swift_line" : 689
+      "swift_line" : 686
     },
     {
       "canonical" : "assert not the medication order's allergy check equals \"conflict\".",
       "meridian_line" : 35,
       "primitive" : "assert",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/rules-steps\/procedure\/4e5644abb84636bc6bf76718b590ecf3596b9ffd184c9880e931cf2968caaea3",
-      "swift_line" : 454
+      "swift_line" : 453
     },
     {
       "canonical" : "wait for approval of medication order from attending.",
       "meridian_line" : 36,
       "primitive" : "wait",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/rules-steps\/procedure\/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881",
-      "swift_line" : 449
+      "swift_line" : 448
     },
     {
       "canonical" : "bind allergyCheck = invoke allergy.check with order = medication order.",
       "meridian_line" : 42,
       "primitive" : "invoke",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/4b859995613c22d948b2f7e2e7daf74c74433b4e93ae3de2a4a14525ca4d9b09",
-      "swift_line" : 459
+      "swift_line" : 458
     },
     {
       "canonical" : "if medication order is cleared,\n  bind medicationOrder = invoke medication.administer with order = medication order.\n  recover from \"medication.administer.failed\":\n    emit clinical.note with message = \"administration failed at the device, hold the dose and notify the attending\".\notherwise,\n  emit clinical.note with message = \"allergy conflict found, dose withheld\".",
       "meridian_line" : 43,
       "primitive" : "branch",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083",
-      "swift_line" : 472
+      "swift_line" : 471
     },
     {
       "canonical" : "bind medicationOrder = invoke medication.administer with order = medication order.",
       "meridian_line" : 44,
       "primitive" : "invoke",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/recover.body\/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
-      "swift_line" : 478
+      "swift_line" : 477
     },
     {
       "canonical" : "bind medicationOrder = invoke medication.administer with order = medication order.\nrecover from \"medication.administer.failed\":\n  emit clinical.note with message = \"administration failed at the device, hold the dose and notify the attending\".",
       "meridian_line" : 45,
       "primitive" : "recover",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/branch.then\/19923e8858e5fcf8495e0d7819da0daa81bbd354bcd755fee1850d88a355a663",
-      "swift_line" : 475
+      "swift_line" : 474
     },
     {
       "canonical" : "emit clinical.note with message = \"administration failed at the device, hold the dose and notify the attending\".",
       "meridian_line" : 46,
       "primitive" : "emit",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/recover.handler\/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd",
-      "swift_line" : 494
+      "swift_line" : 493
     },
     {
       "canonical" : "emit clinical.note with message = \"allergy conflict found, dose withheld\".",
       "meridian_line" : 48,
       "primitive" : "emit",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/branch.else\/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b",
-      "swift_line" : 510
+      "swift_line" : 509
     },
     {
       "canonical" : "bind auditEntry = invoke audit.log with order = medication order.",
       "meridian_line" : 49,
       "primitive" : "invoke",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd",
-      "swift_line" : 524
+      "swift_line" : 523
     },
     {
       "canonical" : "emit clinical.report with message = \"medication administer pass complete\".",
       "meridian_line" : 50,
       "primitive" : "emit",
       "stable_step_path" : "\/MedicationAdministerMedicationOrderPatientNurse\/workflow-steps\/procedure\/5d5d2411193980b7fe43f6f5f444e98709dd921fa592968bbd2bf237e96b4e14",
-      "swift_line" : 538
+      "swift_line" : 537
     }
   ],
   "ir_version" : "1.1",

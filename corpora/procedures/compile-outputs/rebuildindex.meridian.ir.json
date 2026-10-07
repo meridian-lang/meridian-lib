@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8",
-      "swift_line" : 670
+      "swift_line" : 667
     },
     {
       "canonical" : "wait for event indexJobStale.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f",
-      "swift_line" : 670
+      "swift_line" : 667
     },
     {
       "canonical" : "emit trigger.rebuildLaggingIndexes.fired with kind = \"keyword\", spec = \"rebuild lagging indexes\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008",
-      "swift_line" : 670
+      "swift_line" : 667
     },
     {
       "canonical" : "wait for event rebuildLaggingIndexes.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477",
-      "swift_line" : 670
+      "swift_line" : 667
     },
     {
       "canonical" : "bind indexJobs = invoke index.list with status = \"lagging\".",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4",
-      "swift_line" : 468
+      "swift_line" : 467
     },
     {
       "canonical" : "assert any lagging index jobs.",
       "meridian_line" : 17,
       "primitive" : "assert",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/4807caf695281d75203dd2bcfabdc421bcd30bd3c438cda39bf5905fddc2279b",
-      "swift_line" : 482
+      "swift_line" : 481
     },
     {
       "canonical" : "assert at least 1 index jobs whose status equals \"lagging\".",
       "meridian_line" : 18,
       "primitive" : "assert",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/5b93735bb0951229e7c4b253a0ff714a3fd7802ca85c0e40ed58eeebc9935bbd",
-      "swift_line" : 487
+      "swift_line" : 486
     },
     {
       "canonical" : "for each indexJob in indexjobs,\n  bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 19,
       "primitive" : "iterate",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/b203dfb54538a7fbcf067ac5aea663bf0c8c37556b0770e5ada2687173b3505b",
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "canonical" : "bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 20,
       "primitive" : "invoke",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/iterate.body\/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c",
-      "swift_line" : 500
+      "swift_line" : 499
     },
     {
       "canonical" : "emit procedure.report with message = \"lagging index jobs rebuilt\".",
       "meridian_line" : 21,
       "primitive" : "emit",
       "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/be3fc14dc027fff95db30e3a12f459d026d9b08f94e5d4e7cab08583fa88b244",
-      "swift_line" : 519
+      "swift_line" : 518
     },
     {
       "canonical" : "assert all index jobs have a name.",
       "meridian_line" : 24,
       "primitive" : "assert",
       "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/7c24eee529d3a212498be6e9e3830f4d27da9531dc6a12701da7999a14e6329e",
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "canonical" : "assert no index jobs whose status equals \"failed\".",
       "meridian_line" : 25,
       "primitive" : "assert",
       "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/29304f21d5aded8d37a7031930ed505633eb21ffb52801475f9cf13206fc09b2",
-      "swift_line" : 463
+      "swift_line" : 462
     }
   ],
   "ir_version" : "1.1",

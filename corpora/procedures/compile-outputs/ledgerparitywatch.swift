@@ -411,12 +411,11 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
         "parameters": "ledger",
     ]
 
-    public static let skillVersionHash = "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+    public static let skillVersionHash = "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -430,7 +429,7 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
-            versionHash: "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+            versionHash: "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -575,12 +574,11 @@ public struct LedgerParityWatchLedger: MeridianWorkflow {
 public struct WhenRunledgerparitywatchFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+    public static let skillVersionHash = "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -594,7 +592,7 @@ public struct WhenRunledgerparitywatchFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
-            versionHash: "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+            versionHash: "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -651,12 +649,11 @@ public struct WhenRunledgerparitywatchFires: MeridianWorkflow {
 public struct WhenCheckledgerparityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+    public static let skillVersionHash = "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -670,7 +667,7 @@ public struct WhenCheckledgerparityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
-            versionHash: "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+            versionHash: "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -727,12 +724,11 @@ public struct WhenCheckledgerparityFires: MeridianWorkflow {
 public struct WhenMonitorreconciliationparityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+    public static let skillVersionHash = "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -746,7 +742,7 @@ public struct WhenMonitorreconciliationparityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "ledger parity watch",
-            versionHash: "6e205a1571d53487da06aaa268dce6737dbd8da3a1d8b5a24542e699c3ac1c31"
+            versionHash: "fbc2a134f109c8234ec3897b586b3af5bd11b4e0bc62910537afc383784ba6f9"
         ),
         toolCapturePolicies: [:]
     )

@@ -247,7 +247,7 @@
 
       ],
       "skill_name" : "RESOLVER",
-      "skill_version_hash" : "33ad4f1968d1c05c266fe4ee22915f54f48a546b9cc99769f182b1f146374e4a",
+      "skill_version_hash" : "49cdc6c0cc910e26768db9294c756e8f19e88e3e8a686e33808b520bf9e6494b",
       "source_name" : "entry",
       "swift_struct" : "Entry"
     }

@@ -14,7 +14,6 @@ public extension Runtime {
         private var traceSkillIdentity: TraceSkillIdentity = .unknown
         private var traceStoreKind: TraceStoreKind = .memory
         private var traceStorePath: String?
-        private var traceStoreEndpoint: URL?
         /// When true, `build()` instantiates a store from `traceStoreKind` if none was set.
         private var shouldAutoWireTraceStore = false
         private var traceIDGenerator: TraceIDGenerator = TraceIDGenerator()
@@ -103,7 +102,6 @@ public extension Runtime {
             self.traceConfiguration = runtimeTraceConfiguration.trace
             self.traceSkillIdentity = runtimeTraceConfiguration.skillIdentity
             self.traceStorePath = runtimeTraceConfiguration.storePath
-            self.traceStoreEndpoint = runtimeTraceConfiguration.storeEndpoint
             self.shouldAutoWireTraceStore = traceStore == nil
             return self
         }
@@ -195,24 +193,6 @@ public extension Runtime {
                         .appendingPathComponent("meridian-builder-trace-\(runID).jsonl")
                 }
                 return try JSONLTraceStore(fileURL: url, configuration: traceConfiguration)
-            case .sqlite:
-                guard let storePath = traceStorePath, !storePath.isEmpty else {
-                    throw MeridianRuntimeError.traceStoreFailure(
-                        "Trace store sqlite requires `store path:` in === trace === or an explicit setTraceStore(...)"
-                    )
-                }
-                let url = URL(fileURLWithPath: storePath).standardizedFileURL
-                return try SQLiteTraceStore(fileURL: url, configuration: traceConfiguration)
-            case .http:
-                guard let endpoint = traceStoreEndpoint else {
-                    throw MeridianRuntimeError.traceStoreFailure(
-                        "Trace store http requires `store endpoint:` in === trace === or an explicit setTraceStore(...)"
-                    )
-                }
-                return HTTPTraceStoreClient(
-                    transport: URLSessionHTTPTraceTransport(baseURL: endpoint),
-                    configuration: traceConfiguration
-                )
             }
         }
     }

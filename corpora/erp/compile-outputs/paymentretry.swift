@@ -531,12 +531,11 @@ public struct PaymentRetry: MeridianWorkflow {
         "triggers": "\"retry declined payments\"\n\"reattempt invoice collection\"",
     ]
 
-    public static let skillVersionHash = "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+    public static let skillVersionHash = "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct PaymentRetry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
-            versionHash: "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+            versionHash: "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
         ),
         toolCapturePolicies: [:]
     )
@@ -633,12 +632,11 @@ public struct PaymentRetry: MeridianWorkflow {
 public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+    public static let skillVersionHash = "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -652,7 +650,7 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
-            versionHash: "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+            versionHash: "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
         ),
         toolCapturePolicies: [:]
     )
@@ -709,12 +707,11 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
 public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+    public static let skillVersionHash = "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -728,7 +725,7 @@ public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment retry",
-            versionHash: "33104c8916e9f832ab9068333a407f6c8c7ef78851e379b36df8592e53071c05"
+            versionHash: "10cfc76f61bc11614aae4afb94387fc43a6d546d5b7eb0e5685bd05ad19ac2a6"
         ),
         toolCapturePolicies: [:]
     )

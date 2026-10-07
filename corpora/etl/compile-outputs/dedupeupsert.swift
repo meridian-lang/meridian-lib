@@ -338,12 +338,11 @@ public struct DedupeUpsert: MeridianWorkflow {
         "triggers": "\"dedupe datasets\"\n\"run dedupe upsert\"\n\"collapse duplicate datasets\"",
     ]
 
-    public static let skillVersionHash = "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+    public static let skillVersionHash = "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct DedupeUpsert: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
-            versionHash: "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+            versionHash: "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
         ),
         toolCapturePolicies: [:]
     )
@@ -477,12 +476,11 @@ public struct DedupeUpsert: MeridianWorkflow {
 public struct WhenDedupedatasetsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+    public static let skillVersionHash = "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -496,7 +494,7 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
-            versionHash: "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+            versionHash: "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
         ),
         toolCapturePolicies: [:]
     )
@@ -553,12 +551,11 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
 public struct WhenRundedupeupsertFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+    public static let skillVersionHash = "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -572,7 +569,7 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
-            versionHash: "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+            versionHash: "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
         ),
         toolCapturePolicies: [:]
     )
@@ -629,12 +626,11 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
 public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+    public static let skillVersionHash = "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -648,7 +644,7 @@ public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dedupe upsert",
-            versionHash: "2666ddd6515259048ab56aa68776273c44481f66d3b7a92b8350bf467b70233a"
+            versionHash: "2b928a96c6b897171c176b3daa605a0beb8fe7e8396308c7bdaec89c2e1de3cc"
         ),
         toolCapturePolicies: [:]
     )

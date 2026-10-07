@@ -5,91 +5,91 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEscalateopenincidentsFires\/root\/procedure\/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "wait for event escalateOpenIncidents.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEscalateopenincidentsFires\/root\/procedure\/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "wait for event escalateStalledIncidents.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEscalatestalledincidentsFires\/root\/procedure\/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "emit trigger.escalateStalledIncidents.fired with kind = \"keyword\", spec = \"escalate stalled incidents\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEscalatestalledincidentsFires\/root\/procedure\/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "emit trigger.runIncidentEscalation.fired with kind = \"keyword\", spec = \"run incident escalation\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunincidentescalationFires\/root\/procedure\/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "wait for event runIncidentEscalation.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunincidentescalationFires\/root\/procedure\/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0",
-      "swift_line" : 697
+      "swift_line" : 693
     },
     {
       "canonical" : "bind incidents = invoke incident.list with status = \"open\".",
       "meridian_line" : 25,
       "primitive" : "invoke",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
-      "swift_line" : 428
+      "swift_line" : 427
     },
     {
       "canonical" : "assert at least 1 incidents whose severity equals \"sev1\".",
       "meridian_line" : 26,
       "primitive" : "assert",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/55c095c7fc24cf3d5e492128af938c0f9869c2ad58aff3f7033a432a9ef49cbd",
-      "swift_line" : 442
+      "swift_line" : 441
     },
     {
       "canonical" : "for each incident in incidents,\n  wait for event alert.fired matching the event's service name equals the incident's service name.\n  escalate incident.",
       "meridian_line" : 27,
       "primitive" : "iterate",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/d9a4fb70f684903dd059932fa257df864de951129da69e04671ef4e96f1ea378",
-      "swift_line" : 446
+      "swift_line" : 445
     },
     {
       "canonical" : "wait for event alert.fired matching the event's service name equals the incident's service name.",
       "meridian_line" : 28,
       "primitive" : "wait",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/iterate.body\/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f",
-      "swift_line" : 455
+      "swift_line" : 454
     },
     {
       "canonical" : "escalate incident.",
       "meridian_line" : 29,
       "primitive" : "invoke",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/iterate.body\/f95f981f873a7217ad6072b67917938387cae9de56865623731c84126c273f5c",
-      "swift_line" : 460
+      "swift_line" : 459
     },
     {
       "canonical" : "emit incident.report with message = \"incident escalation pass complete\".",
       "meridian_line" : 30,
       "primitive" : "emit",
       "stable_step_path" : "\/EscalateIncident\/workflow\/procedure\/0ccf2d780c7ad1138b42795af12258571781717307047ba1325d98c421665a6b",
-      "swift_line" : 470
+      "swift_line" : 469
     },
     {
       "canonical" : "assert at least 0 incidents whose status equals \"open\".",
       "meridian_line" : 41,
       "primitive" : "assert",
       "stable_step_path" : "\/EscalateIncident\/guarantees\/invariants\/00a8b6d3ce6721fb6a2d2ffc272a9cf5d23f1b4eb126beec7f42ce8447e8cd16",
-      "swift_line" : 423
+      "swift_line" : 422
     }
   ],
   "ir_version" : "1.1",

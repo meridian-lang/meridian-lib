@@ -184,9 +184,6 @@ struct ObservabilityRuntimeCoverageTests {
             payload: [:],
             payloadHash: "payload",
             outcome: outcome,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: nil,
             legacyKind: nil
         )
@@ -202,10 +199,7 @@ private actor QueryFailingTraceStore: TraceStore {
     var capabilities: TraceStoreCapabilities {
         TraceStoreCapabilities(
             isPersistent: false,
-            supportsHashChaining: false,
-            supportsCompaction: false,
-            indexedFields: [],
-            supportedSchemaVersions: [1])
+            supportsCompaction: false)
     }
 
     func append(_ event: TraceRecord) async throws {}
@@ -222,8 +216,4 @@ private actor QueryFailingTraceStore: TraceStore {
     }
 
     func compact(retention: Duration, now: Date) async throws {}
-
-    func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
-        TraceChainVerificationResult(runID: runID, verifiedCount: 0, isValid: true, failure: nil)
-    }
 }

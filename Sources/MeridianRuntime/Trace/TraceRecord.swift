@@ -112,7 +112,6 @@ public struct TraceQueryPattern: Sendable, Equatable {
 
 public struct TraceStoreCapabilities: Sendable, Codable, Equatable {
     public let isPersistent: Bool
-    public let supportsHashChaining: Bool
     public let supportsCompaction: Bool
     /// Whether the store retains full event payloads (vs. hash-only mode, which
     /// keeps `payloadHash` for parity/coherence checking but drops `payload`
@@ -120,23 +119,15 @@ public struct TraceStoreCapabilities: Sendable, Codable, Equatable {
     /// `true` for both shipped stores (in-memory, JSONL); a future hash-only
     /// store would report `false` here.
     public let payloadRetention: Bool
-    public let indexedFields: [String]
-    public let supportedSchemaVersions: [Int]
 
     public init(
         isPersistent: Bool,
-        supportsHashChaining: Bool,
         supportsCompaction: Bool,
-        payloadRetention: Bool = true,
-        indexedFields: [String],
-        supportedSchemaVersions: [Int]
+        payloadRetention: Bool = true
     ) {
         self.isPersistent = isPersistent
-        self.supportsHashChaining = supportsHashChaining
         self.supportsCompaction = supportsCompaction
         self.payloadRetention = payloadRetention
-        self.indexedFields = indexedFields
-        self.supportedSchemaVersions = supportedSchemaVersions
     }
 }
 
@@ -153,7 +144,6 @@ public enum TraceStoreFailurePolicy: String, Sendable, Codable, Equatable {
 
 public struct TraceConfiguration: Sendable, Codable, Equatable {
     public let retention: Duration
-    public let hashChaining: Bool
     public let payloadLimit: Int?
     public let usuallyThreshold: Double
     public let rarelyThreshold: Double
@@ -167,7 +157,6 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
 
     public init(
         retention: Duration = .seconds(60 * 60 * 24 * 30),
-        hashChaining: Bool = true,
         payloadLimit: Int? = nil,
         usuallyThreshold: Double = 0.9,
         rarelyThreshold: Double = 0.1,
@@ -180,7 +169,6 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
         stateHistoryRetention: Bool = false
     ) {
         self.retention = retention
-        self.hashChaining = hashChaining
         self.payloadLimit = payloadLimit
         self.usuallyThreshold = usuallyThreshold
         self.rarelyThreshold = rarelyThreshold
@@ -198,7 +186,6 @@ public struct TraceConfiguration: Sendable, Codable, Equatable {
 
 public struct TraceRecord: Sendable, Equatable, Codable {
     public static let currentSchemaVersion = 2
-    public static let supportedSchemaVersions = [1, 2]
 
     public let schemaVersion: Int
     public let id: String
@@ -214,9 +201,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
     public let payload: [String: Value]?
     public let payloadHash: String
     public let outcome: TraceOutcome?
-    public let witness: String?
-    public let previousHash: String?
-    public let recordHash: String?
     public let operationalDetail: String?
     public let legacyKind: String?
 
@@ -235,9 +219,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         payload: [String: Value]? = nil,
         payloadHash: String,
         outcome: TraceOutcome? = nil,
-        witness: String? = nil,
-        previousHash: String? = nil,
-        recordHash: String? = nil,
         operationalDetail: String? = nil,
         legacyKind: String? = nil
     ) {
@@ -255,9 +236,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         self.payload = payload
         self.payloadHash = payloadHash
         self.outcome = outcome
-        self.witness = witness
-        self.previousHash = previousHash
-        self.recordHash = recordHash
         self.operationalDetail = operationalDetail
         self.legacyKind = legacyKind
     }
@@ -277,9 +255,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         case payload
         case payloadHash
         case outcome
-        case witness
-        case previousHash
-        case recordHash
         case operationalDetail
         case legacyKind
     }
@@ -302,9 +277,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
             payload: encodedPayload?.mapValues(\.value),
             payloadHash: try container.decode(String.self, forKey: .payloadHash),
             outcome: try container.decodeIfPresent(TraceOutcome.self, forKey: .outcome),
-            witness: try container.decodeIfPresent(String.self, forKey: .witness),
-            previousHash: try container.decodeIfPresent(String.self, forKey: .previousHash),
-            recordHash: try container.decodeIfPresent(String.self, forKey: .recordHash),
             operationalDetail: try container.decodeIfPresent(String.self, forKey: .operationalDetail),
             legacyKind: try container.decodeIfPresent(String.self, forKey: .legacyKind)
         )
@@ -328,9 +300,6 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         }
         try container.encode(payloadHash, forKey: .payloadHash)
         try container.encodeIfPresent(outcome, forKey: .outcome)
-        try container.encodeIfPresent(witness, forKey: .witness)
-        try container.encodeIfPresent(previousHash, forKey: .previousHash)
-        try container.encodeIfPresent(recordHash, forKey: .recordHash)
         try container.encodeIfPresent(operationalDetail, forKey: .operationalDetail)
         try container.encodeIfPresent(legacyKind, forKey: .legacyKind)
     }

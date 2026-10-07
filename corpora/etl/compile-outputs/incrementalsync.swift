@@ -338,12 +338,11 @@ public struct IncrementalSync: MeridianWorkflow {
         "triggers": "\"run incremental sync\"\n\"sync dataset watermarks\"\n\"run the watermark sync pass\"",
     ]
 
-    public static let skillVersionHash = "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+    public static let skillVersionHash = "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct IncrementalSync: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
-            versionHash: "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+            versionHash: "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
         ),
         toolCapturePolicies: [:]
     )
@@ -452,12 +451,11 @@ public struct IncrementalSync: MeridianWorkflow {
 public struct WhenRunincrementalsyncFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+    public static let skillVersionHash = "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -471,7 +469,7 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
-            versionHash: "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+            versionHash: "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
         ),
         toolCapturePolicies: [:]
     )
@@ -528,12 +526,11 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
 public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+    public static let skillVersionHash = "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -547,7 +544,7 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
-            versionHash: "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+            versionHash: "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
         ),
         toolCapturePolicies: [:]
     )
@@ -604,12 +601,11 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
 public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+    public static let skillVersionHash = "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -623,7 +619,7 @@ public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "incremental sync",
-            versionHash: "b13beafe2f2d3a2207eb192cd596f5eaa2dd9bbf95a159ddb44b7ae8a5e71e93"
+            versionHash: "9822e296da98df86d5621f6088a896a3b0908f5b5588cffe698290275f35713b"
         ),
         toolCapturePolicies: [:]
     )

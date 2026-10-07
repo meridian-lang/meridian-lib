@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReviewaccessrequestsFires\/root\/procedure\/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "wait for event reviewAccessRequests.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReviewaccessrequestsFires\/root\/procedure\/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "emit trigger.reviewPendingRequests.fired with kind = \"keyword\", spec = \"review pending requests\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReviewpendingrequestsFires\/root\/procedure\/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "wait for event reviewPendingRequests.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReviewpendingrequestsFires\/root\/procedure\/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "wait for event workRequestQueue.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWorkrequestqueueFires\/root\/procedure\/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "emit trigger.workRequestQueue.fired with kind = \"keyword\", spec = \"work the request queue\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWorkrequestqueueFires\/root\/procedure\/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05",
-      "swift_line" : 755
+      "swift_line" : 751
     },
     {
       "canonical" : "assert either queue position is at most 3 or queue position is at most 3.",
       "meridian_line" : 33,
       "primitive" : "assert",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/rules-steps\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
-      "swift_line" : 467
+      "swift_line" : 466
     },
     {
       "canonical" : "bind accessRequests = invoke request.list with status = \"pending\".",
       "meridian_line" : 36,
       "primitive" : "invoke",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
-      "swift_line" : 477
+      "swift_line" : 476
     },
     {
       "canonical" : "assert either at least 1 pending access requests or queue position is at most 3.",
       "meridian_line" : 37,
       "primitive" : "assert",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/fd9bc1850e3919f213b4375c42cee9f8f7a1c026c314a86de402d9e070850b91",
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "canonical" : "assert either at most 20 pending access requests or queue position is at most 3.",
       "meridian_line" : 38,
       "primitive" : "assert",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/0f65d1b125dd2c8d1600e57224b388504cb279e140fe2745ecd03ec1a0af02ab",
-      "swift_line" : 496
+      "swift_line" : 495
     },
     {
       "canonical" : "for each accessrequests whose queue position is at most 3,\n  bind auditEntry = invoke audit.log with request = access request.",
       "meridian_line" : 39,
       "primitive" : "iterate",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/2121dc77d3d6c9689c362acbd5fb3de2d6556fcb8df732c685f819ac3aa3d6ce",
-      "swift_line" : 500
+      "swift_line" : 499
     },
     {
       "canonical" : "bind auditEntry = invoke audit.log with request = access request.",
       "meridian_line" : 40,
       "primitive" : "invoke",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/iterate.body\/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6",
-      "swift_line" : 509
+      "swift_line" : 508
     },
     {
       "canonical" : "emit governance.report with message = \"review requests pass complete\".",
       "meridian_line" : 41,
       "primitive" : "emit",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/workflow\/procedure\/01101df8202c9f4b795badf284e523f0462e81ead3c52906cca474eb717819ca",
-      "swift_line" : 528
+      "swift_line" : 527
     },
     {
       "canonical" : "assert either at most 20 access requests whose status equals \"pending\" or queue position is at most 3.",
       "meridian_line" : 52,
       "primitive" : "assert",
       "stable_step_path" : "\/ReviewRequestsReviewerAccessRequest\/guarantees\/invariants\/8bd1dc391be67a2f49d97f8a2cada8630c84f0750decec99a5ca20fee503694a",
-      "swift_line" : 472
+      "swift_line" : 471
     }
   ],
   "ir_version" : "1.1",

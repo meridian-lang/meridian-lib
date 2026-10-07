@@ -533,12 +533,11 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
         "parameters": "invoice",
     ]
 
-    public static let skillVersionHash = "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+    public static let skillVersionHash = "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -552,7 +551,7 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
-            versionHash: "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+            versionHash: "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -642,12 +641,11 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
 public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+    public static let skillVersionHash = "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -661,7 +659,7 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
-            versionHash: "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+            versionHash: "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -718,12 +716,11 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
 public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+    public static let skillVersionHash = "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -737,7 +734,7 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
-            versionHash: "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+            versionHash: "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
         ),
         toolCapturePolicies: [:]
     )
@@ -794,12 +791,11 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
 public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+    public static let skillVersionHash = "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -813,7 +809,7 @@ public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "payment failure monitor",
-            versionHash: "0707fd7abb5bf44e68bcf2f706a40c41bb47ad1d5e4317bb01ccf0e14a667754"
+            versionHash: "4cc03a80d4fa7b819db68513e61c4fb190e190689c224c8b57bced843cadd0f9"
         ),
         toolCapturePolicies: [:]
     )

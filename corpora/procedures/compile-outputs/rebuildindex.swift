@@ -409,12 +409,11 @@ public struct RebuildIndex: MeridianWorkflow {
         "triggers": "\"rebuild lagging indexes\"\n\"index job stale\"",
     ]
 
-    public static let skillVersionHash = "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+    public static let skillVersionHash = "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct RebuildIndex: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
-            versionHash: "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+            versionHash: "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
         ),
         toolCapturePolicies: [:]
     )
@@ -540,12 +539,11 @@ public struct RebuildIndex: MeridianWorkflow {
 public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+    public static let skillVersionHash = "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -559,7 +557,7 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
-            versionHash: "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+            versionHash: "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
         ),
         toolCapturePolicies: [:]
     )
@@ -616,12 +614,11 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
 public struct WhenIndexjobstaleFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+    public static let skillVersionHash = "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -635,7 +632,7 @@ public struct WhenIndexjobstaleFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rebuild index",
-            versionHash: "75a51c6e8172f1ab62a66788b3f13a44116d92bee75fb55ed47c0450308c3765"
+            versionHash: "a16c07c0139a090933466ba09cb7bb835729493873be9a01336ec923fca35c14"
         ),
         toolCapturePolicies: [:]
     )

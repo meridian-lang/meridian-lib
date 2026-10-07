@@ -531,12 +531,11 @@ public struct ReceiveShipment: MeridianWorkflow {
         "triggers": "\"receive inbound shipment\"\n\"shipment received\"",
     ]
 
-    public static let skillVersionHash = "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+    public static let skillVersionHash = "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct ReceiveShipment: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
-            versionHash: "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+            versionHash: "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
         ),
         toolCapturePolicies: [:]
     )
@@ -620,12 +619,11 @@ public struct ReceiveShipment: MeridianWorkflow {
 public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+    public static let skillVersionHash = "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -639,7 +637,7 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
-            versionHash: "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+            versionHash: "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
         ),
         toolCapturePolicies: [:]
     )
@@ -696,12 +694,11 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
 public struct WhenShipmentreceivedFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+    public static let skillVersionHash = "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -715,7 +712,7 @@ public struct WhenShipmentreceivedFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "receive shipment",
-            versionHash: "cb9b07a8b1b66426371e9734b1aa807131ce68f6d60427c5673f2fedbe6dc799"
+            versionHash: "a3b5938067187ebdbef464e5f8e21e9e0e50b7fb053818e34a348597396e02dc"
         ),
         toolCapturePolicies: [:]
     )

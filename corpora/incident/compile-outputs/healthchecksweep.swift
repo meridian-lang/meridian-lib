@@ -374,12 +374,11 @@ public struct HealthcheckSweep: MeridianWorkflow {
         "triggers": "\"sweep service health\"\n\"run healthcheck sweep\"\n\"run the health sweep pass\"",
     ]
 
-    public static let skillVersionHash = "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+    public static let skillVersionHash = "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct HealthcheckSweep: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
-            versionHash: "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+            versionHash: "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
         ),
         toolCapturePolicies: [:]
     )
@@ -543,12 +542,11 @@ public struct HealthcheckSweep: MeridianWorkflow {
 public struct WhenSweepservicehealthFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+    public static let skillVersionHash = "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -562,7 +560,7 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
-            versionHash: "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+            versionHash: "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
         ),
         toolCapturePolicies: [:]
     )
@@ -619,12 +617,11 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
 public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+    public static let skillVersionHash = "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -638,7 +635,7 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
-            versionHash: "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+            versionHash: "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
         ),
         toolCapturePolicies: [:]
     )
@@ -695,12 +692,11 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
 public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+    public static let skillVersionHash = "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -714,7 +710,7 @@ public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "healthcheck sweep",
-            versionHash: "a2b3d229186095f6a49ca46621c2955f65a648b99d1905e1e259e0188743d3a1"
+            versionHash: "ca10f4f30ecff87eb07efe26808ec6040bfe62165e689911d684d451b277abbb"
         ),
         toolCapturePolicies: [:]
     )

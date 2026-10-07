@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunincrementalsyncFires\/root\/procedure\/0045a78cb2c767c0baf515f602040900a8a63f6ab116e499ac9b0a2987dea07b",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "wait for event runIncrementalSync.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunincrementalsyncFires\/root\/procedure\/c2fc7620ec59cdc6c7d2e7fb11083b850679502a53eaff666dde2ee03d101b8d",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "emit trigger.runWatermarkSyncPass.fired with kind = \"keyword\", spec = \"run the watermark sync pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunwatermarksyncpassFires\/root\/procedure\/0502e5f06e94e4b9d70051fe59da236a3310c16c233978f03a63943750eb7ea0",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "wait for event runWatermarkSyncPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunwatermarksyncpassFires\/root\/procedure\/b1985dad8108579e676fe3730620c486dcbcea55fd313712b0f871e0165c7d4a",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "wait for event syncDatasetWatermarks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSyncdatasetwatermarksFires\/root\/procedure\/231ac4d6d0d66c9e0b822ddc57a110b6f8d77b52462cf361c8b08631cbf1e721",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "emit trigger.syncDatasetWatermarks.fired with kind = \"keyword\", spec = \"sync dataset watermarks\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSyncdatasetwatermarksFires\/root\/procedure\/9a448351204ec9a7b222a19a143172a8aaf8d8f027072ce0c3c58f6b261909ba",
-      "swift_line" : 658
+      "swift_line" : 654
     },
     {
       "canonical" : "bind datasets = invoke dataset.list.",
       "meridian_line" : 30,
       "primitive" : "invoke",
       "stable_step_path" : "\/IncrementalSync\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
-      "swift_line" : 392
+      "swift_line" : 391
     },
     {
       "canonical" : "assert any datasets.",
       "meridian_line" : 31,
       "primitive" : "assert",
       "stable_step_path" : "\/IncrementalSync\/workflow-steps\/procedure\/563d8b87225746cb810168bb8702659a8c24b2243ed4f78e45dce667788c339e",
-      "swift_line" : 399
+      "swift_line" : 398
     },
     {
       "canonical" : "for each dataset in datasets,\n  bind watermark = invoke watermark.read with dataset = dataset.",
       "meridian_line" : 32,
       "primitive" : "iterate",
       "stable_step_path" : "\/IncrementalSync\/workflow-steps\/procedure\/ddfea92eb6a5c6c0ffb2465fa2b23874589c6150e48830cd8b7d5cbcaf21fc27",
-      "swift_line" : 403
+      "swift_line" : 402
     },
     {
       "canonical" : "bind watermark = invoke watermark.read with dataset = dataset.",
       "meridian_line" : 33,
       "primitive" : "invoke",
       "stable_step_path" : "\/IncrementalSync\/workflow-steps\/procedure\/iterate.body\/bcccd8c82bf302e53f0498a0856aea145c9ba74fa0bb78e3a918eb397ecafda8",
-      "swift_line" : 412
+      "swift_line" : 411
     },
     {
       "canonical" : "emit etl.report with message = \"incremental sync pass complete\".",
       "meridian_line" : 37,
       "primitive" : "emit",
       "stable_step_path" : "\/IncrementalSync\/workflow-steps-2\/procedure\/0a957feaa475f2c4325022ad7fe52120ebc737a012fbbba6ce43f13543c6d28c",
-      "swift_line" : 431
+      "swift_line" : 430
     },
     {
       "canonical" : "assert no datasets whose status equals \"stale\".",
       "meridian_line" : 48,
       "primitive" : "assert",
       "stable_step_path" : "\/IncrementalSync\/guarantees\/invariants\/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf",
-      "swift_line" : 387
+      "swift_line" : 386
     }
   ],
   "ir_version" : "1.1",

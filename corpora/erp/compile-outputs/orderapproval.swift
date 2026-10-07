@@ -531,12 +531,11 @@ public struct OrderApproval: MeridianWorkflow {
         "triggers": "\"approve high value orders\"\n\"route orders for approval\"",
     ]
 
-    public static let skillVersionHash = "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+    public static let skillVersionHash = "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct OrderApproval: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
-            versionHash: "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+            versionHash: "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
         ),
         toolCapturePolicies: [:]
     )
@@ -686,12 +685,11 @@ public struct OrderApproval: MeridianWorkflow {
 public struct WhenApprovehighvalueordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+    public static let skillVersionHash = "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -705,7 +703,7 @@ public struct WhenApprovehighvalueordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
-            versionHash: "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+            versionHash: "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
         ),
         toolCapturePolicies: [:]
     )
@@ -762,12 +760,11 @@ public struct WhenApprovehighvalueordersFires: MeridianWorkflow {
 public struct WhenRouteordersapprovalFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+    public static let skillVersionHash = "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -781,7 +778,7 @@ public struct WhenRouteordersapprovalFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "order approval",
-            versionHash: "551c031d71eefea61a18ffecdd25e0585e1995eeddc0b828cab50c1df21a61fe"
+            versionHash: "9fd805d181b81e5aa10d012d63a48e8d5927521addf6a3017e95af7995bba87d"
         ),
         toolCapturePolicies: [:]
     )

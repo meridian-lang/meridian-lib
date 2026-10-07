@@ -374,12 +374,11 @@ public struct RollbackDeploy: MeridianWorkflow {
         "triggers": "\"roll back unhealthy deploys\"\n\"revert failed deploy\"\n\"run the deploy rollback pass\"",
     ]
 
-    public static let skillVersionHash = "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+    public static let skillVersionHash = "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct RollbackDeploy: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
-            versionHash: "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+            versionHash: "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
         ),
         toolCapturePolicies: [:]
     )
@@ -486,12 +485,11 @@ public struct RollbackDeploy: MeridianWorkflow {
 public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+    public static let skillVersionHash = "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -505,7 +503,7 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
-            versionHash: "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+            versionHash: "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
         ),
         toolCapturePolicies: [:]
     )
@@ -562,12 +560,11 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
 public struct WhenRevertfaileddeployFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+    public static let skillVersionHash = "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -581,7 +578,7 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
-            versionHash: "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+            versionHash: "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
         ),
         toolCapturePolicies: [:]
     )
@@ -638,12 +635,11 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
 public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+    public static let skillVersionHash = "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -657,7 +653,7 @@ public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "rollback deploy",
-            versionHash: "6d1c4a9e5f3358a210c247dc5110224439f6383d8e41139f9e27f858e9647b4c"
+            versionHash: "6807190c659ec73b83220c614decdcc8cc7ec588f42d56b2176a1f8722a5742e"
         ),
         toolCapturePolicies: [:]
     )

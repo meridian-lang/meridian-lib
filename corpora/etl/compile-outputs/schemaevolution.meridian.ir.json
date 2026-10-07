@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "emit trigger.checkSchemaEvolution.fired with kind = \"keyword\", spec = \"check schema evolution\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "emit trigger.runSchemaCompatibilityCheck.fired with kind = \"keyword\", spec = \"run schema compatibility check\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "wait for event runSchemaCompatibilityCheck.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "wait for event validateSchemaCompatibility.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "emit trigger.validateSchemaCompatibility.fired with kind = \"keyword\", spec = \"validate schema compatibility\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca",
-      "swift_line" : 689
+      "swift_line" : 685
     },
     {
       "canonical" : "bind datasets = invoke dataset.list.",
       "meridian_line" : 29,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
-      "swift_line" : 392
+      "swift_line" : 391
     },
     {
       "canonical" : "for each dataset in datasets,\n  bind schema = invoke schema.validate with dataset = dataset.\n  if schema is compatible,\n    bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.\n  otherwise,\n    emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 30,
       "primitive" : "iterate",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/d439b7f889716d5ea5fe7038475ffb10ffa97ab3ac90b5beec5ea9f65ee449df",
-      "swift_line" : 398
+      "swift_line" : 397
     },
     {
       "canonical" : "bind schema = invoke schema.validate with dataset = dataset.",
       "meridian_line" : 31,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067",
-      "swift_line" : 407
+      "swift_line" : 406
     },
     {
       "canonical" : "if schema is compatible,\n  bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.\notherwise,\n  emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 32,
       "primitive" : "branch",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf",
-      "swift_line" : 420
+      "swift_line" : 419
     },
     {
       "canonical" : "bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.",
       "meridian_line" : 33,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.then\/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc",
-      "swift_line" : 424
+      "swift_line" : 423
     },
     {
       "canonical" : "emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 35,
       "primitive" : "emit",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.else\/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad",
-      "swift_line" : 443
+      "swift_line" : 442
     },
     {
       "canonical" : "emit etl.report with message = \"schema evolution pass complete\".",
       "meridian_line" : 36,
       "primitive" : "emit",
       "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/1a74c3f6ebcb34ebe99f96919e7727a9916d9439bf748409709565c01c0cc4d6",
-      "swift_line" : 462
+      "swift_line" : 461
     },
     {
       "canonical" : "assert no datasets whose status equals \"stale\".",
       "meridian_line" : 47,
       "primitive" : "assert",
       "stable_step_path" : "\/SchemaEvolution\/guarantees\/invariants\/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf",
-      "swift_line" : 387
+      "swift_line" : 386
     }
   ],
   "ir_version" : "1.1",

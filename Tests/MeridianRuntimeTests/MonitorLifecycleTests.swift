@@ -131,9 +131,6 @@ struct MonitorLifecycleTests {
             payload: [:],
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            witness: nil,
-            previousHash: nil,
-            recordHash: nil,
             operationalDetail: nil,
             legacyKind: nil
         )

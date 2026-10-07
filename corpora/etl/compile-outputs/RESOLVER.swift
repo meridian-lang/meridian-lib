@@ -332,12 +332,11 @@ private static func meridianDef_Watermark_fresh(_ __subjectValue: Value?) -> Boo
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "d3928e3707b5ce48e51b35df7f0e3b567b73e6299d94794ddd815065c1d05af2"
+    public static let skillVersionHash = "a7e9f8ebcaba2a0b0e4f98c8b78d6099f00eb212dca3c2e46d95622c619b2ed7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -351,7 +350,7 @@ public struct Entry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "d3928e3707b5ce48e51b35df7f0e3b567b73e6299d94794ddd815065c1d05af2"
+            versionHash: "a7e9f8ebcaba2a0b0e4f98c8b78d6099f00eb212dca3c2e46d95622c619b2ed7"
         ),
         toolCapturePolicies: [:]
     )

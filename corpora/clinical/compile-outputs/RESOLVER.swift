@@ -384,12 +384,11 @@ private static func meridianDef_VitalSign_stable(_ __subjectValue: Value?) -> Bo
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9fb82c9714ee40e3befa7f7f7e1fc798f800b0508f1b94c7e82c10789106cc2f"
+    public static let skillVersionHash = "0453cd8ab47966f9ed2eb1f8bedb6fc8044c0a48a1ee9f8c9a44998d4e0425d7"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -403,7 +402,7 @@ public struct Entry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "9fb82c9714ee40e3befa7f7f7e1fc798f800b0508f1b94c7e82c10789106cc2f"
+            versionHash: "0453cd8ab47966f9ed2eb1f8bedb6fc8044c0a48a1ee9f8c9a44998d4e0425d7"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )

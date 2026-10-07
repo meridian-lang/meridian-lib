@@ -531,12 +531,11 @@ public struct CancelOrder: MeridianWorkflow {
         "triggers": "\"cancel blocked orders\"\n\"void ERP orders\"",
     ]
 
-    public static let skillVersionHash = "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+    public static let skillVersionHash = "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct CancelOrder: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
-            versionHash: "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+            versionHash: "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
         ),
         toolCapturePolicies: [:]
     )
@@ -644,12 +643,11 @@ public struct CancelOrder: MeridianWorkflow {
 public struct WhenCancelblockedordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+    public static let skillVersionHash = "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -663,7 +661,7 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
-            versionHash: "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+            versionHash: "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
         ),
         toolCapturePolicies: [:]
     )
@@ -720,12 +718,11 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
 public struct WhenVoiderpordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+    public static let skillVersionHash = "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -739,7 +736,7 @@ public struct WhenVoiderpordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cancel order",
-            versionHash: "9b8cf146db6e7672c8010cb5d6a13d5afea933c8bab45de013f693867fb79ed8"
+            versionHash: "7b9dc3b40f40e4da8b57d9395a6d66e3009c3bb0de5a73f3c2bd58b0d9958848"
         ),
         toolCapturePolicies: [:]
     )

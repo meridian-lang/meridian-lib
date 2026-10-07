@@ -505,31 +505,35 @@
   "source_map" : [
     {
       "meridian_line" : 51,
-      "swift_line" : 627
+      "swift_line" : 626
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 698
+      "swift_line" : 696
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 703
+      "swift_line" : 701
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 773
+      "swift_line" : 770
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 778
+      "swift_line" : 775
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 848
+      "swift_line" : 844
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 853
+      "swift_line" : 849
+    },
+    {
+      "meridian_line" : 1,
+      "swift_line" : 918
     },
     {
       "meridian_line" : 1,
@@ -537,15 +541,11 @@
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 928
+      "swift_line" : 992
     },
     {
       "meridian_line" : 1,
-      "swift_line" : 998
-    },
-    {
-      "meridian_line" : 1,
-      "swift_line" : 1003
+      "swift_line" : 997
     }
   ],
   "tools_used" : [

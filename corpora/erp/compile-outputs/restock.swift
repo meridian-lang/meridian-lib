@@ -531,12 +531,11 @@ public struct Restock: MeridianWorkflow {
         "triggers": "\"restock short products\"\n\"inventory below reorder point\"",
     ]
 
-    public static let skillVersionHash = "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+    public static let skillVersionHash = "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct Restock: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
-            versionHash: "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+            versionHash: "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
         ),
         toolCapturePolicies: [:]
     )
@@ -662,12 +661,11 @@ public struct Restock: MeridianWorkflow {
 public struct WhenRestockshortproductsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+    public static let skillVersionHash = "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -681,7 +679,7 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
-            versionHash: "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+            versionHash: "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
         ),
         toolCapturePolicies: [:]
     )
@@ -738,12 +736,11 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
 public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+    public static let skillVersionHash = "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -757,7 +754,7 @@ public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "restock",
-            versionHash: "95687e7c7878d8262d4b4f63dc93adc576a9aa787fb7b989eaaef9797905f332"
+            versionHash: "468ad3c095e20f6ace736d1400b1b7479ea40492b00e9114d8ea0fac2c7231af"
         ),
         toolCapturePolicies: [:]
     )

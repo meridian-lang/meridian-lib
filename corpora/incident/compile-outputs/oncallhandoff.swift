@@ -374,12 +374,11 @@ public struct OncallHandoff: MeridianWorkflow {
         "triggers": "\"run oncall handoff\"\n\"prepare shift handoff\"\n\"run the shift handoff pass\"",
     ]
 
-    public static let skillVersionHash = "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+    public static let skillVersionHash = "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct OncallHandoff: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
-            versionHash: "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+            versionHash: "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
         ),
         toolCapturePolicies: [:]
     )
@@ -501,12 +500,11 @@ public struct OncallHandoff: MeridianWorkflow {
 public struct WhenRunoncallhandoffFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+    public static let skillVersionHash = "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -520,7 +518,7 @@ public struct WhenRunoncallhandoffFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
-            versionHash: "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+            versionHash: "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
         ),
         toolCapturePolicies: [:]
     )
@@ -577,12 +575,11 @@ public struct WhenRunoncallhandoffFires: MeridianWorkflow {
 public struct WhenPrepareshifthandoffFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+    public static let skillVersionHash = "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -596,7 +593,7 @@ public struct WhenPrepareshifthandoffFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
-            versionHash: "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+            versionHash: "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
         ),
         toolCapturePolicies: [:]
     )
@@ -653,12 +650,11 @@ public struct WhenPrepareshifthandoffFires: MeridianWorkflow {
 public struct WhenRunshifthandoffpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+    public static let skillVersionHash = "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -672,7 +668,7 @@ public struct WhenRunshifthandoffpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "oncall handoff",
-            versionHash: "c2e330457a5aaa776ce9e1a2a1178a1ce8c8cb3b94472c213d8f3c906ebeefdf"
+            versionHash: "3584332f3ae08a49787e735f3fce69f84d6d23a64fb14681467b9b8cb55c8252"
         ),
         toolCapturePolicies: [:]
     )

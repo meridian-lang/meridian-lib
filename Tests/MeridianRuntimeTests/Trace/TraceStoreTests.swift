@@ -104,30 +104,6 @@ struct TraceUtilityTests {
 
 @Suite("Trace migration")
 struct TraceMigrationTests {
-    @Test("all legacy EventKind cases round-trip through semantic trace projection")
-    func allKindsRoundTrip() throws {
-        for kind in allEventKinds {
-            let event = Event(
-                timestamp: Date(timeIntervalSince1970: 1_700_000_002),
-                runID: "run-1",
-                sequence: 3,
-                kind: kind,
-                payload: samplePayload(for: kind)
-            )
-            let record = try TraceRecord(
-                legacy: event,
-                step: "trace.step",
-                skillName: "skill",
-                skillVersionHash: "hash",
-                id: "01TESTTRACE00000000000000",
-                ingestOrder: 3
-            )
-            let projected = Event(fromSemantic: record)
-            #expect(projected.kind == kind, Comment(rawValue: "kind \(kind.rawValue) projected as \(projected.kind.rawValue)"))
-            #expect(record.legacyKind == kind.rawValue)
-        }
-    }
-
     @Test("SEM_4_04 judgment boundary maps to a judged record carrying a payload hash, kind, and tool scope")
     func sem404JudgmentBoundary() throws {
         // A judgment boundary (`use judgment to …`) lowers to a plan-execution
@@ -217,21 +193,67 @@ struct TraceStoreTests {
         }
     }
 
-    @Test("8A capability flags: both shipped stores report payload retention and hash chaining per configuration")
+    @Test("8A capability flags: both shipped stores report payload retention and persistence")
     func capabilityFlags() async throws {
-        let memoryStore = InMemoryTraceStore(configuration: TraceConfiguration(hashChaining: true))
+        let memoryStore = InMemoryTraceStore()
         let jsonlURL = try makeTempDirectory().appendingPathComponent("trace.jsonl")
-        let jsonlStore = try JSONLTraceStore(fileURL: jsonlURL, configuration: TraceConfiguration(hashChaining: false))
+        let jsonlStore = try JSONLTraceStore(fileURL: jsonlURL)
 
         let memoryCaps = await memoryStore.capabilities
         #expect(memoryCaps.payloadRetention)
-        #expect(memoryCaps.supportsHashChaining)
         #expect(!memoryCaps.isPersistent)
 
         let jsonlCaps = await jsonlStore.capabilities
         #expect(jsonlCaps.payloadRetention)
-        #expect(!jsonlCaps.supportsHashChaining)
         #expect(jsonlCaps.isPersistent)
+    }
+
+    @Test("schema v1 records remain readable in v2 stores (N-1 reader)")
+    func schemaV1ReaderRegression() async throws {
+        let url = try makeTempDirectory().appendingPathComponent("v1.jsonl")
+        let payload: [String: Value] = ["event": .string("legacy.trace")]
+        let payloadHash = try CanonicalJSON.sha256Hex(for: payload)
+        let v1Record: [String: Any] = [
+            "schemaVersion": 1,
+            "id": "01V1RECORD0000000000000000",
+            "at": "2024-07-18T00:00:00Z",
+            "ingestOrder": 1,
+            "run": "run-v1",
+            "step": "root",
+            "skillName": "legacy-skill",
+            "skillVersionHash": "v1",
+            "tag": "emitted",
+            "subject": "legacy.trace",
+            "payload": ["event": "legacy.trace"],
+            "payloadHash": payloadHash,
+            "outcome": "success",
+            "witness": "legacy-witness-field",
+            "previousHash": "legacy-previous-hash",
+            "recordHash": "legacy-record-hash",
+            "legacyKind": "emit"
+        ]
+        let recordJSON = try JSONSerialization.data(withJSONObject: v1Record)
+        let recordText = String(decoding: recordJSON, as: UTF8.self)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let checksum = try CanonicalJSON.sha256Hex(
+            for: decoder.decode(TraceRecord.self, from: recordJSON)
+        )
+        let envelope = "{\"checksum\":\"\(checksum)\",\"record\":\(recordText)}\n"
+        try Data(envelope.utf8).write(to: url)
+
+        let store = try JSONLTraceStore(fileURL: url)
+        let records = try await store.query(
+            scope: .currentRun,
+            scopeSkills: [],
+            runID: "run-v1",
+            skillName: nil,
+            window: nil,
+            pattern: nil
+        )
+        #expect(records.count == 1)
+        #expect(records[0].id == "01V1RECORD0000000000000000")
+        #expect(records[0].legacyKind == "emit")
     }
 
     @Test("SEM-4-01 append-only within retention and retention compaction drops expired only")
@@ -272,38 +294,6 @@ struct TraceStoreTests {
 
         let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
         #expect(records.map(\.id) == ["early", "late"])
-    }
-
-    @Test("schema v1 records remain readable in v2 stores (N-1 reader)")
-    func schemaV1ReaderRegression() async throws {
-        let store = InMemoryTraceStore()
-        let v1 = TraceRecord(
-            schemaVersion: 1,
-            id: "legacy-v1",
-            at: Date(timeIntervalSince1970: 1_700_000_000),
-            ingestOrder: 1,
-            run: "run-1",
-            step: "deploy",
-            skillName: "skill",
-            skillVersionHash: "hash",
-            tag: .emitted,
-            subject: "legacy",
-            subjectKey: nil,
-            payload: ["event": .string("legacy")],
-            payloadHash: "payload",
-            outcome: .success
-        )
-        try await store.append(v1)
-        let records = try await store.query(
-            scope: .currentRun,
-            scopeSkills: [],
-            runID: "run-1",
-            skillName: nil,
-            window: nil,
-            pattern: TraceQueryPattern(tags: [.emitted], subject: "legacy")
-        )
-        #expect(records.count == 1)
-        #expect(records[0].schemaVersion == 1)
     }
 
     @Test("append rejects unsupported trace schema versions")
@@ -423,42 +413,6 @@ struct TraceStoreTests {
         #expect(sidecars.contains { $0.lastPathComponent.contains(".quarantine-") })
     }
 
-    @Test("hash chain verifies and detects tampering")
-    func hashChainVerification() async throws {
-        let store = InMemoryTraceStore(configuration: TraceConfiguration(hashChaining: true))
-        try await store.append(makeRecord(id: "A", at: Date(timeIntervalSince1970: 1), run: "run-1", ingestOrder: 1, tag: .emitted))
-        try await store.append(makeRecord(id: "B", at: Date(timeIntervalSince1970: 2), run: "run-1", ingestOrder: 2, tag: .completed))
-
-        let valid = try await store.verifyChain(runID: "run-1")
-        #expect(valid.isValid)
-
-        let records = try await store.query(scope: .currentRun, scopeSkills: [], runID: "run-1", skillName: nil, window: nil, pattern: nil)
-        let tampered = TraceRecord(
-            schemaVersion: records[1].schemaVersion,
-            id: records[1].id,
-            at: records[1].at,
-            ingestOrder: records[1].ingestOrder,
-            run: records[1].run,
-            step: records[1].step,
-            skillName: records[1].skillName,
-            skillVersionHash: records[1].skillVersionHash,
-            tag: records[1].tag,
-            subject: records[1].subject,
-            subjectKey: records[1].subjectKey,
-            payload: ["tampered": .boolean(true)],
-            payloadHash: records[1].payloadHash,
-            outcome: records[1].outcome,
-            witness: records[1].witness,
-            previousHash: records[1].previousHash,
-            recordHash: records[1].recordHash,
-            operationalDetail: records[1].operationalDetail,
-            legacyKind: records[1].legacyKind
-        )
-        let tamperedResult = HashChain.verify(records: [records[0], tampered], runID: "run-1")
-        #expect(!tamperedResult.isValid)
-        #expect(tamperedResult.failure?.reason == .recordHashMismatch)
-    }
-
     @Test("indexed query smoke narrows by tag and subject")
     func indexedQuerySmoke() async throws {
         let tempRoot = try makeTempDirectory()
@@ -479,8 +433,6 @@ struct TraceStoreTests {
         #expect(records.map(\.id) == ["C"])
     }
 }
-
-private let allEventKinds: [EventKind] = Array(EventKind.allCases)
 
 private func makeRecord(
     id: String,
@@ -508,21 +460,6 @@ private func makeRecord(
         payloadHash: (try? CanonicalJSON.sha256Hex(for: payload)) ?? "",
         outcome: tag == .failed || tag == .assertFailed ? .failure : .success
     )
-}
-
-private func samplePayload(for kind: EventKind) -> [String: Value] {
-    switch kind {
-    case .workflowStarted, .workflowCompleted, .workflowFailed:
-        return ["workflow": .string("workflow")]
-    case .invokeStart, .invokeEnd, .invokeError, .autonomyStep:
-        return ["tool": .string("tool")]
-    case .emit:
-        return ["event": .string("event")]
-    case .waitStart:
-        return ["kind": .string("signal"), "name": .string("approval")]
-    default:
-        return ["message": .string(kind.rawValue)]
-    }
 }
 
 private func makeTempDirectory() throws -> URL {
@@ -571,9 +508,5 @@ private actor FailingTraceStore: TraceStore {
 
     func compact(retention: Duration, now: Date) async throws {
         try await backing.compact(retention: retention, now: now)
-    }
-
-    func verifyChain(runID: String) async throws -> TraceChainVerificationResult {
-        try await backing.verifyChain(runID: runID)
     }
 }

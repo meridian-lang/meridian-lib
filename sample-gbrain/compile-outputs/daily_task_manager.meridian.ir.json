@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAddtaskFires\/root\/procedure\/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "emit trigger.addTask.fired with kind = \"keyword\", spec = \"add task\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAddtaskFires\/root\/procedure\/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "wait for event completeTask.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCompletetaskFires\/root\/procedure\/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "emit trigger.completeTask.fired with kind = \"keyword\", spec = \"complete task\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCompletetaskFires\/root\/procedure\/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "wait for event deferTask.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenDefertaskFires\/root\/procedure\/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "emit trigger.deferTask.fired with kind = \"keyword\", spec = \"defer task\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenDefertaskFires\/root\/procedure\/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "wait for event taskList.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenTasklistFires\/root\/procedure\/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "emit trigger.taskList.fired with kind = \"keyword\", spec = \"task list\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenTasklistFires\/root\/procedure\/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "emit trigger.whatAreMyTasks.fired with kind = \"keyword\", spec = \"what are my tasks\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhataremytasksFires\/root\/procedure\/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "wait for event whatAreMyTasks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhataremytasksFires\/root\/procedure\/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319",
-      "swift_line" : 1017
+      "swift_line" : 1011
     },
     {
       "canonical" : "`gbrain get ops\/tasks` -- Load current tasks.  — read the task list.",
       "meridian_line" : 46,
       "primitive" : "invoke",
       "stable_step_path" : "\/DailyTaskManagerInput\/phases-steps\/procedure\/bbfda99fa524c1365c726185a80ecc5502dde26c46a54a9308acaea6ccf67fe2",
-      "swift_line" : 628
+      "swift_line" : 627
     },
     {
       "canonical" : "use judgment to follow the Phases — steps 2 guidance:\n  **Defer:** Move to next day\/week with reason\n  Save. `gbrain put ops\/tasks` — write updated task list",
       "meridian_line" : 50,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/DailyTaskManagerInput\/phases-steps-2\/procedure\/0bc7c098fdab7980218df525d54cbbae6dce7ef487835b5774d2d57ee10d1701",
-      "swift_line" : 641
+      "swift_line" : 640
     }
   ],
   "ir_version" : "1.1",

@@ -10,16 +10,16 @@ public enum CanonicalJSON {
         case object([String: Node])
     }
 
-    public static func data(for record: TraceRecord, excludingRecordHash: Bool = false) throws -> Data {
-        try data(for: traceRecordNode(record, excludingRecordHash: excludingRecordHash))
+    public static func data(for record: TraceRecord) throws -> Data {
+        try data(for: traceRecordNode(record))
     }
 
     public static func data(for payload: [String: Value]) throws -> Data {
         try data(for: .object(payload.mapValues(valueNode)))
     }
 
-    public static func sha256Hex(for record: TraceRecord, excludingRecordHash: Bool = false) throws -> String {
-        let digest = SHA256.hash(data: try data(for: record, excludingRecordHash: excludingRecordHash))
+    public static func sha256Hex(for record: TraceRecord) throws -> String {
+        let digest = SHA256.hash(data: try data(for: record))
         return digest.map { String(format: "%02x", $0) }.joined()
     }
 
@@ -32,7 +32,7 @@ public enum CanonicalJSON {
         Data(serialize(node).utf8)
     }
 
-    private static func traceRecordNode(_ record: TraceRecord, excludingRecordHash: Bool) -> Node {
+    private static func traceRecordNode(_ record: TraceRecord) -> Node {
         var object: [String: Node] = [
             "schemaVersion": .string(String(record.schemaVersion)),
             "id": .string(record.id),
@@ -57,15 +57,6 @@ public enum CanonicalJSON {
         }
         if let outcome = record.outcome {
             object["outcome"] = .string(outcome.rawValue)
-        }
-        if let witness = record.witness {
-            object["witness"] = .string(witness)
-        }
-        if let previousHash = record.previousHash {
-            object["previousHash"] = .string(previousHash)
-        }
-        if !excludingRecordHash, let recordHash = record.recordHash {
-            object["recordHash"] = .string(recordHash)
         }
         if let operationalDetail = record.operationalDetail {
             object["operationalDetail"] = .string(operationalDetail)

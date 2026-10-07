@@ -5,91 +5,91 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenApprovehighvalueordersFires\/root\/procedure\/c328c142b18cd8ae0ae0cac3e8d6a7f41b6d68e1274996d64debabd32f78b182",
-      "swift_line" : 816
+      "swift_line" : 813
     },
     {
       "canonical" : "wait for event approveHighValueOrders.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenApprovehighvalueordersFires\/root\/procedure\/cd260f83ef63cd414d7feab7dfefc4183f116b95aaa60445f3682702e8e32f1a",
-      "swift_line" : 816
+      "swift_line" : 813
     },
     {
       "canonical" : "wait for event routeOrdersApproval.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRouteordersapprovalFires\/root\/procedure\/7f2c0d0354a0f08f20e838020eaf7a6faea7c5b77bc2a6b8c2192f1b986a6b88",
-      "swift_line" : 816
+      "swift_line" : 813
     },
     {
       "canonical" : "emit trigger.routeOrdersApproval.fired with kind = \"keyword\", spec = \"route orders for approval\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRouteordersapprovalFires\/root\/procedure\/82338257584e1c6d7a1e45272f46e3220d8544f392d6609f4805c6c8e38e0475",
-      "swift_line" : 816
+      "swift_line" : 813
     },
     {
       "canonical" : "bind orders = invoke order.list with status = \"open\".",
       "meridian_line" : 19,
       "primitive" : "invoke",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "for each orders whose total amount is more than the high value threshold,\n  wait for approval of order from an account manager.\n  ask the user to choose between \"ship\", \"hold\".\n  if choice equals \"ship\",\n    bind shipment = invoke shipment.create with order = order.\n  otherwise,\n    emit erp.note with message = \"order held pending manual review\".",
       "meridian_line" : 20,
       "primitive" : "iterate",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/b11300be7ab0bdf302422de349648df57ddbc39e11aa4fafba0d3415ded0e74b",
-      "swift_line" : 593
+      "swift_line" : 592
     },
     {
       "canonical" : "wait for approval of order from an account manager.",
       "meridian_line" : 21,
       "primitive" : "wait",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/d8a4a4f7452981460b0771c4f60ae04169a91fa6a6b33df612ec5514b69aaddd",
-      "swift_line" : 602
+      "swift_line" : 601
     },
     {
       "canonical" : "emit ask.choice with prompt = \"ask the user to choose between \\\"ship\\\", \\\"hold\\\"\", options = \"ship, hold\".",
       "meridian_line" : 22,
       "primitive" : "emit",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/3ca13de3a6b0257f1e26f050c347cc214f13f434d94e455ab1857c54f9972ba7",
-      "swift_line" : 619
+      "swift_line" : 618
     },
     {
       "canonical" : "ask the user to choose between \"ship\", \"hold\".",
       "meridian_line" : 22,
       "primitive" : "wait",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/87456516db8fd3d7789700b88ffb6f5f15c9ff945b64a482c642bf2682c7c780",
-      "swift_line" : 619
+      "swift_line" : 618
     },
     {
       "canonical" : "if choice equals \"ship\",\n  bind shipment = invoke shipment.create with order = order.\notherwise,\n  emit erp.note with message = \"order held pending manual review\".",
       "meridian_line" : 23,
       "primitive" : "branch",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/iterate.body\/79ec3ea0526d1de4b3f3bd1c60b2a4c231bfab6542afdee27ed477079342b18a",
-      "swift_line" : 624
+      "swift_line" : 623
     },
     {
       "canonical" : "bind shipment = invoke shipment.create with order = order.",
       "meridian_line" : 24,
       "primitive" : "invoke",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/branch.then\/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1",
-      "swift_line" : 628
+      "swift_line" : 627
     },
     {
       "canonical" : "emit erp.note with message = \"order held pending manual review\".",
       "meridian_line" : 26,
       "primitive" : "emit",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/branch.else\/17a5d7fb4f04455aa17af8e1c8c9a7c3c04a81890279a1ce101f0d1f0305a642",
-      "swift_line" : 646
+      "swift_line" : 645
     },
     {
       "canonical" : "emit erp.report with message = \"high value order approval pass complete\".",
       "meridian_line" : 27,
       "primitive" : "emit",
       "stable_step_path" : "\/OrderApproval\/workflow-steps\/procedure\/046e6eb88bffc6850393b1986e510b09ebfeb93fa4dc4196bde68c9884e6dcc9",
-      "swift_line" : 665
+      "swift_line" : 664
     }
   ],
   "ir_version" : "1.1",

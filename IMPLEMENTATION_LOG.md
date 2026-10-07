@@ -3002,3 +3002,67 @@ backups and the pre-rewrite stash were dropped, reflog expired, and
 `meridian-lib 2`) is on the old history and must be re-cloned or rebased.
 
 **STATUS:** RESOLVED (local). Remote sync pending user force-push.
+
+## 2026-10-07 — Simplification Phase 1a: trace backends/crypto removed
+
+**Scope (user-approved):** remove the speculative trace-backend and crypto
+surface, keep the in-memory + JSONL stores. This is the first phase of the
+nine-phase "deep simplification" plan (see the plan file for the full map).
+
+**Deleted:** `Trace/SQLiteTraceStore.swift`, `Trace/SQLiteTraceDatabase.swift`,
+`Trace/HTTPTraceStoreClient.swift`, `Trace/OTLPTraceExporter.swift`,
+`Trace/TraceBatchSigner.swift`, `Trace/HashChain.swift`,
+`Trace/WitnessCapture.swift`, `Trace/CalendarAmountEvaluator.swift`;
+`Tests/MeridianRuntimeTests/HashChainCoverageTests.swift`.
+
+**API changes:** `TraceStore` loses `verifyChain(runID:)`;
+`TraceStoreCapabilities` keeps only `isPersistent`/`supportsCompaction`/
+`payloadRetention`; `TraceRecord` drops `witness`/`previousHash`/`recordHash`
+and `supportedSchemaVersions` (decoder still ignores unknown keys, so older
+JSONL files load — re-added as the `schema v1 records remain readable` test);
+`TraceConfiguration` drops `hashChaining`; `RuntimeTraceConfiguration` drops
+`storeEndpoint` and `TraceStoreKind` is `memory|file`;
+`Runtime.recordViolation` drops the witness-capture parameters;
+`Event(fromSemantic:)`/`projectedKind` deleted (test-only).
+`HashChain.apply`'s `payloadLimit` truncation moved into
+`TraceStoreHelpers.prepareForAppend` — behaviour preserved.
+
+**Also changed:** `=== trace ===` no longer accepts `hash chaining` or
+`store endpoint`; `store:` accepts `memory|file`; `hash chaining:` removed
+from six corpus `.merconfig` files; `Package.swift` drops the `sqlite3`
+linker flag; `TraceVerifyCommand` drops the hash-chain section
+(checksum/order/content/schema/quarantine checks remain).
+
+**Test dispositions:** 22 `@Test` functions deleted (only ones exercising
+removed types), ~20 fixed (constructor/argument updates). Two pre-existing
+issues surfaced and were fixed rather than papered over: the
+`TraceBootstrapTests` suite now carries `.serialized` (a sibling test
+`setenv`s `MERIDIAN_TRACE`, which raced the nil-spec test under Swift
+Testing's in-process parallelism), and the deleted `schemaV1ReaderRegression`
+was replaced by an on-disk v1 → v2 reader test that covers the capability
+that actually remains.
+
+**Artifacts regenerated:** `examples/golden/order_processing_expected.swift`
+(+ 19 `examples/golden/skill/*`), all seven corpora `compile-outputs/`
+(gbrain, erp, procedures, incident, etl, governance, clinical), and
+`Sources/SampleDemoFlows/GeneratedOrderProcessing/OrderProcessing.swift`
+(byte-identical to the golden). `skillVersionHash` values changed because the
+merconfig sources changed.
+
+**Validation:** `swift test --skip MeridianSlowIntegrationTests` → 2753 tests
+/ 352 suites, 0 failures. `GeneratedSwiftTypecheckSlowTests` run for the
+regenerated Swift (see Phase 1 gate note).
+
+**STATUS:** IN PROGRESS — Phase 1b (prover obligations) is next; phase-gate
+sign-off requested after Phase 1 completes.
+
+**Note for Phase 1b:** the `Obligations/` directory is NOT entirely
+artifact-export code. `ObligationId`, `ObligationIdRegistry`,
+`ObligationIdStamper`, `ContractObligationDetector`, and
+`CanonicalIRSerializer`'s semantic-payload builders define the *norm identity*
+that deontic guards and `recordViolation` use at runtime, so they are kept
+(relocated to `IR/NormIdentity.swift` and renamed `NormId*`); only the
+prover-artifact layer (`ObligationArtifact`, `ObligationDocument`,
+`ProofIRReader`, `ObligationEvaluator`, `CoherenceHarness`, the
+`obligations` CLI/MCP surface, and `meridian_obligations` manifest entries)
+is deleted.

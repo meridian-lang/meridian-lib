@@ -5,98 +5,98 @@
       "meridian_line" : 15,
       "primitive" : "assert",
       "stable_step_path" : "\/LetUserAccessResource\/root\/procedure\/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076",
-      "swift_line" : 470
+      "swift_line" : 469
     },
     {
       "canonical" : "assert either queue position is at most 3 or queue position is at most 3.",
       "meridian_line" : 19,
       "primitive" : "assert",
       "stable_step_path" : "\/EscalateOverdueAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
-      "swift_line" : 733
+      "swift_line" : 729
     },
     {
       "canonical" : "assert either queue position is at most 3 or queue position is at most 3.",
       "meridian_line" : 19,
       "primitive" : "assert",
       "stable_step_path" : "\/GrantAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
-      "swift_line" : 733
+      "swift_line" : 729
     },
     {
       "canonical" : "assert either queue position is at most 3 or queue position is at most 3.",
       "meridian_line" : 19,
       "primitive" : "assert",
       "stable_step_path" : "\/HaveReviewerApproveAccessRequest\/root\/procedure\/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353",
-      "swift_line" : 733
+      "swift_line" : 729
     },
     {
       "canonical" : "wait for approval of overdue access request from security officer.",
       "meridian_line" : 21,
       "primitive" : "wait",
       "stable_step_path" : "\/EscalateOverdueAccessRequest\/root\/procedure\/be4d5da2b1a96fbddd7d74e312fa48c0259d897c40c225172f76b4bdb4be7f16",
-      "swift_line" : 728
+      "swift_line" : 724
     },
     {
       "canonical" : "wait for approval of access request from security officer.",
       "meridian_line" : 21,
       "primitive" : "wait",
       "stable_step_path" : "\/GrantAccessRequest\/root\/procedure\/3b233f93b6659d7e5ecf82b38168972f75aaeab9943ec3a13449dcc0bd4e906e",
-      "swift_line" : 728
+      "swift_line" : 724
     },
     {
       "canonical" : "wait for approval of reviewer approve from security officer.",
       "meridian_line" : 21,
       "primitive" : "wait",
       "stable_step_path" : "\/HaveReviewerApproveAccessRequest\/root\/procedure\/75e2ed92237afbb931b5dd2e2d495cfabe13f7630cb1cea6cb81f0f15569655c",
-      "swift_line" : 728
+      "swift_line" : 724
     },
     {
       "canonical" : "wait for approval of user access from security officer.",
       "meridian_line" : 21,
       "primitive" : "wait",
       "stable_step_path" : "\/LetUserAccessResource\/root\/procedure\/2b031dcb54499fa7d96f42b8b5dbcc552166bd484d960265724b728618cd9a59",
-      "swift_line" : 728
+      "swift_line" : 724
     },
     {
       "canonical" : "wait for event accessRequestIsFlaggedAs.",
       "meridian_line" : 23,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAccessRequestIs\/root\/procedure\/4c329036885f4005af854bef5d58bca2d2d6fa4493f61f5b3eb77360fad7d18b",
-      "swift_line" : 815
+      "swift_line" : 810
     },
     {
       "canonical" : "emit trigger.accessRequestIsFlaggedAs.fired with action = \"escalate the access request\", condition = \"an access request is flagged as overdue\".",
       "meridian_line" : 23,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAccessRequestIs\/root\/procedure\/a048dbcdea622e8668f786b404454497963d7f5e9338a754a5a33de997aef243",
-      "swift_line" : 815
+      "swift_line" : 810
     },
     {
       "canonical" : "invoke access.grant with user = user, resource = resource.",
       "meridian_line" : 28,
       "primitive" : "invoke",
       "stable_step_path" : "\/LetUserAccessResource\/root\/procedure\/257419b4bacc9d2b54cc29ce90ed57f803b3dd924f54617992a50c43aa527b9c",
-      "swift_line" : 475
+      "swift_line" : 474
     },
     {
       "canonical" : "invoke audit.log with request = access request.",
       "meridian_line" : 31,
       "primitive" : "invoke",
       "stable_step_path" : "\/HaveReviewerApproveAccessRequest\/root\/procedure\/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711",
-      "swift_line" : 564
+      "swift_line" : 562
     },
     {
       "canonical" : "invoke access.grant with user = the access request's requestor, resource = resource.",
       "meridian_line" : 34,
       "primitive" : "invoke",
       "stable_step_path" : "\/GrantAccessRequest\/root\/procedure\/f3de08021097474026cc3f69e0af9bf6700376421a8142c9fc5177c59c3707d6",
-      "swift_line" : 652
+      "swift_line" : 649
     },
     {
       "canonical" : "invoke audit.log with request = access request.",
       "meridian_line" : 37,
       "primitive" : "invoke",
       "stable_step_path" : "\/EscalateOverdueAccessRequest\/root\/procedure\/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711",
-      "swift_line" : 738
+      "swift_line" : 734
     }
   ],
   "ir_version" : "1.1",

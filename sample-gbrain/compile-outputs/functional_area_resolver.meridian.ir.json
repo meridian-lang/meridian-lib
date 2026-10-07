@@ -5,238 +5,238 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAgentsmdtoolargeFires\/root\/procedure\/6c37af5530a8145feb74e6158403280aade3d8ff33aa4856131fab3f8d7faf5e",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event agentsMdTooLarge.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAgentsmdtoolargeFires\/root\/procedure\/de7215bb3b935ae2744894db208bec2a78eec241c13c911b039bea86d7579c86",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event compressAgentsMd.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCompressagentsmdFires\/root\/procedure\/d58a903ff7e5f1fcac7082941365e697ccfd9b03f061836397c45fefecc0de04",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.compressAgentsMd.fired with kind = \"keyword\", spec = \"compress agents.md\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCompressagentsmdFires\/root\/procedure\/f7bb208a2172bf6e9feacaf6b4f45dbf497e80a737e149a54889b177cc2bb28b",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.compressMyResolver.fired with kind = \"keyword\", spec = \"compress my resolver\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCompressmyresolverFires\/root\/procedure\/8ad73dbb84727144aac4250d45111783089be5e7d2b252ae074407064343a822",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event compressMyResolver.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCompressmyresolverFires\/root\/procedure\/c6823f8bc7cf53093d7210140ab2beab3eaf7feb12b995373f9ac1de14affdd4",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event contextHealthAgents.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenContexthealthagentsFires\/root\/procedure\/038cb82d5844c531581f316701befe22b3e90ec99964ce59b43572d352ab7f65",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.contextHealthAgents.fired with kind = \"keyword\", spec = \"context-health agents\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenContexthealthagentsFires\/root\/procedure\/634227eea797ed937d6e2f84f4c94265d95b0590491773f1d5bf88d980409c3f",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.contextHealthResolver.fired with kind = \"keyword\", spec = \"context-health resolver\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenContexthealthresolverFires\/root\/procedure\/6af9738899054a38678ba3a5f915d7c9cf9339e694a11e6d4c60bb8397fcf0a6",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event contextHealthResolver.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenContexthealthresolverFires\/root\/procedure\/c95dc709703282864c4cb8cd2304aa832de7c4745623158e32dee411b7289cd5",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.functionalAreaDispatcher.fired with kind = \"keyword\", spec = \"functional area dispatcher\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenFunctionalareadispatcherFires\/root\/procedure\/44e6ebc7ae065f1bddd462b16fa857a25a163367fb8f13f25d09d3dd4a94913b",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event functionalAreaDispatcher.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenFunctionalareadispatcherFires\/root\/procedure\/6ee7a6570d0c4df4c69dd0239e62472f94e65c0afc5f351ee25efdda42ed4ce1",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.functionalAreaResolver.fired with kind = \"keyword\", spec = \"functional area resolver\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenFunctionalarearesolverFires\/root\/procedure\/170893ce16fee91be2afd3c26c4c4f74fa167399017eee112d17ae5af54717b2",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event functionalAreaResolver.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenFunctionalarearesolverFires\/root\/procedure\/53cc48923e7883a3d7cd6bc2ca8984c382e61c88c88d243841ef235f40662c3a",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event reduceContextBudget.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReducecontextbudgetFires\/root\/procedure\/665ae551d8c0640b65d9bbb603ea285b9e90a47121826c03175a65e685326afb",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.reduceContextBudget.fired with kind = \"keyword\", spec = \"reduce context budget\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReducecontextbudgetFires\/root\/procedure\/eaf9facfe3840f1437cb787092b966ec0be3db617f7a0e4fe490aaf2ada2bab4",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.resolverMdTooBig.fired with kind = \"keyword\", spec = \"resolver.md too big\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenResolvermdtoobigFires\/root\/procedure\/2c98a32d4fabf4f783c7808f9678e02422f0f266a8682595a97625cbd8fe55e2",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event resolverMdTooBig.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenResolvermdtoobigFires\/root\/procedure\/37987e8e723955ef706f9cc87182044933bc61d146b66620cc0576b7a1c1a6dc",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event resolverTooBig.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenResolvertoobigFires\/root\/procedure\/1310b556af52bfa590f2498e6cfbdd812a17e3190d01aa70065da1db8512d3ce",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.resolverTooBig.fired with kind = \"keyword\", spec = \"resolver too big\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenResolvertoobigFires\/root\/procedure\/363c2fc8f779e0dbb8aef40b1c847c65e1ce19cc8a805040e2b7836bc9fb8dc0",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event shrinkRoutingTable.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenShrinkroutingtableFires\/root\/procedure\/87123a44e970da5560bdf8bd9d0679d319c961ef962b18eaf4db4c56e32fc219",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.shrinkRoutingTable.fired with kind = \"keyword\", spec = \"shrink routing table\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenShrinkroutingtableFires\/root\/procedure\/f8701142f41152c765902de7e4a8e5a17d423a1b3c45adc0f558ae053aaa87ad",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "wait for event slimDownAgentsMd.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSlimdownagentsmdFires\/root\/procedure\/906a56971289035e87136a8d34c019ca96ca50e8fb3d5e5de79800769fc15b7b",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "emit trigger.slimDownAgentsMd.fired with kind = \"keyword\", spec = \"slim down agents.md\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSlimdownagentsmdFires\/root\/procedure\/a7dc31b6f08e7277971061b7aad9cfd228cfc8a1c8b28d8697709ce4e1149bad",
-      "swift_line" : 1652
+      "swift_line" : 1639
     },
     {
       "canonical" : "`(dispatcher for: ...)` -- Sub-skill visibility — the  list shows what's available.",
       "meridian_line" : 83,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/why-it-works-steps\/procedure\/5d52b96899834b0ab7426fb0b0e577c059ceb5238e18a469f06182323c82821f",
-      "swift_line" : 630
+      "swift_line" : 629
     },
     {
       "canonical" : "`node harness.mjs --model sonnet  # ~$1.00`.",
       "meridian_line" : 136,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/1222f92e1abca1c0e98d83656f4c821633e79f0b54255e5ca66aa6ce670d3fa7",
-      "swift_line" : 696
+      "swift_line" : 695
     },
     {
       "canonical" : "`cd evals\/functional-area-resolver`.",
       "meridian_line" : 136,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/623c8cac3529db5601c60f0be95ba544a5dd591232c67f30c88c42476fd0b445",
-      "swift_line" : 696
+      "swift_line" : 695
     },
     {
       "canonical" : "`node rescore.mjs baseline-runs\/2026-05-11-opus-4-7.jsonl  # zero-cost re-score`.",
       "meridian_line" : 136,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/93e180956da8a0909e94c4a1517ef1b54475192011796ff5502b5fbb6ec679ca",
-      "swift_line" : 696
+      "swift_line" : 695
     },
     {
       "canonical" : "`node harness.mjs --model opus    # ~225 LLM calls, ~$1.70 at Opus pricing`.",
       "meridian_line" : 136,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/99d3d6b8d5546646ae8a693a61bd3fc86f8f0fda3d12533a199b3a00eb9bde6c",
-      "swift_line" : 696
+      "swift_line" : 695
     },
     {
       "canonical" : "`node harness.mjs --model haiku   # ~$0.30`.",
       "meridian_line" : 136,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/d956ab5972abafb7e91647a5b8145ad1307feb535728c3caef7cedc263098ab3",
-      "swift_line" : 696
+      "swift_line" : 695
     },
     {
       "canonical" : "`evals\/functional-area-resolver\/baseline-runs\/2026-05-11-{opus-4-7,sonnet-4-6,haiku-4-5}.jsonl`.",
       "meridian_line" : 145,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/reproduce-steps\/procedure\/184ca7d14aa8c168a918aa41b15ea63faa8c285f8aeedc8073ac145803e9fb38",
-      "swift_line" : 709
+      "swift_line" : 708
     },
     {
       "canonical" : "bind results = invoke page.search with query = & knowledge— brain ops as dispatcher.",
       "meridian_line" : 245,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/step-3-identify-functional-areas-steps\/procedure\/cf912e8b7b82473be18c8dee99513fb9f3b175e8da427294771854edbf620c5e",
-      "swift_line" : 722
+      "swift_line" : 721
     },
     {
       "canonical" : "bind report = invoke research with topic = & investigation— perplexity research as dispatcher.",
       "meridian_line" : 249,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/step-3-identify-functional-areas-steps-2\/procedure\/27b17a52598e1490220179667823330db9ffa0ec5edb6145c07f181bb5c456d7",
-      "swift_line" : 736
+      "swift_line" : 735
     },
     {
       "canonical" : "`(dispatcher for: ...)` -- Add the skill name to that area's  list.",
       "meridian_line" : 403,
       "primitive" : "invoke",
       "stable_step_path" : "\/FunctionalAreaResolverInput\/maintenance-steps\/procedure\/5d52b96899834b0ab7426fb0b0e577c059ceb5238e18a469f06182323c82821f",
-      "swift_line" : 750
+      "swift_line" : 749
     }
   ],
   "ir_version" : "1.1",

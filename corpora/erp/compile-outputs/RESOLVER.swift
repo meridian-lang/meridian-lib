@@ -525,12 +525,11 @@ private static func meridianDef_PurchaseOrder_pending(_ __subjectValue: Value?) 
 public struct Entry: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "33ad4f1968d1c05c266fe4ee22915f54f48a546b9cc99769f182b1f146374e4a"
+    public static let skillVersionHash = "49cdc6c0cc910e26768db9294c756e8f19e88e3e8a686e33808b520bf9e6494b"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -544,7 +543,7 @@ public struct Entry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "RESOLVER",
-            versionHash: "33ad4f1968d1c05c266fe4ee22915f54f48a546b9cc99769f182b1f146374e4a"
+            versionHash: "49cdc6c0cc910e26768db9294c756e8f19e88e3e8a686e33808b520bf9e6494b"
         ),
         toolCapturePolicies: [:]
     )

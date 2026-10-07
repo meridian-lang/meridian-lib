@@ -5,91 +5,91 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAskproceedingFires\/root\/procedure\/02c18d54276b8abbe3ea14f17bf6fd1b7a756fd1b4153314f8ce55e7e9784b8b",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "wait for event askProceeding.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAskproceedingFires\/root\/procedure\/4ed67a188948f3fa0d7644910757bd7990d4ca72b054b74ad030949df8a84c40",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "emit trigger.choiceGate.fired with kind = \"keyword\", spec = \"choice gate\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenChoicegateFires\/root\/procedure\/1dc63646e13eaa9e69be702ec78f00ce62af5df37543a9393bfc30eb9d1ff754",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "wait for event choiceGate.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenChoicegateFires\/root\/procedure\/2203a20380ad8c8a5ea10174aed02b92428cce230482cbf4e99b8d615abd9e8f",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "emit trigger.presentOptions.fired with kind = \"keyword\", spec = \"present options\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPresentoptionsFires\/root\/procedure\/a66d2f8de212d21dd8759f2fe39bddd8d1086d7a701b04787f4a4cd1f5546dd1",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "wait for event presentOptions.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPresentoptionsFires\/root\/procedure\/eec06581dc5176ad236722549a810aa91e1afc2996fe8af3ad3ec9337f844235",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "emit trigger.userDecision.fired with kind = \"keyword\", spec = \"user decision\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenUserdecisionFires\/root\/procedure\/0663a1962caa3ecd076728407790717d5ee9221c3ce4b5b7d67f351a4783cf3f",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "wait for event userDecision.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenUserdecisionFires\/root\/procedure\/3c8face1c339d35233cbe105ff826741c92b1a73a9dc8612514ff244feb1f1aa",
-      "swift_line" : 946
+      "swift_line" : 941
     },
     {
       "canonical" : "if time critical operations where delay costs is more than wrong choice,\n  complete.",
       "meridian_line" : 65,
       "primitive" : "branch",
       "stable_step_path" : "\/AskUserInput\/when-not-to-use-steps\/negative-applicability\/9568b620bfb6105bd3b8f2a44face8fe595edce2502f9694ddb20e7dbae2e9c3",
-      "swift_line" : 629
+      "swift_line" : 628
     },
     {
       "canonical" : "complete.",
       "meridian_line" : 65,
       "primitive" : "complete",
       "stable_step_path" : "\/AskUserInput\/when-not-to-use-steps\/negative-applicability\/branch.then\/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1",
-      "swift_line" : 629
+      "swift_line" : 628
     },
     {
       "canonical" : "use judgment to follow the How To Gate (CRITICAL) — steps 2 guidance:\n  ❌ Continue with \"while you decide, I'll start on...\"\n  use judgment to follow the Context block — steps guidance:\n  1-3 lines maximum. The user should understand the decision in under 5 seconds\n  Format: `Action verb — brief qualifier`\n  ✅ \"Merge — combine with existing page\"\n  ✅ \"Create new — separate meeting page\"\n  ❌ \"Option 1\"\n  ❌ \"Click here to merge the content into the existing brain page\"\n  When building a new skill that needs user input at a decision point,\n  reference this pattern rather than inventing a new one",
       "meridian_line" : 141,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/AskUserInput\/how-to-gate-critical-steps-2\/procedure\/923442c5df21f45c9e2400742d0ebdb0e0f3779be78345eac5db9cf86d5df735",
-      "swift_line" : 645
+      "swift_line" : 644
     },
     {
       "canonical" : "assert not (every choice gate must let the user decline.\"none of these\"\/\"skip\"\/\"cancel\" equals mandatory).",
       "meridian_line" : 265,
       "primitive" : "assert",
       "stable_step_path" : "\/AskUserInput\/anti-patterns-steps-2\/prohibitions\/0a3257413247dd5ce1fc2fdc2206c33eadc70ba4a686cf9b2a047e1943f3d517",
-      "swift_line" : 636
+      "swift_line" : 635
     },
     {
       "canonical" : "assert not (\"option1\" forces re reading the context.\"merge into existing page\" equals self explanatory).",
       "meridian_line" : 269,
       "primitive" : "assert",
       "stable_step_path" : "\/AskUserInput\/anti-patterns-steps-3\/prohibitions\/1e459cfa5bccf46b8455d3c6c39800d78836ed4f8cb5aaf7b656998eb3c2dd28",
-      "swift_line" : 641
+      "swift_line" : 640
     }
   ],
   "ir_version" : "1.1",

@@ -374,12 +374,11 @@ public struct PostmortemRender: MeridianWorkflow {
         "triggers": "\"render postmortem\"\n\"publish incident postmortem\"\n\"run the postmortem render pass\"",
     ]
 
-    public static let skillVersionHash = "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+    public static let skillVersionHash = "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct PostmortemRender: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
-            versionHash: "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+            versionHash: "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
         ),
         toolCapturePolicies: [:]
     )
@@ -505,12 +504,11 @@ public struct PostmortemRender: MeridianWorkflow {
 public struct WhenRenderpostmortemFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+    public static let skillVersionHash = "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -524,7 +522,7 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
-            versionHash: "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+            versionHash: "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
         ),
         toolCapturePolicies: [:]
     )
@@ -581,12 +579,11 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
 public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+    public static let skillVersionHash = "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -600,7 +597,7 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
-            versionHash: "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+            versionHash: "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
         ),
         toolCapturePolicies: [:]
     )
@@ -657,12 +654,11 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
 public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+    public static let skillVersionHash = "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -676,7 +672,7 @@ public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "postmortem render",
-            versionHash: "3e4622de0a09d99c523c617643062c3d6368e08a17933e4a9769c5d2bbc018a2"
+            versionHash: "1254475da2891dc12d725e70e95898da5bc40e102842c07c47b22f041ebe074c"
         ),
         toolCapturePolicies: [:]
     )

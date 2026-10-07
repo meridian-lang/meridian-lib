@@ -448,15 +448,11 @@ public struct SwiftEmitter {
         if let storePath = config.storePath {
             optionalStoreFields += ",\n        storePath: \"\(escapeSwiftStringLiteral(storePath))\""
         }
-        if let storeEndpoint = config.storeEndpoint {
-            optionalStoreFields += ",\n        storeEndpoint: URL(string: \"\(escapeSwiftStringLiteral(storeEndpoint.absoluteString))\")"
-        }
         return """
 RuntimeTraceConfiguration(
         store: .\(config.store.rawValue),
         trace: TraceConfiguration(
             retention: .seconds(\(config.trace.retention.components.seconds)),
-            hashChaining: \(config.trace.hashChaining),
             payloadLimit: \(config.trace.payloadLimit.map(String.init) ?? "nil"),
             usuallyThreshold: \(config.trace.usuallyThreshold),
             rarelyThreshold: \(config.trace.rarelyThreshold),

@@ -390,12 +390,11 @@ public struct ShiftHandoff: MeridianWorkflow {
         "triggers": "\"run shift handoff\"\n\"render shift handoff report\"",
     ]
 
-    public static let skillVersionHash = "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+    public static let skillVersionHash = "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -409,7 +408,7 @@ public struct ShiftHandoff: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
-            versionHash: "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+            versionHash: "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )
@@ -493,12 +492,11 @@ public struct ShiftHandoff: MeridianWorkflow {
 public struct WhenRunshifthandoffFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+    public static let skillVersionHash = "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -512,7 +510,7 @@ public struct WhenRunshifthandoffFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
-            versionHash: "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+            versionHash: "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )
@@ -569,12 +567,11 @@ public struct WhenRunshifthandoffFires: MeridianWorkflow {
 public struct WhenRendershifthandoffreportFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+    public static let skillVersionHash = "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -588,7 +585,7 @@ public struct WhenRendershifthandoffreportFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "shift handoff",
-            versionHash: "9662aef0f8b0628b26ae0daa174c1f27003f5425fdadf882266c7a0a12b6348f"
+            versionHash: "5d34703ccb42a14e7cd920ead4d294bb4eacea6dcd5c0ab43be2c7ef2a87435e"
         ),
         toolCapturePolicies: ["allergy.check": .redacted(["order"]), "audit.log": .hashOnly, "consent.record": .redacted(["patient"]), "medication.administer": .hashOnly, "order.list": .hashOnly, "order.override": .hashOnly, "patient.escalate": .hashOnly, "patient.list": .hashOnly, "protocol.lookup": .hashOnly, "vitals.read": .redacted(["patient"])]
     )

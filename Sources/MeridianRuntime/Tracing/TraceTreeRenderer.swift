@@ -369,7 +369,7 @@ public struct TraceTreeRenderer {
         else { return nil }
 
         var payload = record["payload"] as? [String: Any] ?? [:]
-        for key in ["subject", "skillName", "skillVersionHash", "outcome", "witness", "operationalDetail", "legacyKind"] {
+        for key in ["subject", "skillName", "skillVersionHash", "outcome", "operationalDetail", "legacyKind"] {
             if let value = record[key], payload[key] == nil {
                 payload[key] = value
             }

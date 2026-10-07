@@ -5,119 +5,119 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBrainpdfFires\/root\/procedure\/00c6b5a2485f4cb47ba452556cdf6655ef59f556e6209c24c7c61ca242e629cc",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "emit trigger.brainPdf.fired with kind = \"keyword\", spec = \"brain pdf\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBrainpdfFires\/root\/procedure\/e6c725821f55af86030c0e60316d483863e3ef49ab50da5ba1cbfed9c7882175",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "wait for event convertBrainPagePdf.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenConvertbrainpagepdfFires\/root\/procedure\/50b66e01f46b5133ee9adf234954aac42ba9046379ca5c6e375cff554917d393",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "emit trigger.convertBrainPagePdf.fired with kind = \"keyword\", spec = \"convert brain page to pdf\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenConvertbrainpagepdfFires\/root\/procedure\/65ca10ad1555060760b7f41acfd3f53523153b445680a4b05b03672df55cab30",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "emit trigger.exportBrainPage.fired with kind = \"keyword\", spec = \"export brain page\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenExportbrainpageFires\/root\/procedure\/5e630ee2fd9dbde7a40862435e35ffc48958ee63e274a974845045192cdebdc8",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "wait for event exportBrainPage.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenExportbrainpageFires\/root\/procedure\/8c4cf6b13869f7b29a32e31140c10a6266c2791ab971302b4ec2f10583734115",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "wait for event makePdfBrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMakepdfbrainFires\/root\/procedure\/5fba8ce1a21f2cef3bf5bbcf7d381a2c7f4ef9c2865babd9b12470a5ad28a9c9",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "emit trigger.makePdfBrain.fired with kind = \"keyword\", spec = \"make pdf from brain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMakepdfbrainFires\/root\/procedure\/ea3a2c85729168d7bcd76a50f339f3771551940994ef99b6dc26b72afc60d83d",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "emit trigger.publishThisPageAsPdf.fired with kind = \"keyword\", spec = \"publish this page as pdf\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPublishthispageaspdfFires\/root\/procedure\/51d5439f34f1c94e3d3bc3e59534193ef9af20f8410375eedc24031a73736f06",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "wait for event publishThisPageAsPdf.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPublishthispageaspdfFires\/root\/procedure\/726337e9cb249f5e2b76b4725835a350677123e53da404fc4a014383c912b49b",
-      "swift_line" : 1083
+      "swift_line" : 1077
     },
     {
       "canonical" : "`make-pdf` -- This skill depends on the gstack  binary at.",
       "meridian_line" : 51,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/prerequisite-gstack-make-pdf-steps\/procedure\/bf8cbfb440ba667fa5b73c0ab5ffe453f0b542fa13ece1c9a16f70bcb8b12626",
-      "swift_line" : 626
+      "swift_line" : 625
     },
     {
       "canonical" : "`CONTAINER=1 \"$P\" generate --cover --toc \"$CLEAN\" \"$OUT\"`.",
       "meridian_line" : 119,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/common-patterns\/procedure\/266570eed26a44500beba25c1ee0675eee3bbb4fa2702560747991f4b6caa61a",
-      "swift_line" : 679
+      "swift_line" : 678
     },
     {
       "canonical" : "`CONTAINER=1 \"$P\" generate --title \"Custom Title\" --author \"Custom Author\" \"$CLEAN\" \"$OUT\"`.",
       "meridian_line" : 119,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/common-patterns\/procedure\/37eb13bd55f949b336633fdf0e46c6c95d435ab87840fafca9a8356de89d4056",
-      "swift_line" : 679
+      "swift_line" : 678
     },
     {
       "canonical" : "`brain-pdf <slug>`.",
       "meridian_line" : 119,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/common-patterns\/procedure\/66a7186cc043d7932bc1ed6ae44cb873c3fd0fe87781a68c9d521322dbc6b0ca",
-      "swift_line" : 679
+      "swift_line" : 678
     },
     {
       "canonical" : "`CONTAINER=1 \"$P\" generate --watermark DRAFT \"$CLEAN\" \"$OUT\"`.",
       "meridian_line" : 119,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/common-patterns\/procedure\/ad6413d1f255e3641f1f1b16fd4626ec0ba20dab6f092037e091aa87b80dd92b",
-      "swift_line" : 679
+      "swift_line" : 678
     },
     {
       "canonical" : "`fonts-liberation` -- (Helvetica\/Arial substitute).",
       "meridian_line" : 154,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/font-requirements-steps\/procedure\/f58f801a3dc4230fc06a0db7c8ee75dc6fa622e7cf5de5f5a3c414fce3b84b2b",
-      "swift_line" : 692
+      "swift_line" : 691
     },
     {
       "canonical" : "`fonts-noto-cjk` -- (Chinese\/Japanese\/Korean characters).",
       "meridian_line" : 155,
       "primitive" : "invoke",
       "stable_step_path" : "\/BrainPdfInput\/font-requirements-steps\/procedure\/7358ebcc8797585fb354b8cd8100b5483c5da2de2c814ee7f3f0e5505ab2e6cd",
-      "swift_line" : 706
+      "swift_line" : 705
     }
   ],
   "ir_version" : "1.1",

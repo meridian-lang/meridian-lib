@@ -338,9 +338,6 @@ enum BenchTraceRunner {
                 payload: payload,
                 payloadHash: try CanonicalJSON.sha256Hex(for: payload),
                 outcome: outcome,
-                witness: nil,
-                previousHash: nil,
-                recordHash: nil,
                 operationalDetail: nil,
                 legacyKind: nil
             )

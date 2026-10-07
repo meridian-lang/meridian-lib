@@ -409,12 +409,11 @@ public struct AgingReport: MeridianWorkflow {
         "triggers": "\"aging report\"\n\"stale record report\"",
     ]
 
-    public static let skillVersionHash = "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+    public static let skillVersionHash = "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct AgingReport: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
-            versionHash: "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+            versionHash: "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
         ),
         toolCapturePolicies: [:]
     )
@@ -506,12 +505,11 @@ public struct AgingReport: MeridianWorkflow {
 public struct WhenAgingreportFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+    public static let skillVersionHash = "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -525,7 +523,7 @@ public struct WhenAgingreportFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
-            versionHash: "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+            versionHash: "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
         ),
         toolCapturePolicies: [:]
     )
@@ -582,12 +580,11 @@ public struct WhenAgingreportFires: MeridianWorkflow {
 public struct WhenStalerecordreportFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+    public static let skillVersionHash = "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -601,7 +598,7 @@ public struct WhenStalerecordreportFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "aging report",
-            versionHash: "47d34eadc94ed1e6fe92a888651b9d826c71a5e9bff14d17c49e9e3e2eb01ca2"
+            versionHash: "cdece8f98c431f405ecc68fda58ecefdd8540a57512915c870108b47faabd8b9"
         ),
         toolCapturePolicies: [:]
     )

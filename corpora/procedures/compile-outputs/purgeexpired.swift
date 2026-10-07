@@ -409,12 +409,11 @@ public struct PurgeExpired: MeridianWorkflow {
         "triggers": "\"purge expired records\"\n\"retention cleanup\"",
     ]
 
-    public static let skillVersionHash = "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+    public static let skillVersionHash = "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct PurgeExpired: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
-            versionHash: "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+            versionHash: "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
         ),
         toolCapturePolicies: [:]
     )
@@ -547,12 +546,11 @@ public struct PurgeExpired: MeridianWorkflow {
 public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+    public static let skillVersionHash = "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -566,7 +564,7 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
-            versionHash: "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+            versionHash: "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
         ),
         toolCapturePolicies: [:]
     )
@@ -623,12 +621,11 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
 public struct WhenRetentioncleanupFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+    public static let skillVersionHash = "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -642,7 +639,7 @@ public struct WhenRetentioncleanupFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "purge expired",
-            versionHash: "bda188db1a6dd02f21080e69e552844ab21ac9ee584e3bc1cbe8397bd467913e"
+            versionHash: "a61d1e15290807082c5d56215772ded722ed3c3812a5fbf99c21466a332b6ded"
         ),
         toolCapturePolicies: [:]
     )

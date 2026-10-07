@@ -656,7 +656,7 @@ Temporal/statistical conditions in generated Swift call
 | CLI command | Purpose |
 |---|---|
 | `meridian trace eval <jsonl> "<expr>" --at <iso8601>` | Evaluate a trace expression against a retained JSONL file |
-| `meridian trace verify <jsonl> --run <id>` | Verify hash chain / checksum integrity for a run |
+| `meridian trace verify <jsonl> --run <id>` | Verify checksum integrity and ordering for a run |
 | `meridian trace drift <jsonl> …` | Compare expected vs actual trace outcomes |
 | `meridian bench-trace` | Performance baseline for trace evaluation |
 | `meridian trace render <events.jsonl>` | Pretty-print legacy **event** JSONL (not semantic trace JSONL) |

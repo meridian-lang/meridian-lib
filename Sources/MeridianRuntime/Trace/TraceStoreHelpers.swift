@@ -3,12 +3,10 @@ import Foundation
 enum TraceStoreHelpers {
     static func prepareForAppend(
         _ event: TraceRecord,
-        supportedSchemaVersions: [Int],
-        previousHash: String?,
         configuration: TraceConfiguration,
         nextIngestOrder: inout Int
     ) throws -> TraceRecord {
-        guard supportedSchemaVersions.contains(event.schemaVersion) else {
+        guard event.schemaVersion == TraceRecord.currentSchemaVersion else {
             throw TraceStoreError.unsupportedSchemaVersion(event.schemaVersion)
         }
 
@@ -19,7 +17,8 @@ enum TraceStoreHelpers {
             ingestOrder = nextIngestOrder
             nextIngestOrder += 1
         }
-        let staged = TraceRecord(
+        let persistedPayload = try limitedPayload(event.payload, payloadLimit: configuration.payloadLimit)
+        return TraceRecord(
             schemaVersion: event.schemaVersion,
             id: event.id,
             at: event.at,
@@ -31,21 +30,20 @@ enum TraceStoreHelpers {
             tag: event.tag,
             subject: event.subject,
             subjectKey: event.subjectKey,
-            payload: event.payload,
+            payload: persistedPayload,
             payloadHash: event.payloadHash,
             outcome: event.outcome,
-            witness: event.witness,
-            previousHash: event.previousHash,
-            recordHash: event.recordHash,
             operationalDetail: event.operationalDetail,
             legacyKind: event.legacyKind
         )
-        return try HashChain.apply(
-            to: staged,
-            previousHash: previousHash,
-            payloadLimit: configuration.payloadLimit,
-            hashChaining: configuration.hashChaining
-        )
+    }
+
+    private static func limitedPayload(_ payload: [String: Value]?, payloadLimit: Int?) throws -> [String: Value]? {
+        guard let payload, let payloadLimit else {
+            return payload
+        }
+        let size = try CanonicalJSON.data(for: payload).count
+        return size > payloadLimit ? nil : payload
     }
 
     static func filterAndSort<S: Sequence>(

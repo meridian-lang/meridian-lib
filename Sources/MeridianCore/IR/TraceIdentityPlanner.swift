@@ -45,7 +45,6 @@ enum TraceIdentityPlanner {
             : declaredPolicy
         let trace = TraceConfiguration(
             retention: ast.retention?.value ?? .seconds(60 * 60 * 24 * 30),
-            hashChaining: ast.hashChaining?.value ?? true,
             payloadLimit: ast.payloadLimit?.value,
             usuallyThreshold: ast.usuallyThreshold?.value ?? 0.9,
             rarelyThreshold: ast.rarelyThreshold?.value ?? 0.1,
@@ -67,8 +66,7 @@ enum TraceIdentityPlanner {
             trace: trace,
             skillIdentity: TraceSkillIdentity(name: skillName, versionHash: skillVersionHash),
             toolCapturePolicies: toolPolicies,
-            storePath: ast.storePath?.value,
-            storeEndpoint: ast.storeEndpoint.flatMap { URL(string: $0.value) }
+            storePath: ast.storePath?.value
         )
     }
 

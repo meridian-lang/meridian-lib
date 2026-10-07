@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCollectoverdueinvoicesFires\/root\/procedure\/2dacd9103e994477a60bc628668ba199177e722241fc3086cb182a833d392e84",
-      "swift_line" : 810
+      "swift_line" : 807
     },
     {
       "canonical" : "emit trigger.collectOverdueInvoices.fired with kind = \"keyword\", spec = \"collect overdue invoices\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCollectoverdueinvoicesFires\/root\/procedure\/8500e2d72626513efd2bfbe1585f3f194eecbef6ae017062e87ff933a11c36c8",
-      "swift_line" : 810
+      "swift_line" : 807
     },
     {
       "canonical" : "wait for event runDunning.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRundunningFires\/root\/procedure\/3081beda02f692814404f0ca7e57587928af92d50189e40178bdcb617366b096",
-      "swift_line" : 810
+      "swift_line" : 807
     },
     {
       "canonical" : "emit trigger.runDunning.fired with kind = \"keyword\", spec = \"run dunning\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRundunningFires\/root\/procedure\/8a9220f77d924ca53503d3fe28c34d6d83b78705831c0e0a78225ff0a796a7fa",
-      "swift_line" : 810
+      "swift_line" : 807
     },
     {
       "canonical" : "`ofbiz accounting dunning --dry-run --json` -- snapshot overdue accounts.",
       "meridian_line" : 19,
       "primitive" : "invoke",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/e779aef5c01dc4bef55bdc5d85a4b2b0639f2f7c55c3b1b04d6a8b63b82830b9",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "bind invoices = invoke invoice.list with status = \"unpaid\".",
       "meridian_line" : 20,
       "primitive" : "invoke",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
-      "swift_line" : 594
+      "swift_line" : 593
     },
     {
       "canonical" : "assert any unpaid invoices.",
       "meridian_line" : 21,
       "primitive" : "assert",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/65885fdc8d42438bbef519ccb337fd4665401f0672ff8e050a2c839caee44393",
-      "swift_line" : 608
+      "swift_line" : 607
     },
     {
       "canonical" : "for each invoices whose due date is within the last 86400 seconds,\n  bind payment = invoke payment.collect with invoice = invoice.\n  recover from \"payment.declined\":\n    bind dunningNotice = invoke dunning.notify with invoice = invoice.",
       "meridian_line" : 22,
       "primitive" : "iterate",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/cb6085919a4bc26551ca799d8f363bbc80b3be19c1a4fb663a0b1bae679716e9",
-      "swift_line" : 612
+      "swift_line" : 611
     },
     {
       "canonical" : "bind payment = invoke payment.collect with invoice = invoice.",
       "meridian_line" : 23,
       "primitive" : "invoke",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/recover.body\/29ed913d7208ea0cc0cdbe3bcad2a5c364d9f014b1803f4a83c0ae1ae56abb1c",
-      "swift_line" : 623
+      "swift_line" : 622
     },
     {
       "canonical" : "bind payment = invoke payment.collect with invoice = invoice.\nrecover from \"payment.declined\":\n  bind dunningNotice = invoke dunning.notify with invoice = invoice.",
       "meridian_line" : 24,
       "primitive" : "recover",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/iterate.body\/f0c170a5c0daa02cba82c3ec6cf09c9c3304deda772e51cfa5a0085cca4d80c2",
-      "swift_line" : 620
+      "swift_line" : 619
     },
     {
       "canonical" : "bind dunningNotice = invoke dunning.notify with invoice = invoice.",
       "meridian_line" : 25,
       "primitive" : "invoke",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/recover.handler\/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5",
-      "swift_line" : 639
+      "swift_line" : 638
     },
     {
       "canonical" : "emit erp.report with message = \"dunning collection pass complete\".",
       "meridian_line" : 26,
       "primitive" : "emit",
       "stable_step_path" : "\/Dunning\/workflow-steps\/procedure\/f31d01c73728d74f9d5393c402d3ae9f781a73954bff2d4738c5d0449b626620",
-      "swift_line" : 659
+      "swift_line" : 658
     }
   ],
   "ir_version" : "1.1",

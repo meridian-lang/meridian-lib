@@ -5,77 +5,77 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPrioritizeshortinventoryFires\/root\/procedure\/08a674e40b99ea091b841956d6ef66bea8d1f1241ce6f05035ebb28e53a7e4a2",
-      "swift_line" : 781
+      "swift_line" : 778
     },
     {
       "canonical" : "emit trigger.prioritizeShortInventory.fired with kind = \"keyword\", spec = \"prioritize short inventory\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPrioritizeshortinventoryFires\/root\/procedure\/17fc1ed879bf01532a400b66488f3c30970f0d6de8b9878818d3b05c90a972b8",
-      "swift_line" : 781
+      "swift_line" : 778
     },
     {
       "canonical" : "wait for event replenishBackorders.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReplenishbackordersFires\/root\/procedure\/06d5f1045144d6f7e3b8eb4148aa0c662ddc12ca105ba06becc803f70456eafc",
-      "swift_line" : 781
+      "swift_line" : 778
     },
     {
       "canonical" : "emit trigger.replenishBackorders.fired with kind = \"keyword\", spec = \"replenish backorders\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReplenishbackordersFires\/root\/procedure\/f40ee7df4b194375b40d25f472940c9fa391343af8321ebba4cd359232fc1bc7",
-      "swift_line" : 781
+      "swift_line" : 778
     },
     {
       "canonical" : "bind products = invoke product.list with status = \"short\".",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043",
-      "swift_line" : 580
+      "swift_line" : 579
     },
     {
       "canonical" : "assert any short products.",
       "meridian_line" : 17,
       "primitive" : "assert",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/16f9f56d57ce71c0d619488b3562d22b24f54e8a5af0ca1aa7b63cc1743b52cf",
-      "swift_line" : 594
+      "swift_line" : 593
     },
     {
       "canonical" : "bind restockCount = the number of short products.",
       "meridian_line" : 18,
       "primitive" : "bind",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/3b0829be27f46e5646615d7e3946ebfd11b75e4ffe5ad1401223316e2e0e57f9",
-      "swift_line" : 598
+      "swift_line" : 597
     },
     {
       "canonical" : "bind neediestProduct = the largest short products by reorder point.",
       "meridian_line" : 19,
       "primitive" : "bind",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/605a53e4b4b4a4fbba0319625031d1e05224ff6885d3360ec7864601399e832d",
-      "swift_line" : 600
+      "swift_line" : 599
     },
     {
       "canonical" : "for each product in products,\n  bind purchaseOrder = invoke purchase_order.create with product = product.",
       "meridian_line" : 20,
       "primitive" : "iterate",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c",
-      "swift_line" : 602
+      "swift_line" : 601
     },
     {
       "canonical" : "bind purchaseOrder = invoke purchase_order.create with product = product.",
       "meridian_line" : 21,
       "primitive" : "invoke",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/iterate.body\/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d",
-      "swift_line" : 611
+      "swift_line" : 610
     },
     {
       "canonical" : "emit erp.report with message = \"backorder replenishment queued\".",
       "meridian_line" : 22,
       "primitive" : "emit",
       "stable_step_path" : "\/BackorderReplenish\/workflow\/procedure\/ae23fd6e7fc3756e2183cea8abb6ee1c01de398ba3e304a05f46566c5ecdd05e",
-      "swift_line" : 630
+      "swift_line" : 629
     }
   ],
   "ir_version" : "1.1",

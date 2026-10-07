@@ -5,91 +5,91 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGenerateauditmatrixFires\/root\/procedure\/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "wait for event generateAuditMatrix.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGenerateauditmatrixFires\/root\/procedure\/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "wait for event publishAccessMatrix.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPublishaccessmatrixFires\/root\/procedure\/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "emit trigger.publishAccessMatrix.fired with kind = \"keyword\", spec = \"publish access matrix\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPublishaccessmatrixFires\/root\/procedure\/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "emit trigger.renderAccessMatrix.fired with kind = \"keyword\", spec = \"render access matrix\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRenderaccessmatrixFires\/root\/procedure\/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "wait for event renderAccessMatrix.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRenderaccessmatrixFires\/root\/procedure\/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe",
-      "swift_line" : 726
+      "swift_line" : 722
     },
     {
       "canonical" : "!!! table (( data: accessMatrix ))\n| role | classification | outcome |\n| ---- | -------------- | ------- |\n| \"admin\" | \"classified\" | \"allow\" |\n| \"admin\" | \"public\" | \"allow\" |\n| \"user\" | \"classified\" | \"deny\" |\n| \"user\" | \"public\" | \"allow\" |",
       "meridian_line" : 27,
       "primitive" : "bind",
       "stable_step_path" : "\/AccessMatrix\/tables\/tables\/62c0d7918e461b03fd680b87c920dd42f826bc6713e4fac6d10ee4cda15da8dc",
-      "swift_line" : 464
+      "swift_line" : 463
     },
     {
       "canonical" : "bind accessRequests = invoke request.list with status = \"pending\".",
       "meridian_line" : 44,
       "primitive" : "invoke",
       "stable_step_path" : "\/AccessMatrix\/workflow-steps\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
-      "swift_line" : 467
+      "swift_line" : 466
     },
     {
       "canonical" : "bind classifiedCount = the number of access requests whose status equals \"pending\".",
       "meridian_line" : 45,
       "primitive" : "bind",
       "stable_step_path" : "\/AccessMatrix\/workflow-steps\/procedure\/4e72b9da1da2fd4ccbb1a293cf3e515dcfc2e7cdb6138fe8db34a40ae80775f4",
-      "swift_line" : 480
+      "swift_line" : 479
     },
     {
       "canonical" : "emit governance.audit with body = matrix report.",
       "meridian_line" : 49,
       "primitive" : "emit",
       "stable_step_path" : "\/AccessMatrix\/workflow-steps-2\/procedure\/617ad80eae23573b0559732aa396008fab1538a9370c4fc6ea7dfea718327cb4",
-      "swift_line" : 483
+      "swift_line" : 482
     },
     {
       "canonical" : "assert classified count is at least 0.",
       "meridian_line" : 50,
       "primitive" : "assert",
       "stable_step_path" : "\/AccessMatrix\/workflow-steps-2\/procedure\/78a42a0c9c678f7540c16de51f753700072ee8ee488926a5698684ad9b1746cb",
-      "swift_line" : 494
+      "swift_line" : 493
     },
     {
       "canonical" : "emit governance.report with message = \"access matrix pass complete\".",
       "meridian_line" : 51,
       "primitive" : "emit",
       "stable_step_path" : "\/AccessMatrix\/workflow-steps-2\/procedure\/c77dd477bc654227d34a9947a5c6ae7b33a6a79a00bd54689cb40f7a33b04152",
-      "swift_line" : 499
+      "swift_line" : 498
     },
     {
       "canonical" : "assert matrix report contains \"access-matrix\".",
       "meridian_line" : 62,
       "primitive" : "assert",
       "stable_step_path" : "\/AccessMatrix\/guarantees\/invariants\/7c16c55cb20a9ef392b15c52d68dd0abaea4f0740e40062006769f0e162027f2",
-      "swift_line" : 460
+      "swift_line" : 459
     }
   ],
   "ir_version" : "1.1",

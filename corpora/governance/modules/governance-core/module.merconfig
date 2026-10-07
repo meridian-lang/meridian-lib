@@ -102,7 +102,6 @@ Assertion synonyms:
 
 === trace ===
 retention: 30 days
-hash chaining: enabled
 sample floor: 5
 default monitor cadence: 7 days
 profile: production

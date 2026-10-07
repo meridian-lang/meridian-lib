@@ -7,7 +7,6 @@ extension MerConfigParser {
     func parseTraceSection(_ lines: [SourceLine], file: String) throws -> TraceConfigurationAST {
         var store: TraceConfigValue<TraceStoreKind>?
         var retention: TraceConfigValue<Duration>?
-        var hashChaining: TraceConfigValue<Bool>?
         var payloadLimit: TraceConfigValue<Int>?
         var usuallyThreshold: TraceConfigValue<Double>?
         var rarelyThreshold: TraceConfigValue<Double>?
@@ -19,7 +18,6 @@ extension MerConfigParser {
         var crossSkillAllowList: TraceConfigValue<[String]>?
         var stateHistoryRetention: TraceConfigValue<Bool>?
         var storePath: TraceConfigValue<String>?
-        var storeEndpoint: TraceConfigValue<String>?
 
         for line in lines where line.isContent {
             let statement = line.statement.trimmingCharacters(in: .whitespaces)
@@ -39,7 +37,7 @@ extension MerConfigParser {
                     try reportToolDiagnostic(
                         message: "unknown trace store `\(value)`",
                         range: SourceRange(file: file, line: line.number, column: 1),
-                        help: "Use `memory`, `file`, `sqlite`, or `http`."
+                        help: "Use `memory` or `file`."
                     )
                     continue
                 }
@@ -49,21 +47,11 @@ extension MerConfigParser {
                     try reportToolDiagnostic(
                         message: "store path cannot be empty",
                         range: SourceRange(file: file, line: line.number, column: 1),
-                        help: "Provide a filesystem path for `sqlite` or `file` stores."
+                        help: "Provide a filesystem path for `file` stores."
                     )
                     continue
                 }
                 storePath = .init(String(value), file: file, line: line.number)
-            case "store endpoint":
-                guard !value.isEmpty else {
-                    try reportToolDiagnostic(
-                        message: "store endpoint cannot be empty",
-                        range: SourceRange(file: file, line: line.number, column: 1),
-                        help: "Provide an HTTP(S) base URL for `http` stores."
-                    )
-                    continue
-                }
-                storeEndpoint = .init(String(value), file: file, line: line.number)
             case "retention":
                 guard let parsed = parseTraceDuration(String(value)) else {
                     try reportToolDiagnostic(
@@ -74,17 +62,6 @@ extension MerConfigParser {
                     continue
                 }
                 retention = .init(parsed, file: file, line: line.number)
-            case "hash chaining":
-                let lower = value.lowercased()
-                guard lower == "enabled" || lower == "disabled" else {
-                    try reportToolDiagnostic(
-                        message: "invalid hash chaining setting `\(value)`",
-                        range: SourceRange(file: file, line: line.number, column: 1),
-                        help: "Use `enabled` or `disabled`."
-                    )
-                    continue
-                }
-                hashChaining = .init(lower == "enabled", file: file, line: line.number)
             case "payload limit":
                 guard let parsed = Int(value) else {
                     try reportToolDiagnostic(
@@ -167,7 +144,7 @@ extension MerConfigParser {
                 try reportToolDiagnostic(
                     message: "unknown trace setting `\(key)`",
                     range: SourceRange(file: file, line: line.number, column: 1),
-                    help: "Use documented keys such as `store`, `retention`, `hash chaining`, or `profile`."
+                    help: "Use documented keys such as `store`, `retention`, `payload limit`, or `profile`."
                 )
             }
         }
@@ -175,7 +152,6 @@ extension MerConfigParser {
         return TraceConfigurationAST(
             store: store,
             retention: retention,
-            hashChaining: hashChaining,
             payloadLimit: payloadLimit,
             usuallyThreshold: usuallyThreshold,
             rarelyThreshold: rarelyThreshold,
@@ -186,8 +162,7 @@ extension MerConfigParser {
             deploymentZone: deploymentZone,
             crossSkillAllowList: crossSkillAllowList,
             stateHistoryRetention: stateHistoryRetention,
-            storePath: storePath,
-            storeEndpoint: storeEndpoint
+            storePath: storePath
         )
     }
 

@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenApplyincidentmitigationFires\/root\/procedure\/3529c6670e2907986d3a079851cdd62dd142b73be07adb1b6fa0de4dd50874c8",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "emit trigger.applyIncidentMitigation.fired with kind = \"keyword\", spec = \"apply incident mitigation\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenApplyincidentmitigationFires\/root\/procedure\/5b58ba359debc76a38ae894713af2ade020174b2849530a18ace9746e21cb57b",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "wait for event mitigateOpenIncidents.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMitigateopenincidentsFires\/root\/procedure\/3f939c26d60ca29a0af50663a7ac4faf31180769ea417278a8a40039c30e98e2",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "emit trigger.mitigateOpenIncidents.fired with kind = \"keyword\", spec = \"mitigate open incidents\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMitigateopenincidentsFires\/root\/procedure\/ebdfb410b52f93dbda42a67bdd8fcf80508ea13fa4e9fc339fef6c7dfbbc3b15",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "wait for event runIncidentMitigationPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunincidentmitigationpassFires\/root\/procedure\/4367ead00665c048048953efb9efbdbf3468694960f3997c1de9bbcace81b88b",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "emit trigger.runIncidentMitigationPass.fired with kind = \"keyword\", spec = \"run the incident mitigation pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunincidentmitigationpassFires\/root\/procedure\/9b6c036612468dfb59d474a3dab9bbc8802be04033d7712bbe1f2dc58d7c3a32",
-      "swift_line" : 707
+      "swift_line" : 703
     },
     {
       "canonical" : "bind incidents = invoke incident.list with status = \"open\".",
       "meridian_line" : 27,
       "primitive" : "invoke",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
-      "swift_line" : 423
+      "swift_line" : 422
     },
     {
       "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when the incident is high severity, roll back the latest deploy immediately\n  when the incident's severity is \"sev3\", throttle traffic to the affected service\n  otherwise, monitor and document",
       "meridian_line" : 30,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/d33e9b58d47292b3f0945c55a253bd524fb540475dc70580806fc833f1d4a5dc",
-      "swift_line" : 436
+      "swift_line" : 435
     },
     {
       "canonical" : "for each incident in incidents,\n  in the background, bind statusUpdate = invoke status.post with incident = incident.",
       "meridian_line" : 36,
       "primitive" : "iterate",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/bed1202ba0802616a689165ac6e4df7aefbec2f3065177ddc4e2bc984f18d7a2",
-      "swift_line" : 447
+      "swift_line" : 446
     },
     {
       "canonical" : "in the background, bind statusUpdate = invoke status.post with incident = incident.",
       "meridian_line" : 37,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/iterate.body\/a62b4b2cf74e36b4fe50cc83ad4e9f32ad48257f6357fdcab055e10126433a19",
-      "swift_line" : 459
+      "swift_line" : 458
     },
     {
       "canonical" : "bind statusUpdate = invoke status.post with incident = incident.",
       "meridian_line" : 37,
       "primitive" : "invoke",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/simultaneously.branch\/258edf46671c52b83617542f4d16df45bbbabaeeb78f71e00aac81e26579342c",
-      "swift_line" : 459
+      "swift_line" : 458
     },
     {
       "canonical" : "emit incident.report with message = \"incident mitigation pass complete\".",
       "meridian_line" : 38,
       "primitive" : "emit",
       "stable_step_path" : "\/MitigateIncident\/workflow\/procedure\/9ca609c0718748190808e9cb1261e8f81e3469b2e5f57c339468036593cb538d",
-      "swift_line" : 480
+      "swift_line" : 479
     }
   ],
   "ir_version" : "1.1",

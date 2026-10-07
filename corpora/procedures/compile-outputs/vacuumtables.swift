@@ -409,12 +409,11 @@ public struct VacuumTables: MeridianWorkflow {
         "triggers": "\"vacuum bloated tables\"\n\"run table maintenance\"",
     ]
 
-    public static let skillVersionHash = "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+    public static let skillVersionHash = "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct VacuumTables: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
-            versionHash: "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+            versionHash: "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
         ),
         toolCapturePolicies: [:]
     )
@@ -575,12 +574,11 @@ public struct VacuumTables: MeridianWorkflow {
 public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+    public static let skillVersionHash = "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -594,7 +592,7 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
-            versionHash: "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+            versionHash: "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
         ),
         toolCapturePolicies: [:]
     )
@@ -651,12 +649,11 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
 public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+    public static let skillVersionHash = "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -670,7 +667,7 @@ public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "vacuum tables",
-            versionHash: "f5c7b4e5da3ef3184804018ce28518856714223dbb69317863d087c5a73bfbbb"
+            versionHash: "00ac933458f2ed971c965bbff81165a3af902a81751d4b415cf8bdbc33ca7083"
         ),
         toolCapturePolicies: [:]
     )

@@ -5,112 +5,112 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckledgerparityFires\/root\/procedure\/54bf58e717f7452fc462ce1b78e6891e8ba171bcfa0127a8e67469baa7cc00e1",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "wait for event checkLedgerParity.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckledgerparityFires\/root\/procedure\/c51c83076009dd1084c5f6309ab120208f9363c7a86f39f69b826bdf89d9409e",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "wait for event monitorReconciliationParity.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMonitorreconciliationparityFires\/root\/procedure\/01d946bc8c5e71cf2df8da761ff54196ca4301e848a840c750ce83dd5d41e6b4",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "emit trigger.monitorReconciliationParity.fired with kind = \"keyword\", spec = \"monitor reconciliation parity\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMonitorreconciliationparityFires\/root\/procedure\/aa08a44d1759c60f71eef4dbc810dee0c8ef73845595e058b84ca339e5b20a46",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "wait for event runLedgerParityWatch.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunledgerparitywatchFires\/root\/procedure\/65005b15da791f0082f343b312a35902567df258825ebc4f2fc2d8a930246fb7",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "emit trigger.runLedgerParityWatch.fired with kind = \"ambient\", spec = \"run ledger parity watch\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunledgerparitywatchFires\/root\/procedure\/ae5376e3a28bfa0a914d64c23d3f35361dfa6302ed62fe1a52c7f514efea06a1",
-      "swift_line" : 781
+      "swift_line" : 777
     },
     {
       "canonical" : "bind parityReceipt = \"parity watch opened\".",
       "meridian_line" : 36,
       "primitive" : "bind",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/f533d0998c8593a25016bbe5f07cb3d66f366db3c9fa3b26d0701edb54db402a",
-      "swift_line" : 461
+      "swift_line" : 460
     },
     {
       "canonical" : "if the parity step succeeds in at least 99% of occurrences within the last 2592000 seconds,\n  emit procedure.report with message = \"ledger parity stayed within threshold\".\notherwise,\n  emit procedure.report with message = \"ledger parity is below threshold or the retained sample is still indeterminate\".",
       "meridian_line" : 37,
       "primitive" : "branch",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/cbe20f4a0972fda8dbd75f96774016cb7cf4caaf85263f64174c5ed442cbf884",
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "canonical" : "emit procedure.report with message = \"ledger parity stayed within threshold\".",
       "meridian_line" : 38,
       "primitive" : "emit",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/branch.then\/128a719eacc47b8e5e5f8f65d2a4d72e7041c0bb261bb04f984d401a4cd1f2d0",
-      "swift_line" : 476
+      "swift_line" : 475
     },
     {
       "canonical" : "emit procedure.report with message = \"ledger parity is below threshold or the retained sample is still indeterminate\".",
       "meridian_line" : 40,
       "primitive" : "emit",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/branch.else\/f8dcc2f82f1eeca0d06f10a2ddcf7b4232adae9153f03112276659d221bdb9f5",
-      "swift_line" : 491
+      "swift_line" : 490
     },
     {
       "canonical" : "assert the parity step succeeds in at least 99% of occurrences within the last 2592000 seconds.",
       "meridian_line" : 41,
       "primitive" : "assert",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.body\/9f7dc976b91bd972a3bbf7b2f3e0e974827c983fa685b6488344c25140e5fd15",
-      "swift_line" : 507
+      "swift_line" : 506
     },
     {
       "canonical" : "assert the parity step succeeds in at least 99% of occurrences within the last 2592000 seconds.\nrecover from any:\n  emit procedure.report with message = \"blocking ledger parity assertion failed\".\n  emit procedure.report with message = \"ledger parity check deferred after the blocking assertion failure\".",
       "meridian_line" : 42,
       "primitive" : "recover",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/a64fb9ffe5ca8c08fb9be66bc8d6543f8ec995585c038b0b9e2b2d0632a58a67",
-      "swift_line" : 504
+      "swift_line" : 503
     },
     {
       "canonical" : "emit procedure.report with message = \"blocking ledger parity assertion failed\".",
       "meridian_line" : 43,
       "primitive" : "emit",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.handler\/947781d024ebfedbf7e1d77b55bb38c03bb456fd7f5db7ed86830f7d7151c27d",
-      "swift_line" : 529
+      "swift_line" : 528
     },
     {
       "canonical" : "emit procedure.report with message = \"ledger parity check deferred after the blocking assertion failure\".",
       "meridian_line" : 44,
       "primitive" : "emit",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/recover.handler\/0ce844682dd010c4b3c0e32cb3b6260be347e0d228a4687ee7f65fd786604370",
-      "swift_line" : 540
+      "swift_line" : 539
     },
     {
       "canonical" : "proceed, and note \"; parity watch pass complete\" in the parity receipt.",
       "meridian_line" : 45,
       "primitive" : "rebind",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/f59189eea466169b36d6635604f093edeb03bd9d985924dc6a27476dc1b77488",
-      "swift_line" : 551
+      "swift_line" : 550
     },
     {
       "canonical" : "emit procedure.report with message = \"ledger parity watch pass complete\".",
       "meridian_line" : 46,
       "primitive" : "emit",
       "stable_step_path" : "\/LedgerParityWatchLedger\/workflow-steps\/procedure\/0d13a2f931bdb75d2b5195dbe241d6d191f4a21893b56255e38a5558a8936d9d",
-      "swift_line" : 554
+      "swift_line" : 553
     }
   ],
   "ir_version" : "1.1",

@@ -121,27 +121,6 @@ struct FinalWaveMutationGateTests {
         #expect(try id(for: baseline) != id(for: mutated))
     }
 
-    // MARK: - Witness field gate
-
-    @Test("mutation gate: redacted witness must not leak PII field")
-    func witnessRedactionGate() throws {
-        let full = try WitnessCapture.buildEnvelope(
-            body: ["email": .string("leak@corp.com")],
-            mode: .full,
-            redactedFields: []
-        )
-        var mutatedBody = full.body ?? [:]
-        mutatedBody["email"] = .string("leak@corp.com")
-        let redacted = try WitnessCapture.buildEnvelope(
-            body: mutatedBody,
-            mode: .redacted,
-            redactedFields: ["email"]
-        )
-        #expect(redacted.body?["email"] == .string("<redacted>"))
-        #expect(redacted.witnessHash == full.witnessHash)
-        #expect(redacted.body?["email"] != mutatedBody["email"])
-    }
-
     // MARK: - Wilson gate
 
     @Test("mutation gate: Wilson lower bound gate fails on mutated success count")

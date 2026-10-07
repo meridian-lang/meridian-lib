@@ -5,98 +5,98 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRuntablemaintenanceFires\/root\/procedure\/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246",
-      "swift_line" : 705
+      "swift_line" : 702
     },
     {
       "canonical" : "emit trigger.runTableMaintenance.fired with kind = \"keyword\", spec = \"run table maintenance\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRuntablemaintenanceFires\/root\/procedure\/f97e22ee059002750ae9af05281a2a44c1f10683e8b4773bec42f750c3892a4b",
-      "swift_line" : 705
+      "swift_line" : 702
     },
     {
       "canonical" : "wait for event vacuumBloatedTables.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenVacuumbloatedtablesFires\/root\/procedure\/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48",
-      "swift_line" : 705
+      "swift_line" : 702
     },
     {
       "canonical" : "emit trigger.vacuumBloatedTables.fired with kind = \"keyword\", spec = \"vacuum bloated tables\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenVacuumbloatedtablesFires\/root\/procedure\/80117d45da4366a7307ddf4dfbf787161b067f3335b1e12cb16bb2beaf0265e3",
-      "swift_line" : 705
+      "swift_line" : 702
     },
     {
       "canonical" : "bind tables = invoke table.list.",
       "meridian_line" : 16,
       "primitive" : "invoke",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/e24999af416db76012cb2a84f958e90962af7900dd397f320a18136c5d6f4338",
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "canonical" : "bind indexJobs = invoke index.list with status = \"lagging\".",
       "meridian_line" : 17,
       "primitive" : "invoke",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4",
-      "swift_line" : 470
+      "swift_line" : 469
     },
     {
       "canonical" : "simultaneously:\n  for each tables whose row count is more than the vacuum row threshold,\n    bind table = invoke table.vacuum with table = table.\n  for each indexJob in indexjobs,\n    in the background, bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 18,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/46349e5cbd3162f083968385ecc43d3f7897df2396de1eb2fdcf87770bb41648",
-      "swift_line" : 483
+      "swift_line" : 482
     },
     {
       "canonical" : "for each tables whose row count is more than the vacuum row threshold,\n  bind table = invoke table.vacuum with table = table.",
       "meridian_line" : 19,
       "primitive" : "iterate",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/simultaneously.branch\/eb3dbb282474676efc421b5e9e6d454a3aa3a014559d39caf03cdef758e301ef",
-      "swift_line" : 487
+      "swift_line" : 486
     },
     {
       "canonical" : "bind table = invoke table.vacuum with table = table.",
       "meridian_line" : 20,
       "primitive" : "invoke",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/iterate.body\/82617044ae1ee33267b0c9b63fdb82cfd3227bc032009b72c0f71ec80b238d15",
-      "swift_line" : 496
+      "swift_line" : 495
     },
     {
       "canonical" : "for each indexJob in indexjobs,\n  in the background, bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 21,
       "primitive" : "iterate",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/simultaneously.branch\/22ab117b9ae1991a20a17f2e0ae9fc5b397b3052afcb39ed7d41019a24871f66",
-      "swift_line" : 517
+      "swift_line" : 516
     },
     {
       "canonical" : "in the background, bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 22,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/iterate.body\/df12b615e4eb7718cf704aad6c0a7e5ca786de694d28461de84b86d88a47d09d",
-      "swift_line" : 529
+      "swift_line" : 528
     },
     {
       "canonical" : "bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 22,
       "primitive" : "invoke",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/simultaneously.branch\/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c",
-      "swift_line" : 529
+      "swift_line" : 528
     },
     {
       "canonical" : "emit procedure.report with message = \"table maintenance pass complete\".",
       "meridian_line" : 23,
       "primitive" : "emit",
       "stable_step_path" : "\/VacuumTables\/procedure\/procedure\/fb8be05c208b34ae505d94a3ea0f37ded90faa95d2b58f47ebb90aa9924fe2e9",
-      "swift_line" : 554
+      "swift_line" : 553
     },
     {
       "canonical" : "assert all database tables have a name.",
       "meridian_line" : 26,
       "primitive" : "assert",
       "stable_step_path" : "\/VacuumTables\/guarantees\/invariants\/1e4742e040a0503ef480cf9189203f3eb2270fe142b1491d1257065977405a88",
-      "swift_line" : 458
+      "swift_line" : 457
     }
   ],
   "ir_version" : "1.1",

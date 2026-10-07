@@ -338,12 +338,11 @@ public struct SchemaEvolution: MeridianWorkflow {
         "triggers": "\"check schema evolution\"\n\"validate schema compatibility\"\n\"run schema compatibility check\"",
     ]
 
-    public static let skillVersionHash = "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+    public static let skillVersionHash = "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct SchemaEvolution: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
-            versionHash: "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+            versionHash: "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
         ),
         toolCapturePolicies: [:]
     )
@@ -483,12 +482,11 @@ public struct SchemaEvolution: MeridianWorkflow {
 public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+    public static let skillVersionHash = "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -502,7 +500,7 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
-            versionHash: "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+            versionHash: "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
         ),
         toolCapturePolicies: [:]
     )
@@ -559,12 +557,11 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
 public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+    public static let skillVersionHash = "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -578,7 +575,7 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
-            versionHash: "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+            versionHash: "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
         ),
         toolCapturePolicies: [:]
     )
@@ -635,12 +632,11 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
 public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+    public static let skillVersionHash = "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -654,7 +650,7 @@ public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "schema evolution",
-            versionHash: "5f5581a38e9ea0eee7b3d4eba48da3c5b8f1bbaf307a68efa76d5d1d75734907"
+            versionHash: "ad5d5dfe14470453869888b046a638ceafd57c12bb206babfce2c51e66c6118e"
         ),
         toolCapturePolicies: [:]
     )

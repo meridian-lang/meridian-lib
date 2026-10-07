@@ -5,70 +5,70 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenReattemptbatchsettlementFires\/root\/procedure\/88a6b983eb54a5f00bce0e8fbade85c860efd0f1b6453816f3e2bc06d5b4f332",
-      "swift_line" : 660
+      "swift_line" : 657
     },
     {
       "canonical" : "emit trigger.reattemptBatchSettlement.fired with kind = \"keyword\", spec = \"reattempt batch settlement\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenReattemptbatchsettlementFires\/root\/procedure\/f54fcc5d24dd16756288c884c52ce23169372e30e81547c9e14816326754f048",
-      "swift_line" : 660
+      "swift_line" : 657
     },
     {
       "canonical" : "wait for event retryFailedBatches.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRetryfailedbatchesFires\/root\/procedure\/10326fbb630d26a3974562ac739a829854c70f5c564a887efdce3e875772a87c",
-      "swift_line" : 660
+      "swift_line" : 657
     },
     {
       "canonical" : "emit trigger.retryFailedBatches.fired with kind = \"keyword\", spec = \"retry failed batches\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRetryfailedbatchesFires\/root\/procedure\/1caabc23c181c074a15ab9b2ee1c6296a848fd723abc9ddb9a47cc8523b2a4a4",
-      "swift_line" : 660
+      "swift_line" : 657
     },
     {
       "canonical" : "bind batches = invoke batch.list with status = \"failed\".",
       "meridian_line" : 24,
       "primitive" : "invoke",
       "stable_step_path" : "\/Retry\/procedure-steps\/procedure\/0621b17d73615609e8a7580015f5ba4d4a10433fe7d4d51460f86a8afbf41eda",
-      "swift_line" : 463
+      "swift_line" : 462
     },
     {
       "canonical" : "assert any batches whose status equals \"failed\".",
       "meridian_line" : 25,
       "primitive" : "assert",
       "stable_step_path" : "\/Retry\/procedure-steps\/procedure\/1683771f34ba506a2cc652195f89418ad5ff4e6305fb9a9c4c6940ab89ac4d72",
-      "swift_line" : 477
+      "swift_line" : 476
     },
     {
       "canonical" : "bind batches = invoke batch.list with status = \"ready\".",
       "meridian_line" : 29,
       "primitive" : "invoke",
       "stable_step_path" : "\/Retry\/procedure-steps-2\/procedure\/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
-      "swift_line" : 482
+      "swift_line" : 481
     },
     {
       "canonical" : "for each batch in batches,",
       "meridian_line" : 30,
       "primitive" : "iterate",
       "stable_step_path" : "\/Retry\/procedure-steps-2\/procedure\/d01d00ee7b730e5596dc64dcc30696948287d70e59c187312332ef786a810779",
-      "swift_line" : 495
+      "swift_line" : 494
     },
     {
       "canonical" : "emit procedure.report with message = \"failed batch retry pass complete\".",
       "meridian_line" : 34,
       "primitive" : "emit",
       "stable_step_path" : "\/Retry\/procedure-steps-3\/procedure\/c6b0dbce3c96a80b3b210e7b72a1cc5cbccc946342d20de704659a170bf25358",
-      "swift_line" : 509
+      "swift_line" : 508
     },
     {
       "canonical" : "assert no batches whose status equals \"failed\".",
       "meridian_line" : 37,
       "primitive" : "assert",
       "stable_step_path" : "\/Retry\/postconditions\/invariants\/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd",
-      "swift_line" : 458
+      "swift_line" : 457
     }
   ],
   "ir_version" : "1.1",

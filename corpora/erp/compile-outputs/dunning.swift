@@ -531,12 +531,11 @@ public struct Dunning: MeridianWorkflow {
         "triggers": "\"run dunning\"\n\"collect overdue invoices\"",
     ]
 
-    public static let skillVersionHash = "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+    public static let skillVersionHash = "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct Dunning: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
-            versionHash: "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+            versionHash: "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
         ),
         toolCapturePolicies: [:]
     )
@@ -680,12 +679,11 @@ public struct Dunning: MeridianWorkflow {
 public struct WhenRundunningFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+    public static let skillVersionHash = "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -699,7 +697,7 @@ public struct WhenRundunningFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
-            versionHash: "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+            versionHash: "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
         ),
         toolCapturePolicies: [:]
     )
@@ -756,12 +754,11 @@ public struct WhenRundunningFires: MeridianWorkflow {
 public struct WhenCollectoverdueinvoicesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+    public static let skillVersionHash = "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -775,7 +772,7 @@ public struct WhenCollectoverdueinvoicesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "dunning",
-            versionHash: "e397c25fdf329f2fc4bf9838e201efb2f7f39e8b5258e4ed9dd024686cd47739"
+            versionHash: "78271de996987aba59d9e45851c59e5a8e8a0c9ea12473653374f9cfdcbd3600"
         ),
         toolCapturePolicies: [:]
     )

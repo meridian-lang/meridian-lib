@@ -409,12 +409,11 @@ public struct MigrationApply: MeridianWorkflow {
         "triggers": "\"apply pending migrations\"\n\"run schema migration\"",
     ]
 
-    public static let skillVersionHash = "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+    public static let skillVersionHash = "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct MigrationApply: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
-            versionHash: "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+            versionHash: "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
         ),
         toolCapturePolicies: [:]
     )
@@ -551,12 +550,11 @@ public struct MigrationApply: MeridianWorkflow {
 public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+    public static let skillVersionHash = "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -570,7 +568,7 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
-            versionHash: "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+            versionHash: "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
         ),
         toolCapturePolicies: [:]
     )
@@ -627,12 +625,11 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
 public struct WhenRunschemamigrationFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+    public static let skillVersionHash = "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -646,7 +643,7 @@ public struct WhenRunschemamigrationFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "migration apply",
-            versionHash: "684dd50ab0c293208aec2fa55cbd0cb2b61003446f88893ce620fdc46b12e3a7"
+            versionHash: "7dd1aa3b1d66369de4e99a4339894b30721c3fda3c54a6ad8bd49fdfe4406cc9"
         ),
         toolCapturePolicies: [:]
     )

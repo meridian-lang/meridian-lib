@@ -374,12 +374,11 @@ public struct CooldownWatch: MeridianWorkflow {
         "triggers": "\"watch alert cooldown\"\n\"run cooldown watch\"\n\"run the alert cooldown pass\"",
     ]
 
-    public static let skillVersionHash = "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+    public static let skillVersionHash = "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -393,7 +392,7 @@ public struct CooldownWatch: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
-            versionHash: "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+            versionHash: "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
         ),
         toolCapturePolicies: [:]
     )
@@ -531,12 +530,11 @@ public struct CooldownWatch: MeridianWorkflow {
 public struct WhenWatchalertcooldownFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+    public static let skillVersionHash = "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +548,7 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
-            versionHash: "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+            versionHash: "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
         ),
         toolCapturePolicies: [:]
     )
@@ -607,12 +605,11 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
 public struct WhenRuncooldownwatchFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+    public static let skillVersionHash = "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -626,7 +623,7 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
-            versionHash: "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+            versionHash: "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
         ),
         toolCapturePolicies: [:]
     )
@@ -683,12 +680,11 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
 public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+    public static let skillVersionHash = "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -702,7 +698,7 @@ public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cooldown watch",
-            versionHash: "b6512bb20af96930beb16972ca489916b9b8753ca3eaa21737485214b1dd5b25"
+            versionHash: "0a3da4029e84ea5949f559317d7729a999b1541c6a1971af0546ecf3283ee84d"
         ),
         toolCapturePolicies: [:]
     )

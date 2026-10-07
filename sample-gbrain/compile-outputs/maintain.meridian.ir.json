@@ -5,266 +5,266 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBackfillgraphFires\/root\/procedure\/aba1cdcde0d589db308b2a69f877d576d834f522f0e1e9644cd3d77626c893b7",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event backfillGraph.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBackfillgraphFires\/root\/procedure\/b83239a472d5229608224025d2a8198976ceedff5e6a12efef3c36bf46bd123c",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.brainHealth.fired with kind = \"keyword\", spec = \"brain health\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBrainhealthFires\/root\/procedure\/b2349f6f12029bdc093afb4a3150cbb021ab72f6a54e09d9e6a8c60aebf3799b",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event brainHealth.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBrainhealthFires\/root\/procedure\/edcedaa49c8a77c7e9276b81c525d537e861beff96d5b0cb143f4bf9fc7b5fea",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.buildLinkGraph.fired with kind = \"keyword\", spec = \"build link graph\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBuildlinkgraphFires\/root\/procedure\/0bac41c09081719dad943ac9dc50b77ebbc9e028388895599d2c943e4ca9997a",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event buildLinkGraph.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBuildlinkgraphFires\/root\/procedure\/f704f3af1e5b63ee4042a6a6d2f40b833213fc025f0d7a02193ea91e053418f5",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event checkBacklinks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckbacklinksFires\/root\/procedure\/addd8c3af9b29fa5301de444c29de21a924d2e83cabeed52605207b72f5bdb46",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.checkBacklinks.fired with kind = \"keyword\", spec = \"check backlinks\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckbacklinksFires\/root\/procedure\/edc1fc2da4f33de9e34a03239f08c4820ebe1b209e51e04c27374c538015a87d",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event consolidateYesterdaySConversations.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenConsolidateyesterdaysconversationsFires\/root\/procedure\/7f8f6c48a7a3a18fc8fb1404cec6f8bb512d6d3c8561e6e93073cce031801258",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.consolidateYesterdaySConversations.fired with kind = \"keyword\", spec = \"consolidate yesterday's conversations\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenConsolidateyesterdaysconversationsFires\/root\/procedure\/8c2a6b85921d4139724b724cc582c17cc3247231a629753d4e4c9d5467a913e0",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event didDreamCycleRun.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenDiddreamcyclerunFires\/root\/procedure\/939898eea095d1f6625b47e7e3066e7f4405e07a6674c6acfca8a2606c1b3a03",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.didDreamCycleRun.fired with kind = \"keyword\", spec = \"did the dream cycle run\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenDiddreamcyclerunFires\/root\/procedure\/ecb19cc8f6541a261fd427c1c09cfd88d8245eccb5f22a06e6a0fb3253e6ea8e",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.extractLinks.fired with kind = \"keyword\", spec = \"extract links\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenExtractlinksFires\/root\/procedure\/078c09c3f18af3fda9a9eb327dedda567c13f66ff9516a59142afb67a69d12cc",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event extractLinks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenExtractlinksFires\/root\/procedure\/c84b7557d2a684602881ec55aa9f3b070cd3a67ae8387fea36e0d89a48d1de3a",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.extractTimelineEntries.fired with kind = \"keyword\", spec = \"extract timeline entries\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenExtracttimelineentriesFires\/root\/procedure\/187f193b47052d54b68c87434fbe84a4a6f5cca446e77768f3b7de57b47a1f71",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event extractTimelineEntries.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenExtracttimelineentriesFires\/root\/procedure\/795da7f33f19017d68d7cb53883d564f6ad21220fa7c9257b769cd380e5736a1",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event maintenance.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMaintenanceFires\/root\/procedure\/1cc9e00dd17f9c5d806ca226a308d7049ce0f780d3923a56a900f2d5a19759b0",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.maintenance.fired with kind = \"keyword\", spec = \"maintenance\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMaintenanceFires\/root\/procedure\/bba8cd6564e8a6124f35e9fdc8de88c77844ead93143af2aacc03d02b379da86",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.orphanPages.fired with kind = \"keyword\", spec = \"orphan pages\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenOrphanpagesFires\/root\/procedure\/8f879978dba1826f8bcbc0a495f2199d534ae6f89ce71fa34d1df103ff9af2de",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event orphanPages.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenOrphanpagesFires\/root\/procedure\/94903e564e98d744e29b936acb2fc4161a4ea901d26c9ff4f70c307b42962fb2",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.populateLinks.fired with kind = \"keyword\", spec = \"populate links\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPopulatelinksFires\/root\/procedure\/68add7826c1fcda2ed27e4500235a455e6b2d8c03363c3b15ab24176760e0226",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event populateLinks.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPopulatelinksFires\/root\/procedure\/bc3c5b73b8ad06944511f6906e733985ff84a10f62c2ecb41182e51cfb4426d2",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.populateTimeline.fired with kind = \"keyword\", spec = \"populate timeline\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPopulatetimelineFires\/root\/procedure\/1ad5a85005a3f66e08806498e95101121dd06b29f03bc0a3bd70129b76a85f5c",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event populateTimeline.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPopulatetimelineFires\/root\/procedure\/d84b2472b917250e76a8ba6538ae662e5af02c91b6c099544ebbd9159f8cb0b3",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event processTodaySSession.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenProcesstodayssessionFires\/root\/procedure\/37a977e2ce76e92c81046936f6bdba4e6c680129aaa309b617c0b6d34634a2f1",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.processTodaySSession.fired with kind = \"keyword\", spec = \"process today's session\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenProcesstodayssessionFires\/root\/procedure\/b190c96eec340ad692a5a06a0ad693cd6094988ea1bc0da8e06d24bd9ceee030",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.processYesterdaySTranscripts.fired with kind = \"keyword\", spec = \"process yesterday's transcripts\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenProcessyesterdaystranscriptsFires\/root\/procedure\/574414a0617f368d763726c636a2714b7b2e5d50a20ca31fe91e49729c15cadb",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event processYesterdaySTranscripts.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenProcessyesterdaystranscriptsFires\/root\/procedure\/8b605e5fd0afa6ca752ec68f0e3d46f84171dafa1fe77a6e779e0092bc80d021",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event runDream.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRundreamFires\/root\/procedure\/6857d06c23017aa8b1076ef6af086faf19d22096fad70032a5992c7ed83b367d",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.runDream.fired with kind = \"keyword\", spec = \"run dream\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRundreamFires\/root\/procedure\/974b9c72dd48aa49e4d00252f587b6ff1786dbbef046d4ed021dd18a20d69426",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event stalePages.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenStalepagesFires\/root\/procedure\/9688a43fa49ad24e65a8f527808ef05619d3c41995110efcbb0735f9befb03b2",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.stalePages.fired with kind = \"keyword\", spec = \"stale pages\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenStalepagesFires\/root\/procedure\/a31f537be06c54f6a9ed9c995bcd574c9c905092e49e156f2d4a67ac68f43370",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event synthesizeMyConversations.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSynthesizemyconversationsFires\/root\/procedure\/623b9ad924cfdca9e136f78462c72cef12e2ce6a3bb542d882fe1ed65037fdc2",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.synthesizeMyConversations.fired with kind = \"keyword\", spec = \"synthesize my conversations\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSynthesizemyconversationsFires\/root\/procedure\/8b96bca0ed1b52193c69197a2d678dcbdbec05f21b05f4ed3c797ff35ac32a7f",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "emit trigger.whatPatternsDidYouSee.fired with kind = \"keyword\", spec = \"what patterns did you see\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhatpatternsdidyouseeFires\/root\/procedure\/f4f71440dcb8190bcb1673005bb2af6413264ee592df4ecdaaff78607a7bcdff",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "wait for event whatPatternsDidYouSee.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhatpatternsdidyouseeFires\/root\/procedure\/f8741c0461c1051fa3bb079db2d8ef08b433fcae7baec9021d62bfd1e6068ddf",
-      "swift_line" : 1983
+      "swift_line" : 1964
     },
     {
       "canonical" : "assert the each issue found's specific fix action is not empty.",
       "meridian_line" : 53,
       "primitive" : "assert",
       "stable_step_path" : "\/MaintainInput\/contract-steps\/invariants\/d0084ca4810504e9cf09f1e57093a6e8e139111b8c7ea6c52af9bdf745bca9e0",
-      "swift_line" : 628
+      "swift_line" : 627
     },
     {
       "canonical" : "use judgment to follow the Autonomous path (v0.36.4.0) — when you want to reach a target score — steps 2 guidance:\n  `--remediate` walks the plan, submitting each step as a Minion job, re-checking\n  score between every step. `--max-usd N` is a hard cost cap — submission refuses\n  when the plan would exceed the cap (prevents synthesize loops from burning\n  Anthropic credits unattended)\n  When the target score is unreachable for the brain (empty brain with no entity\n  pages → `graph_coverage` caps at 70; unconfigured embedding key → caps at 60),\n  the command bails with a list of what's missing rather than looping\n  You're investigating why score is stuck below `--remediate`'s ceiling\n  Check gbrain health to get the dashboard\n  Check the health output for stale page count\n  For each stale page: read the page from gbrain, review timeline, determine if compiled_truth needs rewriting\n  If link_count is 0 or low relative to page_count, run batch extraction:\n  codeblock:bash:Z2JyYWluIGV4dHJhY3QgbGlua3MgLS1kaXIgfi9icmFpbg==\n  If timeline_entry_count is 0, extract structured timeline from markdown:\n  codeblock:bash:Z2JyYWluIGV4dHJhY3QgdGltZWxpbmUgLS1kaXIgfi9icmFpbg==\n  `gbrain dream` runs the full 8-phase maintenance cycle:\n  use judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 2 guidance:\n  **Synthesize phase:** reads transcripts from `dream.synthesize.session_corpus_dir`,\n  runs a cheap Haiku verdict (cached in `dream_verdicts`) to filter routine\n  ops sessions, then fans out one Sonnet subagent per worth-processing\n  transcript. Each subagent writes reflections (`wiki\/personal\/reflections\/...`),\n  originals (`wiki\/originals\/ideas\/...`), and people timeline entries. The\n  orchestrator collects the slugs from `subagent_tool_executions` (NOT\n  `pages.updated_at` — that would pick up unrelated writes) and reverse-renders\n  each new page from DB → markdown on disk\n  Cross-reference compulsively: every new page MUST have at least one wikilink\n  Edited transcripts produce NEW slugs (content-hash suffix changes) — never silently overwrite\n  use judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 5 guidance:\n  **Trust boundary (`allowed_slug_prefixes`):** the synthesis subagent runs with an\n  explicit allow-list of write paths sourced from `_brain-filing-rules.json`'s\n  `dream_synthesize_paths.globs`. Even on prompt-injection success, the subagent\n  cannot write outside that list. Trust comes from PROTECTED_JOB_NAMES — MCP\n  cannot submit subagent jobs at all. Editing the JSON is the only way to add\n  a new directory the synthesizer can write to\n  **Idempotency + privacy:** transcripts are keyed by `(file_path, content_hash)`,\n  so re-running on the same content is a no-op. `dream.synthesize.exclude_patterns`\n  (default `[\"medical\", \"therapy\"]`) filters out transcripts before any LLM call\n  Cooldown: the cycle's spend cap. `dream.synthesize.cooldown_hours` (default\n  use judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 7 guidance:\n  12) means at most ~2 synthesize runs per day under autopilot. The completion\n  timestamp is stored in `dream.synthesize.last_completion_ts` and is written\n  ONLY on successful runs (not on skipped\/failed). Explicit `--input` \/\n  `--date` \/ `--from` \/ `--to` invocations bypass cooldown\n  `--dry-run` semantics: runs the cheap Haiku significance filter (caches\n  verdicts) but skips the Sonnet synthesis pass. NOT zero LLM calls\n  use judgment to follow the Dream cycle (v0.23): synthesize + patterns — steps 9 guidance:\n  **Configure synthesize on a fresh brain:**\n  codeblock:bash:Z2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5zZXNzaW9uX2NvcnB1c19kaXIgL3BhdGgvdG8vdHJhbnNjcmlwdHMKZ2JyYWluIGNvbmZpZyBzZXQgZHJlYW0uc3ludGhlc2l6ZS5lbmFibGVkIHRydWUKZ2JyYWluIGRyZWFtIC0tcGhhc2Ugc3ludGhlc2l6ZSAtLWRyeS1ydW4gLS1qc29uICAgIyBwcmV2aWV3CmdicmFpbiBkcmVhbSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgZnVsbCA4LXBoYXNlIGN5Y2xl\n  codeblock:bash:Z2JyYWluIGRyZWFtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIyBmdWxsIGN5Y2xlCmdicmFpbiBkcmVhbSAtLXBoYXNlIHN5bnRoZXNpemUgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBzeW50aGVzaXplCmdicmFpbiBkcmVhbSAtLXBoYXNlIHBhdHRlcm5zICAgICAgICAgICAgICAgICAgICAgICAgICMganVzdCBwYXR0ZXJucwpnYnJhaW4gZHJlYW0gLS1pbnB1dCB+L3RyYW5zY3JpcHRzLzIwMjYtMDQtMjUudHh0ICAgICAjIGFkLWhvYyBvbmUgdHJhbnNjcmlwdApnYnJhaW4gZHJlYW0gLS1mcm9tIDIwMjYtMDQtMDEgLS10byAyMDI2LTA0LTI1ICAgICAgICAjIGJhY2tmaWxsIHJhbmdlCmdicmFpbiBkcmVhbSAtLWpzb24gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMgQ3ljbGVSZXBvcnQgSlNPTg==\n  Note: extracted entries improve structured queries (`gbrain timeline`), not vector search\n  codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLXN0YXR1cw==\n  If not running, install it:\n  codeblock:bash:Z2JyYWluIGF1dG9waWxvdCAtLWluc3RhbGwgLS1yZXBvIH4vYnJhaW4=\n  In v0.11.1+, autopilot dispatches each cycle as a single `autopilot-cycle`\n  Minion job and supervises the worker child — one install step gives you\n  sync + extract + embed + backlinks + durable job processing\n  A v0.11.0 install where the migration skill never fired leaves Minions\n  partially set up: schema is applied, but `~\/.gbrain\/preferences.json`\n  doesn't exist, autopilot runs inline, host manifests still reference\n  `agentTurn`. Repair:\n  codeblock:bash:IyBDaGVjayBtaWdyYXRpb24gc3RhdHVzCmdicmFpbiBhcHBseS1taWdyYXRpb25zIC0tbGlzdAoKIyBBcHBseSBwZW5kaW5nIG1pZ3JhdGlvbnMgKGlkZW1wb3RlbnQ7IHNhZmUgb24gaGVhbHRoeSBpbnN0YWxscykKZ2JyYWluIGFwcGx5LW1pZ3JhdGlvbnMgLS15ZXMKCiMgSWYgaG9zdC1zcGVjaWZpYyBoYW5kbGVycyBhcmUgZmxhZ2dlZCBpbiB+Ly5nYnJhaW4vbWlncmF0aW9ucy9wZW5kaW5nLWhvc3Qtd29yay5qc29ubDoKIyB3YWxrIHRoZW0gcGVyIHNraWxscy9taWdyYXRpb25zL3YwLjExLjAubWQgKyBkb2NzL2d1aWRlcy9wbHVnaW4taGFuZGxlcnMubWQsCiMgc2hpcCBoYW5kbGVyIHJlZ2lzdHJhdGlvbnMgaW4gdGhlIGhvc3QgcmVwbywgdGhlbiByZS1ydW4gYXBwbHktbWlncmF0aW9ucy4=\n  Full troubleshooting guide: `docs\/guides\/minions-fix.md`\n  Format: `- YYYY-MM-DD | Referenced in page title -- brief context`\n  Check for common misfiling patterns (see `skills\/_brain-filing-rules.md`):\n  Content with clear primary subjects filed in `sources\/` instead of the\n  appropriate directory (people\/, companies\/, concepts\/, etc.)\n  Use gbrain search to find pages in `sources\/` that reference specific\n  people, companies, or concepts -- these may be misfiled\n  Spot-check pages for missing `[Source: ...]` citations:\n  use judgment to follow the Graph population (v0.10.3+) — steps guidance:\n  `gbrain extract links --source db` — backfill structured links by walking pages\n  from the engine. Reads `[Name](people\/slug)` \/ `[Name](companies\/slug)` references\n  and infers relationship types (`attended`, `works_at`, `invested_in`, `founded`,\n  `advises`, `mentions`, `source`). Idempotent. Use `--source fs --dir <brain>`\n  if you have a markdown checkout to walk instead\n  `gbrain extract timeline --source db` — backfill structured timeline entries\n  Parses `- YYYY-MM-DD | summary` lines from page content. Idempotent (DB\n  UNIQUE constraint)\n  `gbrain extract all --source db` — both in one run\n  `gbrain graph-query <slug> --depth 2` — verify connectivity (use any well-known\n  entity slug as a probe)\n  Available link types (use with `gbrain graph-query --type`):\n  Then check progress: `tail -1 \/tmp\/gbrain-embed.log`\n  Run `gbrain doctor --json` and check the RLS status\n  All tables should show RLS enabled. If not, run `gbrain init` again\n  Check that the schema version is up to date. `gbrain doctor --json` reports\n  the current version vs expected. If behind, `gbrain init` runs migrations\n  automatically\n  Run `gbrain files verify` to check all DB records have valid data\n  Run `gbrain files status` to see migration state (local, mirrored, redirected)\n  Check for orphan `.redirect.yaml` pointers that reference missing storage files\n  If storage backend is configured: verify redirect pointers resolve (download test)\n  Timeline items older than 30 days with unresolved action items\n  Flag for review\n  Tier 1 (entity lookup): known names -- should always resolve\n  Quality matters more than speed (2.5s right > 200ms wrong)\n  Run `gbrain doctor --json` and check for degradation. Report any failing checks\n  staleness\n  Run `gbrain embed --stale` to refresh embeddings for pages that have changed since\n  their last embedding. For large brains (>5000 pages), run this with nohup:\n  codeblock:bash:bm9odXAgZ2JyYWluIGVtYmVkIC0tc3RhbGUgPiAvdG1wL2dicmFpbi1lbWJlZC5sb2cgMj4mMSAm\n  Verify sync is running: check `gbrain stats` and confirm `last_sync` is within\n  the last 24 hours. If sync has stopped, the brain is drifting from the repo\n  Health check results (before\/after scores for each dimension)\n  Outstanding issues requiring user attention",
       "meridian_line" : 78,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/MaintainInput\/autonomous-path-v0-36-4-0-when-you-want-to-reach-a-target-score-steps-2\/procedure\/e67ce75dd2135e37844f4bd2a6c22987291290e32f6cc75d05e75184c33d733d",
-      "swift_line" : 632
+      "swift_line" : 631
     }
   ],
   "ir_version" : "1.1",

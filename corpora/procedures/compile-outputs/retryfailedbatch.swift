@@ -409,12 +409,11 @@ public struct Retry: MeridianWorkflow {
         "triggers": "\"retry failed batches\"\n\"reattempt batch settlement\"",
     ]
 
-    public static let skillVersionHash = "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+    public static let skillVersionHash = "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct Retry: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
-            versionHash: "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+            versionHash: "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
         ),
         toolCapturePolicies: [:]
     )
@@ -530,12 +529,11 @@ public struct Retry: MeridianWorkflow {
 public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+    public static let skillVersionHash = "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -549,7 +547,7 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
-            versionHash: "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+            versionHash: "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
         ),
         toolCapturePolicies: [:]
     )
@@ -606,12 +604,11 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
 public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+    public static let skillVersionHash = "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -625,7 +622,7 @@ public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "retry failed batch",
-            versionHash: "f70951b5a5b42263becadd4d6fdcfa5239b637f8cf0ac40c3cc526ba76d9f765"
+            versionHash: "c9456b03a25faffc7dd2d4f40b3399296f8b660d3739db2940234501ebe2be70"
         ),
         toolCapturePolicies: [:]
     )

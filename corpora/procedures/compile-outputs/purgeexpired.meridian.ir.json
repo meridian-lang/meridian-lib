@@ -5,84 +5,84 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenPurgeexpiredrecordsFires\/root\/procedure\/1b0c806591ba4b0123a4bd695fcba2aad4c81b816e95682020a39714798b5d9b",
-      "swift_line" : 677
+      "swift_line" : 674
     },
     {
       "canonical" : "emit trigger.purgeExpiredRecords.fired with kind = \"keyword\", spec = \"purge expired records\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenPurgeexpiredrecordsFires\/root\/procedure\/2a6dac93e00ae15b73720f0e32ef7a03bf3e56d00b490ac6d8605d1d56387fb3",
-      "swift_line" : 677
+      "swift_line" : 674
     },
     {
       "canonical" : "emit trigger.retentionCleanup.fired with kind = \"keyword\", spec = \"retention cleanup\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRetentioncleanupFires\/root\/procedure\/361196238cefd448112923cb2d3076adf3544a24ae0d3a1a0aa2214d79815a37",
-      "swift_line" : 677
+      "swift_line" : 674
     },
     {
       "canonical" : "wait for event retentionCleanup.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRetentioncleanupFires\/root\/procedure\/f4a72123048bcf0da7a4cc654e09b7143c9d6d611bc91d2f23c37377141bcdeb",
-      "swift_line" : 677
+      "swift_line" : 674
     },
     {
       "canonical" : "bind records = invoke record.list with status = \"stale\".",
       "meridian_line" : 19,
       "primitive" : "invoke",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
-      "swift_line" : 458
+      "swift_line" : 457
     },
     {
       "canonical" : "assert any stale records.",
       "meridian_line" : 20,
       "primitive" : "assert",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0",
-      "swift_line" : 472
+      "swift_line" : 471
     },
     {
       "canonical" : "assert at most 500 stale records.",
       "meridian_line" : 21,
       "primitive" : "assert",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/7caf006036a7e08bb2e99292e0bed951b0e3b7b6acc0687b469b5c8e77139c53",
-      "swift_line" : 477
+      "swift_line" : 476
     },
     {
       "canonical" : "for each first 100 records whose status equals \"stale\" sorted by updated at, ascending,\n  bind record = invoke record.purge with record = record.",
       "meridian_line" : 22,
       "primitive" : "iterate",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/recover.body\/588d72d4fba0ec8e227c9fbf325551b58afe4a843fa29b42a640ff2aeb237495",
-      "swift_line" : 483
+      "swift_line" : 482
     },
     {
       "canonical" : "bind record = invoke record.purge with record = record.",
       "meridian_line" : 23,
       "primitive" : "invoke",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/iterate.body\/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd",
-      "swift_line" : 493
+      "swift_line" : 492
     },
     {
       "canonical" : "for each first 100 records whose status equals \"stale\" sorted by updated at, ascending,\n  bind record = invoke record.purge with record = record.\nrecover from any:\n  emit procedure.report with message = \"expired record purge failed\".",
       "meridian_line" : 24,
       "primitive" : "recover",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/9df94050cb768646ba2b59907aa3896ca64a1155e2534dec90e6229a86f2e112",
-      "swift_line" : 481
+      "swift_line" : 480
     },
     {
       "canonical" : "emit procedure.report with message = \"expired record purge failed\".",
       "meridian_line" : 25,
       "primitive" : "emit",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/recover.handler\/f4a60324d9e15f8d488a939b7cd61b74c7e4c91da554f3a81d21380473d284f8",
-      "swift_line" : 514
+      "swift_line" : 513
     },
     {
       "canonical" : "emit procedure.report with message = \"expired records purged\".",
       "meridian_line" : 26,
       "primitive" : "emit",
       "stable_step_path" : "\/PurgeExpired\/procedure-steps\/procedure\/a42a7dcf25ff610f8d392366cbe82e1fafff00615825e3ec21876d647dfc6335",
-      "swift_line" : 526
+      "swift_line" : 525
     }
   ],
   "ir_version" : "1.1",

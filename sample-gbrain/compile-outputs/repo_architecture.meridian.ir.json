@@ -5,63 +5,63 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCreatenewpageFires\/root\/procedure\/42c170733b38e3fddff76517d44c901ffe0e211c777f935a8f0b08ebf5ab76d0",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "emit trigger.createNewPage.fired with kind = \"keyword\", spec = \"create new page\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCreatenewpageFires\/root\/procedure\/e62ab93e5db72926e69a2cd8572658a5eab503e73326d9e507bb2779e72a2aa3",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "wait for event filingRules.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenFilingrulesFires\/root\/procedure\/4cf404f01afe97f7ad3415383452f67b85781331b2efe0eed430084c505ba981",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "emit trigger.filingRules.fired with kind = \"keyword\", spec = \"filing rules\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenFilingrulesFires\/root\/procedure\/7c438e45b1607fd8563d00a25f7a2d0c349c9bfca585737ed89138c02ba7790f",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "wait for event whereDoesThisGo.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWheredoesthisgoFires\/root\/procedure\/223c5390582f94cda7fef0d28e20cd89e00bedc1e5b72b41c8c60825b0f6a91c",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "emit trigger.whereDoesThisGo.fired with kind = \"keyword\", spec = \"where does this go\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWheredoesthisgoFires\/root\/procedure\/fd30904e13726dbd8ff4196b681faf960ed41547595076a42c6b742fecf82f3f",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "wait for event whichDirectory.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenWhichdirectoryFires\/root\/procedure\/41d1d40d7c8460428f730b904dc7abe59f10a17a101e3247cbae9566a5e2d6ec",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "emit trigger.whichDirectory.fired with kind = \"keyword\", spec = \"which directory\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenWhichdirectoryFires\/root\/procedure\/85e95a2360261a09179f6c919609f1993a245910f1766c8081a992e037bf3014",
-      "swift_line" : 930
+      "swift_line" : 925
     },
     {
       "canonical" : "`skills\/conventions\/quality.md` -- Check notability. See  notability gate.",
       "meridian_line" : 45,
       "primitive" : "invoke",
       "stable_step_path" : "\/RepoArchitectureInput\/phases-steps\/procedure\/e5180d82d951c867080d94d5723ad8887084a4fbe0f4408985183b6472fa2d18",
-      "swift_line" : 628
+      "swift_line" : 627
     }
   ],
   "ir_version" : "1.1",

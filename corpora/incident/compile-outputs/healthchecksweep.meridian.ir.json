@@ -5,126 +5,126 @@
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunhealthchecksweepFires\/root\/procedure\/27e56a5c712fa7aa35c1f1f5191ee9e375ad51fa279591f39d7d62543f72da7e",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "emit trigger.runHealthcheckSweep.fired with kind = \"keyword\", spec = \"run healthcheck sweep\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunhealthchecksweepFires\/root\/procedure\/860b65f11f44306fc9586ecdb55e289f710d1dba26bd3df2abeadff8cd5a2920",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "wait for event runHealthSweepPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunhealthsweeppassFires\/root\/procedure\/89e22be6e97a001acff385491f4d0f7cf041af0004fb5ddcf225b6513a32d089",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "emit trigger.runHealthSweepPass.fired with kind = \"keyword\", spec = \"run the health sweep pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunhealthsweeppassFires\/root\/procedure\/b84be00764782bf63b7de3cfa8372c731b9fea9f892ba852bc9ccd20c539a520",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "emit trigger.sweepServiceHealth.fired with kind = \"keyword\", spec = \"sweep service health\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSweepservicehealthFires\/root\/procedure\/023baa0fcd8b674691a9164b50ddfd70a0346a425ac4420b312d47de78e185e4",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "wait for event sweepServiceHealth.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSweepservicehealthFires\/root\/procedure\/1a37b06a701016d1fd15272964bed16a0d9e0a468c287c116ffef05d79c46bf5",
-      "swift_line" : 749
+      "swift_line" : 745
     },
     {
       "canonical" : "bind services = invoke service.list.",
       "meridian_line" : 26,
       "primitive" : "invoke",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/ee1ee1accec16396e44d966527d9de4d19dc246d1c7fac410b4cfe6c4ee0e74a",
-      "swift_line" : 428
+      "swift_line" : 427
     },
     {
       "canonical" : "bind runbooks = invoke runbook.list.",
       "meridian_line" : 27,
       "primitive" : "invoke",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/c41e5ab229e2bf44c6fc29e0c59143321081162961cfceaef724782997462f15",
-      "swift_line" : 435
+      "swift_line" : 434
     },
     {
       "canonical" : "assert all services have a name.",
       "meridian_line" : 28,
       "primitive" : "assert",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314",
-      "swift_line" : 442
+      "swift_line" : 441
     },
     {
       "canonical" : "simultaneously:\n  for each service in services,\n    bind health = invoke service.healthcheck with service = service.\n  for each runbook in runbooks,\n    in the background, bind runbook = invoke runbook.lookup with service = the pagerduty service.",
       "meridian_line" : 29,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/c609460340e7e897221e50fceb23f6342adf5e00d8213e7779a8ea50be16e6a5",
-      "swift_line" : 446
+      "swift_line" : 445
     },
     {
       "canonical" : "for each service in services,\n  bind health = invoke service.healthcheck with service = service.",
       "meridian_line" : 30,
       "primitive" : "iterate",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/simultaneously.branch\/0f272423851ad39b6ee2555b6faebec9ecb27be32aaa3c94537a6ae8a937894c",
-      "swift_line" : 450
+      "swift_line" : 449
     },
     {
       "canonical" : "bind health = invoke service.healthcheck with service = service.",
       "meridian_line" : 31,
       "primitive" : "invoke",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/iterate.body\/1beca3f9365e26c7834feed2e9fbbb7c1c7c1093b11a268a3784be71a0945389",
-      "swift_line" : 459
+      "swift_line" : 458
     },
     {
       "canonical" : "for each runbook in runbooks,\n  in the background, bind runbook = invoke runbook.lookup with service = the pagerduty service.",
       "meridian_line" : 32,
       "primitive" : "iterate",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/simultaneously.branch\/34e8854ddd315c98f8382165f8528f80d6c5a2900c9c3e63f0476d75573cb310",
-      "swift_line" : 480
+      "swift_line" : 479
     },
     {
       "canonical" : "in the background, bind runbook = invoke runbook.lookup with service = the pagerduty service.",
       "meridian_line" : 33,
       "primitive" : "simultaneously",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/iterate.body\/4fd51b5ec5268ea03b37009de10c4798ea4878ad0ea257e192d29fd5aa1bd58a",
-      "swift_line" : 492
+      "swift_line" : 491
     },
     {
       "canonical" : "bind runbook = invoke runbook.lookup with service = the pagerduty service.",
       "meridian_line" : 33,
       "primitive" : "invoke",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/simultaneously.branch\/1492b7360a4e7958a89015407e044155d9fb4cdfebf85f227275123404f34e82",
-      "swift_line" : 492
+      "swift_line" : 491
     },
     {
       "canonical" : "assert no services whose status equals \"degraded\".",
       "meridian_line" : 34,
       "primitive" : "assert",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/43ce739515f391b54c9db263ac4e1434058edd99ed51dd508426fa99c41efe5f",
-      "swift_line" : 517
+      "swift_line" : 516
     },
     {
       "canonical" : "emit incident.report with message = \"healthcheck sweep complete\".",
       "meridian_line" : 35,
       "primitive" : "emit",
       "stable_step_path" : "\/HealthcheckSweep\/workflow\/procedure\/a1b3a611b8616e45b3065edbd19b029ef93e534204c56784455e2e63e6737e98",
-      "swift_line" : 522
+      "swift_line" : 521
     },
     {
       "canonical" : "assert all services have a name.",
       "meridian_line" : 46,
       "primitive" : "assert",
       "stable_step_path" : "\/HealthcheckSweep\/guarantees\/invariants\/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314",
-      "swift_line" : 423
+      "swift_line" : 422
     }
   ],
   "ir_version" : "1.1",

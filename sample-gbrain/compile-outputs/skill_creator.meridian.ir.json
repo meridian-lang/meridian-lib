@@ -5,63 +5,63 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCreateskillFires\/root\/procedure\/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "wait for event createSkill.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCreateskillFires\/root\/procedure\/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "wait for event improveThisSkill.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenImprovethisskillFires\/root\/procedure\/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "emit trigger.improveThisSkill.fired with kind = \"keyword\", spec = \"improve this skill\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenImprovethisskillFires\/root\/procedure\/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "wait for event newSkill.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenNewskillFires\/root\/procedure\/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "emit trigger.newSkill.fired with kind = \"keyword\", spec = \"new skill\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenNewskillFires\/root\/procedure\/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc",
-      "swift_line" : 883
+      "swift_line" : 879
     },
     {
       "canonical" : "`skills\/manifest.json` -- Add to manifest. Update  with name, path, description.",
       "meridian_line" : 77,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillCreatorInput\/phases-steps-2\/procedure\/6f9a0cc10c26267d08ed2ebacf70a1b5494b22663db5f29ab672545dab3cd121",
-      "swift_line" : 628
+      "swift_line" : 627
     },
     {
       "canonical" : "`skills\/RESOLVER.md` -- Add to resolver. Update  with routing entry in the appropriate category.",
       "meridian_line" : 78,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillCreatorInput\/phases-steps-2\/procedure\/e39e8c3ca1484b153f332c59459bc2a751ee0b93679d098b18e9c3f614917218",
-      "swift_line" : 642
+      "swift_line" : 641
     },
     {
       "canonical" : "`bun test test\/skills-conformance.test.ts` -- Verify. Run  to confirm the new skill passes.",
       "meridian_line" : 79,
       "primitive" : "invoke",
       "stable_step_path" : "\/SkillCreatorInput\/phases-steps-2\/procedure\/f9757fd87b7ade8b8af9aa58e1f887f9788a08c0d127243f62db785d3813cf36",
-      "swift_line" : 656
+      "swift_line" : 655
     }
   ],
   "ir_version" : "1.1",

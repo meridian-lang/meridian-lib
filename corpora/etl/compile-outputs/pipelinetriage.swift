@@ -338,12 +338,11 @@ public struct PipelineTriage: MeridianWorkflow {
         "triggers": "\"triage failed pipelines\"\n\"triage pipeline failures\"\n\"run the pipeline triage pass\"",
     ]
 
-    public static let skillVersionHash = "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+    public static let skillVersionHash = "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -357,7 +356,7 @@ public struct PipelineTriage: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
-            versionHash: "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+            versionHash: "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
         ),
         toolCapturePolicies: [:]
     )
@@ -483,12 +482,11 @@ public struct PipelineTriage: MeridianWorkflow {
 public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+    public static let skillVersionHash = "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -502,7 +500,7 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
-            versionHash: "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+            versionHash: "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
         ),
         toolCapturePolicies: [:]
     )
@@ -559,12 +557,11 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
 public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+    public static let skillVersionHash = "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -578,7 +575,7 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
-            versionHash: "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+            versionHash: "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
         ),
         toolCapturePolicies: [:]
     )
@@ -635,12 +632,11 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
 public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+    public static let skillVersionHash = "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -654,7 +650,7 @@ public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "pipeline triage",
-            versionHash: "c3781eceda252ca004fb2476ff399750d9392501a4be90d525172020c59d892b"
+            versionHash: "dd812984671ef4148f84e9936d2e6971d0588afca3804f602062a2a2f5cd8929"
         ),
         toolCapturePolicies: [:]
     )

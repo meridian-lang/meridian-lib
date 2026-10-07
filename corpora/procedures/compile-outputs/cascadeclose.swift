@@ -409,12 +409,11 @@ public struct CascadeClose: MeridianWorkflow {
         "triggers": "\"cascade close\"\n\"orphaned audit rows\"",
     ]
 
-    public static let skillVersionHash = "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+    public static let skillVersionHash = "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -428,7 +427,7 @@ public struct CascadeClose: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
-            versionHash: "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+            versionHash: "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
         ),
         toolCapturePolicies: [:]
     )
@@ -517,12 +516,11 @@ public struct CascadeClose: MeridianWorkflow {
 public struct WhenCascadecloseFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+    public static let skillVersionHash = "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -536,7 +534,7 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
-            versionHash: "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+            versionHash: "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
         ),
         toolCapturePolicies: [:]
     )
@@ -593,12 +591,11 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
 public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+    public static let skillVersionHash = "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -612,7 +609,7 @@ public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "cascade close",
-            versionHash: "c9568d2e83278cc8cc4fbd0312f4b1ac886877c73676b133ac54a91bc8c97d67"
+            versionHash: "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a"
         ),
         toolCapturePolicies: [:]
     )

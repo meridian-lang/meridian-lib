@@ -5,126 +5,126 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGbrainisoutdateFires\/root\/procedure\/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event gbrainIsOutDate.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGbrainisoutdateFires\/root\/procedure\/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.gbrainSelfUpgrade.fired with kind = \"keyword\", spec = \"gbrain self-upgrade\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGbrainselfupgradeFires\/root\/procedure\/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event gbrainSelfUpgrade.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGbrainselfupgradeFires\/root\/procedure\/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event gbrainUpdateAvailable.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGbrainupdateavailableFires\/root\/procedure\/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.gbrainUpdateAvailable.fired with kind = \"keyword\", spec = \"gbrain update available\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGbrainupdateavailableFires\/root\/procedure\/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event isGbrainUpDate.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenIsgbrainupdateFires\/root\/procedure\/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.isGbrainUpDate.fired with kind = \"keyword\", spec = \"is gbrain up to date\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenIsgbrainupdateFires\/root\/procedure\/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.keepGbrainCurrent.fired with kind = \"keyword\", spec = \"keep gbrain current\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenKeepgbraincurrentFires\/root\/procedure\/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event keepGbrainCurrent.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenKeepgbraincurrentFires\/root\/procedure\/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.updateGbrain.fired with kind = \"keyword\", spec = \"update gbrain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenUpdategbrainFires\/root\/procedure\/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event updateGbrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenUpdategbrainFires\/root\/procedure\/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.upgradeAvailable.fired with kind = \"keyword\", spec = \"UPGRADE_AVAILABLE\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenUpgradeavailableFires\/root\/procedure\/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event upgradeAvailable.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenUpgradeavailableFires\/root\/procedure\/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "wait for event upgradeGbrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenUpgradegbrainFires\/root\/procedure\/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "emit trigger.upgradeGbrain.fired with kind = \"keyword\", spec = \"upgrade gbrain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenUpgradegbrainFires\/root\/procedure\/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5",
-      "swift_line" : 1240
+      "swift_line" : 1231
     },
     {
       "canonical" : "`gbrain self-upgrade --check-only --json`.",
       "meridian_line" : 84,
       "primitive" : "invoke",
       "stable_step_path" : "\/GbrainUpgradeInput\/mode-notify-default-steps\/procedure\/f31a7b25ed20a4c5058bc4393663b233afb8b1c660985ad512444f2b333346ac",
-      "swift_line" : 627
+      "swift_line" : 626
     },
     {
       "canonical" : "use judgment to follow the mode = notify (default) — steps 2 guidance:\n  If `update_available` is `true`, tell the operator WHAT they'll get before\n  asking. The JSON includes `changelog_diff` (CHANGELOG entries between their\n  version and the new one) and `release_url`. Summarize it into 3-5 plain bullets\n  of what's new — do NOT paste the raw diff. Then present the 4-option question:\n  If `changelog_diff` is empty (network blip \/ no notes), ask without the bullets\n  rather than blocking — the version numbers alone are enough to decide\n  Yes → `gbrain self-upgrade`\n  Always → `gbrain config set self_upgrade.mode auto` then `gbrain self-upgrade`\n  Never → `gbrain config set self_upgrade.mode off`",
       "meridian_line" : 91,
       "primitive" : "aiJudgment",
       "stable_step_path" : "\/GbrainUpgradeInput\/mode-notify-default-steps-2\/procedure\/0674f942c7943ade6a2f54fb865fbea03cadec1ef0d76f43db43d0d46316c526",
-      "swift_line" : 639
+      "swift_line" : 638
     }
   ],
   "ir_version" : "1.1",

@@ -531,12 +531,11 @@ public struct ReturnsProcessing: MeridianWorkflow {
         "triggers": "\"process returns\"\n\"route returned orders\"",
     ]
 
-    public static let skillVersionHash = "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+    public static let skillVersionHash = "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -550,7 +549,7 @@ public struct ReturnsProcessing: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
-            versionHash: "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+            versionHash: "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
         ),
         toolCapturePolicies: [:]
     )
@@ -688,12 +687,11 @@ public struct ReturnsProcessing: MeridianWorkflow {
 public struct WhenProcessreturnsFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+    public static let skillVersionHash = "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -707,7 +705,7 @@ public struct WhenProcessreturnsFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
-            versionHash: "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+            versionHash: "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
         ),
         toolCapturePolicies: [:]
     )
@@ -764,12 +762,11 @@ public struct WhenProcessreturnsFires: MeridianWorkflow {
 public struct WhenRoutereturnedordersFires: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+    public static let skillVersionHash = "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
             retention: .seconds(2592000),
-            hashChaining: true,
             payloadLimit: nil,
             usuallyThreshold: 0.9,
             rarelyThreshold: 0.1,
@@ -783,7 +780,7 @@ public struct WhenRoutereturnedordersFires: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "returns processing",
-            versionHash: "4879619d265181023068620c329f0f223626933a4f98233c229d2bc9434847c1"
+            versionHash: "9244164595fa5d8c1f0b4ea565abfeee51d9daf3b426c0ed457c4b3edee81436"
         ),
         toolCapturePolicies: [:]
     )

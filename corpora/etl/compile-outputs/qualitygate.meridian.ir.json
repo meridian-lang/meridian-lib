@@ -5,105 +5,105 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckdataqualityFires\/root\/procedure\/7bd0b45e67ff201c392c5274e0613bd5a6af836a985f3993aac759caccdb0153",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "wait for event checkDataQuality.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckdataqualityFires\/root\/procedure\/f19603e13fb622f6678dc9f0f2b739d2018025a518d802e01e405560e032d4ff",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "emit trigger.runQualityGate.fired with kind = \"keyword\", spec = \"run quality gate\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunqualitygateFires\/root\/procedure\/2dc6996084fec1e926741fd2c1ff5cd99ee659090815cbe95a5b8ffc02421b8f",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "wait for event runQualityGate.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunqualitygateFires\/root\/procedure\/a5d30ae97db9f4bf6b35e35ea5e0009456c69976b34e47f40887b033ea886621",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "emit trigger.runQualityGatePass.fired with kind = \"keyword\", spec = \"run the quality gate pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRunqualitygatepassFires\/root\/procedure\/3d436ce95245b8e67cb21cf95a8a8374d657717343d46cfb73895ea4f555ddbc",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "wait for event runQualityGatePass.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRunqualitygatepassFires\/root\/procedure\/f0e67ce878717aeebcb5f2bd721a97e06de915e5bdb632034764c11eff7a35e1",
-      "swift_line" : 673
+      "swift_line" : 669
     },
     {
       "canonical" : "!!! table (( data: thresholds ))\n| name | floor |\n| ---- | ----- |\n| \"high\" | 100 |\n| \"low\" | 0 |",
       "meridian_line" : 26,
       "primitive" : "bind",
       "stable_step_path" : "\/QualityGate\/tables\/tables\/92a18d6fbdf474459cbfd5b3203ea5c1d311ddd0c1ece85b05d112dbb899207f",
-      "swift_line" : 391
+      "swift_line" : 390
     },
     {
       "canonical" : "bind datasets = invoke dataset.list.",
       "meridian_line" : 41,
       "primitive" : "invoke",
       "stable_step_path" : "\/QualityGate\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
-      "swift_line" : 394
+      "swift_line" : 393
     },
     {
       "canonical" : "for each dataset in datasets,\n  bind qualityCheck = invoke quality.run with dataset = dataset.",
       "meridian_line" : 42,
       "primitive" : "iterate",
       "stable_step_path" : "\/QualityGate\/workflow-steps\/procedure\/0fcb88e7fd516bcfd7ae086cf94676aa0aecaab35eca89168e25b1d9e861212f",
-      "swift_line" : 400
+      "swift_line" : 399
     },
     {
       "canonical" : "bind qualityCheck = invoke quality.run with dataset = dataset.",
       "meridian_line" : 43,
       "primitive" : "invoke",
       "stable_step_path" : "\/QualityGate\/workflow-steps\/procedure\/iterate.body\/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a",
-      "swift_line" : 409
+      "swift_line" : 408
     },
     {
       "canonical" : "bind passingCount = the number of quality checks whose status equals \"passed\".",
       "meridian_line" : 44,
       "primitive" : "bind",
       "stable_step_path" : "\/QualityGate\/workflow-steps\/procedure\/77470d4a75c89014f3916ad42223403650b251baab3a73bea0b3329077077c89",
-      "swift_line" : 427
+      "swift_line" : 426
     },
     {
       "canonical" : "emit etl.quality_report with body = quality report.",
       "meridian_line" : 48,
       "primitive" : "emit",
       "stable_step_path" : "\/QualityGate\/workflow-steps-2\/procedure\/3e78edb07ba05d64896442d3aeedd129e411ae911fb3354365e8cad659f4c2e5",
-      "swift_line" : 430
+      "swift_line" : 429
     },
     {
       "canonical" : "assert passing count is at least 0.",
       "meridian_line" : 49,
       "primitive" : "assert",
       "stable_step_path" : "\/QualityGate\/workflow-steps-2\/procedure\/9c6ad3a0df997efda018a98d4b7a57c71f7ac861afd6cb7740f300c04e53f921",
-      "swift_line" : 441
+      "swift_line" : 440
     },
     {
       "canonical" : "emit etl.report with message = \"quality gate pass complete\".",
       "meridian_line" : 50,
       "primitive" : "emit",
       "stable_step_path" : "\/QualityGate\/workflow-steps-2\/procedure\/83f51a6ce42d45eba080cc636d5a54a143c96208ef59500ce2f64e709c7d30c6",
-      "swift_line" : 446
+      "swift_line" : 445
     },
     {
       "canonical" : "assert quality report contains \"quality-gate\".",
       "meridian_line" : 60,
       "primitive" : "assert",
       "stable_step_path" : "\/QualityGate\/guarantees\/invariants\/4dd626fee7ea4c66f724635aefad8e841d3a8e88d5a151fcf9266997f96f5b14",
-      "swift_line" : 387
+      "swift_line" : 386
     }
   ],
   "ir_version" : "1.1",

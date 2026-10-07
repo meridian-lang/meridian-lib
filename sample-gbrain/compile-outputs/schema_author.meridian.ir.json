@@ -5,231 +5,231 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAddpagetypeFires\/root\/procedure\/0777e961c6c9d620880d583bf7a8835d1abe57f58c59a54349b8745c35b09403",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event addPageType.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAddpagetypeFires\/root\/procedure\/546f371cefa3b3a3ed22fc4796b6c5edc9a393c965a20145acee32f06d667eeb",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.addTypeMySchema.fired with kind = \"keyword\", spec = \"add a type to my schema\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAddtypemyschemaFires\/root\/procedure\/68bcb874dc768cdebf3f3f893ce4b9fe3370a458aa3f046e7dd163cd5a44bac7",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event addTypeMySchema.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAddtypemyschemaFires\/root\/procedure\/ce3de1cdcd8275686407010238cc093e5b0fd21ffdf3ec1ed52463b0fb0646d8",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event backfillPageTypes.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenBackfillpagetypesFires\/root\/procedure\/cf02a02e6ca1aa8104f56e6dc820284153879625f1426f0b37816b1413f3048b",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.backfillPageTypes.fired with kind = \"keyword\", spec = \"backfill page types\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenBackfillpagetypesFires\/root\/procedure\/f933bc4b9acaa51188be7694ce86129fe8f3a8f643cfd4ea874d456ed4923937",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event createCustomType.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCreatecustomtypeFires\/root\/procedure\/b67e22706244b62d2413a4d7dfa94b4325169d71e8f044984dff8e44ced4239d",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.createCustomType.fired with kind = \"keyword\", spec = \"create a custom type for\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCreatecustomtypeFires\/root\/procedure\/f335fbd7e31b10c9abf7e3c2b2cfb7e6e56d305ec110ca522172af2ca562e6f5",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.evolveMySchema.fired with kind = \"keyword\", spec = \"evolve my schema\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenEvolvemyschemaFires\/root\/procedure\/e388a796bed9fa0b29f62e1193261b1d78bb7a124a4e71a98851d4cf88e81e42",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event evolveMySchema.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenEvolvemyschemaFires\/root\/procedure\/f87bf9c168ec4ff9100f87c0d94312bf51627c1e5c4ea354f39ebdbccb0a2460",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.extendSchemaPack.fired with kind = \"keyword\", spec = \"extend the schema pack\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenExtendschemapackFires\/root\/procedure\/224f71bfb081fb6bb37309ee5e9947a1f28d9dd4f460894a893cf2fc76eb489b",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event extendSchemaPack.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenExtendschemapackFires\/root\/procedure\/7f4fc2f4aa722cfc422b9b1b7d1705cd54253e154157d4448e3155fc3f55d3ba",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.makeXExpertType.fired with kind = \"keyword\", spec = \"make X an expert type\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMakexexperttypeFires\/root\/procedure\/15881eef3458abb2718fc449813ae36ccc5562cba36065f21ab7606f71bdb008",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event makeXExpertType.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMakexexperttypeFires\/root\/procedure\/bba03018c06399f03218d2129d1eb31156d4ee4a7226f4b4ec6475cd6173346e",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.myBrainHasUntypedPages.fired with kind = \"keyword\", spec = \"my brain has untyped pages\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenMybrainhasuntypedpagesFires\/root\/procedure\/23b417bc8277320cab75bd2da6ad0cd21107a9955dbe68272c75f0f81d72de11",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event myBrainHasUntypedPages.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenMybrainhasuntypedpagesFires\/root\/procedure\/77e2e0f900633a42474ea9e201b404c6f582fc54b89c9eaf5afc05d326ea0637",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.proposeNewTypesMyCorpus.fired with kind = \"keyword\", spec = \"propose new types from my corpus\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenProposenewtypesmycorpusFires\/root\/procedure\/4bb498fad4881114e8b83e3286dcf81fce6ca6d1a73fbbae92f794885306887a",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event proposeNewTypesMyCorpus.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenProposenewtypesmycorpusFires\/root\/procedure\/95db2aff307faae816f069039e5fe86ae584ae09010aa714bd656c7473caf85a",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.researcherType.fired with kind = \"keyword\", spec = \"researcher type\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenResearchertypeFires\/root\/procedure\/3fece2ff74872f16c23ac23a8732821b89b950fec72c7f387714e63ad6964917",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event researcherType.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenResearchertypeFires\/root\/procedure\/c8b5d0c2d88eeba5609bf10d399f44695dadc6f4be9f663ee7b8c7e577147135",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event schemaAuthor.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSchemaauthorFires\/root\/procedure\/625af7a075a5e68937f3d61a6044e91ded3477d67c974f229f5f8666f9670798",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.schemaAuthor.fired with kind = \"keyword\", spec = \"schema author\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSchemaauthorFires\/root\/procedure\/7e0da19bc9c55390e566a81a6645e79ecb9b33809803d12e156822f901cfff97",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.schemaIsnTMatchingMy.fired with kind = \"keyword\", spec = \"schema isn't matching my notes\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSchemaisntmatchingmyFires\/root\/procedure\/3564b9f57448f7c2daf3e78d5af995dc217de61b852400922dd00dd616c078b6",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event schemaIsnTMatchingMy.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSchemaisntmatchingmyFires\/root\/procedure\/c76c5118a681a0d0c4855440073df602b458fc3516dc8c7a98ca352095fd6113",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.schemaMutate.fired with kind = \"keyword\", spec = \"schema mutate\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSchemamutateFires\/root\/procedure\/015528e7f4dd9a93a7d22d122d49375b6be95568b6d1b522ee4d04e706700890",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event schemaMutate.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSchemamutateFires\/root\/procedure\/7bde963aa48998f57ee27c7ec05a89ec30afef8281883a4a462139d34a58b02b",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.schemaPackAdd.fired with kind = \"keyword\", spec = \"schema pack add\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSchemapackaddFires\/root\/procedure\/682db467fb4066b8f84536b570cfea4698641f2a1e8f79e1d27331e27b3b6347",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event schemaPackAdd.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSchemapackaddFires\/root\/procedure\/c1071f6c2e583df75711cf91c615cb84a85a1767c513f42edc0ca49cf7f2a7b1",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "wait for event schemaSync.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenSchemasyncFires\/root\/procedure\/20ce9dc81071772cfa286e4431ce02ab1ce9e5ee953b08a2773f466cc7513062",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "emit trigger.schemaSync.fired with kind = \"keyword\", spec = \"schema sync\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenSchemasyncFires\/root\/procedure\/6c0cd11b8927a368456982a9f49efba2db8e2f660af329b6bb8441c1ac49a90a",
-      "swift_line" : 1783
+      "swift_line" : 1767
     },
     {
       "canonical" : "`~\/.gbrain\/schema-packs\/<name>\/pack.{json,yaml}` -- Mutated pack file at.",
       "meridian_line" : 255,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaAuthorInput\/outputs-steps\/procedure\/d90e0d3cfeba89cdc1019c46ddc6c57b8c8c647b9de8440488aec790c643c463",
-      "swift_line" : 628
+      "swift_line" : 627
     },
     {
       "canonical" : "`~\/.gbrain\/audit\/schema-mutations-YYYY-Www.jsonl` -- Audit row in  per mutation.",
       "meridian_line" : 256,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaAuthorInput\/outputs-steps\/procedure\/c24ae087b8f96cfc47292b624e7892522decce73891210099b6bbc57670a17cc",
-      "swift_line" : 642
+      "swift_line" : 641
     },
     {
       "canonical" : "bind pages = invoke page.list with filter = rows after`sync apply`.",
       "meridian_line" : 257,
       "primitive" : "invoke",
       "stable_step_path" : "\/SchemaAuthorInput\/outputs-steps\/procedure\/3b97be90df033de3be78df936fc205f9b3735c5039f1d3c8b8add4c33826cb19",
-      "swift_line" : 656
+      "swift_line" : 655
     }
   ],
   "ir_version" : "1.1",
