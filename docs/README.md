@@ -50,7 +50,7 @@ runs against a small deterministic runtime.
 | 20 | [20_DEONTIC.md](20_DEONTIC.md) | Wave 9 deontic norms, obligations, conflict lattice, and guards |
 | 21 | [21_OUT_OF_SCOPE.md](21_OUT_OF_SCOPE.md) | Permanent out-of-scope boundary (prover discharge, localization) |
 | 22 | [22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md) | Shared module imports, `--module-path`, lockfiles |
-| 24 | [24_TRACE_STORAGE.md](24_TRACE_STORAGE.md) | Trace store backends (memory, JSONL, SQLite, HTTP) |
+| 24 | [24_TRACE_STORAGE.md](24_TRACE_STORAGE.md) | Trace store backends (memory, JSONL), capture policy, shell-hole redaction |
 | — | [cookbook/README.md](cookbook/README.md) | **Semantics oracle** — normative meaning/surface docs for Waves 7–9 / Final Wave (`MERIDIAN_*.md`) |
 | — | [coverage/README.md](coverage/README.md) | **Anyone touching tests** — how & why coverage is measured, the enforced per-file gate, and how to raise it |
 | — | [../Tests/README.md](../Tests/README.md) | All contributors — test suites, forcing functions, adding tests |
