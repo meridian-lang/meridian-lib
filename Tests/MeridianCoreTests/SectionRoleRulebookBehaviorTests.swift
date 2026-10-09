@@ -36,7 +36,7 @@ struct SectionRoleRulebookBehaviorTests {
 
     @Test("rulebook section aliases merge with builtins and custom headings compile")
     func rulebookAliasesDriveSectionBuilder() throws {
-        let rulebook = try RulebookParser(trace: .silent()).parse("""
+        let rulebook = try RulebookParser().parse("""
         === sections ===
         section "Repair missing back-links", "Fix links" -> procedure
         section "Guarantees" -> invariants
@@ -49,7 +49,6 @@ struct SectionRoleRulebookBehaviorTests {
 
         let swift = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
-            trace: .silent()
         )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             rulebook: rules.merrules
@@ -68,21 +67,21 @@ struct SectionRoleRulebookBehaviorTests {
     @Test("rulebook parser rejects malformed section aliases and unknown roles")
     func rulebookSectionDiagnostics() {
         #expect(throws: CompilerError.self) {
-            _ = try RulebookParser(trace: .silent()).parse("""
+            _ = try RulebookParser().parse("""
             === sections ===
             "Contract" -> invariants
             """, file: "rules.merrules")
         }
 
         #expect(throws: CompilerError.self) {
-            _ = try RulebookParser(trace: .silent()).parse("""
+            _ = try RulebookParser().parse("""
             === sections ===
             section "Contract" invariants
             """, file: "rules.merrules")
         }
 
         #expect(throws: CompilerError.self) {
-            _ = try RulebookParser(trace: .silent()).parse("""
+            _ = try RulebookParser().parse("""
             === sections ===
             section "Contract" -> executable
             """, file: "rules.merrules")
@@ -91,7 +90,7 @@ struct SectionRoleRulebookBehaviorTests {
 
     @Test("SkillSectionBuilder preserves strict executable and non-executable section behavior")
     func sectionBuilderStrictness() throws {
-        let executable = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+        let executable = try MeridianParser(symbols: SymbolTable()).parse("""
         ## Custom Work (( role: procedure ))
         complete.
 
@@ -107,7 +106,7 @@ struct SectionRoleRulebookBehaviorTests {
         #expect(executable.workflows.first?.body.statements.count == 1)
 
         #expect(throws: CompilerError.self) {
-            _ = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+            _ = try MeridianParser(symbols: SymbolTable()).parse("""
             ## Custom Work
             complete.
             """, file: "skill.meri")

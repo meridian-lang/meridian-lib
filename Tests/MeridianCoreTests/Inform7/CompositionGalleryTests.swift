@@ -156,9 +156,8 @@ struct CompositionGalleryTests {
     @Test("Gallery-6 table-conditioned may-invoke-slack-send permission classifies")
     func gallery6() throws {
         let analyzer = RuleAnalyzer(symbols: SymbolTable.build(
-            from: try! MerConfigParser(trace: .silent()).parse(Self.galleryVocabularySource, file: "gallery.merconfig"),
+            from: try! MerConfigParser().parse(Self.galleryVocabularySource, file: "gallery.merconfig"),
             sourceFile: "gallery.merconfig",
-            trace: .silent()
         ))
         let tableRule = RuleAST(
             text: "This skill may invoke slack.send only where the channel is the channel corresponding to the severity \"sev2\" in the escalation table.",

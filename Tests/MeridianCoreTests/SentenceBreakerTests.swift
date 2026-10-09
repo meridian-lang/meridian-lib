@@ -49,14 +49,14 @@ struct SentenceBreakerTests {
     @Test("trimming a terminating period is traced under .tokenize (B1)")
     func trimTraced() {
         let cap = ParserTrace.capturing(categories: [.tokenize])
-        _ = SentenceBreaker().statementText(from: "complete.", trace: cap.trace)
+        _ = cap.trace.run { SentenceBreaker().statementText(from: "complete.") }
         #expect(cap.lines().contains { $0.contains("sentence-break: trimmed terminating period") })
     }
 
     @Test("no trace emitted when there is no terminating period to trim")
     func noTrimNoTrace() {
         let cap = ParserTrace.capturing(categories: [.tokenize])
-        _ = SentenceBreaker().statementText(from: "emit note with body = \"done.\"", trace: cap.trace)
+        _ = cap.trace.run { SentenceBreaker().statementText(from: "emit note with body = \"done.\"") }
         #expect(cap.lines().isEmpty)
     }
 

@@ -6,7 +6,7 @@ import Testing
 struct FinalWaveClosureTests {
     @Test("SEM_3_01 commit lowers to checkpoint boundary without implicit rollback")
     func sem301CommitRecoverHonesty() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
+        let out = try Compiler(options: .init()).compile(
             meridianSource: """
             ---
             vocabulary: t.merconfig

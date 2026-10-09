@@ -37,22 +37,20 @@ public struct ModuleResolver: Sendable {
 
     public let moduleSearchPaths: [URL]
     public let anchorDirectory: URL
-    public let trace: ParserTrace
     public let lexicon: EnglishLexicon
 
     public init(
         moduleSearchPaths: [URL],
         anchorDirectory: URL,
-        trace: ParserTrace = .shared,
         lexicon: EnglishLexicon = .default
     ) {
         self.moduleSearchPaths = moduleSearchPaths
         self.anchorDirectory = anchorDirectory.standardizedFileURL
-        self.trace = trace
         self.lexicon = lexicon
     }
 
     public func resolve(imports: [ModuleImportSpec]) throws -> ModuleResolutionResult {
+        let trace = ParserTrace.current
         var seenImportNames: Set<String> = []
         for spec in imports {
             let key = spec.name.lowercased()
@@ -156,6 +154,7 @@ public struct ModuleResolver: Sendable {
     }
 
     private func locatePackage(named name: String, sourceFile: String, sourceLine: Int) throws -> LocatedPackage {
+        let trace = ParserTrace.current
         var candidates: [URL] = []
         let stem = (name as NSString).lastPathComponent
         func appendCandidates(relativeTo base: URL) {
@@ -221,11 +220,12 @@ public struct ModuleResolver: Sendable {
 
     private func parseMerconfig(at url: URL, file: String) throws -> MerConfigFile {
         let source = try String(contentsOf: url, encoding: .utf8)
-        return try MerConfigParser(trace: trace, lexicon: lexicon).parse(source, file: file)
+        return try MerConfigParser(lexicon: lexicon).parse(source, file: file)
     }
 
     private func parseImportsFromMeridian(at url: URL?) -> [ModuleImportSpec] {
         guard let url else { return [] }
+        let trace = ParserTrace.current
         let source: String
         do {
             source = try String(contentsOf: url, encoding: .utf8)

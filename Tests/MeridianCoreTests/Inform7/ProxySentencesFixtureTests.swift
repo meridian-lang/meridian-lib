@@ -91,7 +91,7 @@ struct ProxySentencesFixtureTests {
         #expect(narrativeEntries.count == 20, Comment(rawValue: "expected 20 narrative-labeled entries, got \(narrativeEntries.count)"))
 
         for entry in narrativeEntries {
-            let parsed = ExpressionParser(trace: .silent()).parse(entry.sentence)
+            let parsed = ExpressionParser().parse(entry.sentence)
             switch parsed {
             case .traceTemporal, .traceStatistical:
                 Issue.record("`\(entry.id)` (\(entry.notes)) was misparsed as trace grammar: \(parsed)")

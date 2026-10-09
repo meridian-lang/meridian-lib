@@ -40,22 +40,20 @@ public enum LLMProviderError: Error, Sendable, Equatable {
 }
 
 public enum LLMProviderRegistry {
-    private final class Storage: @unchecked Sendable {
-        var override: (any LLMProvider)?
-    }
+    /// Task-scoped provider override. Task-local rather than a process global so
+    /// parallel tests (and any concurrent host work) cannot observe each
+    /// other's override; child tasks inherit it.
+    @TaskLocal public static var override: (any LLMProvider)?
 
-    private static let storage = Storage()
-
-    public static func setOverride(_ provider: (any LLMProvider)?) {
-        storage.override = provider
-    }
-
-    public static func peekOverride() -> (any LLMProvider)? {
-        storage.override
+    public static func withOverride<T>(
+        _ provider: (any LLMProvider)?,
+        _ body: () async throws -> T
+    ) async rethrows -> T {
+        try await $override.withValue(provider, operation: body)
     }
 
     public static func resolve(requireConfigured: Bool) throws -> any LLMProvider {
-        if let override = storage.override { return override }
+        if let override { return override }
         if let config = LLMEnvironment.configuration() {
             return HTTPLLMProvider(config: config)
         }

@@ -18,7 +18,7 @@ struct PhaseFLanguageTests {
   """
 
     private func compile(_ mer: String, file: String = "test.meridian") throws -> String {
-        try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: file)], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))[file]!.swift
+        try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: file)], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))[file]!.swift
     }
 
     @Test("wait with timeout and recover lowers recover from wait.timeout")
@@ -77,8 +77,7 @@ struct PhaseFLanguageTests {
     @Test("the last N take suffix parses on descriptions")
     func lastNTakeSuffix() throws {
         let symbols = SymbolTable.build(
-            from: try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig"),
-            trace: .silent()
+            from: try MerConfigParser().parse(cfg, file: "t.merconfig"),
         )
         let parsed = DescriptionGrammar(
             lexicon: .default,
@@ -134,10 +133,10 @@ struct PhaseFLanguageTests {
 
     @Test("gradable adjective metadata enables most-adjective superlative")
     func gradableAdjectiveSuperlative() throws {
-        let config = try MerConfigParser(trace: .silent()).parse(gradableCfg, file: "g.merconfig")
+        let config = try MerConfigParser().parse(gradableCfg, file: "g.merconfig")
         let lexicon = EnglishLexicon.default.merging(from: config.languageSynonyms)
-        let symbols = SymbolTable.build(from: config, trace: .silent(), lexicon: lexicon)
-        let parser = ExpressionParser(symbols: symbols, trace: .silent(), lexicon: lexicon)
+        let symbols = SymbolTable.build(from: config, lexicon: lexicon)
+        let parser = ExpressionParser(symbols: symbols, lexicon: lexicon)
         let expr = parser.parse("the most urgent deal")
         guard case .superlative(let sup) = expr else {
             Issue.record("expected superlative from gradable adjective metadata")
@@ -151,14 +150,13 @@ struct PhaseFLanguageTests {
     @Test("MER-DSC-001 when magnitude superlative lacks by and gradable metadata")
     func merDsc001WithoutGradableBacking() throws {
         let symbols = SymbolTable.build(
-            from: try MerConfigParser(trace: .silent()).parse("""
+            from: try MerConfigParser().parse("""
             === vocabulary ===
             A deal is a kind of thing.
             A deal has an amount, which is Money.
             """, file: "g.merconfig"),
-            trace: .silent()
         )
-        let parser = ExpressionParser(symbols: symbols, trace: .silent())
+        let parser = ExpressionParser(symbols: symbols)
         let expr: ExpressionAST = parser.parse("the largest deal")
         guard case .malformed(_, code: let code, _, _) = expr else {
             Issue.record("expected malformed superlative without by")
@@ -190,7 +188,7 @@ struct PhaseFLanguageTests {
             invoke access.revoke with user = "u1", resource = "r1".
           complete.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "grant.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: revokeCfg)]))["grant.meridian"]!.swift
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "grant.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: revokeCfg)]))["grant.meridian"]!.swift
         #expect(out.contains("runtime.checkpoint"))
         #expect(out.contains("recordRecoverEngaged"))
         #expect(out.contains("access.revoke"))

@@ -91,7 +91,7 @@ public struct RunCommand: AsyncParsableCommand {
         let swiftURL = outputURL.appendingPathComponent(stem + ".swift")
         try swift.write(to: swiftURL, atomically: true, encoding: .utf8)
         let m = compiled.manifest
-        let manifest = try ManifestEmitter(trace: traceInstance).emit(.init(
+        let manifest = try traceInstance.run { try ManifestEmitter().emit(.init(
             sourceFiles: [meridianURL.lastPathComponent] + merconfigURLs.map(\.lastPathComponent),
             workflows: m.workflows,
             constantsDecl: m.constantsDecl,
@@ -106,7 +106,7 @@ public struct RunCommand: AsyncParsableCommand {
             definitions: m.definitions,
             relations: m.relations,
             verbs: m.verbs
-        ))
+        )) }
         try manifest.write(
             to: outputURL.appendingPathComponent(stem + ".meridian.manifest.json"),
             atomically: true,

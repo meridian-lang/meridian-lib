@@ -173,8 +173,37 @@ At init time, `ParserTrace` reads `MERIDIAN_TRACE` from the environment and
 auto-enables categories. This means tests that set `MERIDIAN_TRACE` in the
 environment will also get trace output unless they use an isolated instance.
 
-All compiler components accept `trace: ParserTrace = .shared` in their
-initialiser.
+### Task-local threading
+
+Compiler components do **not** take a `trace:` parameter. The active trace is a
+task-local, `ParserTrace.current`, which defaults to `ParserTrace.shared`:
+
+```swift
+@TaskLocal public static var current: ParserTrace = .shared
+```
+
+There are exactly two injection points:
+
+- **`Compiler.Options.trace`** — every `Compiler` entry point (`compile(_:)`,
+  `bootstrap(_:)`, `emit(workflows:)`, `emitManifest(_:)`) installs
+  `options.trace` as `ParserTrace.current` for the duration of the call, so the
+  whole pipeline (parse → lower → emit) sees it without threading.
+- **`trace.run { … }`** — wraps a direct API call (a parser/emitter/linter used
+  outside a compile) so the components inside read `trace` from the task-local:
+
+  ```swift
+  try trace.run { try Verbalizer(model: model).verbalize() }
+  ```
+
+`@TaskLocal` values are inherited by child tasks, so `await`ed work inside a
+compile sees the same trace. `Task.detached` does not inherit; nothing in the
+compiler detaches (detached work falls back to `.shared`, which is silent
+unless activated).
+
+Hot paths (`IndentTokenizer.tokenize`, `StatementParser` entry points,
+`ExpressionParser.parse`, `ASTToIR.lowerWorkflow`, `SwiftEmitter.emit`,
+`DiagnosticEngine.report`) read `ParserTrace.current` once per entry call into
+a local rather than per loop iteration.
 
 ---
 
@@ -231,7 +260,8 @@ trace.pop(token, "→ \(resultCount) primitives")
 ```swift
 let cap = ParserTrace.capturing(categories: [.phraseMatch])
 
-// pass cap.trace to the compiler
+// Compile-driving tests: pass cap.trace through Compiler.Options — the compile
+// installs it as the task-local for the whole pipeline.
 let out = try Compiler(options: .init(trace: cap.trace)).compile(
     meridianSource: mer,
     meridianFile: "test.meridian",
@@ -239,13 +269,18 @@ let out = try Compiler(options: .init(trace: cap.trace)).compile(
     merconfigFile: "test.merconfig"
 )
 
-// read captured lines after compilation
+// Direct-API tests: wrap the call so the component reads the captured trace.
+_ = cap.trace.run { PhrasePatternParser().parse("validate an order") }
+
+// read captured lines after the call
 let lines = cap.lines()
 // lines: [String] — every line emitted in the .phraseMatch category
 ```
 
 **Important:** `capturing()` does NOT take a trailing closure. Pass `cap.trace`
-into the compiler, then call `cap.lines()` afterwards.
+into the compiler (or wrap the call in `cap.trace.run { … }`), then call
+`cap.lines()` afterwards. An async variant of `run` exists for `await`ed
+bodies.
 
 ### Silence (for tests)
 
@@ -253,8 +288,9 @@ into the compiler, then call `cap.lines()` afterwards.
 let trace = ParserTrace.silent()   // never logs, sink goes to /dev/null
 ```
 
-Pass this to compiler stages in unit tests where trace output is noise. Production
-compiler and CLI paths must not hardcode `.silent()` because that drops a
+A compile that does not capture anything can simply omit `trace:` — the default
+`.shared` is silent unless `MERIDIAN_TRACE` is set. Production compiler and CLI
+paths must not hardcode `.silent()` because that drops a
 caller's `--trace`/`--trace-file` request. The only approved production-source
 exceptions are probe/benchmark paths listed in
 [`coverage/SILENT_FALLBACK_ALLOWLIST.md`](coverage/SILENT_FALLBACK_ALLOWLIST.md):
@@ -295,7 +331,8 @@ sink: `Authorization` headers, bearer tokens, `password=...`, `api_key=...`,
 
 Every subcommand that runs the compiler or migration pipeline creates a fresh
 `ParserTrace()` per invocation (via the shared `makeCLITrace(spec:file:)`
-bootstrap in `CLISupport.swift`), configures it, then passes it down.
+bootstrap in `CLISupport.swift`), configures it, passes it to
+`Compiler.Options.trace`, and wraps any direct-API work in `trace.run { … }`.
 `compile`, `check`, `verify`, `run`, `migrate-skill`, `preview-skill`,
 `explain`, `drift`, `inert-yield`, `skill-deviation`, and `lint` ALL accept
 `--trace`, `--trace-file`, and `--trace-format` (full parity — none are
@@ -311,6 +348,9 @@ let opts = Compiler.Options(
     emitterOptions: SwiftEmitter.Options(…),
     trace: traceInstance
 )
+
+// Direct-API work outside a compile (verbalizer, drift, lint, preview, …):
+try traceInstance.run { try Verbalizer(model: model).verbalize() }
 ```
 
 This does NOT touch `ParserTrace.shared` — each CLI invocation gets its own
@@ -354,32 +394,33 @@ enabled after init, so env-only activation gets the same banner as an explicit
 
 ---
 
-## Passing trace through the compiler
+## Injecting a trace
 
-Every major compiler component accepts `trace` as a constructor parameter
-with a default of `.shared`:
+Compiler components read the task-local `ParserTrace.current`; none take a
+`trace:` parameter. Two ways to inject one:
 
 ```swift
-MerConfigParser(trace: trace).parse(source, file: "ecommerce.merconfig")
-MeridianParser(symbols: st, trace: trace).parse(source, file: "order.meridian")
-StatementParser(symbols: st, trace: trace).parseBlock(lines)
-ExpressionParser(symbols: st, trace: trace).parse(text)
-try ASTToIR(symbols: st, sourceFile: "order.meridian", trace: trace).lower(file)
-try SwiftEmitter(options: emitterOpts, trace: trace).emit(workflows: workflows, …)
-try ManifestEmitter(trace: trace).emit(…)
-try SkillMigrator(compiler: compiler, vocabularies: vocabs, trace: trace).migrate(markdown, file: "skill.meri")
-SkillMarkdownImporter(trace: trace).preview(markdown, name: "…")
-try Verbalizer(model: model, trace: trace).verbalize()
-DriftEngine.diff(authored: authored, canonical: canonical, trace: trace)
+// 1. The compile scope — covers parse → lower → emit for the whole call.
+let compiler = Compiler(options: .init(trace: trace))
+try compiler.compile(unit)
+
+// 2. Direct API calls outside a compile — wrap the call.
+try trace.run { try Verbalizer(model: model).verbalize() }
+try trace.run { try SkillMigrator(compiler: compiler, vocabularies: vocabs).migrate(markdown, file: "skill.meri") }
+trace.run { SkillMarkdownImporter().preview(markdown, name: "…") }
+trace.run { DriftEngine.diff(authored: authored, canonical: canonical) }
 ```
 
-`SkillMigrator` and `SkillMarkdownImporter` default `trace` to the owning
-`Compiler`'s trace / `.shared` respectively — never to `.silent()` — so a
-caller's `--trace`/`--trace-file` request is always honored, logged under the
-`.skill` category (`migrate "file.meri": …`).
+`DiagnosticEngine()` and every parser/emitter/lowerer read `ParserTrace.current`
+at their entry call, so an engine constructed inside a compile scope sees the
+compile's trace. `SkillMigrator` and `SkillMarkdownImporter` log under `.skill`
+(`migrate "file.meri": …`) and never force `.silent()` — a caller's
+`--trace`/`--trace-file` request is always honored (wrap the call in `run {}`
+when invoking them directly rather than through a compile).
 
-In unit tests you can pass an explicit `ParserTrace()` per test, or
-`ParserTrace.silent()` to suppress all output.
+In unit tests you can pass an explicit `ParserTrace()` through
+`Compiler.Options`, or `ParserTrace.silent()` (or just the silent default) to
+suppress all output.
 
 ---
 

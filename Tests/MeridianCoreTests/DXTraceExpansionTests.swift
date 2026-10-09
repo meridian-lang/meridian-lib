@@ -112,13 +112,15 @@ struct DXTraceExpansionTests {
         let cap = ParserTrace.capturing(categories: [.codegen, .timing])
         let compiler = Compiler(options: .init(trace: cap.trace))
         let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["audit.meridian"]!.model
-        _ = try IRSidecarEmitter(trace: cap.trace).emit(
-            workflows: model.workflows,
-            verbalizer: Verbalizer(model: model, trace: cap.trace),
-            sourceFile: "audit.meridian",
-            swiftFile: "audit.swift",
-            sourceMap: []
-        )
+        _ = try cap.trace.run {
+            try IRSidecarEmitter().emit(
+                workflows: model.workflows,
+                verbalizer: Verbalizer(model: model),
+                sourceFile: "audit.meridian",
+                swiftFile: "audit.swift",
+                sourceMap: []
+            )
+        }
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("emit IR sidecar") })
@@ -137,7 +139,7 @@ struct DXTraceExpansionTests {
         let cap = ParserTrace.capturing(categories: [.verbalizer])
         let compiler = Compiler(options: .init(trace: cap.trace))
         let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["audit.meridian"]!.model
-        _ = try Verbalizer(model: model, trace: cap.trace).verbalize()
+        _ = try cap.trace.run { try Verbalizer(model: model).verbalize() }
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("workflow ") && $0.contains("▶") })
@@ -148,10 +150,12 @@ struct DXTraceExpansionTests {
     @Test("MeridianLinter threads trace through tokenizer and lint span")
     func linterTrace() {
         let cap = ParserTrace.capturing(categories: [.diagnostics, .tokenize])
-        _ = MeridianLinter(trace: cap.trace).lint(
-            source: "please maybe resolve the comment.",
-            file: "demo.meri"
-        )
+        _ = cap.trace.run {
+            MeridianLinter().lint(
+                source: "please maybe resolve the comment.",
+                file: "demo.meri"
+            )
+        }
         let lines = cap.lines()
         #expect(lines.contains { $0.hasPrefix("[diagnostics]") && $0.contains("lint demo.meri") })
         #expect(lines.contains { $0.contains("diagnostic(s)") })

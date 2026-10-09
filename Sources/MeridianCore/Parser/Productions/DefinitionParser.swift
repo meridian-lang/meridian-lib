@@ -15,12 +15,10 @@ struct DefinitionParser {
 
     let lexicon: EnglishLexicon
     let symbols: SymbolTable?
-    let trace: ParserTrace
 
-    init(lexicon: EnglishLexicon = .default, symbols: SymbolTable? = nil, trace: ParserTrace = .shared) {
+    init(lexicon: EnglishLexicon = .default, symbols: SymbolTable? = nil) {
         self.lexicon = lexicon
         self.symbols = symbols
-        self.trace = trace
     }
 
     /// True when `text` begins a definition (`Definition:` prefix).
@@ -33,6 +31,7 @@ struct DefinitionParser {
     /// Parse a `Definition:` line into a declaration, or nil when the shape is
     /// not recognised.
     func parse(_ rawLine: String, line: Int) -> DefinitionDeclaration? {
+        let trace = ParserTrace.current
         var t = rawLine.trimmingCharacters(in: .whitespaces)
         guard t.lowercased().hasPrefix(lexicon.grammar.definitionPrefix) else { return nil }
         t = String(t.dropFirst(lexicon.grammar.definitionPrefix.count)).trimmingCharacters(in: .whitespaces)
@@ -65,7 +64,7 @@ struct DefinitionParser {
 
         // Rewrite `it`/`its` to the subject before parsing.
         let bodyText = rewriteSubjectPronouns(condition, subject: subjectVar)
-        let body = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon).parse(bodyText)
+        let body = ExpressionParser(symbols: symbols, lexicon: lexicon).parse(bodyText)
 
         trace.log(.statement, "L\(line): definition parsed — kind=\"\(subjectVar)\" adjective=\"\(adjective)\"")
         return DefinitionDeclaration(

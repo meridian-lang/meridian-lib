@@ -2,11 +2,7 @@ import Foundation
 
 /// Companion IR metadata emitted beside generated Swift (`*.meridian.ir.json`).
 public struct IRSidecarEmitter {
-    private let trace: ParserTrace
-
-    public init(trace: ParserTrace = .shared) {
-        self.trace = trace
-    }
+    public init() {}
 
     public struct Entry: Codable, Sendable, Equatable {
         public let meridianLine: Int
@@ -45,7 +41,8 @@ public struct IRSidecarEmitter {
         swiftFile: String,
         sourceMap: [ManifestEmitter.SourceMapEntry]
     ) throws -> String {
-        try trace.phase("irSidecar") {
+        let trace = ParserTrace.current
+        return try trace.phase("irSidecar") {
             trace.log(.codegen, "emit IR sidecar for \(sourceFile) → \(swiftFile)")
             var mapByMeridianLine: [Int: Int] = [:]
             for entry in sourceMap {

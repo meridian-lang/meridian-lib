@@ -318,6 +318,7 @@ extension SkillMigrator {
     func splitPlan(for body: ArraySlice<String>, knowledge: Compiler.KnowledgeContext,
                    checkableOnly: Bool = false, ruleAware: Bool = true,
                    referenceHeadingContext: Bool = false) -> SplitPlan {
+        let trace = ParserTrace.current
         let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
         // Phase 0B rule-aware classifier hook: a line the compiler's own
         // `RuleAnalyzer` recognizes as a Phase-8 rule shape (`must not …` /
@@ -333,7 +334,7 @@ extension SkillMigrator {
         // trigger match the compiler-side fix (`SkillSectionBuilder`) guards
         // against; see IMPLEMENTATION_LOG.md for the gbrain measurement that
         // surfaced this.
-        let ruleAnalyzer = ruleAware ? RuleAnalyzer(lexicon: knowledge.lexicon, trace: trace, symbols: knowledge.symbols) : nil
+        let ruleAnalyzer = ruleAware ? RuleAnalyzer(lexicon: knowledge.lexicon, symbols: knowledge.symbols) : nil
         func isRuleShaped(_ text: String) -> Bool {
             guard let ruleAnalyzer else { return false }
             // Shape-gate first: `classify`'s marker matching is unanchored

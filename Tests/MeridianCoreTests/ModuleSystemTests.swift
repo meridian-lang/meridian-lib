@@ -15,7 +15,6 @@ struct ModuleSystemTests {
         let resolver = ModuleResolver(
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot,
-            trace: .silent()
         )
         let result = try resolver.resolve(imports: [
             ModuleImportSpec(name: "shared-domain", sourceFile: "skill.meridian", sourceLine: 1)
@@ -42,7 +41,6 @@ struct ModuleSystemTests {
         let resolver = ModuleResolver(
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot,
-            trace: .silent()
         )
         do {
             _ = try resolver.resolve(imports: [
@@ -59,7 +57,6 @@ struct ModuleSystemTests {
         let resolver = ModuleResolver(
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot,
-            trace: .silent()
         )
         do {
             _ = try resolver.resolve(imports: [
@@ -89,7 +86,6 @@ struct ModuleSystemTests {
         """
         let moduleRoot = fixturesRoot
         let compiler = Compiler(options: .init(
-            trace: .silent(),
             moduleSearchPaths: [moduleRoot],
             anchorDirectory: moduleRoot
         ))
@@ -103,7 +99,6 @@ struct ModuleSystemTests {
         let resolver = ModuleResolver(
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot,
-            trace: .silent()
         )
         let result = try resolver.resolve(imports: [
             ModuleImportSpec(name: "internal-domain", sourceFile: "t.merconfig", sourceLine: 1),
@@ -134,7 +129,6 @@ struct ModuleSystemTests {
           complete.
         """
         let compiler = Compiler(options: .init(
-            trace: .silent(),
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot
         ))

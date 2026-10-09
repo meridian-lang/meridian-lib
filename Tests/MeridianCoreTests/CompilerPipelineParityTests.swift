@@ -29,7 +29,7 @@ struct CompilerPipelineParityTests {
 
     @Test("workflows, norms, and verbalizer model agree across compile paths")
     func compilePathsAgreeOnLoweredArtifacts() throws {
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "parity.meri")], vocabularies: [vocab]))["parity.meri"]!.model
         let manifestResult = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "parity.meri")], vocabularies: [vocab]))["parity.meri"]!
 

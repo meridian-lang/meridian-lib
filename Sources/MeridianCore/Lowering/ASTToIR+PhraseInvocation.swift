@@ -16,6 +16,7 @@ extension ASTToIR {
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
     ) throws -> [IRPrimitive] {
+        let trace = ParserTrace.current
         let token = trace.push(.phraseInline, "phrase invocation @L\(s.sourceLine) depth=\(depth): \"\(s.words)\"")
         defer { trace.pop(token) }
 
@@ -63,7 +64,7 @@ extension ASTToIR {
         }
 
         if s.words.lowercased().hasPrefix(lexicon.grammar.statement.invokePrefix) {
-            let sp = StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
+            let sp = StatementParser(symbols: symbols, lexicon: lexicon)
             let expr = sp.buildInvokeExpr(s.words)
             if case .invoke(let toolID, let args) = expr {
                 trace.log(.phraseInline, "  bare invoke: tool=\(toolID) args=\(args.count)")
@@ -179,7 +180,7 @@ extension ASTToIR {
               let bindName = implicitBindName(from: invocationWords) else {
             return primitives
         }
-        trace.log(.lowering, "implicit bind \(bindName) for \(invoke.toolID)")
+        ParserTrace.current.log(.lowering, "implicit bind \(bindName) for \(invoke.toolID)")
         return [.invoke(InvokeIR(
             toolID: invoke.toolID,
             arguments: invoke.arguments,

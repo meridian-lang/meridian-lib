@@ -22,7 +22,7 @@ struct TraceTemporalEmitterTests {
             mode: .strict
         )
 
-        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false), trace: .silent())
+        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false))
             .emit(workflows: [workflow]).combined
 
         #expect(out.contains("runtime.evaluateTrace("), Comment(rawValue: out))
@@ -54,7 +54,7 @@ struct TraceTemporalEmitterTests {
             mode: .strict
         )
 
-        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false), trace: .silent())
+        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false))
             .emit(workflows: [workflow]).combined
 
         #expect(out.contains("== .indeterminate"), Comment(rawValue: out))

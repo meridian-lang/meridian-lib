@@ -7,12 +7,12 @@ struct ProseModeTests {
     @Test("unmatched line in discretion workflow lowers to AIJudgmentIR")
     func discretionUnmatchedLineBecomesProseStep() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To babysit, with discretion:
           inspect the diff and leave only useful comments.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR")
             return
@@ -23,7 +23,7 @@ struct ProseModeTests {
     @Test("unmatched line outside discretion still raises a semantic error")
     func strictUnmatchedLineStillErrors() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To babysit:
           inspect the diff and leave only useful comments.
         """)
@@ -31,7 +31,7 @@ struct ProseModeTests {
         // The lowerer's batch engine collects; the pipeline caller checkpoints.
         let engine = DiagnosticEngine()
         #expect(throws: CompilerError.self) {
-            _ = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: engine).lower(ast)
+            _ = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: engine).lower(ast)
             try engine.throwIfErrors()
         }
     }
@@ -61,12 +61,12 @@ struct ProseModeTests {
     @Test("unmatched line in discretion workflow lowers to AIJudgmentIR with the record output-kind default")
     func discretionProseStepDefaultsToRecordOutputKind() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To babysit, with discretion:
           inspect the diff and leave only useful comments.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR"); return
         }
@@ -165,7 +165,7 @@ struct ProseModeTests {
     @Test("use judgment to follow the <heading> guidance: threads AST guidance through IR and codegen")
     func judgmentFollowGuidanceThreadsThroughFullPipeline() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To run diagnostics:
           use judgment to follow the Diagnostics guidance:
             Check the golden path first.
@@ -173,7 +173,7 @@ struct ProseModeTests {
             Then check the fallback path.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR")
             return

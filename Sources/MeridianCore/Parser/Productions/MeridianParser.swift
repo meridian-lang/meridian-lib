@@ -9,7 +9,6 @@ import MeridianRuntime
 public struct MeridianParser {
 
     public let symbols: SymbolTable
-    public let trace: ParserTrace
     public let lexicon: EnglishLexicon
     /// Optional desugar engine threaded into every StatementParser this parser
     /// constructs. Nil for plain `.meridian` files (no rulebook loaded).
@@ -18,26 +17,26 @@ public struct MeridianParser {
     /// builds so per-statement parse errors are collected rather than aborting.
     public let diagnostics: DiagnosticEngine?
 
-    public init(symbols: SymbolTable, trace: ParserTrace = .shared,
+    public init(symbols: SymbolTable,
                 lexicon: EnglishLexicon = .default,
                 rewriteEngine: RewriteEngine? = nil,
                 diagnostics: DiagnosticEngine? = nil) {
         self.symbols = symbols
-        self.trace = trace
         self.lexicon = lexicon
         self.rewriteEngine = rewriteEngine
         self.diagnostics = diagnostics
     }
 
     private func makeStatementParser() -> StatementParser {
-        StatementParser(symbols: symbols, trace: trace, lexicon: lexicon,
+        StatementParser(symbols: symbols, lexicon: lexicon,
                         rewriteEngine: rewriteEngine, diagnostics: diagnostics)
     }
 
     public func parse(_ source: String, file: String = "") throws -> MeridianFile {
+        let trace = ParserTrace.current
         let token = trace.push(.parse, "MeridianParser.parse(\(file))")
         defer { trace.pop(token) }
-        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
+        let lines = IndentTokenizer().tokenize(source, file: file)
         let outline = MarkdownOutline.build(lines).map { section -> HeadingEntry in
             // Strip any trailing `(( … ))` marker so the outline carries the
             // clean heading text; the resolved role surfaces as `kind`.
@@ -155,7 +154,7 @@ public struct MeridianParser {
             // 2B: top-level `Definition:` lines are pulled out of the implicit
             // body so they register as checkable adjectives, not procedure steps.
             if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
-                if let def = DefinitionParser(lexicon: lexicon, symbols: symbols, trace: trace)
+                if let def = DefinitionParser(lexicon: lexicon, symbols: symbols)
                     .parse(t, line: line.number) {
                     definitions.append(def)
                 }
@@ -222,10 +221,10 @@ public struct MeridianParser {
                     let options = String(rawPatternText[autonomyRange.upperBound...]).trimmingCharacters(in: .whitespaces)
                     rawPatternText = String(rawPatternText[..<autonomyRange.lowerBound]).trimmingCharacters(in: .whitespaces)
                     allowsDiscretion = true
-                    let exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+                    let exprParser = ExpressionParser(symbols: symbols, lexicon: lexicon)
                     autonomy = AutonomyConfigAST.parse(options, parseExpression: exprParser.parse)
                 }
-                let pattern = PhrasePatternParser(trace: trace, lexicon: lexicon).parse(rawPatternText)
+                let pattern = PhrasePatternParser(lexicon: lexicon).parse(rawPatternText)
 
                 var bodyLines: [SourceLine] = []
                 while j < lines.count {
@@ -367,7 +366,7 @@ public struct MeridianParser {
         var sectionRules: [RuleAST] = []
         if hasHeadings {
             let builder = SkillSectionBuilder(
-                symbols: symbols, lexicon: lexicon, trace: trace,
+                symbols: symbols, lexicon: lexicon,
                 rulebook: rewriteEngine?.rulebook ?? .empty, file: file)
             let result = try builder.build(regionLines: regionLines)
             effectiveBody = result.bodyLines

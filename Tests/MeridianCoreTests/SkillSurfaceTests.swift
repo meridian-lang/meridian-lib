@@ -90,8 +90,8 @@ struct SkillSurfaceMarkdownTests {
 struct SkillSurfaceImplicitEntryTests {
 
     private func symbols(_ source: String) throws -> SymbolTable {
-        let cfg = try MerConfigParser(trace: .silent()).parse(source, file: "test.merconfig")
-        return SymbolTable.build(from: cfg, sourceFile: "test.merconfig", trace: .silent())
+        let cfg = try MerConfigParser().parse(source, file: "test.merconfig")
+        return SymbolTable.build(from: cfg, sourceFile: "test.merconfig")
     }
 
     @Test("top-level statements become an implicit entry workflow")
@@ -101,7 +101,7 @@ struct SkillSurfaceImplicitEntryTests {
         A pull request is a kind of thing.
         """)
 
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         ---
         name: babysit
         parameters: pull request
@@ -128,7 +128,7 @@ struct SkillSurfaceImplicitEntryTests {
         """)
 
         #expect(throws: CompilerError.self) {
-            _ = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+            _ = try MeridianParser(symbols: symbols).parse("""
             ---
             name: babysit
             parameters: ticket
@@ -147,7 +147,7 @@ struct SkillSurfaceImplicitEntryTests {
         """)
 
         #expect(throws: CompilerError.self) {
-            _ = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+            _ = try MeridianParser(symbols: symbols).parse("""
             ---
             name: babysit
             parameters: pull request
@@ -167,7 +167,7 @@ struct SkillSurfaceConnectiveTests {
 
     private func parse(_ source: String) throws -> ASTBlock {
         let lines = IndentTokenizer().tokenize(source)
-        return try StatementParser(symbols: SymbolTable(), trace: .silent()).parseBlock(lines)
+        return try StatementParser(symbols: SymbolTable()).parseBlock(lines)
     }
 
     @Test("only when suffix becomes a single-statement conditional")
@@ -279,7 +279,7 @@ struct SkillSurfaceConnectiveTests {
 struct SkillSurfaceEveryEachTests {
 
     private func parse(_ source: String) throws -> ASTBlock {
-        try StatementParser(symbols: SymbolTable(), trace: .silent())
+        try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize(source))
     }
 
@@ -360,13 +360,13 @@ struct SkillSurfaceImplicitBindTests {
                 returnType: "Customer"
             )
         ])
-        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig", trace: .silent())
+        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig")
         #expect(symbols.tools["getCustomer"]?.returnType == "Customer")
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To demo:
           invoke get customer with id = "c-1".
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
 
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("Expected invoke")
@@ -386,13 +386,13 @@ struct SkillSurfaceImplicitBindTests {
                 returnType: "Customer"
             )
         ])
-        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig", trace: .silent())
+        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig")
         #expect(symbols.tools["getCustomer"]?.returnType == "Customer")
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To demo:
           bind fetched customer = invoke get customer with id = "c-1".
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
 
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("Expected invoke")
@@ -407,7 +407,7 @@ struct SkillSurfaceLateTier1Tests {
 
     @Test("topic label wraps a parsed statement and appears in outline")
     func topicLabel() throws {
-        let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: SymbolTable()).parse("""
         To demo:
           Comments: complete.
         """)
@@ -428,7 +428,7 @@ struct SkillSurfaceLateTier1Tests {
 
     @Test("do chains parse as sequential statements")
     func inlineStatementChain() throws {
-        let block = try StatementParser(symbols: SymbolTable(), trace: .silent())
+        let block = try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize("do complete, commit, and wait 5 seconds."))
 
         #expect(block.statements.count == 3)
@@ -439,7 +439,7 @@ struct SkillSurfaceLateTier1Tests {
 
     @Test("single workflow parameter is filled when phrase needs it")
     func implicitSingleParameterFill() throws {
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === vocabulary ===
         A pull request is a kind of thing.
         A comment is a kind of thing.
@@ -447,12 +447,12 @@ struct SkillSurfaceLateTier1Tests {
         To review a comment for a pull request:
           complete.
         """, file: "test.merconfig")
-        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig", trace: .silent())
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let symbols = SymbolTable.build(from: cfg, sourceFile: "test.merconfig")
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To babysit a pull request:
           review the comment.
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
 
         guard case .complete = workflows[0].body.statements.first else {
             Issue.record("Expected phrase to resolve via implicit parameter fill")

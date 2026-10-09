@@ -5,7 +5,7 @@ import Testing
 struct EnglishIdiomTests {
 
     private func parse(_ source: String) throws -> ASTBlock {
-        try StatementParser(symbols: SymbolTable(), trace: .silent())
+        try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize(source))
     }
 

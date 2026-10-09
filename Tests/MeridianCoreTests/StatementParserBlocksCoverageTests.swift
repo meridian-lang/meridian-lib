@@ -8,7 +8,7 @@ import Testing
 @Suite("StatementParser+Blocks coverage")
 struct StatementParserBlocksCoverageTests {
 
-    private let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+    private let parser = StatementParser(symbols: SymbolTable())
 
     private func parse(_ source: String) throws -> ASTBlock {
         try parser.parseBlock(IndentTokenizer().tokenize(source))

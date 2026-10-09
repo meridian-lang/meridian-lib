@@ -36,7 +36,7 @@ struct IndeterminateAnalysisCoverageTests {
         .traceTemporal(TraceTemporalIR(kind: .ever(failedDeploy)))
     }
 
-    private func analysis(_ symbols: SymbolTable = SymbolTable(trace: .silent())) -> IndeterminateAnalysis {
+    private func analysis(_ symbols: SymbolTable = SymbolTable()) -> IndeterminateAnalysis {
         IndeterminateAnalysis(symbols: symbols)
     }
 
@@ -110,7 +110,7 @@ struct IndeterminateAnalysisCoverageTests {
 
     @Test("definitionPredicate recurses into adjective bodies and cycle-guards")
     func definitionPredicateRecursion() {
-        let symbols = SymbolTable(trace: .silent())
+        let symbols = SymbolTable()
         register(
             adjective: "reliable",
             body: .traceStatistical(TraceStatisticalAST(

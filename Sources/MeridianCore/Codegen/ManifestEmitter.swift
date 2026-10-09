@@ -186,15 +186,11 @@ public struct ManifestEmitter {
         }
     }
 
-    private let trace: ParserTrace
-
-    public init(trace: ParserTrace = .shared) {
-        self.trace = trace
-    }
+    public init() {}
 
     /// Emit the manifest as a pretty-printed JSON string.
     public func emit(_ input: Input) throws -> String {
-        trace.log(.codegen, "emit manifest: \(input.workflows.count) workflow(s), \(input.toolsUsed.count) tool(s), \(input.kindsUsed.count) kind(s), \(input.rules.count) rule(s), \(input.skillSections.count) section(s)")
+        ParserTrace.current.log(.codegen, "emit manifest: \(input.workflows.count) workflow(s), \(input.toolsUsed.count) tool(s), \(input.kindsUsed.count) kind(s), \(input.rules.count) rule(s), \(input.skillSections.count) section(s)")
         let dict = buildDict(input)
         let data = try JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted, .sortedKeys])
         return String(data: data, encoding: .utf8) ?? "{}"

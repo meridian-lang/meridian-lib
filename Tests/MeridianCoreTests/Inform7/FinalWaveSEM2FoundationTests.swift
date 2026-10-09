@@ -31,7 +31,7 @@ struct FinalWaveSEM2FoundationTests {
     """
 
     private func compile(_ mer: String) throws -> String {
-        try Compiler(options: .init(trace: .silent())).compile(
+        try Compiler(options: .init()).compile(
             meridianSource: mer,
             meridianFile: "sem2.meridian",
             merconfigSource: Self.wave3Vocab,
@@ -92,7 +92,7 @@ struct FinalWaveSEM2FoundationTests {
 
     @Test("SEM_2_04 mixed and/or without grouping is ill-formed")
     func sem204MixedBooleanIllFormed() {
-        let parsed = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default)
+        let parsed = ExpressionParser(symbols: nil, lexicon: .default)
             .parse("a is 1 and b is 2 or c is 3")
         if case .malformed = parsed {
             // expected
@@ -104,7 +104,7 @@ struct FinalWaveSEM2FoundationTests {
     @Test("SEM_2_05 recursive definition is a hard error")
     func sem205AcyclicDefinitions() {
         #expect(throws: (any Error).self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
+            _ = try Compiler(options: .init()).compile(
                 meridianSource: """
                 ---
                 name: review
@@ -154,7 +154,7 @@ struct FinalWaveSEM2FoundationTests {
         The verb to own (it owns, it is owned) means the ownership relation.
         """
         #expect(throws: (any Error).self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
+            _ = try Compiler(options: .init()).compile(
                 meridianSource: """
                 ---
                 name: audit

@@ -9,22 +9,21 @@ import MeridianRuntime
 
 public struct MerConfigParser {
 
-    public let trace: ParserTrace
     public let lexicon: EnglishLexicon
     /// Shared by section parsers in extension files (`+Language`, `+Trace`).
     let diagnostics: DiagnosticEngine?
 
-    public init(trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default,
+    public init(lexicon: EnglishLexicon = .default,
                 diagnostics: DiagnosticEngine? = nil) {
-        self.trace = trace
         self.lexicon = lexicon
         self.diagnostics = diagnostics
     }
 
     public func parse(_ source: String, file: String = "") throws -> MerConfigFile {
+        let trace = ParserTrace.current
         let token = trace.push(.merconfig, "MerConfigParser.parse(\(file))")
         defer { trace.pop(token) }
-        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
+        let lines = IndentTokenizer().tokenize(source, file: file)
         var vocabulary:  [VocabularyStatement] = []
         var constants:   [ConstantDeclaration] = []
         var instances:   [InstanceDeclaration] = []
@@ -74,7 +73,7 @@ public struct MerConfigParser {
             tools += try parseToolsSection(toolsRange.lines, file: file)
         }
         let toolsBootstrap = SymbolTable.build(
-            from: MerConfigFile(tools: tools), sourceFile: file, trace: trace, lexicon: lexicon)
+            from: MerConfigFile(tools: tools), sourceFile: file, lexicon: lexicon)
 
         for (section, body) in sectionRanges {
             trace.log(.merconfig, "section === \(section) === (\(body.filter(\.isContent).count) lines)")

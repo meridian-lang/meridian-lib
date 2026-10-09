@@ -13,7 +13,7 @@ import MeridianRuntime
 struct BooleanCompositionTests {
 
     private func parse(_ s: String) -> ExpressionAST {
-        ExpressionParser(trace: .silent()).parse(s)
+        ExpressionParser().parse(s)
     }
 
     @Test("pure and-chain")
@@ -332,7 +332,7 @@ struct DefinitionTests {
 struct ConditionGrammarTests {
 
     private func parse(_ s: String) -> ExpressionAST {
-        ExpressionParser(trace: .silent()).parse(s)
+        ExpressionParser().parse(s)
     }
 
     @Test("X has no Y → isEmpty over a property access")
@@ -443,11 +443,11 @@ struct QuantifierTests {
     """
 
     private func parse(_ s: String, symbols: SymbolTable? = nil) -> ExpressionAST {
-        ExpressionParser(symbols: symbols, trace: .silent()).parse(s)
+        ExpressionParser(symbols: symbols).parse(s)
     }
 
     private func symbolsForPages() throws -> SymbolTable {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         return SymbolTable.build(from: config)
     }
 

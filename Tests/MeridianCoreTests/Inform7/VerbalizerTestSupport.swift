@@ -67,7 +67,7 @@ enum VerbalizerTestSupport {
     }
 
     static func compiler(moduleSearchPaths: [URL] = []) -> Compiler {
-        Compiler(options: .init(trace: .silent(), moduleSearchPaths: moduleSearchPaths))
+        Compiler(options: .init(moduleSearchPaths: moduleSearchPaths))
     }
 
     static func moduleSearchPaths(forCorpus corpus: String, root: URL) -> [URL] {

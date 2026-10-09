@@ -73,7 +73,7 @@ struct TrialLowering {
     /// invoke, if, assert, …) via the real parser + lowerer.
     func lowersAsStatement(_ text: String) -> Bool {
         guard !text.isEmpty else { return false }
-        let tokenized = IndentTokenizer().tokenize(text, file: "<probe>", trace: .silent())
+        let tokenized = silent { IndentTokenizer().tokenize(text, file: "<probe>") }
         return probe(tokenized) == .success
     }
 
@@ -99,7 +99,7 @@ struct TrialLowering {
     /// pipeline.
     func isCheckableCondition(_ text: String) -> Bool {
         guard !text.isEmpty else { return false }
-        guard case .checkable = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: .silent()).classify(text) else {
+        guard case .checkable = silent({ ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon).classify(text) }) else {
             return false
         }
         let marker = knowledge.lexicon.assertionMarkers.first ?? "make sure"
@@ -137,16 +137,27 @@ struct TrialLowering {
 
     // MARK: - Probe primitive
 
+    /// Probe parsing is internal classification, never host-visible trace
+    /// output — run every probe step under a silent trace so an active
+    /// `MERIDIAN_TRACE`/`--trace` cannot turn trial failures into noise.
+    private func silent<T>(_ body: () throws -> T) rethrows -> T {
+        try ParserTrace.silent().run(body)
+    }
+
     func probe(_ lines: [SourceLine]) -> Outcome {
+        silent { probeInSilence(lines) }
+    }
+
+    private func probeInSilence(_ lines: [SourceLine]) -> Outcome {
         guard lines.contains(where: \.isContent) else { return .failure([]) }
-        let sp = StatementParser(symbols: knowledge.symbols, trace: .silent(), lexicon: knowledge.lexicon,
+        let sp = StatementParser(symbols: knowledge.symbols, lexicon: knowledge.lexicon,
                                  rewriteEngine: knowledge.rewriteEngine, diagnostics: nil)
         do {
             let block = try sp.parseBlock(lines, sourceFile: "<probe>")
             guard !block.statements.isEmpty else { return .failure([]) }
-            let lowerer = ASTToIR(symbols: knowledge.symbols, sourceFile: "<probe>", trace: .silent(),
+            let lowerer = ASTToIR(symbols: knowledge.symbols, sourceFile: "<probe>",
                                   lexicon: knowledge.lexicon, fallbackPolicy: .strict,
-                                  rulebook: knowledge.rulebook, engine: DiagnosticEngine(trace: .silent()))
+                                  rulebook: knowledge.rulebook, engine: DiagnosticEngine())
             // `lowerBlock` alone never runs the top-level `lower(_ file:)` setup
             // that materializes merconfig-declared adjectives
             // (`symbols.pendingDefinitions`) into `symbols.definitions` — so a

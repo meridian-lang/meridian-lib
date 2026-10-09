@@ -26,7 +26,7 @@ struct TraceStatisticalEmitterTests {
             mode: .strict
         )
 
-        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false), trace: .silent())
+        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false))
             .emit(workflows: [workflow]).combined
 
         #expect(out.contains("TraceStatisticalQuery("), Comment(rawValue: out))
@@ -59,7 +59,7 @@ struct TraceStatisticalEmitterTests {
             mode: .strict
         )
 
-        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false), trace: .silent())
+        let out = try SwiftEmitter(options: .init(includeTimestamp: false, emitSourceLineComments: false))
             .emit(workflows: [workflow]).combined
 
         #expect(out.contains("runtime.registerMonitor("), Comment(rawValue: out))

@@ -137,10 +137,17 @@ public struct InertYieldAnalyzer {
 
     // MARK: - Section probe
 
+    /// Yield analysis is measurement, not host-visible trace output — run each
+    /// probe under a silent trace so an active `MERIDIAN_TRACE`/`--trace`
+    /// cannot pollute the report with internal probe lines.
+    private func silent<T>(_ body: () throws -> T) rethrows -> T {
+        try ParserTrace.silent().run(body)
+    }
+
     private func analyzeSection(_ detail: SkillMetrics.InertSection,
                                 knowledge: Compiler.KnowledgeContext) -> SectionYield {
         let bodyText = detail.body.joined(separator: "\n")
-        let tokenized = IndentTokenizer().tokenize(bodyText, file: "<probe>", trace: .silent())
+        let tokenized = silent { IndentTokenizer().tokenize(bodyText, file: "<probe>") }
 
         if case .success = probe(tokenized, knowledge: knowledge), !tokenized.filter(\.isContent).isEmpty {
             return SectionYield(heading: detail.heading, line: detail.line, overall: .lowersAsIs,
@@ -220,8 +227,8 @@ public struct InertYieldAnalyzer {
     }
 
     private func looksLikeCondition(_ text: String, knowledge: Compiler.KnowledgeContext) -> Bool {
-        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: .silent())
-        switch classifier.classify(text) {
+        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon)
+        switch silent({ classifier.classify(text) }) {
         case .fuzzy, .dispatchPhrase:
             return true
         case .checkable:

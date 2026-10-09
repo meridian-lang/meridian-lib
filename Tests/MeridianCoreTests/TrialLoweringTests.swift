@@ -22,7 +22,7 @@ struct TrialLoweringTests {
     )
 
     static func knowledge(vocab: Bool) throws -> Compiler.KnowledgeContext {
-        try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: vocab ? [orderVocab] : []))
+        try Compiler(options: .init()).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: vocab ? [orderVocab] : []))
     }
 
     @Test("a whole-line command/fence line is always executable, independent of vocabulary")
@@ -111,7 +111,7 @@ struct TrialLoweringTests {
 
     @Test("a checkable quantifier condition over a merconfig-declared adjective trial-lowers")
     func merconfigAdjectiveQuantifierIsCheckable() throws {
-        let knowledge = try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [Self.productVocab]))
+        let knowledge = try Compiler(options: .init()).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [Self.productVocab]))
         let trial = TrialLowering(knowledge: knowledge)
         #expect(trial.isCheckableCondition("any short products"))
         #expect(trial.lowersAsStatement("make sure any short products."))
@@ -129,7 +129,7 @@ struct TrialLoweringTests {
         Assertion synonyms:
           verify that
         """)
-        let knowledge = try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [vocab]))
+        let knowledge = try Compiler(options: .init()).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [vocab]))
         #expect(knowledge.lexicon.assertionMarkers.first == "verify that")
         let trial = TrialLowering(knowledge: knowledge)
         #expect(trial.isCheckableCondition("any short products"))

@@ -32,7 +32,7 @@ struct ManifestEmitterCoverageTests {
             rules: [rule]
         )
         let cap = ParserTrace.capturing(categories: [.codegen])
-        let json = try ManifestEmitter(trace: cap.trace).emit(input)
+        let json = try cap.trace.run { try ManifestEmitter().emit(input) }
         #expect(cap.lines().contains { $0.contains("emit manifest:") })
         #expect(json.contains("\"apiKey\""))
         #expect(json.contains("sk_test"))
@@ -46,7 +46,6 @@ struct ManifestEmitterCoverageTests {
     func compileCompleteSkillSchema() throws {
         let compiler = Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
-            trace: .silent()
         ))
         let result = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
@@ -104,7 +103,6 @@ struct ManifestEmitterCoverageTests {
         """
         let opts = Compiler.Options(
             emitterOptions: SwiftEmitter.Options(includeTimestamp: false, emitSourceLineComments: false),
-            trace: .silent()
         )
         let result = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "w.meridian")], vocabularies: [.init(name: "w.merconfig", file: "w.merconfig", source: cfg)]))["w.meridian"]!
 

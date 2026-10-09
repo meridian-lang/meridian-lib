@@ -181,7 +181,7 @@ struct TraceEnabledCompileTests {
             compiler: compiler,
             vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
         )
-        _ = try await migrator.migrate(markdown, file: "demo.meri")
+        _ = try await cap.trace.run { try await migrator.migrate(markdown, file: "demo.meri") }
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("migrate \"demo.meri\"") })
@@ -206,7 +206,7 @@ struct TraceEnabledCompileTests {
           emit "done".
           complete.
         """
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let lhs = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: original, file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.workflows
         let rhs = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: edited, file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.workflows
         let lhsPaths = Set(stepPaths(in: lhs))
@@ -235,7 +235,7 @@ struct TraceEnabledCompileTests {
     @Test("skill fingerprint ignores whitespace-only edits but changes on meaning edits")
     func skillFingerprintStability() throws {
         let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let base = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To audit an order:\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash
         let whitespace = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To   audit   an order:\n\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash
         let meaning = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To audit an order:\n  emit \"changed\".\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash

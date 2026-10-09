@@ -3,20 +3,19 @@ import MeridianRuntime
 
 public struct MeridianLinter {
     private let lexicon: EnglishLexicon
-    private let trace: ParserTrace
 
-    public init(lexicon: EnglishLexicon = .default, trace: ParserTrace = .shared) {
+    public init(lexicon: EnglishLexicon = .default) {
         self.lexicon = lexicon
-        self.trace = trace
     }
 
     public func lint(source: String, file: String = "") -> [Diagnostic] {
+        let trace = ParserTrace.current
         let label = file.isEmpty ? "<source>" : file
         let span = trace.push(.diagnostics, "lint \(label)")
         defer {
             trace.pop(span)
         }
-        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace).filter(\.isContent)
+        let lines = IndentTokenizer().tokenize(source, file: file).filter(\.isContent)
         var diagnostics: [Diagnostic] = []
         var referents: [String] = []
         let resolver = AnaphoraResolver(lexicon: lexicon)

@@ -4,7 +4,7 @@ import Testing
 @Suite("MeridianParser — no-silent-drop error paths")
 struct MeridianParserCoverageTests {
     private func compile(_ source: String) throws {
-        _ = try Compiler(options: .init(trace: .silent()))
+        _ = try Compiler(options: .init())
             .compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
     }
 

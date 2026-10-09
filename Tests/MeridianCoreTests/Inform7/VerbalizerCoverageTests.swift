@@ -78,7 +78,7 @@ struct VerbalizerCoverageTests {
             .parameter(PhraseParameterAST(name: "page", kind: "page")),
             .literal("carefully"),
         ])
-        let symbols = SymbolTable(trace: .silent())
+        let symbols = SymbolTable()
         symbols.registerWorkflowPhrase(
             pattern: pattern,
             structName: "ReviewPage",
@@ -135,7 +135,7 @@ struct VerbalizerCoverageTests {
                 parameters: [ToolParameterAST(name: "value", type: "String")],
                 returnType: "String"
             )
-        ]), trace: .silent())
+        ]))
         let toolInverter = InvokeInverter(symbols: toolSymbols)
         #expect(toolInverter.surface(
             for: InvokeIR(toolID: "demo.tool", arguments: [InvokeArg("value", .literal(.string("x")))]),
@@ -147,7 +147,7 @@ struct VerbalizerCoverageTests {
     func driftEngineBranches() {
         #expect(DriftEngine.diff(authored: "same", canonical: "same").hunks.isEmpty)
         let cap = ParserTrace.capturing(categories: [.drift])
-        _ = DriftEngine.diff(authored: "left", canonical: "right", trace: cap.trace)
+        _ = cap.trace.run { DriftEngine.diff(authored: "left", canonical: "right") }
         #expect(cap.lines().contains { $0.contains("classified 1 drift hunk") })
 
         let trim = DriftEngine.diff(authored: "  same  ", canonical: "same")
@@ -811,7 +811,9 @@ struct VerbalizerCoverageTests {
             parameters: [],
             body: IRBlock(statements: [.complete(CompleteIR())])
         )
-        let text = try Verbalizer(model: emptyModel(workflows: [traceWorkflow]), trace: cap.trace).verbalize()
+        let text = try cap.trace.run {
+            try Verbalizer(model: emptyModel(workflows: [traceWorkflow])).verbalize()
+        }
         #expect(text.contains("To trace:"), Comment(rawValue: text))
         #expect(cap.lines().contains { $0.contains("verbalizing 1 workflow") })
     }
@@ -887,7 +889,7 @@ struct VerbalizerCoverageTests {
             .relationBacking(RelationBackingDeclaration(relation: "curation", backing: .tool(toolID: "assign.tool"))),
             .relationBacking(RelationBackingDeclaration(relation: "mentioning", backing: .tool(toolID: "link.tool"))),
         ])
-        let symbols = SymbolTable.build(from: config, trace: .silent())
+        let symbols = SymbolTable.build(from: config)
         let v = Verbalizer(model: emptyModel(symbols: symbols))
         let text = v.verbalize(.quantified(QuantifierIR(
             kind: .all,
@@ -910,7 +912,7 @@ struct VerbalizerCoverageTests {
         let config = MerConfigFile(vocabulary: [
             .relationBacking(RelationBackingDeclaration(relation: "ownership", backing: .property(kind: "page", path: "owner"))),
         ])
-        let symbols = SymbolTable.build(from: config, trace: .silent())
+        let symbols = SymbolTable.build(from: config)
         let v = Verbalizer(model: emptyModel(symbols: symbols))
         let text = v.verbalize(.quantified(QuantifierIR(
             kind: .all,
@@ -933,7 +935,7 @@ struct VerbalizerCoverageTests {
     }
 
     private func emptyModel(
-        symbols: SymbolTable = SymbolTable(trace: .silent()),
+        symbols: SymbolTable = SymbolTable(),
         workflows: [IRWorkflow] = [],
         lexicon: EnglishLexicon = .default,
         metadata: FileMetadataAST? = nil,
@@ -1010,7 +1012,7 @@ struct VerbalizerCoverageTests {
     }
 
     private func definitionSymbols() -> SymbolTable {
-        let symbols = SymbolTable(trace: .silent())
+        let symbols = SymbolTable()
         symbols.registerDefinition(.init(
             adjective: "ready",
             kind: "page",

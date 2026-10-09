@@ -4,7 +4,7 @@ import Testing
 @Suite("SymbolTable — verb form and tool resolution")
 struct SymbolTableVerbTests {
     private func symbols() throws -> SymbolTable {
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === vocabulary ===
         A user is a kind of thing.
         A page is a kind of thing.
@@ -20,7 +20,7 @@ struct SymbolTableVerbTests {
         ============
         ~ archivePage(id: String) : Page
         """, file: "t.merconfig")
-        return SymbolTable.build(from: cfg, sourceFile: "t.merconfig", trace: .silent())
+        return SymbolTable.build(from: cfg, sourceFile: "t.merconfig")
     }
 
     @Test("isVerbForm recognizes base, third-person, and participle forms")
@@ -79,7 +79,7 @@ struct SymbolTableVerbTests {
         let phrase = PhraseDefinition(pattern: pattern, body: ASTBlock(statements: [], sourceLine: 1))
         #expect(phrase.sourceFile.isEmpty)
         let cfg = MerConfigFile(vocabulary: [.phrase(phrase)])
-        let table = SymbolTable.build(from: cfg, sourceFile: "backfilled.merconfig", trace: .silent())
+        let table = SymbolTable.build(from: cfg, sourceFile: "backfilled.merconfig")
         #expect(table.phrases.first?.sourceFile == "backfilled.merconfig")
     }
 
@@ -98,8 +98,7 @@ struct SymbolTableVerbTests {
     func matchPhraseTracesNoSignificantWords() throws {
         let s = try symbols()
         let cap = ParserTrace.capturing(categories: [.phraseMatch])
-        s.trace = cap.trace
-        #expect(s.matchPhrase("   ") == nil)
+        #expect(cap.trace.run { s.matchPhrase("   ") } == nil)
         #expect(cap.lines().contains { $0.contains("no significant words") })
     }
 
@@ -107,9 +106,8 @@ struct SymbolTableVerbTests {
     func matchPhraseTracesImplicitFillRetry() throws {
         let s = try symbols()
         let cap = ParserTrace.capturing(categories: [.phraseMatch])
-        s.trace = cap.trace
         let defaultParam = PhraseParameterAST(name: "page", kind: "page")
-        _ = s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam)
+        _ = cap.trace.run { s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam) }
         #expect(cap.lines().contains { $0.contains("phrase.match.implicit-fill") })
     }
 
@@ -122,12 +120,13 @@ struct SymbolTableVerbTests {
         ])
         s.registerWorkflowPhrase(pattern: pattern, structName: "GreetUser", sourceLine: 1, sourceFile: "t.merconfig")
         let cap = ParserTrace.capturing(categories: [.phraseMatch])
-        s.trace = cap.trace
         // The direct match on the raw invocation misses (no shared literal
         // with "greet"), so `matchPhrase` falls through to the implicit-fill
         // retry, which is the only call that receives `excludingStructName`.
         let defaultParam = PhraseParameterAST(name: "user", kind: "user")
-        let result = s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam, excludingStructName: "GreetUser")
+        let result = cap.trace.run {
+            s.matchPhrase("totally unrelated gibberish", defaultParam: defaultParam, excludingStructName: "GreetUser")
+        }
         #expect(result == nil)
         #expect(cap.lines().contains { $0.contains("excluded: self-referential implicit fill") })
     }
@@ -141,10 +140,9 @@ struct SymbolTableVerbTests {
         ])
         s.registerWorkflowPhrase(pattern: pattern, structName: "ArchivePage", sourceLine: 1, sourceFile: "t.merconfig")
         let cap = ParserTrace.capturing(categories: [.phraseMatch])
-        s.trace = cap.trace
         // Nothing follows the literal, so the parameter's raw arg text is
         // empty and `ExpressionParser.parseAtom` yields `.malformed`.
-        let result = s.matchPhrase("archive")
+        let result = cap.trace.run { s.matchPhrase("archive") }
         #expect(result == nil)
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("reject") && $0.contains("malformed argument") })
@@ -160,9 +158,8 @@ struct SymbolTableVerbTests {
         ])
         s.registerWorkflowPhrase(pattern: pattern, structName: "ArchiveThePage", sourceLine: 1, sourceFile: "t.merconfig")
         let cap = ParserTrace.capturing(categories: [.phraseExtractArgs])
-        s.trace = cap.trace
         // "the" is a pattern literal word but never appears in the invocation.
-        _ = s.matchPhrase("archive page1")
+        _ = cap.trace.run { s.matchPhrase("archive page1") }
         #expect(cap.lines().contains { $0.contains("literal word \"the\" NOT FOUND") })
     }
 }

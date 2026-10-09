@@ -122,14 +122,16 @@ public struct TraceRenderCommand: ParsableCommand {
         @OptionGroup var cliTrace: CLITraceOptions
 
         func run() async throws {
-            try await TraceEvalRunner.run(
-                input: input,
-                expression: expression,
-                instant: instant,
-                merconfig: merconfig,
-                format: format,
-                trace: try cliTrace.makeTrace()
-            )
+            let traceInstance = try cliTrace.makeTrace()
+            try await traceInstance.run {
+                try await TraceEvalRunner.run(
+                    input: input,
+                    expression: expression,
+                    instant: instant,
+                    merconfig: merconfig,
+                    format: format
+                )
+            }
         }
     }
 }

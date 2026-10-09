@@ -6,7 +6,7 @@ struct AnaphoraTests {
 
     @Test("single referent resolves it")
     func resolvesSingleReferent() throws {
-        let block = try StatementParser(symbols: SymbolTable(), trace: .silent())
+        let block = try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize("""
             bind comment = "c1".
             resolve it.
@@ -22,7 +22,7 @@ struct AnaphoraTests {
     @Test("ambiguous referent throws")
     func ambiguousReferentThrows() throws {
         #expect(throws: CompilerError.self) {
-            _ = try StatementParser(symbols: SymbolTable(), trace: .silent())
+            _ = try StatementParser(symbols: SymbolTable())
                 .parseBlock(IndentTokenizer().tokenize("""
                 bind comment = "c1".
                 bind job = "j1".

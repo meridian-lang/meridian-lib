@@ -194,7 +194,7 @@ public struct CompileCommand: AsyncParsableCommand, ModulePathSupporting {
         // metadata, outline, recorded sections), merging in the source map
         // derived from the generated Swift. No more thin `workflows: []` stub.
         let m = compiled.manifest
-        let manifest = try ManifestEmitter(trace: traceInstance).emit(.init(
+        let manifest = try traceInstance.run { try ManifestEmitter().emit(.init(
             sourceFiles: [meridianURL.lastPathComponent] + merconfigURLs.map(\.lastPathComponent),
             workflows: m.workflows,
             constantsDecl: m.constantsDecl,
@@ -212,18 +212,18 @@ public struct CompileCommand: AsyncParsableCommand, ModulePathSupporting {
             definitions: m.definitions,
             relations: m.relations,
             verbs: m.verbs
-        ))
+        )) }
         let manifestFile = outputURL.appendingPathComponent(stem + ".meridian.manifest.json")
         try manifest.write(to: manifestFile, atomically: true, encoding: .utf8)
 
         let model = compiled.model
-        let sidecar = try IRSidecarEmitter(trace: traceInstance).emit(
+        let sidecar = try traceInstance.run { try IRSidecarEmitter().emit(
             workflows: model.workflows,
-            verbalizer: Verbalizer(model: model, trace: traceInstance),
+            verbalizer: Verbalizer(model: model),
             sourceFile: meridianURL.lastPathComponent,
             swiftFile: stem + ".swift",
             sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift)
-        )
+        ) }
         let sidecarFile = outputURL.appendingPathComponent(stem + ".meridian.ir.json")
         try sidecar.write(to: sidecarFile, atomically: true, encoding: .utf8)
 

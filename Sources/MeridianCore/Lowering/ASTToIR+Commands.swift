@@ -50,7 +50,6 @@ extension ASTToIR {
                     if !literal.isEmpty { segments.append(.literal(literal)); literal = "" }
                     let parsed = ExpressionParser(
                         symbols: symbols,
-                        trace: trace,
                         lexicon: lexicon
                     ).parse(exprText)
                     let lowered = try lowerExpr(parsed)

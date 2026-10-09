@@ -14,11 +14,13 @@ struct ParseStageTraceTests {
     @Test("DefinitionParser traces both rejection reasons and a successful parse")
     func definitionParserTraced() {
         let cap = ParserTrace.capturing(categories: [.statement])
-        let dp = DefinitionParser(lexicon: .default, trace: cap.trace)
+        let dp = DefinitionParser(lexicon: .default)
 
-        _ = dp.parse("Definition: a page is stale", line: 1)
-        _ = dp.parse("Definition: a page stale if it has no summary", line: 2)
-        _ = dp.parse("Definition: a page is stale if it has no summary", line: 3)
+        cap.trace.run {
+            _ = dp.parse("Definition: a page is stale", line: 1)
+            _ = dp.parse("Definition: a page stale if it has no summary", line: 2)
+            _ = dp.parse("Definition: a page is stale if it has no summary", line: 3)
+        }
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("no \"if\" condition introducer") || $0.contains("no \" if \" condition introducer") })
@@ -31,11 +33,13 @@ struct ParseStageTraceTests {
     @Test("ConditionClassifier traces all three classification outcomes")
     func conditionClassifierTraced() {
         let cap = ParserTrace.capturing(categories: [.statement])
-        let cc = ConditionClassifier(symbols: nil, lexicon: .default, trace: cap.trace)
+        let cc = ConditionClassifier(symbols: nil, lexicon: .default)
 
-        _ = cc.classify("amount is more than 5")
-        _ = cc.classify("the report is notable")
-        _ = cc.classify("send the report")
+        cap.trace.run {
+            _ = cc.classify("amount is more than 5")
+            _ = cc.classify("the report is notable")
+            _ = cc.classify("send the report")
+        }
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("→ checkable") })
@@ -48,8 +52,10 @@ struct ParseStageTraceTests {
     @Test("SentenceBreaker only traces when it actually trims a period")
     func sentenceBreakerSelectiveTrace() {
         let cap = ParserTrace.capturing(categories: [.tokenize])
-        _ = SentenceBreaker().statementText(from: "bind x = 1.", trace: cap.trace)
-        _ = SentenceBreaker().statementText(from: "bind x = 1", trace: cap.trace)
+        cap.trace.run {
+            _ = SentenceBreaker().statementText(from: "bind x = 1.")
+            _ = SentenceBreaker().statementText(from: "bind x = 1")
+        }
         #expect(cap.lines().count == 1)
     }
 
@@ -87,8 +93,10 @@ struct ParseStageTraceTests {
         complete with reason "trailing".
         otherwise complete with reason "recovered".
         """
-        let block = try StatementParser(symbols: SymbolTable(), trace: cap.trace)
-            .parseBlock(IndentTokenizer().tokenize(source))
+        let block = try cap.trace.run {
+            try StatementParser(symbols: SymbolTable())
+                .parseBlock(IndentTokenizer().tokenize(source))
+        }
         #expect(!block.statements.isEmpty)
 
         let lines = cap.lines()

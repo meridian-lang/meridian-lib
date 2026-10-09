@@ -14,7 +14,7 @@ import Foundation
 struct SectionedRuleFiringTests {
 
     private func parse(_ source: String, file: String = "skill.meri") throws -> MeridianFile {
-        try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse(source, file: file)
+        try MeridianParser(symbols: SymbolTable()).parse(source, file: file)
     }
 
     // MARK: - Extraction: each rule shape is mined from an executable section

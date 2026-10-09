@@ -4,17 +4,16 @@ import Foundation
 
 public struct PhrasePatternParser {
 
-    public let trace: ParserTrace
     public let lexicon: EnglishLexicon
 
-    public init(trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default) {
-        self.trace = trace
+    public init(lexicon: EnglishLexicon = .default) {
         self.lexicon = lexicon
     }
 
     /// Parse "validate an order" or "put an order on hold with a reason"
     /// into a PhrasePattern with literal and parameter segments.
     public func parse(_ text: String) -> PhrasePattern {
+        let trace = ParserTrace.current
         let token = trace.push(.phraseParse, "PhrasePattern.parse: \"\(text)\"")
         defer { trace.pop(token) }
 
@@ -54,6 +53,7 @@ public struct PhrasePatternParser {
     }
 
     private func tryParseParam(_ s: String) -> (String, String, PhraseParameterAST)? {
+        let trace = ParserTrace.current
         // Find the EARLIEST occurrence of an article-delimited parameter slot.
         // Picking the earliest is critical: in "of a customer for an amount" the
         // first parameter slot starts at "a customer", not "an amount".

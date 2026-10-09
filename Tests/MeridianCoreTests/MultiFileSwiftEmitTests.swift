@@ -23,7 +23,7 @@ struct MultiFileSwiftEmitTests {
         To inspect a service:
           complete.
         """
-        let split = try Compiler(options: .init(trace: .silent()))
+        let split = try Compiler(options: .init())
             .compile(Compiler.CompilationUnit(
                 sources: [Compiler.SourceInput(source: mer, file: "inspect.meridian")],
                 vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]

@@ -336,7 +336,8 @@ public struct IndentTokenizer {
 
     public init() {}
 
-    public func tokenize(_ source: String, file: String = "", trace: ParserTrace = .shared) -> [SourceLine] {
+    public func tokenize(_ source: String, file: String = "") -> [SourceLine] {
+        let trace = ParserTrace.current
         var lines: [SourceLine] = []
         let rawLines = source.components(separatedBy: "\n")
 

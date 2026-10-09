@@ -19,17 +19,19 @@ struct SkillTriggersCoverageTests {
     @Test("synthesizer logs lowering decisions under .lowering trace")
     func synthesizerTrace() {
         let cap = ParserTrace.capturing(categories: [.lowering])
-        let synth = TriggerSynthesizer(lexicon: .default, trace: cap.trace)
-        _ = synth.synthesize([
-            SkillTrigger(kind: .schedule, spec: "nightly", name: "nightly", sourceLine: 4),
-        ], sourceFile: "t.meridian")
+        let synth = TriggerSynthesizer(lexicon: .default)
+        cap.trace.run {
+            _ = synth.synthesize([
+                SkillTrigger(kind: .schedule, spec: "nightly", name: "nightly", sourceLine: 4),
+            ], sourceFile: "t.meridian")
+        }
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("trigger @L4") && $0.contains("schedule") })
     }
 
     @Test("first trigger keeps the unsuffixed struct name")
     func synthesizerBaseStructName() {
-        let synth = TriggerSynthesizer(lexicon: .default, trace: .silent())
+        let synth = TriggerSynthesizer(lexicon: .default)
         let workflows = synth.synthesize([
             SkillTrigger(kind: .keyword, spec: "hello", name: "hello", sourceLine: 1),
         ], sourceFile: "t.meridian")
@@ -42,7 +44,7 @@ struct SkillTriggersCoverageTests {
 
     @Test("duplicate trigger struct names receive numeric suffixes")
     func synthesizerDisambiguatesStructNames() {
-        let synth = TriggerSynthesizer(lexicon: .default, trace: .silent())
+        let synth = TriggerSynthesizer(lexicon: .default)
         let triggers = [
             SkillTrigger(kind: .keyword, spec: "perplexity research", name: "perplexityResearch", sourceLine: 1),
             SkillTrigger(kind: .keyword, spec: "perplexity-research", name: "perplexityResearch", sourceLine: 2),

@@ -102,10 +102,10 @@ struct TraceTemporalInform7Tests {
     }
 
     private func loweredDefinitions(mer: String, cfg: String) throws -> [LoweredDefinition] {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         return try lowering.lowerRegisteredDefinitions()
     }
@@ -322,7 +322,7 @@ struct BrokenTwinDiagnosticsTests {
         // resolves to a *negated* event pattern, so `parseSince` must take
         // it directly via `.map(ExpressionAST.eventPattern)` rather than
         // re-parsing it through the general recursive `recurse` closure.
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -354,7 +354,7 @@ struct BrokenTwinDiagnosticsTests {
         // of non-event-pattern holds sides), a state-predicate holds clause
         // must fall through `eventPattern(holdsText).map(...) ?? recurse(...)`
         // to the `recurse` branch, since it has no outcome verb.
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -383,7 +383,7 @@ struct BrokenTwinDiagnosticsTests {
         // try again — which only succeeds here because a *second*,
         // space-preceded "since the last" occurs later in the text for its
         // marker scan to find.
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -437,7 +437,7 @@ struct BrokenTwinDiagnosticsTests {
 
     @Test("a non-numeric count-in-window count falls through every comparator prefix and never matches")
     func nonNumericCountInWindowFallsThrough() {
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -449,7 +449,7 @@ struct BrokenTwinDiagnosticsTests {
 
     @Test("a non-numeric `times in a row` count never matches the in-a-row shape")
     func nonNumericInARowFallsThrough() {
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -464,7 +464,7 @@ struct BrokenTwinDiagnosticsTests {
         // `parseInARow` strips the count token off leaving an empty
         // `patternText`; `eventPattern("")` must reject that, so this must
         // return nil rather than crash on the empty-subject edge.
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -476,7 +476,7 @@ struct BrokenTwinDiagnosticsTests {
 
     @Test("a `within the last` window missing its duration unit never matches")
     func withinWindowMissingDurationUnitFallsThrough() {
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -493,7 +493,7 @@ struct BrokenTwinDiagnosticsTests {
         // itself must reject the recursive `parse(remainder)` result and
         // return nil rather than wrapping a non-temporal expression in a
         // bogus `.acrossAllRuns` scope.
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let grammar = TraceTemporalGrammar(
             lexicon: .default,
             recurse: ep.parse,
@@ -513,10 +513,10 @@ struct BrokenTwinDiagnosticsTests {
         cfg: String,
         code: DiagnosticCode
     ) throws -> Diagnostic {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         do {
             _ = try lowering.lower(file)
             _ = try lowering.lowerRegisteredDefinitions()
@@ -532,10 +532,10 @@ struct BrokenTwinDiagnosticsTests {
     }
 
     private func definitionCompiles(mer: String, cfg: String) throws {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         let defs = try lowering.lowerRegisteredDefinitions()
         #expect(!defs.isEmpty)
@@ -730,7 +730,7 @@ struct BrokenTwinDiagnosticsTests {
     }
 
     private func requireExpressionDiagnostic(_ expression: String, code: DiagnosticCode) throws -> (message: String, help: String?) {
-        let parsed = ExpressionParser(trace: .silent()).parse(expression)
+        let parsed = ExpressionParser().parse(expression)
         guard case .malformed(_, let actualCode, _, _) = parsed else {
             Issue.record("expected malformed expression for \(code.id), got \(parsed)")
             throw CompilerError.codegenError(message: "expected malformed expression \(code.id)")
@@ -761,13 +761,13 @@ struct BrokenTwinDiagnosticsTests {
         A service is keyed by the name.
         """
         let cfg = override.isEmpty ? defaultCfg : override
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(merBody, file: "t.meridian")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(merBody, file: "t.meridian")
         // The lowerer's batch engine collects; this helper checkpoints so the
         // `requireDiagnostics` contract (errors thrown as `CompilerError`) holds.
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(),
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian",
                                     engine: engine).lower(file)
         try engine.throwIfErrors()
         return workflows
@@ -1073,13 +1073,13 @@ struct TraceStatisticalInform7Tests {
     }
 
     private func loweredWorkflow(mer: String, cfg: String) throws -> IRWorkflow {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
         // The lowerer's batch engine collects; this helper checkpoints so
         // direct-lower tests still observe errors as thrown `CompilerError`s.
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: engine).lower(file)
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: engine).lower(file)
         try engine.throwIfErrors()
         guard let workflow = workflows.first else {
             throw CompilerError.codegenError(message: "expected lowered workflow")
@@ -1088,10 +1088,10 @@ struct TraceStatisticalInform7Tests {
     }
 
     private func loweredDefinitions(mer: String, cfg: String) throws -> [LoweredDefinition] {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         return try lowering.lowerRegisteredDefinitions()
     }

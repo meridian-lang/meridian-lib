@@ -137,7 +137,7 @@ struct DurationParsingTests {
 struct ComparisonMarkerTests {
 
     func parse(_ s: String) -> ExpressionAST {
-        ExpressionParser(symbols: nil, trace: .silent()).parse(s)
+        ExpressionParser(symbols: nil).parse(s)
     }
 
     @Test("greater than")
@@ -195,7 +195,7 @@ struct ComparisonMarkerTests {
 struct LogicalConnectorTests {
 
     func parse(_ s: String) -> ExpressionAST {
-        ExpressionParser(symbols: nil, trace: .silent()).parse(s)
+        ExpressionParser(symbols: nil).parse(s)
     }
 
     @Test("and connector")

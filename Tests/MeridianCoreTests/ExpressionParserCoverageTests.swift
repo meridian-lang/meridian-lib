@@ -103,9 +103,11 @@ struct ExpressionParserCoverageTests {
     @Test("malformed atom paths log under .expression when tracing is enabled")
     func malformedPathsTraced() {
         let cap = ParserTrace.capturing(categories: [.expression])
-        let p = ExpressionParser(trace: cap.trace)
-        _ = p.parse("")
-        _ = p.parse("\u{E000}codeblock:plain:!!!not-valid-base64!!!")
+        let p = ExpressionParser()
+        cap.trace.run {
+            _ = p.parse("")
+            _ = p.parse("\u{E000}codeblock:plain:!!!not-valid-base64!!!")
+        }
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("malformed (empty expression)") })
         #expect(lines.contains { $0.contains("malformed (corrupt sentinel)") })
@@ -119,12 +121,14 @@ struct ExpressionParserCoverageTests {
         A page is a kind of thing.
         A page has a summary, which is text.
         """
-        let sym = SymbolTable.build(from: try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig"))
-        let p = ExpressionParser(symbols: sym, trace: cap.trace)
-        _ = p.parse("all pages have a summary")
-        _ = p.parse("results is empty")
-        _ = p.parse("the price corresponding to the sku \"SKU1\" in the price table")
-        _ = p.parse("pages frobnicated by the user")
+        let sym = SymbolTable.build(from: try MerConfigParser().parse(cfg, file: "t.merconfig"))
+        let p = ExpressionParser(symbols: sym)
+        cap.trace.run {
+            _ = p.parse("all pages have a summary")
+            _ = p.parse("results is empty")
+            _ = p.parse("the price corresponding to the sku \"SKU1\" in the price table")
+            _ = p.parse("pages frobnicated by the user")
+        }
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("→ quantifier") })
         #expect(lines.contains { $0.contains("→ emptiness/temporal-window") })

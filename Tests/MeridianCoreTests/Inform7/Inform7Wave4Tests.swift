@@ -7,7 +7,7 @@ struct Inform7Wave4DomainTests {
 
     @Test("called-the property syntax parses typed property declarations")
     func calledThePropertySyntax() throws {
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === vocabulary ===
         A page is a kind of thing.
         A page has a text called the summary.
@@ -35,7 +35,7 @@ struct Inform7Wave4DomainTests {
 
     @Test("can-be and usually compile to enum property with author default")
     func canBeUsuallyDefault() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: page workflow
             parameters: page
@@ -57,7 +57,7 @@ struct Inform7Wave4DomainTests {
 
     @Test("Domain section declarations are harvested before frontmatter parameter resolution")
     func domainSectionHarvestsBeforeParameterResolution() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: summarize
             parameters: page
@@ -79,7 +79,7 @@ struct Inform7Wave4DomainTests {
     @Test("Domain-shaped sentence in a procedure is not harvested")
     func domainSentenceInProcedureErrors() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: bad
                 ---
@@ -93,7 +93,7 @@ struct Inform7Wave4DomainTests {
     @Test("duplicate kind declarations reject multiple parents")
     func duplicateKindRejectsMultipleParents() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: duplicate
                 parameters: deal
@@ -117,7 +117,7 @@ struct Inform7Wave4TableTests {
 
     @Test("Tables section defaults unmarked Markdown tables to data bindings")
     func tablesSectionDefaultsToData() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: route
             ---
@@ -140,7 +140,7 @@ struct Inform7Wave4TableTests {
 
     @Test("explicit named data table supports multi-word lookup table names")
     func namedDataTableLookup() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: route
             ---
@@ -161,7 +161,7 @@ struct Inform7Wave4TableTests {
     @Test("typed data table reports row and column for invalid cells")
     func typedTableCellDiagnostic() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: bad table
                 ---
@@ -183,7 +183,7 @@ struct Inform7Wave4TemplateTests {
 
     @Test("template parser recognizes conditional loop formatter and leaves plain brackets literal")
     func parserRecognizesTemplateDirectives() {
-        let parser = ExpressionParser(trace: .silent())
+        let parser = ExpressionParser()
         let segs = parser.parseInterpolationSegments("""
         [date]
         [if the score is more than 5]high[otherwise]low[end if]
@@ -233,7 +233,7 @@ struct Inform7Wave4TemplateTests {
 
     @Test("source-level fenced template can be bound after an empty assignment")
     func sourceLevelFencedTemplateBind() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: template source
             ---
@@ -284,7 +284,7 @@ struct Inform7Wave4TemplateTests {
     @Test("an unknown formatter in a fenced template is a sourced MER2012 error naming the available formatters")
     func unknownFormatterIsHardError() throws {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: template source
                 ---
@@ -308,7 +308,7 @@ struct Inform7Wave4TemplateTests {
     @Test("a near-miss formatter typo suggests the nearest declared name")
     func formatterTypoSuggestsNearest() throws {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: template source
                 ---
@@ -329,7 +329,7 @@ struct Inform7Wave4TemplateTests {
 
     @Test("short date, long date, and decimal(N) formatters all compile cleanly")
     func validFormattersCompile() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
+        let out = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: template source
             ---

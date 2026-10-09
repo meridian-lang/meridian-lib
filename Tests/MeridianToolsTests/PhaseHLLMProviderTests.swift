@@ -7,7 +7,6 @@ import MeridianRuntime
 struct PhaseHLLMProviderTests {
     @Test("llm.chat fails closed when provider is not configured")
     func llmChatNotConfigured() async {
-        LLMProviderRegistry.setOverride(nil)
         await #expect(throws: (any Error).self) {
             _ = try await MeridianTools.invoke("llm.chat", args: ["prompt": .string("hi")])
         }
@@ -21,9 +20,9 @@ struct PhaseHLLMProviderTests {
 
     @Test("llm.chat uses deterministic override for tests")
     func llmChatOverride() async throws {
-        LLMProviderRegistry.setOverride(DeterministicLLMProvider())
-        defer { LLMProviderRegistry.setOverride(nil) }
-        let result = try await MeridianTools.invoke("llm.chat", args: ["prompt": .string("hello")])
+        let result = try await LLMProviderRegistry.withOverride(DeterministicLLMProvider()) {
+            try await MeridianTools.invoke("llm.chat", args: ["prompt": .string("hello")])
+        }
         guard case .record(let dict) = result else {
             Issue.record("expected record")
             return
@@ -34,7 +33,6 @@ struct PhaseHLLMProviderTests {
 
     @Test("llm.decide uses deterministic provider when unset")
     func llmDecideDeterministic() async throws {
-        LLMProviderRegistry.setOverride(nil)
         let yes = try await MeridianTools.invoke("llm.decide", args: ["question": .string("yes please")])
         #expect(yes == .boolean(true))
         let no = try await MeridianTools.invoke("llm.decide", args: ["question": .string("no way")])

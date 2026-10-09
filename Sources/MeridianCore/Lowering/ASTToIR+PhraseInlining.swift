@@ -17,6 +17,7 @@ extension ASTToIR {
         proseDispatchMode: ProseDispatchMode? = nil,
         autonomyConfig: AutonomyConfigIR? = nil
     ) throws -> [IRPrimitive] {
+        let trace = ParserTrace.current
         let token = trace.push(.phraseInline, "inline phrase @L\(phrase.sourceLine)")
         defer { trace.pop(token) }
         // Expanded primitives belong to the invocation site. Retaining the

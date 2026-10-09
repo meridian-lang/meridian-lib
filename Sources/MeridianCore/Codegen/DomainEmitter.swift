@@ -93,6 +93,7 @@ public extension SwiftEmitter {
     ///      it would be empty and add nothing the parent doesn't already
     ///      give us.
     func emitDomain(_ d: DomainDecl) -> StringTemplate {
+        let trace = ParserTrace.current
         // Lookup table: enum-type-name → first-case identifier (e.g. "valid").
         // Used to default enum-typed fields in generated initializers.
         let firstCase: [String: String] = Dictionary(uniqueKeysWithValues: d.enumerations.compactMap { e in

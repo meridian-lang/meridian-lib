@@ -7,7 +7,7 @@ import MeridianRuntime
 struct ASTToIRStatementsBindCommandsCoverageTests {
 
     private func makeIR() -> ASTToIR {
-        ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
     }
 
     @Test("lowerStatement complete/commit/emit produce matching IR primitives")

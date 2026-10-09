@@ -603,13 +603,15 @@ struct DiagnosticTests {
     @Test("DiagnosticEngine recovery attaches skip notes and one MER6004 summary")
     func diagnosticEngineRecoverySummaryAndNotes() throws {
         let cap = ParserTrace.capturing(categories: [.diagnostics])
-        let engine = DiagnosticEngine(trace: cap.trace)
+        let engine = DiagnosticEngine()
         let r = range("broken.meridian", line: 2, col: 3, endCol: 14)
 
-        let recovered: Int? = try engine.recovering(context: "workflow process order") {
-            throw CompilerError.diagnostics([
-                Diagnostic.error(.unresolvedPhrase, message: "unknown phrase", range: r)
-            ])
+        let recovered: Int? = try cap.trace.run {
+            try engine.recovering(context: "workflow process order") {
+                throw CompilerError.diagnostics([
+                    Diagnostic.error(.unresolvedPhrase, message: "unknown phrase", range: r)
+                ])
+            }
         }
         #expect(recovered == nil)
         #expect(engine.diagnostics.last?.notes.contains {

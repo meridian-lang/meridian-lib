@@ -18,7 +18,7 @@ struct DeonticInform7Tests {
         code: DiagnosticCode
     ) throws -> Diagnostic {
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
+            _ = try Compiler(options: .init()).compile(
                 meridianSource: mer,
                 meridianFile: "test.meridian",
                 merconfigSource: cfg,
@@ -47,7 +47,7 @@ struct DeonticInform7Tests {
           invoke time.now.
           complete.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
+        let out = try Compiler(options: .init()).compile(
             meridianSource: mer,
             meridianFile: "test.meridian",
             merconfigSource: cfg,
@@ -68,7 +68,7 @@ struct DeonticInform7Tests {
           invoke time.now.
           complete.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
+        let out = try Compiler(options: .init()).compile(
             meridianSource: mer,
             meridianFile: "test.meridian",
             merconfigSource: cfg,
@@ -120,7 +120,7 @@ struct DeonticInform7Tests {
           commit.
           complete.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
+        let out = try Compiler(options: .init()).compile(
             meridianSource: mer,
             meridianFile: "test.meridian",
             merconfigSource: cfg,

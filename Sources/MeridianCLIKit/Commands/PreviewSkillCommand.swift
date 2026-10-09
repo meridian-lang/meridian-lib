@@ -24,6 +24,6 @@ public struct PreviewSkillCommand: ParsableCommand {
         }
         let markdown = try String(contentsOfFile: input, encoding: .utf8)
         let traceInstance = try cliTrace.makeTrace()
-        print(SkillMarkdownImporter(trace: traceInstance).preview(markdown, name: name))
+        print(traceInstance.run { SkillMarkdownImporter().preview(markdown, name: name) })
     }
 }

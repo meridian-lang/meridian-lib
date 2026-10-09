@@ -59,7 +59,7 @@ struct FinalWaveMutationGateTests {
         let mutated = baseline.replacingOccurrences(of: "time.now", with: "shell.run")
         #expect(mutated != baseline)
 
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         func id(for mer: String) throws -> String {
             let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "mutated.meridian")], vocabularies: [.init(name: "test", file: "test.merconfig", source: cfg)]))["mutated.meridian"]!.model
             return try #require(model.workflows.flatMap(\.norms).first?.id)
@@ -92,7 +92,7 @@ struct FinalWaveMutationGateTests {
         2. Compile prep briefing.
         """
         let result = try await SkillMigrator(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: [],
             options: .init(routeFuzzy: false)
         ).migrate(skillMD)

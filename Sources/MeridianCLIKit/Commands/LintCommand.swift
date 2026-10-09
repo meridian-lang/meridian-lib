@@ -22,7 +22,7 @@ public struct LintCommand: ParsableCommand {
     public func run() throws {
         let trace = try traceOptions.makeTrace()
         let source = try String(contentsOfFile: input, encoding: .utf8)
-        let diagnostics = MeridianLinter(trace: trace).lint(source: source, file: input)
+        let diagnostics = trace.run { MeridianLinter().lint(source: source, file: input) }
         if !diagnostics.isEmpty {
             let renderer = DiagnosticRenderer(
                 sources: [input: source],

@@ -25,7 +25,7 @@ struct SkillImportTests {
 
     @Test("supported paraphrases lower to equivalent statement shapes")
     func paraphraseEquivalence() throws {
-        let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+        let parser = StatementParser(symbols: SymbolTable())
         let unless = try parser.parseBlock(IndentTokenizer().tokenize("complete unless blocked."))
         let except = try parser.parseBlock(IndentTokenizer().tokenize("complete except when blocked."))
 
@@ -40,7 +40,7 @@ struct SkillImportTests {
 
     @Test("preview preserves frontmatter wrapper and imports only meridian or plain fences")
     func previewFenceFilteringAndFrontmatter() {
-        let out = SkillMarkdownImporter(trace: .silent()).preview("""
+        let out = SkillMarkdownImporter().preview("""
         # Demo
         Intro paragraph.
 

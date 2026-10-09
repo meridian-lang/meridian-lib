@@ -169,15 +169,15 @@ enum ExpressionParserGoldenCorpus {
         switch kind {
         case .none: return nil
         case .pages:
-            let cfg = try MerConfigParser(trace: .silent()).parse(pagesConfig, file: "pages.merconfig")
+            let cfg = try MerConfigParser().parse(pagesConfig, file: "pages.merconfig")
             return SymbolTable.build(from: cfg)
         case .relations:
-            let cfg = try MerConfigParser(trace: .silent()).parse(relationsConfig, file: "relations.merconfig")
+            let cfg = try MerConfigParser().parse(relationsConfig, file: "relations.merconfig")
             return SymbolTable.build(from: cfg)
         case .wave3:
             let url = examplesURL().appendingPathComponent("relations.merconfig")
             let src = try String(contentsOf: url, encoding: .utf8)
-            let cfg = try MerConfigParser(trace: .silent()).parse(src, file: "relations.merconfig")
+            let cfg = try MerConfigParser().parse(src, file: "relations.merconfig")
             return SymbolTable.build(from: cfg)
         }
     }
@@ -266,7 +266,7 @@ struct ExpressionParserGoldenTests {
     func matchesGoldenBaseline() throws {
         for c in ExpressionParserGoldenCorpus.cases {
             let symbols = try ExpressionParserGoldenCorpus.symbolTable(for: c.symbols)
-            let ast = ExpressionParser(symbols: symbols, trace: .silent()).parse(c.source)
+            let ast = ExpressionParser(symbols: symbols).parse(c.source)
             let actual = ast.traceDescription(detail: .verbose)
 
             if printCaptureMode {

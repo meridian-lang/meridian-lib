@@ -38,8 +38,10 @@ public struct ExplainCommand: AsyncParsableCommand, ModulePathSupporting {
         do {
             let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
-                try Verbalizer(model: model, trace: traceInstance)
-                    .verbalize(annotateNormIDs: !noNormIDs)
+                try traceInstance.run {
+                    try Verbalizer(model: model)
+                        .verbalize(annotateNormIDs: !noNormIDs)
+                }
             }
             print(canonical)
         } catch {

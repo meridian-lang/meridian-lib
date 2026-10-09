@@ -9,6 +9,7 @@ extension SwiftEmitter {
     // MARK: - 3. branch
 
     func emitBranch(_ ir: BranchIR, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
+        let trace = ParserTrace.current
         let inner = ctx.in(1)
         switch ir.condition {
         case .predicate:

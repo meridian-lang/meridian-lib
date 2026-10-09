@@ -27,8 +27,8 @@ struct RuleInjectorCoverageTests {
         There is a payment processor called stripe:
           api endpoint = "https://api.stripe.com/v1"
         """
-        let parsed = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        return SymbolTable.build(from: parsed, sourceFile: "t.merconfig", trace: .silent())
+        let parsed = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        return SymbolTable.build(from: parsed, sourceFile: "t.merconfig")
     }
 
     private func workflow(
@@ -57,7 +57,6 @@ struct RuleInjectorCoverageTests {
         let sym = try symbols ?? self.symbols()
         var injector = RuleInjector(
             symbols: sym,
-            trace: .silent(),
             lowerAction: lowerAction,
             fallbackPolicy: fallbackPolicy,
             sourceFile: "t.meridian"
@@ -232,7 +231,7 @@ struct RuleInjectorCoverageTests {
             ))
         ]
         let wf = workflow(name: "approve an order", params: [("order", "order")], body: [.complete(CompleteIR())])
-        var injector = RuleInjector(symbols: try symbols(), trace: .silent(), sourceFile: "t.meridian")
+        var injector = RuleInjector(symbols: try symbols(), sourceFile: "t.meridian")
         _ = try injector.inject(rules: rules, into: [wf], sourceFile: "t.meridian")
         #expect(injector.unattachedRules.isEmpty)
     }
@@ -301,7 +300,7 @@ struct RuleInjectorCoverageTests {
             params: [("medicationOrder", "MedicationOrder"), ("patient", "Patient"), ("nurse", "Nurse")],
             body: [.complete(CompleteIR())]
         )
-        var injector = RuleInjector(symbols: try symbols(), trace: .silent(), sourceFile: "t.meridian")
+        var injector = RuleInjector(symbols: try symbols(), sourceFile: "t.meridian")
         let out = try injector.inject(rules: rules, into: [wf], sourceFile: "t.meridian")
         #expect(injector.unattachedRules.isEmpty)
         guard case .assert(let a) = out[0].body.statements.first else {
@@ -505,7 +504,6 @@ struct RuleInjectorCoverageTests {
     func triggerUnresolvedStrict() throws {
         var injector = RuleInjector(
             symbols: try symbols(),
-            trace: .silent(),
             lowerAction: { _, _ in
                 throw CompilerError.diagnostics([
                     Diagnostic.error(.unresolvedPhrase, message: "no such workflow", range: .unknown)
@@ -531,7 +529,6 @@ struct RuleInjectorCoverageTests {
     func triggerUnresolvedLenient() throws {
         var injector = RuleInjector(
             symbols: try symbols(),
-            trace: .silent(),
             lowerAction: { _, _ in
                 throw CompilerError.diagnostics([
                     Diagnostic.error(.unresolvedPhrase, message: "no such workflow", range: .unknown)

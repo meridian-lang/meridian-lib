@@ -67,7 +67,7 @@ struct LexiconRegistryParityTests {
             for header in spec.headers {
                 let sample = sample(for: spec)
                 let source = "=== language ===\n\(header):\n\(sample.line)\n"
-                let synonyms = try MerConfigParser(trace: .silent())
+                let synonyms = try MerConfigParser()
                     .parse(source, file: "parity.merconfig").languageSynonyms
                 let context = Comment(rawValue: "\(spec.category) / \(header)")
 
@@ -170,7 +170,7 @@ struct LexiconRegistryParityTests {
         var parsed = 0
         for fixture in fixtures {
             let source = "=== language ===\n" + fixture.body.joined(separator: "\n") + "\n"
-            guard let synonyms = try? MerConfigParser(trace: .silent())
+            guard let synonyms = try? MerConfigParser()
                 .parse(source, file: fixture.name).languageSynonyms else {
                 continue  // a fixture the parser rejects is not a parity oracle
             }
@@ -378,7 +378,7 @@ struct LexiconRegistryParityTests {
     /// resolvers the parser uses (comparison spellings, duration units, …) but
     /// without the registry's per-category wiring.
     private func declaredEntries(inSection body: [String]) -> (entries: [LexiconCategory: [LexiconEntry]], timestampProperty: String?) {
-        let parser = MerConfigParser(trace: .silent())
+        let parser = MerConfigParser()
         var spec: LexiconCategorySpec? = nil
         var entries: [LexiconCategory: [LexiconEntry]] = [:]
         var timestampProperty: String? = nil
@@ -386,7 +386,7 @@ struct LexiconRegistryParityTests {
         for raw in body {
             let text = raw.trimmingCharacters(in: .whitespaces)
             guard !text.isEmpty, !text.hasPrefix("#"), !text.hasPrefix(">") else { continue }
-            let statement = SentenceBreaker().statementText(from: text, trace: .silent())
+            let statement = SentenceBreaker().statementText(from: text)
                 .trimmingCharacters(in: .whitespaces)
             let lower = statement.lowercased()
 

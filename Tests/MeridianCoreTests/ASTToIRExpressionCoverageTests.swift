@@ -20,8 +20,8 @@ struct ASTToIRExpressionCoverageTests {
                 sourceLine: 2
             )),
         ])
-        let symbols = SymbolTable.build(from: config, trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let symbols = SymbolTable.build(from: config)
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         let fields = try #require(ir.knownPayloadFields(forSubjectNamed: "deploy"))
         #expect(fields.contains("region"))
         #expect(ir.payloadFieldName(IRExpression.literal(.boolean(true))) == nil)
@@ -30,11 +30,11 @@ struct ASTToIRExpressionCoverageTests {
 
     @Test("currentRun scope with stepOfSkill subject becomes acrossSkills after allow-list check")
     func implicitCrossSkillScopeFromStepOfSkill() throws {
-        let symbols = SymbolTable.build(from: MerConfigFile(), trace: .silent())
+        let symbols = SymbolTable.build(from: MerConfigFile())
         symbols.traceConfiguration = TraceConfigurationAST(
             crossSkillAllowList: .init(["briefing"], file: "t.merconfig", line: 1)
         )
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         let scope = try ir.resolveTraceScope(
             declared: .currentRun,
             subjects: [.stepOfSkill(step: "fetch", skill: "briefing")],
@@ -45,7 +45,7 @@ struct ASTToIRExpressionCoverageTests {
 
     @Test("resolveSinceHolds accepts a direct event-pattern holds expression")
     func resolveSinceHoldsDirectEventPattern() throws {
-        let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let ir = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
         let pattern = EventPatternIR(subject: .step("deploy"), outcome: .failed)
         let resolved = try ir.resolveSinceHolds(.eventPattern(pattern), line: 1)
         #expect(resolved.holdsPattern?.outcome == .failed)
@@ -54,7 +54,7 @@ struct ASTToIRExpressionCoverageTests {
 
     @Test("resolveSinceHolds inlines an adjective whose body is an event pattern")
     func resolveSinceHoldsAdjectiveEventBody() throws {
-        let symbols = SymbolTable(trace: .silent())
+        let symbols = SymbolTable()
         symbols.registerDefinition(SymbolTable.DefinitionRecord(
             adjective: "stale",
             kind: "service",
@@ -66,7 +66,7 @@ struct ASTToIRExpressionCoverageTests {
             functionName: "service_is_stale",
             sourceLine: 1
         ))
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         let holds = IRExpression.definitionPredicate(
             functionName: "service_is_stale",
             subject: .identifierRef(name: "service")
@@ -78,7 +78,7 @@ struct ASTToIRExpressionCoverageTests {
 
     @Test("statistical assert without cadence or default monitor cadence is malformedCondition")
     func monitoredAssertRequiresCadence() throws {
-        let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let ir = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
         let statistical = TraceStatisticalIR(
             pattern: TraceStatisticalPatternIR(subject: .step("deploy")),
             outcome: .fails,
@@ -102,8 +102,8 @@ struct ASTToIRExpressionCoverageTests {
                 returnType: "void"
             ),
         ])
-        let symbols = SymbolTable.build(from: config, trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let symbols = SymbolTable.build(from: config)
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         let ok = try ir.lowerTraceStatistical(
             TraceStatisticalAST(
                 scope: .currentRun,

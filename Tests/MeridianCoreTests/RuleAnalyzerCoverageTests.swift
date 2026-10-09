@@ -7,7 +7,7 @@ import Foundation
 @Suite("RuleAnalyzer — coverage gaps")
 struct RuleAnalyzerCoverageTests {
 
-    private let analyzer = RuleAnalyzer(trace: .silent(), symbols: nil)
+    private let analyzer = RuleAnalyzer(symbols: nil)
 
     @Test("parameter-guard predicates qualify nested property accesses")
     func parameterGuardQualifiesPropertyAccess() throws {
@@ -157,9 +157,9 @@ struct RuleAnalyzerCoverageTests {
         Inclusion is read from the prescription's drug.
         The verb to include (it includes, it is included) means the inclusion relation.
         """
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
-        let symbolAwareAnalyzer = RuleAnalyzer(trace: .silent(), symbols: symbols)
+        let symbolAwareAnalyzer = RuleAnalyzer(symbols: symbols)
         let rule = RuleAST(
             text: "A patient whose active prescriptions include a contraindicated drug must not receive the new order.",
             sourceLine: 20
@@ -330,9 +330,9 @@ struct RuleAnalyzerCoverageTests {
     @Test("unrecognized rules log unclassified and return nil")
     func unclassifiedRuleLogsAndReturnsNil() throws {
         let cap = ParserTrace.capturing(categories: [.lowering])
-        let traced = RuleAnalyzer(trace: cap.trace, symbols: nil)
+        let traced = RuleAnalyzer(symbols: nil)
         let rule = RuleAST(text: "A customer should place orders freely.", sourceLine: 17)
-        #expect(try traced.classify(rule) == nil)
+        #expect(try cap.trace.run { try traced.classify(rule) } == nil)
         #expect(cap.lines().contains { $0.contains("unclassified") })
     }
 

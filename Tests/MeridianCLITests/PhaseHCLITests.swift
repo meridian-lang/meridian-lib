@@ -22,7 +22,6 @@ struct PhaseHCLITests {
 
     @Test("canonicalize --propose requires configured provider")
     func canonicalizeProposeRequiresProvider() async {
-        LLMProviderRegistry.setOverride(nil)
         let cmd = try? CanonicalizeCommand.parse([
             ex("examples/order_processing.meridian"),
             "--merconfig", ex("examples/ecommerce.merconfig"),
@@ -37,22 +36,18 @@ struct PhaseHCLITests {
 
     @Test("canonicalize --propose with mock provider emits proposals")
     func canonicalizeProposeMock() async throws {
-        LLMProviderRegistry.setOverride(DeterministicLLMProvider())
-        defer { LLMProviderRegistry.setOverride(nil) }
-
         let cmd = try CanonicalizeCommand.parse([
             ex("examples/order_processing.meridian"),
             "--merconfig", ex("examples/ecommerce.merconfig"),
             "--propose",
         ])
-        try await cmd.run()
+        try await LLMProviderRegistry.withOverride(DeterministicLLMProvider()) {
+            try await cmd.run()
+        }
     }
 
     @Test("migrate-skill --repair --dry-run uses mock provider without writing output")
     func migrateRepairDryRun() async throws {
-        LLMProviderRegistry.setOverride(DeterministicLLMProvider())
-        defer { LLMProviderRegistry.setOverride(nil) }
-
         let t = TempDir()
         let skill = t.write("SKILL.md", """
         # Repair Demo
@@ -64,7 +59,9 @@ struct PhaseHCLITests {
         let cmd = try MigrateSkillCommand.parse([
             skill.path, "--out", out, "--repair", "--dry-run", "--force"
         ])
-        await #expect(throws: (any Error).self) { try await cmd.run() }
+        try await LLMProviderRegistry.withOverride(DeterministicLLMProvider()) {
+            await #expect(throws: (any Error).self) { try await cmd.run() }
+        }
         #expect(!FileManager.default.fileExists(atPath: out))
     }
 

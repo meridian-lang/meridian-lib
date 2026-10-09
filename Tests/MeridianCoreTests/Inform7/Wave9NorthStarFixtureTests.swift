@@ -15,7 +15,7 @@ struct Wave9NorthStarFixtureTests {
     """
 
     private func compileModel(mer: String, file: String = "fixture.meridian") throws -> VerbalizerModel {
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         return try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: file)], vocabularies: [.init(name: "test", file: "test.merconfig", source: Self.fixtureVocabulary)]))[file]!.model
     }
 

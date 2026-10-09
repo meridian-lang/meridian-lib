@@ -147,6 +147,7 @@ extension ASTToIR {
         autonomyConfig: AutonomyConfigIR? = nil,
         scope: Set<String> = []
     ) throws -> [IRPrimitive] {
+        let trace = ParserTrace.current
         try assertNoMalformed(stmt)
         trace.log(.lowering, "L\(stmt.sourceLine) lowerStatement \(Self.statementKind(stmt))")
         switch stmt {
@@ -293,7 +294,7 @@ extension ASTToIR {
                 )
                 return BranchCase(pattern: pattern, block: block)
             }
-            trace.log(.lowering, "match branch L\(s.sourceLine): \(cases.count) case(s) \(cases.map { matchPatternTraceName($0.pattern) }.joined(separator: ", ")), otherwise \(s.otherwiseBlock == nil ? "absent" : "present")")
+            ParserTrace.current.log(.lowering, "match branch L\(s.sourceLine): \(cases.count) case(s) \(cases.map { matchPatternTraceName($0.pattern) }.joined(separator: ", ")), otherwise \(s.otherwiseBlock == nil ? "absent" : "present")")
             let otherwise = try s.otherwiseBlock.map {
                 try lowerBlock(
                     $0, mode: mode, depth: depth,

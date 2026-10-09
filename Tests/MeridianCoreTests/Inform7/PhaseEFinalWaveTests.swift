@@ -40,7 +40,7 @@ struct PhaseEFinalWaveTests {
             workflows: [workflow],
             loweredDefinitions: [],
             inlineDefinitions: [],
-            symbols: SymbolTable(trace: .silent()),
+            symbols: SymbolTable(),
             lexicon: .default,
             sourceFileName: "t.meridian",
             authoredSource: ""
@@ -141,13 +141,13 @@ struct PhaseEFinalWaveTests {
     }
 
     private func loweredWorkflow(mer: String, cfg: String) throws -> IRWorkflow {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
-        let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
+        let file = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
         // The lowerer's batch engine collects; this helper checkpoints so
         // direct-lower tests still observe errors as thrown `CompilerError`s.
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: engine).lower(file)
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: engine).lower(file)
         try engine.throwIfErrors()
         guard let workflow = workflows.first else {
             throw CompilerError.codegenError(message: "expected lowered workflow")

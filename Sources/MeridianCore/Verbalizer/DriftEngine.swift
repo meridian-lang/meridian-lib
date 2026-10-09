@@ -39,9 +39,9 @@ public struct DriftEngine: Sendable {
     public static func diff(
         authored: String,
         canonical: String,
-        trace: ParserTrace = .shared,
         lexicon: EnglishLexicon = .default
     ) -> DriftReport {
+        let trace = ParserTrace.current
         let authoredLines = authored.components(separatedBy: .newlines)
         let canonicalLines = canonical.components(separatedBy: .newlines)
         let maxCount = max(authoredLines.count, canonicalLines.count)

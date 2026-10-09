@@ -47,10 +47,10 @@ public struct CanonicalizeCommand: AsyncParsableCommand, ModulePathSupporting {
         do {
             let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
-                try Verbalizer(model: model, trace: traceInstance).verbalize()
+                try traceInstance.run { try Verbalizer(model: model).verbalize() }
             }
             let report = traceInstance.phase("drift") {
-                DriftEngine.diff(authored: model.authoredSource, canonical: canonical, trace: traceInstance)
+                traceInstance.run { DriftEngine.diff(authored: model.authoredSource, canonical: canonical) }
             }
 
             if propose {
@@ -122,7 +122,7 @@ public struct CanonicalizeCommand: AsyncParsableCommand, ModulePathSupporting {
             return HTTPLLMProvider(config: LLMEnvironment.Configuration(
                 apiURL: config.apiURL, apiKey: config.apiKey, model: llm))
         }
-        if let override = LLMProviderRegistry.peekOverride() {
+        if let override = LLMProviderRegistry.override {
             return override
         }
         do {

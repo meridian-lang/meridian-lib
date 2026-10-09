@@ -17,7 +17,6 @@ struct ReachableCoveragePhase4Tests {
     private func compile(_ mer: String, _ cfg: String) throws -> String {
         try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
-            trace: .silent()
         )).compile(
             meridianSource: mer, meridianFile: "t.meridian",
             merconfigSource: cfg, merconfigFile: "t.merconfig"
@@ -44,7 +43,7 @@ struct ReachableCoveragePhase4Tests {
 
     @Test("RuleAnalyzer classifies all five rule shapes and rejects others")
     func ruleClassification() throws {
-        let a = RuleAnalyzer(trace: .silent(), symbols: nil)
+        let a = RuleAnalyzer(symbols: nil)
         func kindOf(_ text: String) throws -> String {
             guard let r = try a.classify(RuleAST(text: text, sourceLine: 1)) else { return "nil" }
             switch r {
@@ -75,7 +74,7 @@ struct ReachableCoveragePhase4Tests {
     @Test("deterministicTransform rewrites <param> command holes inside shell + backtick spans")
     func migratorCommandHoles() throws {
         let m = SkillMigrator(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: [], rulebooks: []
         )
         let md = """
@@ -101,7 +100,7 @@ struct ReachableCoveragePhase4Tests {
     @Test("heading matcher rejects 1-hash, 7-hash, no-space, and empty-text headings")
     func migratorHeadingEdges() throws {
         let m = SkillMigrator(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: [], rulebooks: []
         )
         // None of these are valid `##`..`######` headings with text, so the

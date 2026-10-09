@@ -35,9 +35,9 @@ struct NonterminalScreeningTests {
         let hasComparison = screen.candidates(for: source).contains { $0.name == "comparison" }
         #expect(hasComparison)
 
-        let screened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: true)
+        let screened = ExpressionParser(symbols: nil, lexicon: .default, useScreen: true)
             .parse(source)
-        let unscreened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: false)
+        let unscreened = ExpressionParser(symbols: nil, lexicon: .default, useScreen: false)
             .parse(source)
         #expect(screened.traceDescription(detail: .verbose) == unscreened.traceDescription(detail: .verbose))
     }
@@ -74,8 +74,8 @@ struct NonterminalScreeningTests {
         let lines = try Self.corpusLines()
         #expect(lines.count > 2000, Comment(rawValue: "expected a corpus-scale line count, got \(lines.count)"))
 
-        let screened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: true)
-        let unscreened = ExpressionParser(symbols: nil, trace: .silent(), lexicon: .default, useScreen: false)
+        let screened = ExpressionParser(symbols: nil, lexicon: .default, useScreen: true)
+        let unscreened = ExpressionParser(symbols: nil, lexicon: .default, useScreen: false)
 
         var mismatches: [String] = []
         for (source, text) in lines {

@@ -36,7 +36,6 @@ import MeridianRuntime
 struct SkillSectionBuilder {
     let symbols: SymbolTable
     let lexicon: EnglishLexicon
-    let trace: ParserTrace
     let rulebook: Rulebook
     let file: String
 
@@ -82,6 +81,7 @@ struct SkillSectionBuilder {
     /// Build the canonical implicit-workflow body from the raw region lines
     /// (statements + interleaved heading lines).
     func build(regionLines: [SourceLine]) throws -> Result {
+        let trace = ParserTrace.current
         let sections = try splitSections(regionLines)
         var prelude: [SourceLine] = []
         var procedure: [SourceLine] = []
@@ -90,7 +90,7 @@ struct SkillSectionBuilder {
         var records: [SkillSectionRecord] = []
         var toolsUsed: [String] = []
         var rules: [RuleAST] = []
-        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
+        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, symbols: symbols)
 
         for sec in sections {
             // Content before the first heading is never executable and must not
@@ -380,7 +380,7 @@ struct SkillSectionBuilder {
         // so a derived `.tools` role is preserved (build() mines its bullets).
         let clean = parsed.cleanHeading
         let decision = SectionRoleResolver.decision(for: heading, rulebook: rulebook)
-        trace.log(.skill, "resolve '\(clean)' -> \(decision.recordedRole) executes=\(decision.executes) marker=\(decision.fromMarker) @L\(headingLine)")
+        ParserTrace.current.log(.skill, "resolve '\(clean)' -> \(decision.recordedRole) executes=\(decision.executes) marker=\(decision.fromMarker) @L\(headingLine)")
         if decision.resolved {
             let keptRole: SkillSectionRole?
             if decision.fromMarker {
@@ -424,7 +424,7 @@ struct SkillSectionBuilder {
         }
         // 1D output invariant: `every emitted <noun> <predicate>` is sugar for an
         // assert on the bound result `<noun>` (shared normalization).
-        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace)
+        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon)
         let text = stripAssertionMarker(classifier.normalizeFormatInvariant(group.head.statement))
         switch classify(text) {
         case .checkable:
@@ -449,6 +449,7 @@ struct SkillSectionBuilder {
 
     private func applyApplicability(_ group: StatementGroup, negated: Bool,
                                     prelude: inout [SourceLine], dispatch: inout [String]) throws {
+        let trace = ParserTrace.current
         guard !group.isMultiline else {
             // A multi-line applicability block is an authored procedure-like
             // construct; treat its lines as procedure to avoid silent drops.
@@ -508,7 +509,7 @@ struct SkillSectionBuilder {
     /// dispatch phrase (an intent), or a fuzzy condition. Delegates to the
     /// shared `ConditionClassifier` (single source of truth).
     func classify(_ text: String) -> Applicability {
-        ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace).classify(text)
+        ConditionClassifier(symbols: symbols, lexicon: lexicon).classify(text)
     }
 
     private func raiseStructural(_ code: DiagnosticCode, message: String,

@@ -32,23 +32,25 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
     public func run() async throws {
         let traceInstance = try cliTrace.makeTrace()
-        if batch {
-            try runBatch(trace: traceInstance)
-        } else {
-            try runSingle(trace: traceInstance)
+        try traceInstance.run {
+            if batch {
+                try runBatch()
+            } else {
+                try runSingle()
+            }
         }
     }
 
     // MARK: - Single
 
-    private func runSingle(trace: ParserTrace) throws {
+    private func runSingle() throws {
         let origURL = URL(fileURLWithPath: original).standardized
         let portURL = URL(fileURLWithPath: ported).standardized
         let fm = FileManager.default
         guard fm.fileExists(atPath: origURL.path) else { throw ValidationError("Original not found: \(original)") }
         guard fm.fileExists(atPath: portURL.path) else { throw ValidationError("Ported file not found: \(ported)") }
-        let rulebook = try loadRulebook(beside: portURL, trace: trace)
-        let lexicon = try loadLexicon(beside: portURL, trace: trace)
+        let rulebook = try loadRulebook(beside: portURL)
+        let lexicon = try loadLexicon(beside: portURL)
         let dependencies = try loadCompilerInputs(beside: portURL)
         let originalSource = try String(contentsOf: origURL, encoding: .utf8)
         let portedSource = try String(contentsOf: portURL, encoding: .utf8)
@@ -62,7 +64,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
             lexicon: lexicon
         )
         try recordCanonicalDrift(into: &report, portedMeri: portedSource, portedFile: portURL.lastPathComponent,
-                                  dependencies: dependencies, trace: trace)
+                                  dependencies: dependencies)
         let markdown = SkillDeviation.renderMarkdown(report, includeDiff: !noDiff)
 
         if let out {
@@ -79,7 +81,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
     // MARK: - Batch
 
-    private func runBatch(trace: ParserTrace) throws {
+    private func runBatch() throws {
         let fm = FileManager.default
         let origDir = URL(fileURLWithPath: original).standardized
         let portDir = URL(fileURLWithPath: ported).standardized
@@ -111,8 +113,8 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         let outDir = out.map { URL(fileURLWithPath: $0).standardized }
         if let outDir { try fm.createDirectory(at: outDir, withIntermediateDirectories: true) }
         let placeholder = portDir.appendingPathComponent("placeholder.meri")
-        let rulebook = try loadRulebook(beside: placeholder, trace: trace)
-        let lexicon = try loadLexicon(beside: placeholder, trace: trace)
+        let rulebook = try loadRulebook(beside: placeholder)
+        let lexicon = try loadLexicon(beside: placeholder)
         let dependencies = try loadCompilerInputs(beside: placeholder)
 
         var rows: [SkillDeviation.DeviationReport] = []
@@ -142,7 +144,7 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
                 lexicon: lexicon
             )
             try recordCanonicalDrift(into: &report, portedMeri: portedSource, portedFile: meriURL.lastPathComponent,
-                                      dependencies: dependencies, trace: trace)
+                                      dependencies: dependencies)
             rows.append(report)
             let reportStem = meriURL.deletingPathExtension().lastPathComponent
             if let outDir {
@@ -208,10 +210,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         return url.lastPathComponent
     }
 
-    private func loadRulebook(beside inputURL: URL, trace: ParserTrace) throws -> Rulebook {
+    private func loadRulebook(beside inputURL: URL) throws -> Rulebook {
         let urls = try DependencyDiscovery.resolveRulebooks(explicit: [], beside: inputURL)
         var merged = Rulebook.empty
-        let parser = RulebookParser(trace: trace)
+        let parser = RulebookParser()
         for url in urls {
             let source = try String(contentsOf: url, encoding: .utf8)
             merged = merged.merging(try parser.parse(source, file: url.lastPathComponent))
@@ -233,18 +235,18 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         into report: inout SkillDeviation.DeviationReport,
         portedMeri: String,
         portedFile: String,
-        dependencies: (vocabularies: [Compiler.VocabularyInput], rulebooks: [RulebookInput]),
-        trace: ParserTrace
+        dependencies: (vocabularies: [Compiler.VocabularyInput], rulebooks: [RulebookInput])
     ) throws {
         guard !dependencies.vocabularies.isEmpty || !dependencies.rulebooks.isEmpty else { return }
         let model = try compiledModel(
-            Compiler(options: .init(trace: trace)),
+            Compiler(options: .init(trace: ParserTrace.current)),
             portedMeri, portedFile, dependencies.vocabularies, dependencies.rulebooks)
+        let trace = ParserTrace.current
         let canonical = try trace.phase("verbalize") {
-            try Verbalizer(model: model, trace: trace).verbalize()
+            try Verbalizer(model: model).verbalize()
         }
         let drift = trace.phase("drift") {
-            DriftEngine.diff(authored: model.authoredSource, canonical: canonical, trace: trace)
+            DriftEngine.diff(authored: model.authoredSource, canonical: canonical)
         }
         report.metrics.recordCanonicalDrift(drift)
     }
@@ -254,10 +256,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
     /// `referenceHeadingWords`, per P2) — the same corpus-tuned vocabulary
     /// `SkillMetrics.analyze`'s reference/operational discrimination (§5)
     /// needs, rather than the conservative built-in default.
-    private func loadLexicon(beside inputURL: URL, trace: ParserTrace) throws -> EnglishLexicon {
+    private func loadLexicon(beside inputURL: URL) throws -> EnglishLexicon {
         let urls = try DependencyDiscovery.resolveMerconfigs(explicit: [], beside: inputURL)
         guard !urls.isEmpty else { return .default }
-        let parser = MerConfigParser(trace: trace)
+        let parser = MerConfigParser()
         var merged = MerConfigFile()
         for url in urls {
             let source = try String(contentsOf: url, encoding: .utf8)

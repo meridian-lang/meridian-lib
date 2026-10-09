@@ -30,9 +30,11 @@ The pipeline runs in five stages:
 5. **Format** — `swift-format` is run on the emitted Swift unless the
    caller passes `--no-format`.
 
-For diagnostics, every parser and lowerer takes an optional
-``ParserTrace`` so a host can opt into category-scoped logging without
-touching the codebase.
+For diagnostics, the compiler reads a task-local ``ParserTrace``
+(``ParserTrace/current``) so a host can opt into category-scoped logging
+without threading a parameter; inject one through
+``Compiler/Options/trace`` (installed for the whole compile) or
+``ParserTrace/run(_:)`` around a direct API call.
 
 ## Topics
 

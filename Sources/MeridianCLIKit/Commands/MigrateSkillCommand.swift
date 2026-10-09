@@ -77,17 +77,18 @@ public struct MigrateSkillCommand: AsyncParsableCommand {
             vocabularies: vocabularies,
             rulebooks: rulebooks,
             options: .init(maxRepair: effectiveMaxRepair, routeFuzzy: routeFuzzy),
-            repair: repairClosure(enabled: repairEnabled),
-            trace: traceInstance
+            repair: repairClosure(enabled: repairEnabled)
         )
 
         let depsDir = batch ? inputURL : inputURL.deletingLastPathComponent()
         let rulebookTarget = out == nil ? nil : try primaryRulebookTarget(beside: depsDir)
 
-        if batch {
-            try await runBatch(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
-        } else {
-            try await runSingle(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
+        try await traceInstance.run {
+            if batch {
+                try await runBatch(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
+            } else {
+                try await runSingle(inputURL: inputURL, migrator: migrator, rulebookTarget: rulebookTarget)
+            }
         }
     }
 

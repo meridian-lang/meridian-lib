@@ -31,6 +31,14 @@ public struct ParserBenchmark: Sendable {
     }
 
     public func run(sentences: [String]) -> ParserBenchmarkResult {
+        // The benchmark measures raw parser cost — install a silent trace so an
+        // active `MERIDIAN_TRACE` cannot skew the timing with trace I/O.
+        ParserTrace.silent().run {
+            runInSilence(sentences: sentences)
+        }
+    }
+
+    private func runInSilence(sentences: [String]) -> ParserBenchmarkResult {
         let cleaned = sentences
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
@@ -38,14 +46,14 @@ public struct ParserBenchmark: Sendable {
         var screenedCandidateCount = 0
 
         let unscreened = measure {
-            let parser = ExpressionParser(symbols: nil, trace: .silent(), lexicon: lexicon, useScreen: false)
+            let parser = ExpressionParser(symbols: nil, lexicon: lexicon, useScreen: false)
             for sentence in cleaned {
                 _ = parser.parse(sentence)
             }
         }
 
         let screened = measure {
-            let parser = ExpressionParser(symbols: nil, trace: .silent(), lexicon: lexicon, useScreen: true)
+            let parser = ExpressionParser(symbols: nil, lexicon: lexicon, useScreen: true)
             for sentence in cleaned {
                 screenedCandidateCount += screen.candidates(for: sentence).count
                 _ = parser.parse(sentence)

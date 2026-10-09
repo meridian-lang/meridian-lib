@@ -80,12 +80,14 @@ struct ReachableCoverageBatch1Tests {
         let r = SourceRange(file: "t.meridian", line: 1, column: 1)
         // An enabled trace so the suggestion/note mirroring autoclosures evaluate.
         let cap = ParserTrace.capturing(categories: [.diagnostics])
-        let eng = DiagnosticEngine(trace: cap.trace)
-        eng.report(Diagnostic(
-            code: .unknownTool, severity: .error, message: "boom", primaryRange: r,
-            suggestions: [Suggestion(replacement: "fix", range: r, rationale: "did you mean fix?")],
-            notes: [DiagnosticNote("a related note")]))
-        eng.report([Diagnostic.warning(.unknownTool, message: "meh", range: r)])
+        let eng = DiagnosticEngine()
+        cap.trace.run {
+            eng.report(Diagnostic(
+                code: .unknownTool, severity: .error, message: "boom", primaryRange: r,
+                suggestions: [Suggestion(replacement: "fix", range: r, rationale: "did you mean fix?")],
+                notes: [DiagnosticNote("a related note")]))
+            eng.report([Diagnostic.warning(.unknownTool, message: "meh", range: r)])
+        }
         #expect(eng.errors.count == 1)
         #expect(eng.warnings.count == 1)
         #expect(eng.hasErrors)
@@ -157,7 +159,7 @@ struct ReachableCoverageBatch1Tests {
 
     @Test("definition parser rejects malformed shapes and parses period-less input")
     func definitionParserBranches() {
-        let dp = DefinitionParser(lexicon: .default, trace: .silent())
+        let dp = DefinitionParser(lexicon: .default)
         // Not a definition line.
         #expect(dp.parse("To do a thing:", line: 1) == nil)
         // No ` if ` introducer.
@@ -176,7 +178,7 @@ struct ReachableCoverageBatch1Tests {
 
     @Test("desugar rules sort by priority; trailing literal must reach the end")
     func rewriteEngine() throws {
-        let rb = try RulebookParser(trace: .silent()).parse("""
+        let rb = try RulebookParser().parse("""
         === desugar ===
         rule "low" (priority 1):
           match: start {x} end
@@ -187,19 +189,21 @@ struct ReachableCoverageBatch1Tests {
         """)
         // Enabled trace so the rewrite-log autoclosure evaluates.
         let cap = ParserTrace.capturing(categories: [.rulebook])
-        let engine = RewriteEngine(rulebook: rb, trace: cap.trace)
+        let engine = RewriteEngine(rulebook: rb)
         #expect(!engine.isEmpty)
-        // High-priority rule fires.
-        #expect(engine.rewrite("begin now").text == "HIGH now")
-        #expect(cap.lines().contains { $0.contains("rewrite") })
-        // Trailing-literal rule: input has trailing content after `end`, so the
-        // template can't anchor to the end → no rewrite.
-        #expect(engine.rewrite("start foo end extra").changed == false)
-        // Exact trailing-literal match does fire.
-        #expect(engine.rewrite("start foo end").text == "LOW foo")
+        cap.trace.run {
+            // High-priority rule fires.
+            #expect(engine.rewrite("begin now").text == "HIGH now")
+            #expect(cap.lines().contains { $0.contains("rewrite") })
+            // Trailing-literal rule: input has trailing content after `end`, so the
+            // template can't anchor to the end → no rewrite.
+            #expect(engine.rewrite("start foo end extra").changed == false)
+            // Exact trailing-literal match does fire.
+            #expect(engine.rewrite("start foo end").text == "LOW foo")
+        }
 
         // Empty rulebook → rewrite short-circuits (text, false).
-        let empty = RewriteEngine(rulebook: try RulebookParser(trace: .silent()).parse(""), trace: .silent())
+        let empty = RewriteEngine(rulebook: try RulebookParser().parse(""))
         #expect(empty.isEmpty)
         #expect(empty.rewrite("anything") == ("anything", false))
 

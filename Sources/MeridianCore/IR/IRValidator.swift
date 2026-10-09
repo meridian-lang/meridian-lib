@@ -8,9 +8,9 @@ public enum IRValidationError: Error, Sendable {
 public enum IRValidator {
     public static func validate(
         _ workflows: [IRWorkflow],
-        sourceFile: String = "<ir>",
-        trace: ParserTrace = .shared
+        sourceFile: String = "<ir>"
     ) throws {
+        let trace = ParserTrace.current
         let token = trace.openSpan(.validation, "validate \(workflows.count) workflow(s)")
         var validator = Validator(sourceFile: sourceFile, workflows: workflows)
         for workflow in workflows {
@@ -33,20 +33,18 @@ public enum IRValidator {
 
     public static func validate(
         _ workflow: IRWorkflow,
-        sourceFile: String = "<ir>",
-        trace: ParserTrace = .shared
+        sourceFile: String = "<ir>"
     ) throws {
         try validate(
             [workflow],
-            sourceFile: workflow.sourceFile.isEmpty ? sourceFile : workflow.sourceFile,
-            trace: trace)
+            sourceFile: workflow.sourceFile.isEmpty ? sourceFile : workflow.sourceFile)
     }
 
     public static func validate(
         _ expression: IRExpression,
-        sourceFile: String = "<ir>",
-        trace: ParserTrace = .shared
+        sourceFile: String = "<ir>"
     ) throws {
+        let trace = ParserTrace.current
         let token = trace.openSpan(.validation, "validate expression")
         var validator = Validator(sourceFile: sourceFile, workflows: [])
         validator.validate(expression, range: SourceRange(file: sourceFile, line: 0, column: 1), context: .standaloneExpression)

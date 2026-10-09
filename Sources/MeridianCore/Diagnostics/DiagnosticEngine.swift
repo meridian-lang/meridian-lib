@@ -15,16 +15,14 @@ public final class DiagnosticEngine {
 
     public private(set) var diagnostics: [Diagnostic] = []
     public private(set) var skippedConstructs: [String] = []
-    private let trace: ParserTrace
     private var skipSummaryAppended = false
 
-    public init(trace: ParserTrace = .shared) {
-        self.trace = trace
-    }
+    public init() {}
 
     /// Record a diagnostic and mirror it into the `.diagnostics` trace stream
     /// (also bumping the trace's diagnostic counter for the compile profile).
     public func report(_ d: Diagnostic) {
+        let trace = ParserTrace.current
         diagnostics.append(d)
         trace.recordDiagnostic("\(d.severity.rawValue) \(d.code.id) @\(d.primaryRange): \(d.message)")
         for s in d.suggestions {
@@ -109,6 +107,6 @@ public final class DiagnosticEngine {
             help: existing.help,
             phase: existing.phase,
             relatedRanges: existing.relatedRanges)
-        trace.log(.diagnostics, "  note: \(note.message)")
+        ParserTrace.current.log(.diagnostics, "  note: \(note.message)")
     }
 }

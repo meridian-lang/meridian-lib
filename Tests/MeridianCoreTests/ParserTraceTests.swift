@@ -5,6 +5,32 @@ import Testing
 @Suite("ParserTrace")
 struct ParserTraceTests {
 
+    @Test("run installs the task-local current trace and restores it afterwards")
+    func runInstallsAndRestoresCurrentTrace() {
+        let outer = ParserTrace.silent()
+        let inner = ParserTrace.silent()
+        #expect(ParserTrace.current === ParserTrace.shared)
+        outer.run {
+            #expect(ParserTrace.current === outer)
+            inner.run {
+                #expect(ParserTrace.current === inner)
+            }
+            #expect(ParserTrace.current === outer)
+        }
+        #expect(ParserTrace.current === ParserTrace.shared)
+    }
+
+    @Test("async run scopes the trace and child tasks inherit it")
+    func asyncRunScopesAndChildTasksInherit() async {
+        let cap = ParserTrace.capturing(categories: [.lowering])
+        await cap.trace.run {
+            #expect(ParserTrace.current === cap.trace)
+            let childSaw = await Task { ParserTrace.current === cap.trace }.value
+            #expect(childSaw)
+        }
+        #expect(ParserTrace.current === ParserTrace.shared)
+    }
+
     @Test("capturing() collects only enabled categories")
     func captureRespectsCategories() {
         let cap = ParserTrace.capturing(categories: [.phraseParse])

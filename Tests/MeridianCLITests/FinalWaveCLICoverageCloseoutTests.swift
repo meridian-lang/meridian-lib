@@ -22,7 +22,7 @@ struct FinalWaveCLICoverageCloseoutTests {
         === vocabulary ===
         A customer is a kind of thing.
         """
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let compiled = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "greet.meridian")], vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]))["greet.meridian"]!
         let model = compiled.model
         let swift = compiled.swift
@@ -30,7 +30,7 @@ struct FinalWaveCLICoverageCloseoutTests {
         let swiftURL = t.write("greet.swift", swift)
         let sidecar = try IRSidecarEmitter().emit(
             workflows: model.workflows,
-            verbalizer: Verbalizer(model: model, trace: .silent()),
+            verbalizer: Verbalizer(model: model),
             sourceFile: "greet.meridian",
             swiftFile: "greet.swift",
             sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift)
@@ -158,7 +158,6 @@ struct FinalWaveCLICoverageCloseoutTests {
             instant: instant,
             merconfig: [],
             format: .text,
-            trace: .silent()
         )
         try await TraceEvalRunner.run(
             input: fileURL.path,
@@ -166,7 +165,6 @@ struct FinalWaveCLICoverageCloseoutTests {
             instant: instant,
             merconfig: [],
             format: .json,
-            trace: .silent()
         )
     }
 
@@ -179,7 +177,6 @@ struct FinalWaveCLICoverageCloseoutTests {
                 instant: ISO8601DateFormatter.meridianFormatter.string(from: Date()),
                 merconfig: [],
                 format: .text,
-                trace: .silent()
             )
         }
         await #expect(throws: (any Error).self) {
@@ -189,7 +186,6 @@ struct FinalWaveCLICoverageCloseoutTests {
                 instant: "not-a-date",
                 merconfig: [],
                 format: .text,
-                trace: .silent()
             )
         }
     }
@@ -270,14 +266,12 @@ struct FinalWaveCLICoverageCloseoutTests {
             instant: instant,
             merconfig: [merconfigURL.path],
             format: .json,
-            trace: .silent()
         )
 
         await #expect(throws: (any Error).self) {
             _ = try TraceEvalRunner.makeReplayPlan(
                 expression: "the order is ready",
                 vocabularies: [],
-                trace: .silent()
             )
         }
     }
@@ -295,7 +289,6 @@ struct FinalWaveCLICoverageCloseoutTests {
                 instant: instant,
                 merconfig: [],
                 format: .text,
-                trace: .silent()
             )
         }
 
@@ -325,7 +318,6 @@ struct FinalWaveCLICoverageCloseoutTests {
                 instant: ISO8601DateFormatter.meridianFormatter.string(from: base.addingTimeInterval(1)),
                 merconfig: [],
                 format: .text,
-                trace: .silent()
             )
         }
     }

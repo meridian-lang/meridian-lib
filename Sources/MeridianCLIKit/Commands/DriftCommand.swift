@@ -33,10 +33,10 @@ public struct DriftCommand: AsyncParsableCommand {
         do {
             let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
-                try Verbalizer(model: model, trace: traceInstance).verbalize()
+                try traceInstance.run { try Verbalizer(model: model).verbalize() }
             }
             let report = traceInstance.phase("drift") {
-                DriftEngine.diff(authored: model.authoredSource, canonical: canonical, trace: traceInstance)
+                traceInstance.run { DriftEngine.diff(authored: model.authoredSource, canonical: canonical) }
             }
             if json {
                 try printJSON(report, file: loaded.meridianURL.lastPathComponent)

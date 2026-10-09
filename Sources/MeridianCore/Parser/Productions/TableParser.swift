@@ -18,11 +18,9 @@ import Foundation
 
 struct TableParser {
     let lexicon: EnglishLexicon
-    let trace: ParserTrace
 
-    init(lexicon: EnglishLexicon, trace: ParserTrace = .shared) {
+    init(lexicon: EnglishLexicon) {
         self.lexicon = lexicon
-        self.trace = trace
     }
 
     /// A decoded table: the header cells and the data rows (the Markdown
@@ -135,7 +133,7 @@ struct TableParser {
                 out.append("\(lexicon.grammar.statement.ifPrefix)\(predicates.joined(separator: lexicon.grammar.booleanConnectors.andMarker)), \(action)")
             }
         }
-        trace.log(.statement, "table decision -> \(out.count) row statement(s)")
+        ParserTrace.current.log(.statement, "table decision -> \(out.count) row statement(s)")
         return out
     }
 

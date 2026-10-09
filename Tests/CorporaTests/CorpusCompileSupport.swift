@@ -15,7 +15,6 @@ enum CorpusCompileSupport {
                                 emitterOptions: SwiftEmitter.Options = .init()) -> Compiler.Options {
         Compiler.Options(
             emitterOptions: emitterOptions,
-            trace: .silent(),
             moduleSearchPaths: moduleSearchPaths
         )
     }

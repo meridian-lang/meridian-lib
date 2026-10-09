@@ -8,7 +8,7 @@ struct AutonomyModeTests {
     func autonomyConfigMarkers() {
         let config = AutonomyConfigAST.parse(
             "until ci is passed unless blocked replan after 4 failures up to 9 steps",
-            parseExpression: { ExpressionParser(trace: .silent()).parse($0) }
+            parseExpression: { ExpressionParser().parse($0) }
         )
 
         #expect(config.until != nil)
@@ -18,7 +18,7 @@ struct AutonomyModeTests {
 
         let hyphenated = AutonomyConfigAST.parse(
             "re-plan after 2 failures max 5 steps",
-            parseExpression: { ExpressionParser(trace: .silent()).parse($0) }
+            parseExpression: { ExpressionParser().parse($0) }
         )
         #expect(hyphenated.replanAfterFailures == 2)
         #expect(hyphenated.maxSteps == 5)
@@ -32,7 +32,7 @@ struct AutonomyModeTests {
         // rather than handing `parseExpression` a blank string.
         let config = AutonomyConfigAST.parse(
             "until  unless blocked",
-            parseExpression: { ExpressionParser(trace: .silent()).parse($0) }
+            parseExpression: { ExpressionParser().parse($0) }
         )
         #expect(config.until == nil)
         #expect(config.unless != nil)
@@ -40,7 +40,7 @@ struct AutonomyModeTests {
 
     @Test("autonomy workflow header records stop and replan clauses")
     func parsesAutonomyHeader() throws {
-        let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: SymbolTable()).parse("""
         To stabilize, with autonomy until ci is passed unless blocked re-plan after 2 failures:
           keep fixing the smallest failing thing.
         """)
@@ -54,11 +54,11 @@ struct AutonomyModeTests {
     @Test("unmatched autonomy body lowers to autonomous AIAutonomyIR")
     func lowersAutonomyProseStep() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To stabilize, with autonomy re-plan after 2 failures:
           keep fixing the smallest failing thing.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
 
         guard case .aiAutonomy(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected autonomous AIAutonomyIR")

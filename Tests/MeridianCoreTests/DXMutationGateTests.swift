@@ -30,7 +30,7 @@ struct DXMutationGateTests {
 
     @Test("mutation gate: unlowerable deontic obligation condition raises MER-DEO-007")
     func deonticUnlowerableConditionIsNotSilentlyDropped() throws {
-        let analyzer = RuleAnalyzer(trace: .silent(), symbols: nil)
+        let analyzer = RuleAnalyzer(symbols: nil)
         let rule = RuleAST(text: "Every order is shipped must hold.", sourceLine: 3)
         do {
             _ = try analyzer.classify(rule)
@@ -42,7 +42,7 @@ struct DXMutationGateTests {
 
     @Test("mutation gate: DeonticLowering rejects unlowerable whose constraint values")
     func deonticLoweringConstraintValueGate() throws {
-        let exprParser = ExpressionParser(trace: .silent())
+        let exprParser = ExpressionParser()
         let lexicon = EnglishLexicon.default
         do {
             _ = try DeonticLowering.parseArgumentConstraints(
@@ -88,7 +88,7 @@ struct DXMutationGateTests {
             complete.
         """
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
+            _ = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
             Issue.record("expected malformed recover header to throw")
         } catch let CompilerError.diagnostics(diags) {
             #expect(diags.contains { $0.code == .unparseableStatement })
@@ -153,7 +153,7 @@ struct DXMutationGateTests {
           invoke chargePaymnt with order = the order.
         """
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
+            _ = try Compiler(options: .init()).compile(
                 meridianSource: mer,
                 meridianFile: "t.meridian",
                 merconfigSource: cfg,

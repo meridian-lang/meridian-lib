@@ -3,12 +3,10 @@ import MeridianRuntime
 
 public struct Verbalizer: Sendable {
     public let model: VerbalizerModel
-    let trace: ParserTrace
     let invokeInverter: InvokeInverter
 
-    public init(model: VerbalizerModel, trace: ParserTrace = .shared) {
+    public init(model: VerbalizerModel) {
         self.model = model
-        self.trace = trace
         self.invokeInverter = InvokeInverter(symbols: model.symbols)
     }
 
@@ -17,8 +15,9 @@ public struct Verbalizer: Sendable {
     var statement: FixedStatementKeywords { grammar.statement }
 
     public func verbalize(annotateNormIDs: Bool = false) throws -> String {
+        let trace = ParserTrace.current
         try validateCanonicalLexiconMarkers()
-        try IRValidator.validate(model.workflows, sourceFile: model.sourceFileName, trace: trace)
+        try IRValidator.validate(model.workflows, sourceFile: model.sourceFileName)
         trace.log(.verbalizer, "verbalizing \(model.workflows.count) workflow(s)")
         let emitWorkflows = model.workflows.filter(shouldEmitWorkflow)
         let omitEntryKeys = emitWorkflows.contains { isImplicitEntryWorkflow($0) }
@@ -146,7 +145,7 @@ public struct Verbalizer: Sendable {
     }
 
     private func verbalize(_ prim: IRPrimitive, annotateNormIDs: Bool) -> String {
-        trace.log(.verbalizer, primitiveTraceLabel(prim))
+        ParserTrace.current.log(.verbalizer, primitiveTraceLabel(prim))
         switch prim {
         case .invoke(let invoke):
             return verbalizeInvoke(invoke)
@@ -221,6 +220,7 @@ public struct Verbalizer: Sendable {
     }
 
     private func verbalizeWorkflow(_ workflow: IRWorkflow, annotateNormIDs: Bool = false) -> String {
+        let trace = ParserTrace.current
         let span = trace.push(.verbalizer, "workflow \(workflow.structName)")
         defer { trace.pop(span) }
         let header: String

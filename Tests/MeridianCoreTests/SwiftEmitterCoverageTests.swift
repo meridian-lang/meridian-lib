@@ -1217,7 +1217,7 @@ struct SwiftEmitterBlockCoverageTests {
             thenBlock: IRBlock(statements: [])
         ))
         let wf = IRWorkflow(name: "run the loop", parameters: [], body: IRBlock(statements: [whileLoop, match]))
-        let out = try SwiftEmitter(trace: cap.trace).emit(workflows: [wf]).combined
+        let out = try cap.trace.run { try SwiftEmitter().emit(workflows: [wf]).combined }
         #expect(out.contains("while "))
         #expect(out.contains("switch "))
         #expect(out.contains("case \"open\""))
@@ -1247,8 +1247,10 @@ struct SwiftEmitterBlockCoverageTests {
             .complete(CompleteIR()),
         ])
         let wf = IRWorkflow(name: "cover every primitive", parameters: [], body: body)
-        let out = try SwiftEmitter(options: .init(namespaceEnum: "CoverageDemo"), trace: cap.trace)
-            .emit(workflows: [wf]).combined
+        let out = try cap.trace.run {
+            try SwiftEmitter(options: .init(namespaceEnum: "CoverageDemo"))
+                .emit(workflows: [wf]).combined
+        }
         #expect(out.contains("public enum CoverageDemo {"), Comment(rawValue: out))
         let trace = cap.lines().joined(separator: "\n")
         #expect(trace.contains("namespace CoverageDemo"), Comment(rawValue: trace))
@@ -1272,7 +1274,7 @@ struct SwiftEmitterBlockCoverageTests {
             thenBlock: IRBlock(statements: [.complete(CompleteIR(reason: "fallback"))])
         ))
         let wf = IRWorkflow(name: "run the match", parameters: [], body: IRBlock(statements: [match]))
-        let out = try SwiftEmitter(trace: cap.trace).emit(workflows: [wf]).combined
+        let out = try cap.trace.run { try SwiftEmitter().emit(workflows: [wf]).combined }
         #expect(out.contains("default:"), Comment(rawValue: out))
         let trace = cap.lines().joined(separator: "\n")
         #expect(trace.contains("default present"), Comment(rawValue: trace))

@@ -9,7 +9,7 @@ struct VerbalizerTotalityTests {
             workflows: [],
             loweredDefinitions: [],
             inlineDefinitions: [],
-            symbols: SymbolTable(trace: .silent()),
+            symbols: SymbolTable(),
             lexicon: .default,
             sourceFileName: "test.meridian",
             authoredSource: ""

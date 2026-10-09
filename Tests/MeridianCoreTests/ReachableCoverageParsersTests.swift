@@ -28,12 +28,12 @@ struct ReachableCoverageParsersTests {
     """
 
     private func relSymbols() throws -> SymbolTable {
-        let cfg = try MerConfigParser(trace: .silent()).parse(Self.relCfg, file: "rel.merconfig")
+        let cfg = try MerConfigParser().parse(Self.relCfg, file: "rel.merconfig")
         return SymbolTable.build(from: cfg)
     }
 
     private func parse(_ s: String, _ sym: SymbolTable? = nil) -> ExpressionAST {
-        ExpressionParser(symbols: sym, trace: .silent()).parse(s)
+        ExpressionParser(symbols: sym).parse(s)
     }
 
     private func examplesURL() -> URL {
@@ -54,7 +54,7 @@ struct ReachableCoverageParsersTests {
             contentsOf: examplesURL().appendingPathComponent("relations.merconfig"),
             encoding: .utf8
         )
-        let cfg = try MerConfigParser(trace: .silent()).parse(src, file: "relations.merconfig")
+        let cfg = try MerConfigParser().parse(src, file: "relations.merconfig")
         return SymbolTable.build(from: cfg)
     }
 
@@ -72,7 +72,7 @@ struct ReachableCoverageParsersTests {
         A page has a summary, which is text.
         A page has a status, which is text.
         """
-        let cfg = try MerConfigParser(trace: .silent()).parse(minimal, file: "q.merconfig")
+        let cfg = try MerConfigParser().parse(minimal, file: "q.merconfig")
         let sym = SymbolTable.build(from: cfg)
         func kind(_ s: String) -> QuantifierKindAST? {
             if case .quantified(let q) = parse(s, sym) { return q.kind }
@@ -122,7 +122,7 @@ struct ReachableCoverageParsersTests {
 
     @Test("MerConfigParser parses relations, verbs, property backing, and the inverse form")
     func merConfigRelational() throws {
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === vocabulary ===
         An order is a kind of thing.
         An order has a total, which is Money.
@@ -150,7 +150,7 @@ struct ReachableCoverageParsersTests {
     @Test("MerConfigParser parseLiteral covers boolean/double/money/duration")
     func merConfigLiterals() throws {
         // Constants with each literal kind exercise parseLiteral's arms.
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === vocabulary ===
         A thing is a kind of thing.
 
@@ -167,7 +167,7 @@ struct ReachableCoverageParsersTests {
     // MARK: StatementParser — rare statement forms via the full parser
 
     private func parseWorkflow(_ src: String) throws -> MeridianFile {
-        try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse(src, file: "t.meridian")
+        try MeridianParser(symbols: SymbolTable()).parse(src, file: "t.meridian")
     }
 
     @Test("single-line conditional with inline otherwise")

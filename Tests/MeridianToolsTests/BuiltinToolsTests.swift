@@ -113,7 +113,6 @@ struct BuiltinToolsTests {
 
     @Test("llm.chat throws explicit not-configured error")
     func llmChatThrows() async throws {
-        LLMProviderRegistry.setOverride(nil)
         do {
             _ = try await MeridianTools.invoke("llm.chat", args: [:])
             Issue.record("Expected llm.chat to throw")
@@ -124,7 +123,6 @@ struct BuiltinToolsTests {
 
     @Test("llm.decide default returns false for non-affirmative questions")
     func llmDecideDefault() async throws {
-        LLMProviderRegistry.setOverride(nil)
         let result = try await MeridianTools.invoke("llm.decide", args: [
             "question": .string("Should we ship this PR?")
         ])

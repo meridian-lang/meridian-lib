@@ -59,13 +59,17 @@ public struct Compiler {
         workflows: [IRWorkflow],
         constantsDecl: SwiftEmitter.ConstantsDecl? = nil
     ) throws -> String {
-        try SwiftEmitter(options: options.emitterOptions, trace: options.trace)
-            .emit(workflows: workflows, constantsDecl: constantsDecl).combined
+        try ParserTrace.$current.withValue(options.trace) {
+            try SwiftEmitter(options: options.emitterOptions)
+                .emit(workflows: workflows, constantsDecl: constantsDecl).combined
+        }
     }
 
     /// Emit the companion JSON manifest.
     public func emitManifest(_ input: ManifestEmitter.Input) throws -> String {
-        try ManifestEmitter(trace: options.trace).emit(input)
+        try ParserTrace.$current.withValue(options.trace) {
+            try ManifestEmitter().emit(input)
+        }
     }
 
     // MARK: - Phase 3: Source → Swift
@@ -170,22 +174,30 @@ public struct Compiler {
     /// resolver table resolve across files; the single-source case registers
     /// exactly the same set the lowerer would self-register.
     public func compile(_ unit: CompilationUnit) throws -> [String: CompiledFile] {
-        let trace = options.trace
+        try ParserTrace.$current.withValue(options.trace) {
+            try compileInScope(unit)
+        }
+    }
+
+    /// Body of `compile(_:)`, run with `options.trace` installed as the
+    /// task-local current trace.
+    private func compileInScope(_ unit: CompilationUnit) throws -> [String: CompiledFile] {
+        let trace = ParserTrace.current
         trace.resetProfile()
         let compileSpan = trace.push(.timing, "compile (\(unit.sources.count) file(s))")
         defer { trace.pop(compileSpan); trace.profileSummary() }
 
         let bootstrapContext = try bootstrap(
-            unit: unit, trace: trace, engine: DiagnosticEngine(trace: trace))
+            unit: unit, engine: DiagnosticEngine())
 
         // Parse every source against the SHARED symbol table. Each file gets
         // its own `DiagnosticEngine` (so batching never crosses files) used for
         // both its parse and lower phases.
         var parsed: [(ast: MeridianFile, source: SourceInput, engine: DiagnosticEngine)] = []
         for source in unit.sources {
-            let engine = DiagnosticEngine(trace: trace)
+            let engine = DiagnosticEngine()
             let ast = try trace.phase("parse \(source.file)") {
-                try MeridianParser(symbols: bootstrapContext.symbols, trace: trace,
+                try MeridianParser(symbols: bootstrapContext.symbols,
                                    lexicon: bootstrapContext.lexicon,
                                    rewriteEngine: bootstrapContext.rewriteEngine, diagnostics: engine)
                     .parse(source.source, file: source.file)
@@ -212,7 +224,7 @@ public struct Compiler {
             outputs[entry.source.file] = try lowerAndEmit(
                 ast: entry.ast, meridianFile: entry.source.file,
                 symbols: bootstrapContext.symbols, config: bootstrapContext.config,
-                lexicon: bootstrapContext.lexicon, trace: trace,
+                lexicon: bootstrapContext.lexicon,
                 rulebook: bootstrapContext.rulebook, unit: unit,
                 authoredSource: entry.source.source,
                 engine: entry.engine
@@ -240,11 +252,12 @@ public struct Compiler {
     /// bootstrap phase would (duplicate vocab/rulebook names, malformed
     /// `.merconfig`/`.merrules`).
     public func bootstrap(_ unit: CompilationUnit) throws -> KnowledgeContext {
-        let trace = options.trace
-        let engine = DiagnosticEngine(trace: trace)
-        let ctx = try bootstrap(unit: unit, trace: trace, engine: engine)
-        return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
-                                rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
+        try ParserTrace.$current.withValue(options.trace) {
+            let engine = DiagnosticEngine()
+            let ctx = try bootstrap(unit: unit, engine: engine)
+            return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
+                                    rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
+        }
     }
 
     private struct BootstrapContext {
@@ -258,9 +271,9 @@ public struct Compiler {
 
     private func bootstrap(
         unit: CompilationUnit,
-        trace: ParserTrace,
         engine: DiagnosticEngine,
     ) throws -> BootstrapContext {
+        let trace = ParserTrace.current
         let duplicateHelp = DuplicateInputHelp(
             rulebook: "Each `--rulebook` / frontmatter `rulebook:` entry must have a unique name.",
             vocabulary: "Each `--vocabulary` / frontmatter `vocabulary:` entry must have a unique name."
@@ -279,11 +292,11 @@ public struct Compiler {
                 ])
             }
             let parsed = try trace.phase("bootstrap.rulebook") {
-                try RulebookParser(trace: trace).parse(input.source, file: input.file)
+                try RulebookParser().parse(input.source, file: input.file)
             }
             rulebook = rulebook.merging(parsed)
         }
-        let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
+        let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook)
 
         let anchor = options.anchorDirectory
             ?? unit.sources.first.map { URL(fileURLWithPath: ($0.file as NSString).deletingLastPathComponent) }
@@ -307,7 +320,7 @@ public struct Compiler {
                 ])
             }
             let parsed = try trace.phase("bootstrap.merconfig") {
-                try MerConfigParser(trace: trace, lexicon: lexicon, diagnostics: engine)
+                try MerConfigParser(lexicon: lexicon, diagnostics: engine)
                     .parse(input.source, file: input.file)
             }
             moduleImportSpecs += ModuleResolver.parseImportsLines(parsed.imports, file: input.file)
@@ -318,7 +331,6 @@ public struct Compiler {
             let resolver = ModuleResolver(
                 moduleSearchPaths: options.moduleSearchPaths,
                 anchorDirectory: anchor,
-                trace: trace,
                 lexicon: lexicon
             )
             let resolution = try trace.phase("bootstrap.modules") {
@@ -338,7 +350,6 @@ public struct Compiler {
                     from: source.source,
                     file: source.file,
                     rulebook: rulebook,
-                    trace: trace,
                     lexicon: lexicon
                 )
             }
@@ -354,7 +365,7 @@ public struct Compiler {
 
         let symbolsFile = unit.vocabularies.first?.file ?? "config.merconfig"
         let symbols = trace.phase("symbols") {
-            SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
+            SymbolTable.build(from: config, sourceFile: symbolsFile, lexicon: lexicon)
         }
         return BootstrapContext(
             config: config,
@@ -374,19 +385,18 @@ public struct Compiler {
         symbols: SymbolTable,
         config: MerConfigFile,
         lexicon: EnglishLexicon,
-        trace: ParserTrace,
         rulebook: Rulebook,
         unit: CompilationUnit,
         authoredSource: String,
         engine: DiagnosticEngine
     ) throws -> CompiledFile {
+        let trace = ParserTrace.current
         let lowered = try lowerParsedAST(
             ast: ast,
             meridianFile: meridianFile,
             symbols: symbols,
             config: config,
             lexicon: lexicon,
-            trace: trace,
             rulebook: rulebook,
             unit: unit,
             authoredSource: authoredSource,
@@ -428,7 +438,7 @@ public struct Compiler {
             namespaceEnum: options.emitterOptions.namespaceEnum
         )
         let output = try trace.phase("codegen") {
-            try SwiftEmitter(options: emitterOpts, trace: trace)
+            try SwiftEmitter(options: emitterOpts)
                 .emit(workflows: workflows,
                       constantsDecl: constantsDecl,
                       instancesDecl: instancesDecl,
@@ -447,7 +457,7 @@ public struct Compiler {
         // practice (opt-in frontmatter) that we accept reporting it as
         // `executes: true` here rather than threading attach status out of
         // the lowerer for this edge case.
-        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
+        let ruleAnalyzer = RuleAnalyzer(lexicon: lexicon, symbols: symbols)
         let ruleManifestEntries: [ManifestEmitter.RuleManifestEntry] = try trace.phase("manifestRules") {
             try ast.rules.map { raw in
                 guard let parsed = try ruleAnalyzer.classify(raw) else {
@@ -583,12 +593,12 @@ public struct Compiler {
         symbols: SymbolTable,
         config: MerConfigFile,
         lexicon: EnglishLexicon,
-        trace: ParserTrace,
         rulebook: Rulebook,
         unit: CompilationUnit,
         authoredSource: String,
         engine: DiagnosticEngine
     ) throws -> LoweredCompileUnit {
+        let trace = ParserTrace.current
         try validateImports(ast.imports, against: unit.vocabularies, file: meridianFile)
         try validateRulebookReferences(ast.metadata, against: unit.rulebooks, file: meridianFile)
 
@@ -601,13 +611,11 @@ public struct Compiler {
         let scopedTools = mergedScopedTools(
             frontmatterTools: frontmatter.tools,
             toolsUsed: ast.toolsUsed,
-            symbols: symbols,
-            trace: trace
+            symbols: symbols
         )
         let lowerer = ASTToIR(
             symbols: symbols,
             sourceFile: meridianFile,
-            trace: trace,
             lexicon: lexicon,
             fallbackPolicy: effectivePolicy,
             rulebook: rulebook,
@@ -628,8 +636,7 @@ public struct Compiler {
             metadata: ast.metadata,
             sourceFile: meridianFile,
             lexicon: lexicon,
-            rulebook: rulebook,
-            trace: trace
+            rulebook: rulebook
         )
         let skillName = frontmatter.name
             ?? meridianFile.replacingOccurrences(of: ".meridian", with: "")
@@ -641,8 +648,7 @@ public struct Compiler {
             skillName: skillName,
             authoredSource: authoredSource,
             vocabularies: unit.vocabularies,
-            rulebooks: unit.rulebooks,
-            trace: trace
+            rulebooks: unit.rulebooks
         )
         return LoweredCompileUnit(
             workflows: annotated.workflows,
@@ -659,18 +665,17 @@ public struct Compiler {
         metadata: FileMetadataAST?,
         sourceFile: String,
         lexicon: EnglishLexicon,
-        rulebook: Rulebook,
-        trace: ParserTrace
+        rulebook: Rulebook
     ) -> [IRWorkflow] {
         guard !frontmatter.triggers.isEmpty else {
             return workflows
         }
 
-        let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook, trace: trace)
+        let classifier = TriggerClassifier(lexicon: lexicon, rulebook: rulebook)
         let triggers = frontmatter.triggers.map {
             classifier.classify($0, sourceLine: metadata?.sourceLine ?? 0)
         }
-        return workflows + TriggerSynthesizer(lexicon: lexicon, trace: trace)
+        return workflows + TriggerSynthesizer(lexicon: lexicon)
             .synthesize(triggers, sourceFile: sourceFile)
     }
 
@@ -681,9 +686,9 @@ public struct Compiler {
         skillName: String,
         authoredSource: String,
         vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput],
-        trace: ParserTrace
+        rulebooks: [RulebookInput]
     ) throws -> (workflows: [IRWorkflow], skillVersionHash: String) {
+        let trace = ParserTrace.current
         let skillVersionHash = try trace.phase("traceIdentity.hash") {
             try TraceIdentityPlanner.skillVersionHash(
                 meridianSource: authoredSource,
@@ -805,11 +810,10 @@ public struct Compiler {
     private func mergedScopedTools(
         frontmatterTools: [String],
         toolsUsed: [String],
-        symbols: SymbolTable,
-        trace: ParserTrace
+        symbols: SymbolTable
     ) -> [String]? {
         let tokens = frontmatterTools + toolsUsed
-        guard let resolved = resolveScopedTools(tokens, symbols: symbols, trace: trace) else {
+        guard let resolved = resolveScopedTools(tokens, symbols: symbols) else {
             return nil
         }
         var set = Set(resolved)
@@ -818,7 +822,8 @@ public struct Compiler {
         return set.sorted()
     }
 
-    private func resolveScopedTools(_ tokens: [String], symbols: SymbolTable, trace: ParserTrace) -> [String]? {
+    private func resolveScopedTools(_ tokens: [String], symbols: SymbolTable) -> [String]? {
+        let trace = ParserTrace.current
         guard !tokens.isEmpty else { return nil }
         let methodNames = Set(symbols.tools.keys)
         var resolved: Set<String> = []
@@ -923,16 +928,15 @@ public struct Compiler {
     private func harvestDomainVocabulary(from source: String,
                                          file: String,
                                          rulebook: Rulebook,
-                                         trace: ParserTrace,
                                          lexicon: EnglishLexicon) throws -> MerConfigFile {
-        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
+        let lines = IndentTokenizer().tokenize(source, file: file)
         let sections = MarkdownOutline.build(lines)
             .filter { SectionRoleResolver.role(for: $0.heading, rulebook: rulebook) == .domain }
             .map { $0.bodyLines.filter(\.isContent) }
             .filter { !$0.isEmpty }
 
         guard !sections.isEmpty else { return MerConfigFile() }
-        let parser = MerConfigParser(trace: trace, lexicon: lexicon)
+        let parser = MerConfigParser(lexicon: lexicon)
         let vocab = try sections.flatMap { try parser.parseVocabularyLines($0, file: file) }
         return MerConfigFile(vocabulary: vocab)
     }

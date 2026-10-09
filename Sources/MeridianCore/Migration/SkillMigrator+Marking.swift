@@ -3,6 +3,7 @@ import Foundation
 extension SkillMigrator {
     func markSections(_ markdown: String) throws
         -> (markdown: String, aliases: [SectionAlias], unminedContracts: [String]) {
+        let trace = ParserTrace.current
         if trace.isEnabled(.skill) {
             probeSession.tally = TrialLowering.ProbeTally()
         } else {
@@ -96,6 +97,7 @@ extension SkillMigrator {
     func wrapHeadinglessNarrativeIfNeeded(_ lines: [String], bodyStart: Int,
                                                   knowledge: Compiler.KnowledgeContext)
         throws -> (markdown: String, aliases: [SectionAlias]) {
+        let trace = ParserTrace.current
         var lines = lines
         let body = lines[bodyStart..<lines.count]
         if sectionIsExecutableOnly(body, knowledge: knowledge) {
@@ -141,7 +143,7 @@ extension SkillMigrator {
     /// decide inertness by themselves.
     func headinglessBodyNeedsInertOverview(_ body: ArraySlice<String>,
                                                    knowledge: Compiler.KnowledgeContext) -> Bool {
-        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: trace)
+        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon)
         for raw in body {
             let trimmed = raw.trimmingCharacters(in: .whitespaces)
             if trimmed.isEmpty { continue }

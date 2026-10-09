@@ -32,16 +32,16 @@ struct ProductionGrammarBranchCoverageTests {
     """
 
     private func symbols() throws -> SymbolTable {
-        let cfg = try MerConfigParser(trace: .silent()).parse(Self.config, file: "branch.merconfig")
+        let cfg = try MerConfigParser().parse(Self.config, file: "branch.merconfig")
         return SymbolTable.build(from: cfg)
     }
 
     private func parser(_ symbols: SymbolTable? = nil) -> ExpressionParser {
-        ExpressionParser(symbols: symbols, trace: .silent())
+        ExpressionParser(symbols: symbols)
     }
 
     private func atom(_ text: String) -> ExpressionAST {
-        ExpressionParser(trace: .silent()).parseAtom(text)
+        ExpressionParser().parseAtom(text)
     }
 
     private func descriptionGrammar(_ symbols: SymbolTable?) -> DescriptionGrammar {

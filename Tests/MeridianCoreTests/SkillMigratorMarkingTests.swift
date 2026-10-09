@@ -13,7 +13,7 @@ struct SkillMigratorMarkingTests {
     static func migrator(vocabularies: [Compiler.VocabularyInput] = [], rulebooks: [RulebookInput] = [],
                          routeFuzzy: Bool = true) -> SkillMigrator {
         SkillMigrator(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: vocabularies,
             rulebooks: rulebooks,
             options: .init(routeFuzzy: routeFuzzy)
@@ -351,7 +351,7 @@ struct SkillMigratorMarkingTests {
         // signal is left exactly as authored by the marking pass, and the
         // real compiler raises its own precise diagnostic — a hard error,
         // never a silently downgraded reference section.
-        let strict = try await SkillMigrator(compiler: Compiler(options: .init(trace: .silent())), vocabularies: [],
+        let strict = try await SkillMigrator(compiler: Compiler(options: .init()), vocabularies: [],
                                              options: .init(routeFuzzy: false)).migrate(source)
         #expect(!strict.compiledOK, Comment(rawValue: strict.meriSource))
 
@@ -561,15 +561,16 @@ struct SkillMigratorMarkingTests {
         let cap = ParserTrace.capturing(categories: [.skill])
         let migrator = SkillMigrator(
             compiler: Compiler(options: .init(trace: cap.trace)),
-            vocabularies: [],
-            trace: cap.trace)
-        _ = try migrator.markSections("""
-        # Deprecated
+            vocabularies: [])
+        _ = try cap.trace.run {
+            try migrator.markSections("""
+            # Deprecated
 
-        This skill moved elsewhere.
+            This skill moved elsewhere.
 
-        - Keep this note as documentation.
-        """)
+            - Keep this note as documentation.
+            """)
+        }
         #expect(cap.lines().contains { $0.contains("Overview (( role: reference ))") })
     }
 
@@ -1167,7 +1168,7 @@ struct SkillMigratorMarkingTests {
             durationUnits: base.durationUnits,
             toolStopwords: base.toolStopwords
         )
-        let compiler = Compiler(options: .init(trace: .silent(), lexicon: noArticleLexicon))
+        let compiler = Compiler(options: .init(lexicon: noArticleLexicon))
         let knowledge = try compiler.bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: []))
         let trial = TrialLowering(knowledge: knowledge)
         let migrator = Self.migrator()

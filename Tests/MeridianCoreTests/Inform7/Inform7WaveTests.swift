@@ -14,12 +14,12 @@ struct CommandAnnotationTests {
 
     private func lower(_ source: String) throws -> [IRWorkflow] {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent())
+        let ast = try MeridianParser(symbols: symbols)
             .parse(source, file: "test.meridian")
         // The lowerer's batch engine collects; this helper checkpoints so
         // direct-lower tests still observe errors as thrown `CompilerError`s.
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: engine).lower(ast)
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: engine).lower(ast)
         try engine.throwIfErrors()
         return workflows
     }
@@ -94,14 +94,14 @@ struct CommandAnnotationTests {
                 rewrite: "`{command}` -- {purpose}"
             )
         ])
-        let engine = RewriteEngine(rulebook: rulebook, trace: .silent())
+        let engine = RewriteEngine(rulebook: rulebook)
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent(), rewriteEngine: engine)
+        let ast = try MeridianParser(symbols: symbols, rewriteEngine: engine)
             .parse("""
             To demo:
               Run `gbrain doctor --json` to check index health.
             """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("expected the rewritten command to lower to a shell.run invoke"); return
         }
@@ -135,15 +135,15 @@ struct CommandHoleTests {
 
     private func lower(_ source: String) throws -> [IRWorkflow] {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent())
+        let ast = try MeridianParser(symbols: symbols)
             .parse(source, file: "test.meridian")
         // The lowerer's batch engine collects; this helper checkpoints so
         // direct-lower tests still observe errors as thrown `CompilerError`s.
         // These fixtures use host-provided `gbrain.*` tools that no vocabulary
         // declares, so unknown-tool reporting is downgraded the same way
         // frontmatter `allow-fallbacks: unknown-tools` would.
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(),
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian",
                                     fallbackPolicy: FallbackPolicy(allowed: [.unknownTools]),
                                     engine: engine).lower(ast)
         try engine.throwIfErrors()
@@ -536,9 +536,9 @@ struct IterationRefinementTests {
 
     private func iterate(_ source: String) throws -> IterateIR? {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent())
+        let ast = try MeridianParser(symbols: symbols)
             .parse(source, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         for stmt in workflows[0].body.statements {
             if case .iterate(let ir) = stmt { return ir }
         }

@@ -95,6 +95,7 @@ extension StatementParser {
     }
 
     func buildInvokeExpr(_ s: String) -> ExpressionAST {
+        let trace = ParserTrace.current
         // "invoke {tool name} with {k = v, k = v}"
         // Strip "invoke "
         trace.log(.statement, "buildInvokeExpr start: \(ParserTrace.short(s))")
@@ -133,7 +134,7 @@ extension StatementParser {
             guard let range = p.range(of: " = ") ?? p.range(of: "=") else { return nil }
             let key = String(p[p.startIndex ..< range.lowerBound]).trimmingCharacters(in: .whitespaces)
             let val = String(p[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            trace.log(.statement, "parseArgList key=\(key) val=\(ParserTrace.short(val))")
+            ParserTrace.current.log(.statement, "parseArgList key=\(key) val=\(ParserTrace.short(val))")
             return (key, exprParser.parse(val))
         }
     }
@@ -290,7 +291,7 @@ extension StatementParser {
             }
             j = k
         }
-        trace.log(.statement, "match branch @L\(line.number): \(cases.count) case arm(s), otherwise \(otherwiseBlock == nil ? "absent" : "present")")
+        ParserTrace.current.log(.statement, "match branch @L\(line.number): \(cases.count) case arm(s), otherwise \(otherwiseBlock == nil ? "absent" : "present")")
         return (
             MatchBranchStatementAST(
                 subject: subject,

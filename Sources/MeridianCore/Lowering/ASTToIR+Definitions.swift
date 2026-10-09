@@ -49,7 +49,7 @@ extension ASTToIR {
         try symbols.definitions.values
             .sorted { $0.functionName < $1.functionName }
             .map { rec in
-                trace.log(.lowering, "lower definition \(rec.functionName) (adjective on \(rec.kind))")
+                ParserTrace.current.log(.lowering, "lower definition \(rec.functionName) (adjective on \(rec.kind))")
                 // Rewrite the body so bare property references resolve against
                 // the subject (the function parameter), mirroring loop-var
                 // qualification.

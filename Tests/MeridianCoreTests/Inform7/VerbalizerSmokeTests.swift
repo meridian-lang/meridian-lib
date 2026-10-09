@@ -32,7 +32,7 @@ struct VerbalizerSmokeTests {
             invoke demo tool with value = score.
           complete.
         """
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let vocab = [Compiler.VocabularyInput(name: "test", file: "test.merconfig", source: cfg)]
         let first = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "test.meridian")], vocabularies: vocab))["test.meridian"]!.model
         let canonical = try Verbalizer(model: first).verbalize()

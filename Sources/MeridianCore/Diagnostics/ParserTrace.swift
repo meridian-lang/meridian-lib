@@ -22,6 +22,11 @@ import MeridianRuntime
 // Output destination defaults to stderr. Override with
 // `ParserTrace.shared.sink = .file(URL(fileURLWithPath: "trace.log"))` or
 // `.custom { line in ... }` for programmatic capture (tests, golden files).
+//
+// Threading: the active trace is a task-local (`ParserTrace.current`). Hosts
+// inject one via `Compiler.Options.trace` (the compile entry points install it
+// for the duration of the compile) or `trace.run { ... }` around a direct API
+// call; no component takes a `trace:` parameter.
 
 public enum SpanOutcome: String, Sendable {
     case success
@@ -37,6 +42,26 @@ public struct SpanID: Hashable, Sendable {
 public final class ParserTrace: @unchecked Sendable {
 
     public static let shared = ParserTrace()
+
+    /// The trace every compiler component reads. Defaults to the process-wide
+    /// `shared` instance; hosts inject a different one by setting
+    /// `Compiler.Options.trace` (the compile entry points install it for the
+    /// duration of the compile) or by wrapping a direct API call in `run(_:)`.
+    /// `TaskLocal` values are inherited by child tasks, so `await`ed work
+    /// inside a compile sees the same trace.
+    @TaskLocal public static var current: ParserTrace = .shared
+
+    /// Run `body` with this trace installed as the task-local current trace.
+    /// The direct-API injection point for hosts and tests (compile scopes get
+    /// it for free through `Compiler.Options.trace`).
+    public func run<T>(_ body: () throws -> T) rethrows -> T {
+        try Self.$current.withValue(self, operation: body)
+    }
+
+    /// Async variant of `run(_:)`, for async command bodies and tests.
+    public func run<T>(_ body: () async throws -> T) async rethrows -> T {
+        try await Self.$current.withValue(self, operation: body)
+    }
 
     public enum OutputFormat: Sendable {
         case text

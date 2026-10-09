@@ -11,7 +11,7 @@ import Testing
 struct UniversalSectionMarkerTests {
 
     private func parse(_ source: String, file: String = "skill.meri") throws -> MeridianFile {
-        try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse(source, file: file)
+        try MeridianParser(symbols: SymbolTable()).parse(source, file: file)
     }
 
     @Test("(( inert )) records role inert and executes nothing")
@@ -115,7 +115,7 @@ struct UniversalSectionMarkerTests {
 
     @Test("invariants sections accept explicit assertion markers")
     func invariantsAcceptAssertionMarkers() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
+        let out = try Compiler(options: .init()).compile(
             meridianSource: """
             ---
             name: guarded
@@ -146,7 +146,7 @@ struct UniversalSectionMarkerTests {
 struct UniversalSectionErrorTests {
 
     private func parse(_ source: String, file: String = "skill.meri") throws -> MeridianFile {
-        try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse(source, file: file)
+        try MeridianParser(symbols: SymbolTable()).parse(source, file: file)
     }
 
     @Test("unrecognized heading with content is a hard error")
@@ -216,7 +216,7 @@ struct UniversalSectionManifestTests {
 
     @Test("meridian_skill.sections round-trips every marker form and is deterministic")
     func sectionsManifestRoundTrip() throws {
-        let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: SymbolTable()).parse("""
         ## Philosophy (( inert ))
         Prose rationale.
 

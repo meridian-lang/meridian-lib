@@ -15,13 +15,13 @@ struct IRSidecarTests {
         === vocabulary ===
         A customer is a kind of thing.
         """
-        let compiler = Compiler(options: .init(trace: .silent()))
+        let compiler = Compiler(options: .init())
         let compiled = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "greet.meridian")], vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]))["greet.meridian"]!
         let model = compiled.model
         let swift = compiled.swift
         let sidecar = try IRSidecarEmitter().emit(
             workflows: model.workflows,
-            verbalizer: Verbalizer(model: model, trace: .silent()),
+            verbalizer: Verbalizer(model: model),
             sourceFile: "greet.meridian",
             swiftFile: "greet.swift",
             sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift)
@@ -78,7 +78,7 @@ struct IRSidecarTests {
         )
         let json = try IRSidecarEmitter().emit(
             workflows: [wf],
-            verbalizer: Verbalizer(model: model, trace: .silent()),
+            verbalizer: Verbalizer(model: model),
             sourceFile: "nested.meridian",
             swiftFile: "nested.swift",
             sourceMap: [

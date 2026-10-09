@@ -35,17 +35,14 @@ import MeridianRuntime
 
 public struct RulebookParser {
 
-    public let trace: ParserTrace
-
-    public init(trace: ParserTrace = .shared) {
-        self.trace = trace
-    }
+    public init() {}
 
     public func parse(_ source: String, file: String = "") throws -> Rulebook {
+        let trace = ParserTrace.current
         let token = trace.push(.rulebook, "RulebookParser.parse(\(file))")
         defer { trace.pop(token) }
 
-        let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
+        let lines = IndentTokenizer().tokenize(source, file: file)
 
         // Split into sections by `=== name ===` headers (same convention as
         // merconfig). Lines before the first header are ignored.
@@ -190,7 +187,7 @@ public struct RulebookParser {
                 targetsPrimitive: targetsPrimitive,
                 sourceLine: line.number
             ))
-            trace.log(.rulebook, "desugar \"\(name)\" prio=\(priority): \(m) ⇒ \(r)")
+            ParserTrace.current.log(.rulebook, "desugar \"\(name)\" prio=\(priority): \(m) ⇒ \(r)")
             i = j
         }
         return results

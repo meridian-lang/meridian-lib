@@ -119,14 +119,16 @@ Prefer behavioral tests with the narrowest surface that proves the invariant:
   `Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`
   (or run `swift test --filter GeneratedSwiftTypecheckSlowTests`) — do not
   treat `Compiler.compile` success as proof that Swift syntax is valid.
-- For trace behavior, use `ParserTrace.capturing(categories:)` and pass the
-  captured trace explicitly; use `.silent()` when a test must ignore ambient
-  `MERIDIAN_TRACE`.
+- For trace behavior, use `ParserTrace.capturing(categories:)`: pass
+  `cap.trace` through `Compiler.Options` when the test drives a compile, or
+  wrap a direct type call in `cap.trace.run { … }` (async variant for async
+  bodies). Omit `trace:` when a test must ignore ambient `MERIDIAN_TRACE` —
+  the default `.shared` is silent unless activated.
 
 Minimal compile pattern:
 
 ```swift
-let swift = try Compiler(options: .init(trace: .silent())).compile(
+let swift = try Compiler(options: .init()).compile(
     meridianSource: "To run:\n  complete.\n",
     meridianFile: "demo.meri",
     merconfigSource: "=== vocabulary ===\n",

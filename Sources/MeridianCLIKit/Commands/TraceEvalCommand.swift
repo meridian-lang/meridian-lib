@@ -29,14 +29,16 @@ public struct TraceEvalCommand: AsyncParsableCommand {
     @OptionGroup var cliTrace: CLITraceOptions
 
     public func run() async throws {
-        try await TraceEvalRunner.run(
-            input: input,
-            expression: expression,
-            instant: instant,
-            merconfig: merconfig,
-            format: format,
-            trace: try cliTrace.makeTrace()
-        )
+        let traceInstance = try cliTrace.makeTrace()
+        try await traceInstance.run {
+            try await TraceEvalRunner.run(
+                input: input,
+                expression: expression,
+                instant: instant,
+                merconfig: merconfig,
+                format: format
+            )
+        }
     }
 }
 
@@ -103,8 +105,7 @@ enum TraceEvalRunner {
         expression: String,
         instant: String,
         merconfig: [String],
-        format: TraceEvalOutputFormat,
-        trace: ParserTrace
+        format: TraceEvalOutputFormat
     ) async throws {
         let fileURL = URL(fileURLWithPath: input).standardizedFileURL
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
@@ -113,7 +114,7 @@ enum TraceEvalRunner {
 
         let evaluationInstant = try parseInstant(instant)
         let vocabularies = try DependencyDiscovery.loadVocabularies(try merconfig.map(existingURL(path:)))
-        let plan = try makeReplayPlan(expression: expression, vocabularies: vocabularies, trace: trace)
+        let plan = try makeReplayPlan(expression: expression, vocabularies: vocabularies)
         let store = try JSONLTraceStore(fileURL: fileURL)
         let context = try await inferReplayContext(store: store, scope: plan.query.scope)
         let replayContext = TraceEvaluationContext(
@@ -150,26 +151,23 @@ enum TraceEvalRunner {
 
     static func makeReplayPlan(
         expression: String,
-        vocabularies: [Compiler.VocabularyInput],
-        trace: ParserTrace
+        vocabularies: [Compiler.VocabularyInput]
     ) throws -> ReplayPlan {
-        let compiler = Compiler(options: .init(trace: trace))
+        let compiler = Compiler(options: .init(trace: ParserTrace.current))
         let knowledge = try compiler.bootstrap(Compiler.CompilationUnit(
             sources: [Compiler.SourceInput(source: "", file: "<trace-eval>")],
             vocabularies: vocabularies
         ))
         let parsed = ExpressionParser(
             symbols: knowledge.symbols,
-            trace: trace,
             lexicon: knowledge.lexicon
         ).parse(expression)
         let lowered = try ASTToIR(
             symbols: knowledge.symbols,
             sourceFile: "<trace-eval>",
-            trace: trace,
             lexicon: knowledge.lexicon,
             rulebook: knowledge.rulebook,
-            engine: DiagnosticEngine(trace: trace)
+            engine: DiagnosticEngine()
         ).lowerExpression(parsed, line: 1)
         let canonical = Verbalizer(model: VerbalizerModel(
             workflows: [],
@@ -179,7 +177,7 @@ enum TraceEvalRunner {
             lexicon: knowledge.lexicon,
             sourceFileName: "<trace-eval>",
             authoredSource: expression
-        ), trace: trace).verbalize(lowered)
+        )).verbalize(lowered)
 
         switch lowered {
         case .traceTemporal(let temporal):

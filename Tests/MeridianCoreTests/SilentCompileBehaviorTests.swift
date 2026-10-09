@@ -5,7 +5,7 @@ import Testing
 @Suite("Silent compile behavior elimination (plan step 3)")
 struct SilentCompileBehaviorTests {
 
-    private let analyzer = RuleAnalyzer(trace: .silent(), symbols: nil)
+    private let analyzer = RuleAnalyzer(symbols: nil)
 
     @Test("obligation must hold with unlowerable condition raises MER-DEO-007")
     func obligationUnlowerableCondition() throws {
@@ -57,12 +57,13 @@ struct SilentCompileBehaviorTests {
         let cap = ParserTrace.capturing(categories: [.symbols])
         let resolver = ModuleResolver(
             moduleSearchPaths: [fixturesRoot],
-            anchorDirectory: fixturesRoot,
-            trace: cap.trace
+            anchorDirectory: fixturesRoot
         )
-        _ = try resolver.resolve(imports: [
-            ModuleImportSpec(name: "shared-domain", sourceFile: "skill.meridian", sourceLine: 1)
-        ])
+        _ = try cap.trace.run {
+            try resolver.resolve(imports: [
+                ModuleImportSpec(name: "shared-domain", sourceFile: "skill.meridian", sourceLine: 1)
+            ])
+        }
         // shared-domain has no module.meridian — inferred manifest is expected; no warning required.
         // A module with unreadable meridian is covered by unit-level read path; trace category is wired.
         #expect(cap.lines().contains { $0.contains("resolved") })

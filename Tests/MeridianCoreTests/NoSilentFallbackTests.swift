@@ -527,7 +527,7 @@ struct NoSilentFallbackTests {
 
     @Test("warnings-only DiagnosticEngine does not throw")
     func warningsDoNotFailCompile() {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         engine.report(Diagnostic.warning(.swiftFormatFailed, message: "cosmetic",
                                          range: SourceRange(file: "x.swift", line: 1, column: 1)))
         var threw = false

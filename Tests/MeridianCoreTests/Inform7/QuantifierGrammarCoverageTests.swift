@@ -8,7 +8,7 @@ import Testing
 @Suite("QuantifierGrammar whose-trailing-body branch coverage")
 struct QuantifierGrammarCoverageTests {
     private func parse(_ s: String) -> ExpressionAST? {
-        ExpressionParser(trace: .silent()).parse(s)
+        ExpressionParser().parse(s)
     }
 
     /// `QuantifierGrammar` constructed directly, bypassing
@@ -22,7 +22,7 @@ struct QuantifierGrammarCoverageTests {
     /// connector intact (e.g. a nested nominal restriction) — so it is
     /// exercised here via direct construction instead.
     private func quantifierGrammar() -> QuantifierGrammar {
-        let ep = ExpressionParser(trace: .silent())
+        let ep = ExpressionParser()
         let description = DescriptionGrammar(lexicon: .default, symbols: nil, atom: { .malformed($0) }, recurse: ep.parse)
         return QuantifierGrammar(lexicon: .default, description: description, recurse: ep.parse)
     }

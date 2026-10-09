@@ -41,9 +41,9 @@ struct ASTToIRDeepCoverageTests {
     /// of its own lower phase, reproduced here for direct-lower tests.
     private func lowerCheckpointing(_ mer: String, symbols: SymbolTable = SymbolTable(),
                                     fallbackPolicy: FallbackPolicy = .strict) throws -> [IRWorkflow] {
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let engine = DiagnosticEngine(trace: .silent())
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(),
+        let ast = try MeridianParser(symbols: symbols).parse(mer, file: "t.meridian")
+        let engine = DiagnosticEngine()
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian",
                                     fallbackPolicy: fallbackPolicy, engine: engine).lower(ast)
         try engine.throwIfErrors()
         return workflows
@@ -115,8 +115,8 @@ struct ASTToIRDeepCoverageTests {
         ])
 
         do {
-            let engine = DiagnosticEngine(trace: .silent())
-            _ = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent(), engine: engine).lower(ast)
+            let engine = DiagnosticEngine()
+            _ = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: engine).lower(ast)
             try engine.throwIfErrors()
             Issue.record("expected matchBranchSemantic")
         } catch let error as CompilerError {
@@ -159,7 +159,9 @@ struct ASTToIRDeepCoverageTests {
             )
         ])
 
-        let workflows = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: cap.trace, engine: DiagnosticEngine()).lower(ast)
+        let workflows = try cap.trace.run {
+            try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine()).lower(ast)
+        }
         #expect(workflows.first?.body.statements.count == 1)
         let trace = cap.lines().joined(separator: "\n")
         #expect(trace.contains("literal("), Comment(rawValue: trace))
@@ -169,7 +171,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("direct modal statement lowering returns no primitives")
     func directModalStatementLowering() throws {
-        let lowered = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let lowered = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
             .lowerStatement(.modal(.lenient), mode: .strict, depth: 0)
         #expect(lowered.isEmpty)
     }
@@ -179,9 +181,9 @@ struct ASTToIRDeepCoverageTests {
     @Test("`in lenient mode.` as a direct statement lowers to no primitive")
     func modalStatementLowersToNothing() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent())
+        let ast = try MeridianParser(symbols: symbols)
             .parse("To sync:\n  in lenient mode.\n  complete.\n", file: "t.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine()).lower(ast)
         #expect(workflows.first?.mode == .lenient)
         // The modal marker itself contributes no IR primitive — only `complete`.
         #expect(workflows.first?.body.statements.count == 1)
@@ -286,7 +288,7 @@ struct ASTToIRDeepCoverageTests {
     // and other callers — exercise them directly here.
     @Test("substituteArgs recurses through every ExpressionAST case when invoked directly")
     func substituteArgsDirectExpressionShapes() {
-        let lowering = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let lowering = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
         let userExpr = ExpressionAST.identifierRef("the substituted user")
         let args = ["the user": userExpr]
 
@@ -727,7 +729,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("an unparseable rule with a batch engine reports instead of throwing (strict policy)")
     func unparseableRuleWithEngineReports() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         let file = MeridianFile(
             rules: [RuleAST(text: "The gizmo requires frobnication.", sourceLine: 3)],
             workflows: [
@@ -743,7 +745,6 @@ struct ASTToIRDeepCoverageTests {
         _ = try ASTToIR(
             symbols: SymbolTable(),
             sourceFile: "t.meridian",
-            trace: .silent(),
             fallbackPolicy: .strict,
             engine: engine
         ).lower(file)
@@ -752,7 +753,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("an unattached rule with a batch engine reports instead of throwing (strict policy)")
     func unattachedRuleWithEngineReports() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         let file = MeridianFile(
             rules: [RuleAST(text: "A widget must not be tampered.", sourceLine: 3)],
             workflows: [
@@ -768,7 +769,6 @@ struct ASTToIRDeepCoverageTests {
         _ = try ASTToIR(
             symbols: SymbolTable(),
             sourceFile: "t.meridian",
-            trace: .silent(),
             fallbackPolicy: .strict,
             engine: engine
         ).lower(file)
@@ -790,12 +790,13 @@ struct ASTToIRDeepCoverageTests {
                 ),
             ]
         )
-        _ = try ASTToIR(
-            symbols: SymbolTable(),
-            sourceFile: "t.meridian",
-            trace: cap.trace,
-            fallbackPolicy: FallbackPolicy(allowed: [.unparseableRules]), engine: DiagnosticEngine()
-        ).lower(file)
+        _ = try cap.trace.run {
+            try ASTToIR(
+                symbols: SymbolTable(),
+                sourceFile: "t.meridian",
+                fallbackPolicy: FallbackPolicy(allowed: [.unparseableRules]), engine: DiagnosticEngine()
+            ).lower(file)
+        }
         #expect(cap.lines().contains { $0.contains("unparseable") || $0.contains("allow-fallbacks") })
     }
 
@@ -812,7 +813,7 @@ struct ASTToIRDeepCoverageTests {
         ])
         symbols.registerWorkflowPhrase(
             pattern: pattern, structName: "BillACustomerForAnOrder", sourceLine: 1, sourceFile: "t.merconfig")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: DiagnosticEngine())
         #expect(throws: (any Error).self) {
             try lowering.lowerPhraseInvocation(
                 PhraseInvocationAST(words: "bill a customer", sourceLine: 2),
@@ -857,9 +858,9 @@ struct ASTToIRDeepCoverageTests {
         let file = MeridianFile(workflows: [
             WorkflowAST(pattern: pattern, body: body, sourceLine: 1),
         ])
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         #expect(throws: (any Error).self) {
-            _ = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent(), engine: engine).lower(file)
+            _ = try ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: engine).lower(file)
             try engine.throwIfErrors()
         }
     }
@@ -867,9 +868,9 @@ struct ASTToIRDeepCoverageTests {
     // MARK: - Direct lowerExpr quantifier / description semantic errors
 
     private func lowering(forConfig cfg: String, engine: DiagnosticEngine = DiagnosticEngine()) throws -> ASTToIR {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
-        return ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: engine)
+        return ASTToIR(symbols: symbols, sourceFile: "t.meridian", engine: engine)
     }
 
     private let wave3RelCfg = """
@@ -1083,7 +1084,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("a malformed expression with a batch engine reports before throwing")
     func malformedExprWithEngineReports() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         let lowering = try lowering(forConfig: """
         === vocabulary ===
         A page is a kind of thing.
@@ -1122,7 +1123,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("lowerInterpolationSegments lowers for-each nested inside a conditional branch")
     func lowerInterpolationForEachNestedInConditional() throws {
-        let lowering = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
+        let lowering = ASTToIR(symbols: SymbolTable(), sourceFile: "t.meridian", engine: DiagnosticEngine())
         let ir = try lowering.lowerExpr(.interpolatedString([
             .conditional(
                 condition: .literal(.string("t")),
@@ -1303,7 +1304,7 @@ struct ASTToIRDeepCoverageTests {
 
     @Test("a description with two tool-backed relation clauses is a hard error")
     func descriptionTwoToolClausesErrors() throws {
-        let checkpoint = DiagnosticEngine(trace: .silent())
+        let checkpoint = DiagnosticEngine()
         let lowering = try lowering(forConfig: wave3RelCfg, engine: checkpoint)
         let d = DescriptionAST(
             noun: "pages",

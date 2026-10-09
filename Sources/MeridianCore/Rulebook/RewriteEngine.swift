@@ -19,13 +19,12 @@ import Foundation
 public struct RewriteEngine {
 
     private let rules: [DesugarRule]
-    private let trace: ParserTrace
     private let maxPasses = 8
     /// The source rulebook, retained so consumers (e.g. section-role lowering)
     /// can reach its section/convention rules without a second parse.
     public let rulebook: Rulebook
 
-    public init(rulebook: Rulebook, trace: ParserTrace = .shared) {
+    public init(rulebook: Rulebook) {
         self.rulebook = rulebook
         // Higher priority first; stable within equal priority by source order.
         self.rules = rulebook.desugars.enumerated()
@@ -36,7 +35,6 @@ public struct RewriteEngine {
                 return lhs.offset < rhs.offset
             }
             .map(\.element)
-        self.trace = trace
     }
 
     public var isEmpty: Bool { rules.isEmpty }
@@ -46,6 +44,7 @@ public struct RewriteEngine {
     @discardableResult
     public func rewrite(_ text: String) -> (text: String, changed: Bool) {
         guard !rules.isEmpty else { return (text, false) }
+        let trace = ParserTrace.current
         var current = text
         var changed = false
         for _ in 0..<maxPasses {

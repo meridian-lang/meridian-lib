@@ -260,7 +260,7 @@ struct VerbalizerGenerativeTests {
             loweredDefinitions: [],
             inlineDefinitions: [],
             symbols: SymbolTable.build(
-                from: try! MerConfigParser(trace: .silent()).parse(VerbalizerTestSupport.baseVocabulary, file: "test.merconfig"),
+                from: try! MerConfigParser().parse(VerbalizerTestSupport.baseVocabulary, file: "test.merconfig"),
                 sourceFile: "test.merconfig"
             ),
             lexicon: .default,

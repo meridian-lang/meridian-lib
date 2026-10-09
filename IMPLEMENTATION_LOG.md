@@ -3486,3 +3486,136 @@ clean run is green).
 `MeridianCore/Testing/MeridianTestRunner.swift` 90.29% < 90.60 — both
 reproduced on the pre-change tree and last touched by Phase 3. Flagged for a
 follow-up rather than re-based here.
+
+---
+
+## 2026-10-09 — Simplification Phase 6: de-thread `ParserTrace` (task-local)
+
+**What changed.** The `ParserTrace` feature is untouched (19 categories, spans,
+JSONL, profiling, `MERIDIAN_TRACE`, `--trace`, `trace categories`); only the
+parameter threading is gone. The active trace is now a task-local:
+
+```swift
+@TaskLocal public static var current: ParserTrace = .shared
+public func run<T>(_ body: () throws -> T) rethrows -> T          // sync
+public func run<T>(_ body: () async throws -> T) async rethrows -> T
+```
+
+Two injection points: `Compiler.Options.trace` (every entry point —
+`compile(_:)`, `bootstrap(_:)`, `emit(workflows:)`, `emitManifest(_:)` —
+installs it for the duration of the call) and `trace.run { … }` for direct API
+calls (CLI commands, tests, hosts). `ParserTrace.shared` and its
+`MERIDIAN_TRACE` init activation are unchanged.
+
+**De-threaded:** the `trace:` parameter and stored property were removed from 27
+types across 26 files — `SwiftEmitter`, `ManifestEmitter`, `IRSidecarEmitter`,
+`MeridianParser`, `MerConfigParser` (+ extensions), `StatementParser`
+(+ extensions), `ExpressionParser`, `IndentTokenizer`, `SymbolTable`,
+`ASTToIR` (+ extensions), `RuleAnalyzer`, `RuleInjector`, `RuleLowering`'s
+helpers, `ConventionInjector`, `TriggerClassifier`, `TriggerSynthesizer`,
+`Verbalizer`, `IRValidator`, `RulebookParser`, `RewriteEngine`,
+`ModuleResolver`, `SkillMigrator` (+ extensions), `TrialLowering`,
+`InertYieldAnalyzer`, `SkillSectionBuilder`, `ConditionClassifier`,
+`TableParser`, `PhrasePatternParser`, `DefinitionParser`, `MeridianLinter`,
+`SkillMarkdownImporter`, `DiagnosticEngine`. Hot paths
+(`IndentTokenizer.tokenize`, `StatementParser` entry points,
+`ExpressionParser.parse`, `ASTToIR.lowerWorkflow`, `SwiftEmitter.emit`,
+`DiagnosticEngine.report`) read `ParserTrace.current` once per entry call.
+
+**Interpretation decisions (flagged for review):**
+
+- `DiagnosticEngine` reads `ParserTrace.current` at each `report(_:)` call
+  rather than capturing at `init` — this is the stronger reading of "delete the
+  stored property" and lets a test scope a capture around the report call.
+  Engines are still constructed inside compile scopes, so production sees the
+  compile trace either way.
+- `TrialLowering`, `InertYieldAnalyzer`, and `ParserBenchmark` preserve their
+  deliberate `.silent()` probe/benchmark semantics by installing a silent trace
+  with `ParserTrace.silent().run { … }` instead of passing `.silent()` down.
+  The `SILENT_FALLBACK_ALLOWLIST.md` rows for these three paths stay accurate
+  and the audit test is green.
+- An async `run` overload was added beyond the plan's sync signature: CLI
+  command bodies and async tests otherwise need raw
+  `ParserTrace.$current.withValue(_:operation:)`.
+
+**No `Task.detached` in the compiler.** MeridianCore has no detaching sites
+(the runtime's monitor `Task {}` / `group.addTask` don't use `ParserTrace`);
+`Task {}` inherits task-locals, so awaited work inside a compile keeps the
+trace.
+
+**Tests.** ~500 `trace:` arguments deleted across 92 test files; 20 test files
+were restructured (not just arg-deleted) — the `cap.trace` capturing tests now
+wrap the direct type call in `cap.trace.run { … }` (or pass `cap.trace` through
+`Compiler.Options` where the test drives a compile): `SymbolTableVerbTests`
+(dropped the mutable `s.trace = cap.trace` hook), `ParseStageTraceTests`,
+`DXTraceExpansionTests`, `SwiftEmitterCoverageTests`,
+`ExpressionParserCoverageTests`, `ASTToIRDeepCoverageTests`,
+`SentenceBreakerTests`, `ReachableCoverageBatch1Tests`, `MerConfigParserTests`,
+`LexiconCentralizationTests`, `VerbalizerCoverageTests`, `DiagnosticTests`,
+`CodegenManifestCoverageTests`, `SkillTriggersCoverageTests`,
+`SkillMigratorMarkingTests`, `SilentCompileBehaviorTests`,
+`RuleAnalyzerCoverageTests`, `ParserSentinelTests`,
+`ObservabilityCoverageCloseoutTests`, `TraceEnabledCompileTests`
+(`SkillMigrator` no longer inherits the compiler's trace implicitly — the
+migrate call is wrapped). Two new `ParserTraceTests` pin the task-local
+contract (install/restore, nesting, async + child-task inheritance).
+
+**Validation:** `swift build --build-tests` clean; fast suite 2755 tests / 351
+suites green; full `MeridianSlowIntegrationTests` target 64 tests / 12 suites
+green (incl. generated-Swift typechecks and process-level CLI `--trace` E2E);
+CLI smoke `meridian check examples/order_processing.meridian --trace
+expression,lowering` prints trace lines; coverage `--gate` green with no floors
+re-based (`ParserTrace.swift` 95.52% region / 98.96% line). `git diff --stat
+corpora examples sample-gbrain` is empty except one required 2-line update in
+`sample-gbrain/Tests/SampleGbrainSmokeTests.swift` (it constructed
+`MerConfigParser(trace:)` / `RulebookParser(trace:)` directly — no corpus or
+fixture data changed).
+
+**Docs:** `docs/08_TRACING.md` ("Shared singleton" → task-local threading,
+capturing/silence recipes, CLI integration, "Injecting a trace"),
+`.cursor/rules/tracing.mdc` (task-local convention, no-silent-components),
+`Tests/README.md` trace recipe, `MeridianCore.docc` note.
+
+## 2026-10-09 — Simplification Phase 6: ParserTrace de-threaded via a task-local
+
+The `ParserTrace` feature is unchanged (19 categories, spans, profiling, JSONL,
+`MERIDIAN_TRACE`, `--trace`, `trace categories`); only the parameter threading
+is gone. `ParserTrace.current` is now a `@TaskLocal` (default `.shared`) with
+`run { … }` helpers (sync + async), and there are exactly two injection
+points: `Compiler.Options.trace` (the compile/bootstrap/emit entry points wrap
+their bodies in `$current.withValue`) and `trace.run { … }` for direct API
+calls (CLI commands, tests, hosts). Hot paths read `ParserTrace.current` once
+per entry call.
+
+Removed: 79 `trace:` parameters and the stored property on 27 types
+(`MeridianParser`, `MerConfigParser`, `StatementParser`, `ExpressionParser`,
+`SymbolTable`, `ASTToIR`, `RuleAnalyzer`/`RuleInjector`/`RuleLowering`,
+`SwiftEmitter`, `ManifestEmitter`, `IRSidecarEmitter`, `Verbalizer`,
+`RulebookParser`, `RewriteEngine`, `ModuleResolver`, `SkillMigrator`,
+`SkillSectionBuilder`, `TableParser`, `PhrasePatternParser`,
+`DefinitionParser`, `MeridianLinter`, `SkillMarkdownImporter`,
+`DiagnosticEngine`, …). `DiagnosticEngine` reads the task-local at each
+`report(_:)`; ~450 test arguments were deleted and 20 test files restructured
+to wrap direct API calls in `run {}`. Two new `ParserTraceTests` pin the
+task-local contract (install/restore, nesting, async + child-task
+inheritance). No compiler-internal `Task.detached` exists, so no compile loses
+its trace; `Task {}` inherits it.
+
+**One behaviour note:** `SkillMigrator` no longer implicitly inherits
+`compiler.options.trace` (it reads the task-local, so a caller wanting a
+traced migration wraps the call in `run {}`). Documented in `docs/08_TRACING.md`
+and `.cursor/rules/tracing.mdc`.
+
+**Pre-existing flake fixed while verifying:** `LLMProviderRegistry`'s override
+was a process-global (`Storage.override`) mutated from parallel tests in four
+suites across two targets — a data race that showed up as a spurious failure
+once and as a **hang** (0% CPU) during this phase's verification.
+It is now `@TaskLocal public static var override` with a
+`withOverride(_:_:)` helper; the "assert no override" call sites simply
+dropped their reset lines. Three consecutive full fast-suite runs are green
+(2757 tests) since.
+
+**Validation:** build clean; fast suite 2757 tests / 351 suites (×3);
+focused trace suites 120 tests; CLI `--trace` E2E + typecheck slow suites
+green; `git diff --stat corpora examples` empty; coverage gate green with no
+floors re-based.

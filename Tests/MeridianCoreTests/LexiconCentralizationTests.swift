@@ -73,7 +73,7 @@ struct FixedGrammarDefaultsTests {
             ],
             loweredDefinitions: [],
             inlineDefinitions: [],
-            symbols: SymbolTable(trace: .silent()),
+            symbols: SymbolTable(),
             lexicon: .default,
             sourceFileName: "guard.meri",
             authoredSource: ""
@@ -215,7 +215,7 @@ struct EnglishLexiconMorphologyBranchTests {
 struct ComparisonFoldingTests {
 
     private func op(_ s: String) -> ComparisonOpAST? {
-        if case .comparison(_, let op, _) = ExpressionParser(symbols: nil, trace: .silent()).parse(s) {
+        if case .comparison(_, let op, _) = ExpressionParser(symbols: nil).parse(s) {
             return op
         }
         return nil
@@ -241,7 +241,7 @@ struct ComparisonFoldingTests {
 
     @Test("a genuine disjunction still splits even alongside a ≥ comparison")
     func disjunctionStillSplits() {
-        let e = ExpressionParser(symbols: nil, trace: .silent())
+        let e = ExpressionParser(symbols: nil)
             .parse("the total is more than or equal to 5 or the status equals \"open\"")
         guard case .logical(.or, let ops) = e else {
             Issue.record("expected a top-level disjunction, got: \(e)")
@@ -327,14 +327,14 @@ struct FenceToolMappingLexiconTests {
             .fenceTool: [.mapping("python", "interpreter.run")],
         ])
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent(), lexicon: lexicon).parse("""
+        let ast = try MeridianParser(symbols: symbols, lexicon: lexicon).parse("""
         To score, with discretion:
           ```python
           print("hi")
           x = 1 + 1
           ```
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), lexicon: lexicon, engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", lexicon: lexicon, engine: DiagnosticEngine()).lower(ast)
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("expected a single invoke, got \(workflows[0].body.statements.first as Any)")
             return
@@ -365,7 +365,7 @@ struct FenceToolMappingLexiconTests {
         // block" diagnostic behavior — it must not be misrouted to
         // interpreter.run just because *some* mapping exists.
         #expect(throws: (any Error).self) {
-            _ = try MeridianParser(symbols: symbols, trace: .silent(), lexicon: lexicon).parse("""
+            _ = try MeridianParser(symbols: symbols, lexicon: lexicon).parse("""
             To score, with discretion:
               ```ruby
               puts "hi"
@@ -392,15 +392,15 @@ struct TriggerRulebookTests {
     @Test("classify logs the classification decision under .lowering")
     func classifyTraced() {
         let cap = ParserTrace.capturing(categories: [.lowering])
-        let c = TriggerClassifier(lexicon: .default, trace: cap.trace)
-        #expect(c.classify("nightly", sourceLine: 3).kind == .schedule)
+        let c = TriggerClassifier(lexicon: .default)
+        #expect(cap.trace.run { c.classify("nightly", sourceLine: 3) }.kind == .schedule)
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("trigger classify") && $0.contains("L3") && $0.contains("nightly") && $0.contains("schedule") })
     }
 
     @Test("an author === triggers === block extends classification")
     func authorExtends() throws {
-        let rb = try RulebookParser(trace: .silent()).parse("""
+        let rb = try RulebookParser().parse("""
         === triggers ===
         schedule: fortnightly, quarterly
         event: ingested
@@ -416,7 +416,7 @@ struct TriggerRulebookTests {
     @Test("unknown trigger kind is a hard error")
     func unknownKind() {
         #expect(throws: CompilerError.self) {
-            _ = try RulebookParser(trace: .silent()).parse("""
+            _ = try RulebookParser().parse("""
             === triggers ===
             sometime: occasionally
             """, file: "x.merrules")
@@ -490,7 +490,7 @@ struct SectionAliasDataTests {
 @Suite("Lexicon merge recipe — Phase 1 cleanup categories")
 struct LexiconPhase1RecipeTests {
     private func mergedLexicon(from cfg: String) throws -> EnglishLexicon {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         return EnglishLexicon.default.merging(from: config.languageSynonyms)
     }
 
@@ -556,7 +556,7 @@ struct LexiconPhase1RecipeTests {
         Vague-hedge synonyms:
           kinda
         """
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         let fromHelper = EnglishLexicon.default.merging(from: config.languageSynonyms)
         let fromBootstrap = try Compiler().bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "probe.meri")], vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)])).lexicon
         #expect(fromHelper.normativeCueWords == fromBootstrap.normativeCueWords)
@@ -609,7 +609,7 @@ struct LexiconPhase1RecipeTests {
         ]
         for (irOp, astOp, surface) in cases {
             #expect(CanonicalForms.comparison(irOp, lexicon: lex) == surface)
-            let parsed = ExpressionParser(symbols: nil, trace: .silent(), lexicon: lex)
+            let parsed = ExpressionParser(symbols: nil, lexicon: lex)
                 .parse("the status \(surface) \"open\"")
             if case .comparison(_, let parsedOp, _) = parsed {
                 #expect(parsedOp == astOp)

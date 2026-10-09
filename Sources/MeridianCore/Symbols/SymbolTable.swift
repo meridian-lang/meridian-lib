@@ -138,10 +138,6 @@ public final class SymbolTable: @unchecked Sendable {
     /// instead of a stray `state.get(…)` lookup.
     public private(set) var enumCases:  Set<String>                  = []
 
-    /// Trace sink used by `matchPhrase` / `extractArgs`. Defaults to the
-    /// process-wide `ParserTrace.shared`; tests can swap in a captured trace.
-    public var trace: ParserTrace = .shared
-
     /// English lexicon used for stop-word filtering and article stripping.
     public var lexicon: EnglishLexicon = .default
 
@@ -149,15 +145,15 @@ public final class SymbolTable: @unchecked Sendable {
     /// statistical thresholds and monitor cadence defaults.
     public var traceConfiguration: TraceConfigurationAST = .init()
 
-    public init(trace: ParserTrace = .shared) { self.trace = trace }
+    public init() {}
 
     // MARK: - Populate from MerConfigFile
 
     public static func build(from config: MerConfigFile,
                              sourceFile: String = "",
-                             trace: ParserTrace = .shared,
                              lexicon: EnglishLexicon = .default) -> SymbolTable {
-        let table = SymbolTable(trace: trace)
+        let trace = ParserTrace.current
+        let table = SymbolTable()
         table.lexicon = lexicon
         table.traceConfiguration = config.traceConfiguration
         for stmt in config.vocabulary {
@@ -255,7 +251,7 @@ public final class SymbolTable: @unchecked Sendable {
         }
         guard let defaultParam else { return nil }
         let filled = "\(invocation)\(lexicon.grammar.implicitParamFillConnector)\(defaultParam.kind)"
-        trace.log(.phraseMatch, "phrase.match.implicit-fill: \"\(invocation)\" → \"\(filled)\"")
+        ParserTrace.current.log(.phraseMatch, "phrase.match.implicit-fill: \"\(invocation)\" → \"\(filled)\"")
         // The implicit-fill retry manufactures extra literal overlap (the
         // appended connector + the workflow's own parameter kind), which can
         // trivially self-match the workflow currently being lowered on ANY
@@ -273,6 +269,7 @@ public final class SymbolTable: @unchecked Sendable {
         _ invocation: String,
         excludingStructName: String? = nil
     ) -> (phrase: PhraseDefinition, args: [String: ExpressionAST])? {
+        let trace = ParserTrace.current
         let token = trace.push(.phraseMatch, "matchPhrase: \"\(invocation)\"")
         defer { trace.pop(token) }
 
@@ -401,12 +398,13 @@ public final class SymbolTable: @unchecked Sendable {
         _ invocation: String,
         pattern: PhrasePattern
     ) -> [String: ExpressionAST] {
+        let trace = ParserTrace.current
         let token = trace.push(.phraseExtractArgs, "extractArgs from \"\(invocation)\"")
         defer { trace.pop(token) }
 
         var args: [String: ExpressionAST] = [:]
         var remaining = invocation.trimmingCharacters(in: .whitespaces)
-        let exprParser = ExpressionParser(symbols: self, trace: trace, lexicon: lexicon)
+        let exprParser = ExpressionParser(symbols: self, lexicon: lexicon)
 
         for seg in pattern.segments {
             switch seg {

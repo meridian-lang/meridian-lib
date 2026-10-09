@@ -127,7 +127,6 @@ struct CorporaTypecheckSlowTests {
                     emitterOptions: SwiftEmitter.Options(
                         namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(
                             file.deletingPathExtension().lastPathComponent)),
-                    trace: .silent(),
                     moduleSearchPaths: moduleSearchPaths
                 )
                 let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.swift
@@ -171,7 +170,6 @@ struct SampleGbrainTypecheckSlowTests {
             let source = try String(contentsOf: file, encoding: .utf8)
             let opts = Compiler.Options(
                 emitterOptions: SwiftEmitter.Options(namespaceEnum: namespace(for: file)),
-                trace: .silent()
             )
             let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [vocab], rulebooks: [rulebook]))[file.lastPathComponent]!.swift
             return (file.lastPathComponent, swift)

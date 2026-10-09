@@ -11,7 +11,7 @@ import Foundation
 struct FrontmatterTests {
 
     private static func lines(_ source: String) -> [SourceLine] {
-        IndentTokenizer().tokenize(source, file: "fm.meri", trace: .silent())
+        IndentTokenizer().tokenize(source, file: "fm.meri")
     }
 
     @Test("locate: fence-at-line-0 mode vs blank-line-tolerant mode")
@@ -143,7 +143,7 @@ struct FrontmatterTests {
 
     @Test("an empty frontmatter name falls back to the entry workflow name")
     func emptyNameFallsBackToEntry() throws {
-        let file = try MeridianParser(symbols: SymbolTable(), trace: .silent())
+        let file = try MeridianParser(symbols: SymbolTable())
             .parse("---\nname:\n---\n\ncomplete.\n", file: "empty-name.meri")
         #expect(file.metadata?["name"] == "")
         #expect(file.workflows.first?.pattern.displayText == "entry")

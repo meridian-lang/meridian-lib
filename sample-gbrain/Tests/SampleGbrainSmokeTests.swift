@@ -33,7 +33,7 @@ struct SampleGbrainSmokeTests {
     @Test("brain.merconfig parses with kinds, enums, tools, and phrases")
     func vocabParses() throws {
         let v = try Self.vocab()
-        let cfg = try MerConfigParser(trace: .silent()).parse(v.source, file: v.file)
+        let cfg = try MerConfigParser().parse(v.source, file: v.file)
         #expect(cfg.tools.count >= 15)
         let kindNames = cfg.vocabulary.compactMap { stmt -> String? in
             if case .kind(let k) = stmt { return k.name } else { return nil }
@@ -47,7 +47,7 @@ struct SampleGbrainSmokeTests {
     @Test("brain.merrules parses desugar, section-role, and convention rules")
     func rulebookParses() throws {
         let r = try Self.rulebook()
-        let book = try RulebookParser(trace: .silent()).parse(r.source, file: r.file)
+        let book = try RulebookParser().parse(r.source, file: r.file)
         #expect(book.desugars.count >= 6)
         #expect(book.sectionRoles.count >= 6)
         #expect(book.conventions.count >= 3)

@@ -18,7 +18,7 @@ private extension LanguageSynonyms {
 @Suite("MerConfigParser — language section")
 struct MerConfigLanguageSectionTests {
     private func parse(_ src: String) throws -> MerConfigFile {
-        try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: "t.merconfig")
+        try MerConfigParser().parse(src, file: "t.merconfig")
     }
 
     @Test("every === language === synonym sub-block is captured")
@@ -240,7 +240,7 @@ struct MerConfigLanguageSectionTests {
 
     @Test("parseGradableDirection and resolveComparisonOp edge branches")
     func languageHelperBranches() throws {
-        let parser = MerConfigParser(trace: .silent())
+        let parser = MerConfigParser()
         #expect(parser.parseGradableDirection("ascending") == true)
         #expect(parser.parseGradableDirection("oldest") == true)
         #expect(parser.parseGradableDirection("most") == false)
@@ -337,7 +337,7 @@ struct MerConfigLanguageSectionTests {
 @Suite("MerConfigParser — sections + instances")
 struct MerConfigSectionsTests {
     private func parse(_ src: String) throws -> MerConfigFile {
-        try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: "t.merconfig")
+        try MerConfigParser().parse(src, file: "t.merconfig")
     }
 
     @Test("an unrecognized section is unknownMerconfigSection")
@@ -419,7 +419,7 @@ struct MerConfigSectionsTests {
 @Suite("MerConfigParser — declaration edge cases")
 struct MerConfigParserDeclarationCoverageTests {
     private func parse(_ src: String, diagnostics: DiagnosticEngine? = nil) throws -> MerConfigFile {
-        try MerConfigParser(trace: .silent(), diagnostics: diagnostics).parse(src, file: "t.merconfig")
+        try MerConfigParser(diagnostics: diagnostics).parse(src, file: "t.merconfig")
     }
 
     @Test("a key declaration accepts the `an` article, not just `a`")
@@ -511,7 +511,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("malformed tool signatures report through a batch DiagnosticEngine")
     func malformedToolSignatureBatch() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === tools ===
 
@@ -524,7 +524,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("unrecognized block property lines report through a batch DiagnosticEngine")
     func unrecognizedBlockPropertyBatch() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === vocabulary ===
         order is a kind of thing.
@@ -676,7 +676,7 @@ struct MerConfigParserDeclarationCoverageTests {
     @Test("malformed tool signatures throw when no batch diagnostics engine is set")
     func malformedToolThrowsWithoutEngine() {
         #expect(throws: (any Error).self) {
-            try MerConfigParser(trace: .silent()).parse("""
+            try MerConfigParser().parse("""
             === tools ===
 
             Broken Tool
@@ -904,7 +904,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("a verb declaration without a ` means ` marker is malformed")
     func verbDeclarationWithoutMeansMarkerMalformed() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === vocabulary ===
         user is a kind of thing.
@@ -917,7 +917,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("a verb declaration whose meaning strips down to an empty relation is malformed")
     func verbDeclarationEmptyRelationMalformed() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === vocabulary ===
         user is a kind of thing.
@@ -1021,7 +1021,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("a block property line that strips down to an empty name is dropped, not appended")
     func blockPropertyEntryEmptyNameDropped() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         let cfg = try parse("""
         === vocabulary ===
         order is a kind of thing.
@@ -1039,7 +1039,7 @@ struct MerConfigParserDeclarationCoverageTests {
 
     @Test("a block property which-is-one-of clause with no parentheses is dropped, sibling entries still parse")
     func blockPropertyWhichIsOneOfWithoutParensDropped() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         let cfg = try parse("""
         === vocabulary ===
         order is a kind of thing.
@@ -1073,7 +1073,7 @@ struct MerConfigParserDeclarationCoverageTests {
     @Test("phrase pattern rejection logs its 'no kind words' trace message")
     func phrasePatternRejectionTraceMessage() {
         let cap = ParserTrace.capturing(categories: [.phraseParse])
-        _ = PhrasePatternParser(trace: cap.trace).parse("validate a called reference")
+        _ = cap.trace.run { PhrasePatternParser().parse("validate a called reference") }
         #expect(cap.lines().contains { $0.contains("no kind words") })
     }
 }
@@ -1082,7 +1082,7 @@ struct MerConfigParserDeclarationCoverageTests {
 struct MerConfigPhrasePatternCoverageTests {
     @Test("phrase patterns honor called parameter introducers")
     func phrasePatternCalledIntroducer() {
-        let pattern = PhrasePatternParser(trace: .silent()).parse("send an order called reference")
+        let pattern = PhrasePatternParser().parse("send an order called reference")
         let params = pattern.segments.compactMap { seg -> PhraseParameterAST? in
             if case .parameter(let p) = seg { return p }
             return nil
@@ -1096,7 +1096,7 @@ struct MerConfigPhrasePatternCoverageTests {
 
     @Test("phrase patterns reject slots with no kind words before called")
     func phrasePatternCalledWithoutKindRejects() {
-        let pattern = PhrasePatternParser(trace: .silent()).parse("validate a called reference")
+        let pattern = PhrasePatternParser().parse("validate a called reference")
         let hasParam = pattern.segments.contains { seg in
             if case .parameter = seg { return true }
             return false
@@ -1108,25 +1108,27 @@ struct MerConfigPhrasePatternCoverageTests {
 @Suite("MerConfigParser — trace")
 struct MerConfigTraceTests {
     private func parse(_ src: String, file: String = "trace.merconfig") throws -> MerConfigFile {
-        try MerConfigParser(trace: ParserTrace.silent()).parse(src, file: file)
+        try MerConfigParser().parse(src, file: file)
     }
 
     private func bootstrap(
         _ vocabularies: [Compiler.VocabularyInput]
     ) throws -> Compiler.KnowledgeContext {
-        try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "empty.meri")], vocabularies: vocabularies))
+        try Compiler(options: .init()).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "empty.meri")], vocabularies: vocabularies))
     }
 
     @Test("merconfig trace category emits section + summary lines")
     func traceEmitsSections() throws {
         let cap = ParserTrace.capturing(categories: [.merconfig])
-        _ = try MerConfigParser(trace: cap.trace).parse("""
-        === vocabulary ===
-        An order is a kind of thing.
-        === language ===
-        Assertion synonyms:
-         verify
-        """, file: "trace.merconfig")
+        _ = try cap.trace.run {
+            try MerConfigParser().parse("""
+            === vocabulary ===
+            An order is a kind of thing.
+            === language ===
+            Assertion synonyms:
+             verify
+            """, file: "trace.merconfig")
+        }
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("section === vocabulary ===") })
         #expect(lines.contains { $0.contains("parsed 1 vocab") })
@@ -1342,8 +1344,8 @@ struct MerConfigTraceTests {
 
     @Test("every malformed trace setting value reports its own diagnostic and is skipped, not crashed on")
     func everyMalformedTraceSettingValueIsReportedAndSkipped() throws {
-        let engine = DiagnosticEngine(trace: .silent())
-        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        let engine = DiagnosticEngine()
+        let cfg = try MerConfigParser(diagnostics: engine).parse("""
         === trace ===
         this line has no colon
         store: carrier-pigeon
@@ -1384,7 +1386,7 @@ struct MerConfigTraceTests {
 
     @Test("store path and state history parse when well-formed")
     func storePathAndStateHistory() throws {
-        let cfg = try MerConfigParser(trace: .silent()).parse("""
+        let cfg = try MerConfigParser().parse("""
         === trace ===
         store: file
         store path: /tmp/traces.jsonl
@@ -1398,7 +1400,7 @@ struct MerConfigTraceTests {
     @Test("a malformed trace setting throws when no batch diagnostics engine is supplied")
     func malformedTraceSettingThrowsWithoutEngine() {
         #expect(throws: (any Error).self) {
-            try MerConfigParser(trace: .silent()).parse("""
+            try MerConfigParser().parse("""
             === trace ===
             store: carrier-pigeon
             """, file: "trace.merconfig")
@@ -1407,8 +1409,8 @@ struct MerConfigTraceTests {
 
     @Test("an invalid usually/rarely percentage reports through the batch engine and defaults to zero")
     func invalidTracePercentageDefaultsToZero() throws {
-        let engine = DiagnosticEngine(trace: .silent())
-        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        let engine = DiagnosticEngine()
+        let cfg = try MerConfigParser(diagnostics: engine).parse("""
         === trace ===
         usually at least: not-a-percent
         """, file: "trace.merconfig")
@@ -1427,8 +1429,8 @@ struct MerConfigTraceTests {
 
     @Test("an unknown tool capture policy reports through the batch engine and defaults to full")
     func unknownToolCapturePolicyDefaultsToFull() throws {
-        let engine = DiagnosticEngine(trace: .silent())
-        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        let engine = DiagnosticEngine()
+        let cfg = try MerConfigParser(diagnostics: engine).parse("""
         === tools ===
         Validate Order
         ==============
@@ -1456,8 +1458,8 @@ struct MerConfigTraceTests {
 
     @Test("a redacted capture policy without a parenthesized field list reports through the batch engine")
     func redactedCapturePolicyWithoutFieldsReported() throws {
-        let engine = DiagnosticEngine(trace: .silent())
-        let cfg = try MerConfigParser(trace: .silent(), diagnostics: engine).parse("""
+        let engine = DiagnosticEngine()
+        let cfg = try MerConfigParser(diagnostics: engine).parse("""
         === tools ===
         Validate Order
         ==============
@@ -1472,7 +1474,7 @@ struct MerConfigTraceTests {
 @Suite("MerConfigParser — tools section")
 struct MerConfigToolsSectionTests {
     private func parse(_ src: String, diagnostics: DiagnosticEngine? = nil) throws -> MerConfigFile {
-        try MerConfigParser(trace: .silent(), diagnostics: diagnostics).parse(src, file: "t.merconfig")
+        try MerConfigParser(diagnostics: diagnostics).parse(src, file: "t.merconfig")
     }
 
     @Test("tool with description lines and omitted capture parses")
@@ -1495,7 +1497,7 @@ struct MerConfigToolsSectionTests {
 
     @Test("missing signature line reports a diagnostic")
     func missingSignatureReports() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === tools ===
         Orphan Tool
@@ -1520,7 +1522,7 @@ struct MerConfigToolsSectionTests {
 
     @Test("signature without parentheses is malformed")
     func signatureWithoutParensMalformed() throws {
-        let engine = DiagnosticEngine(trace: .silent())
+        let engine = DiagnosticEngine()
         _ = try parse("""
         === tools ===
         Broken
@@ -1535,7 +1537,7 @@ struct MerConfigToolsSectionTests {
 struct MerConfigVocabularyHelperCoverageTests {
     @Test("property-block / relation-backing / verb / inverse guards return nil")
     func helperEarlyExits() {
-        let p = MerConfigParser(trace: .silent())
+        let p = MerConfigParser()
         #expect(p.parsePropertyBlockHeader(" has:", line: 1) == nil)
         #expect(p.parsePropertyBlockHeader(" has properties:", line: 1) == nil)
 

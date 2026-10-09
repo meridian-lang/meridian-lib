@@ -8,7 +8,7 @@ import Testing
 @Suite("StatementParser+ControlFlow coverage")
 struct StatementParserControlFlowCoverageTests {
 
-    private let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+    private let parser = StatementParser(symbols: SymbolTable())
 
     private func lines(_ source: String) -> [SourceLine] {
         IndentTokenizer().tokenize(source)

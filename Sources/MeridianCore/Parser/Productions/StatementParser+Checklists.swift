@@ -13,7 +13,7 @@ extension StatementParser {
     /// item becomes `make sure <cond>`; a non-checkable one is a hard error
     /// (rephrase to a comparison or move under an `(( inert ))` section).
     func checklistInvariant(_ line: SourceLine, sourceFile: String) throws -> StatementAST {
-        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon, trace: trace)
+        let classifier = ConditionClassifier(symbols: symbols, lexicon: lexicon)
         // Shared with Contract invariants: `every emitted <noun> <predicate>`
         // is an assert on the bound result `<noun>`.
         let text = classifier.normalizeFormatInvariant(line.statement)

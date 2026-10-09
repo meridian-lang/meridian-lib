@@ -66,7 +66,9 @@ struct ObservabilityCoverageCloseoutTests {
     func irValidatorTraceFailureSpan() {
         let cap = ParserTrace.capturing(categories: [.validation])
         do {
-            try IRValidator.validate(IRExpression.logical(.and, []), sourceFile: "invalid.ir", trace: cap.trace)
+            try cap.trace.run {
+                try IRValidator.validate(IRExpression.logical(.and, []), sourceFile: "invalid.ir")
+            }
             Issue.record("expected invalidIR")
         } catch {
             // expected
@@ -182,7 +184,7 @@ struct ObservabilityCoverageCloseoutTests {
             workflows: [],
             loweredDefinitions: [],
             inlineDefinitions: [],
-            symbols: SymbolTable(trace: .silent()),
+            symbols: SymbolTable(),
             lexicon: .default,
             sourceFileName: "test.meri",
             authoredSource: "",
@@ -215,7 +217,7 @@ struct ObservabilityCoverageCloseoutTests {
                 parameters: [ToolParameterAST(name: "channel", type: "String")],
                 returnType: "String"
             ),
-        ]), trace: .silent())
+        ]))
         let v = Verbalizer(model: VerbalizerModel(
             workflows: [],
             loweredDefinitions: [],
@@ -270,7 +272,7 @@ struct ObservabilityCoverageCloseoutTests {
             workflows: [],
             loweredDefinitions: [],
             inlineDefinitions: [],
-            symbols: SymbolTable(trace: .silent()),
+            symbols: SymbolTable(),
             lexicon: .default,
             sourceFileName: "t.meridian",
             authoredSource: ""
@@ -317,7 +319,7 @@ struct ObservabilityCoverageCloseoutTests {
 
     @Test("ProbeTally records probe outcomes and renders a summary line")
     func probeTallySummary() throws {
-        let knowledge = try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [TrialLoweringTests.orderVocab]))
+        let knowledge = try Compiler(options: .init()).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [TrialLoweringTests.orderVocab]))
         let tally = TrialLowering.ProbeTally()
         let trial = TrialLowering(knowledge: knowledge, probeTally: tally)
         #expect(trial.lowersAsStatement("Validate the order."))

@@ -21,7 +21,7 @@ struct InertYieldAnalyzerTests {
 
     static func analyzer() -> InertYieldAnalyzer {
         InertYieldAnalyzer(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: [vocab]
         )
     }

@@ -18,7 +18,6 @@ import Foundation
 struct ConditionClassifier {
     let symbols: SymbolTable?
     let lexicon: EnglishLexicon
-    let trace: ParserTrace
 
     enum Classification: Sendable {
         case checkable
@@ -27,7 +26,8 @@ struct ConditionClassifier {
     }
 
     func classify(_ text: String) -> Classification {
-        let parser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+        let trace = ParserTrace.current
+        let parser = ExpressionParser(symbols: symbols, lexicon: lexicon)
         let expr = parser.parse(text)
         if isCheckable(expr) {
             trace.log(.statement, "condition(\"\(text)\") → checkable")

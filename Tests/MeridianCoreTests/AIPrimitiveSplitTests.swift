@@ -17,12 +17,12 @@ struct AIPrimitiveSplitTests {
     @Test("`use judgment to …:` lowers to IRPrimitive.aiJudgment")
     func useJudgmentLowersToAIJudgment() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To triage:
           use judgment to classify the incident:
             Look at severity and blast radius.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiJudgment")
             return
@@ -33,11 +33,11 @@ struct AIPrimitiveSplitTests {
     @Test("inherited `with discretion` workflow prose lowers to IRPrimitive.aiJudgment")
     func inheritedDiscretionLowersToAIJudgment() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To babysit, with discretion:
           inspect the diff and leave only useful comments.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiJudgment")
             return
@@ -47,11 +47,11 @@ struct AIPrimitiveSplitTests {
     @Test("`with autonomy …:` lowers to IRPrimitive.aiAutonomy carrying AutonomyConfigIR")
     func withAutonomyLowersToAIAutonomy() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To stabilize, with autonomy until ci is passed re-plan after 2 failures:
           keep fixing the smallest failing thing.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiAutonomy(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiAutonomy")
             return
@@ -63,11 +63,11 @@ struct AIPrimitiveSplitTests {
     @Test("inherited `with autonomy` workflow prose lowers to IRPrimitive.aiAutonomy")
     func inheritedAutonomyLowersToAIAutonomy() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To stabilize, with autonomy re-plan after 2 failures:
           keep fixing the smallest failing thing.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiAutonomy(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiAutonomy")
             return
@@ -78,14 +78,14 @@ struct AIPrimitiveSplitTests {
     @Test("ai-discretion fuzzy table lowers to IRPrimitive.aiJudgment")
     func aiDiscretionTableLowersToAIJudgment() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To triage:
           !!! table (( ai-discretion ))
           | Condition | Action |
           |---|---|
           | user asks for research | spawn a research subagent |
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiJudgment")
             return
@@ -95,13 +95,13 @@ struct AIPrimitiveSplitTests {
     @Test("ai-autonomy fuzzy checklist lowers to IRPrimitive.aiAutonomy")
     func aiAutonomyChecklistLowersToAIAutonomy() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To audit:
           !!! checklist (( ai-autonomy ))
           - [ ] all entity pages are cross-linked
           - [ ] no DRY violations across skills
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .aiAutonomy = workflows[0].body.statements.first else {
             Issue.record("Expected IRPrimitive.aiAutonomy")
             return
@@ -155,12 +155,12 @@ struct AIPrimitiveSplitTests {
     @Test("expression-level `decide whether …` stays InvokeIR(toolID: runtime.discretion.decide), not folded into AIJudgmentIR")
     func decideWhetherStaysInlineInvocation() throws {
         let symbols = SymbolTable()
-        let ast = try MeridianParser(symbols: symbols, trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: symbols).parse("""
         To gate:
           bind should act = decide whether the request looks risky.
           complete.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine()).lower(ast)
         guard case .bind(let bind) = workflows[0].body.statements.first,
               case .invocation(let inv) = bind.expression else {
             Issue.record("Expected a bind whose expression is an inline InvokeIR")

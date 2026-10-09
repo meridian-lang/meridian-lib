@@ -107,8 +107,8 @@ extension StatementParser {
     /// array otherwise (empty = inert/iteration, consumed without execution).
     func tableStatements(_ line: SourceLine, sourceFile: String) throws -> [StatementAST]? {
         guard let (mode, table) = TableParser.decode(line.text) else { return nil }
-        trace.log(.statement, "table \(mode) \(table.rows.count) row(s), \(table.header.count) column(s) @L\(line.number)")
-        let parser = TableParser(lexicon: lexicon, trace: trace)
+        ParserTrace.current.log(.statement, "table \(mode) \(table.rows.count) row(s), \(table.header.count) column(s) @L\(line.number)")
+        let parser = TableParser(lexicon: lexicon)
         switch mode {
         case .decision:
             var out: [StatementAST] = []

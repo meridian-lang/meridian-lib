@@ -29,7 +29,6 @@ import Foundation
 public struct ExpressionParser {
 
     public let symbols: SymbolTable?
-    public let trace: ParserTrace
     private let lexicon: EnglishLexicon
     private let screen: NonterminalScreen
     /// Benchmarking-only escape hatch (`ParserBenchmark`'s unscreened arm).
@@ -38,19 +37,19 @@ public struct ExpressionParser {
     /// unconditionally, measuring the cost `NonterminalScreen` saves.
     private let useScreen: Bool
 
-    public init(symbols: SymbolTable? = nil, trace: ParserTrace = .shared, lexicon: EnglishLexicon = .default) {
-        self.init(symbols: symbols, trace: trace, lexicon: lexicon, useScreen: true)
+    public init(symbols: SymbolTable? = nil, lexicon: EnglishLexicon = .default) {
+        self.init(symbols: symbols, lexicon: lexicon, useScreen: true)
     }
 
-    init(symbols: SymbolTable?, trace: ParserTrace, lexicon: EnglishLexicon, useScreen: Bool) {
+    init(symbols: SymbolTable?, lexicon: EnglishLexicon, useScreen: Bool) {
         self.symbols = symbols
-        self.trace = trace
         self.lexicon = lexicon
         self.screen = NonterminalScreen(table: PegexSurfaceGrammar(lexicon: lexicon).table)
         self.useScreen = useScreen
     }
 
     public func parse(_ raw: String) -> ExpressionAST {
+        let trace = ParserTrace.current
         let s = raw.trimmingCharacters(in: .whitespaces)
         trace.log(.expression, "parse.start(\"\(s)\")")
         let result = BooleanGrammar(lexicon: lexicon, recurse: parse, clause: parseClause).parse(s)
@@ -76,6 +75,7 @@ public struct ExpressionParser {
     /// suffix forms) — always trying them is strictly no less correct than
     /// the pre-rewrite parser, just without the (currently unverified) speedup.
     private func parseClause(_ raw: String) -> ExpressionAST {
+        let trace = ParserTrace.current
         let t = raw.trimmingCharacters(in: .whitespaces)
 
         if isEligible("quantifier", for: t),
@@ -128,6 +128,7 @@ public struct ExpressionParser {
     /// deliberately unconditional per AGENTS.md's possessive-without-article
     /// sharp edge).
     func parseAtom(_ s: String) -> ExpressionAST {
+        let trace = ParserTrace.current
         let t = s.trimmingCharacters(in: .whitespaces)
         if t.isEmpty {
             trace.log(.expression, "atom(\"\") → malformed (empty expression)")
@@ -226,7 +227,7 @@ public struct ExpressionParser {
     private func isEligible(_ productionName: String, for text: String) -> Bool {
         guard useScreen else { return true }
         let admitted = screen.candidates(for: text).contains { $0.name == productionName }
-        trace.log(.expression,
+        ParserTrace.current.log(.expression,
                   "screen(\"\(productionName)\", \"\(text)\") → \(admitted ? "admitted" : "skipped (no anchor match)")")
         return admitted
     }

@@ -11,8 +11,8 @@ struct SkillExampleCorpusTests {
     func skillExamplesParseAndLower() throws {
         let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let cfgSource = try String(contentsOf: root.appendingPathComponent("examples/github.merconfig"), encoding: .utf8)
-        let cfg = try MerConfigParser(trace: .silent()).parse(cfgSource, file: "github.merconfig")
-        let symbols = SymbolTable.build(from: cfg, sourceFile: "github.merconfig", trace: .silent())
+        let cfg = try MerConfigParser().parse(cfgSource, file: "github.merconfig")
+        let symbols = SymbolTable.build(from: cfg, sourceFile: "github.merconfig")
         let names = [
             "ci_fixer",
             "code_review",
@@ -26,7 +26,7 @@ struct SkillExampleCorpusTests {
             let url = root.appendingPathComponent("examples/skill/\(name).meridian")
             let source = try String(contentsOf: url, encoding: .utf8)
             let ast = try Self.parse(source: source, file: url.path, symbols: symbols)
-            let workflows = try ASTToIR(symbols: symbols, sourceFile: url.path, trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+            let workflows = try ASTToIR(symbols: symbols, sourceFile: url.path, engine: DiagnosticEngine()).lower(ast)
             #expect(!workflows.isEmpty, Comment(rawValue: "Expected workflows in \(name)"))
         }
     }
@@ -35,8 +35,8 @@ struct SkillExampleCorpusTests {
     func releaseOrchestratorCrossTierNesting() throws {
         let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let cfgSource = try String(contentsOf: root.appendingPathComponent("examples/github.merconfig"), encoding: .utf8)
-        let cfg = try MerConfigParser(trace: .silent()).parse(cfgSource, file: "github.merconfig")
-        let symbols = SymbolTable.build(from: cfg, sourceFile: "github.merconfig", trace: .silent())
+        let cfg = try MerConfigParser().parse(cfgSource, file: "github.merconfig")
+        let symbols = SymbolTable.build(from: cfg, sourceFile: "github.merconfig")
         let source = try String(
             contentsOf: root.appendingPathComponent("examples/skill/release_orchestrator.meridian"),
             encoding: .utf8
@@ -50,7 +50,7 @@ struct SkillExampleCorpusTests {
         let workflows = try ASTToIR(
             symbols: symbols,
             sourceFile: "examples/skill/release_orchestrator.meridian",
-            trace: .silent(), engine: DiagnosticEngine()
+            engine: DiagnosticEngine()
         ).lower(ast)
 
         let entry = try #require(workflows.first)
@@ -97,14 +97,13 @@ struct SkillExampleCorpusTests {
             contentsOf: root.appendingPathComponent("examples/skill/comprehensive_workflows.merconfig"),
             encoding: .utf8
         )
-        let cfg = try MerConfigParser(trace: .silent()).parse(
+        let cfg = try MerConfigParser().parse(
             cfgSource,
             file: "comprehensive_workflows.merconfig"
         )
         return SymbolTable.build(
             from: cfg,
             sourceFile: "comprehensive_workflows.merconfig",
-            trace: .silent()
         )
     }
 
@@ -117,8 +116,8 @@ struct SkillExampleCorpusTests {
             contentsOf: root.appendingPathComponent("examples/skill/skill.merrules"),
             encoding: .utf8
         )
-        let rb = try RulebookParser(trace: .silent()).parse(src, file: "skill.merrules")
-        return RewriteEngine(rulebook: rb, trace: .silent())
+        let rb = try RulebookParser().parse(src, file: "skill.merrules")
+        return RewriteEngine(rulebook: rb)
     }
 
     /// The same rulebook as a `RulebookInput` for the full-`Compiler` path.
@@ -132,7 +131,7 @@ struct SkillExampleCorpusTests {
     }
 
     private static func parse(source: String, file: String, symbols: SymbolTable) throws -> MeridianFile {
-        try MeridianParser(symbols: symbols, trace: .silent(),
+        try MeridianParser(symbols: symbols,
                            rewriteEngine: try exampleRewriteEngine()).parse(source, file: file)
     }
 
@@ -143,7 +142,7 @@ struct SkillExampleCorpusTests {
         let source = try String(contentsOf: url, encoding: .utf8)
         let file = "examples/skill/\(name).\(ext)"
         let ast = try parse(source: source, file: file, symbols: symbols)
-        return try ASTToIR(symbols: symbols, sourceFile: file, trace: .silent(), engine: DiagnosticEngine()).lower(ast)
+        return try ASTToIR(symbols: symbols, sourceFile: file, engine: DiagnosticEngine()).lower(ast)
     }
 
     @Test("comprehensive vocabulary parses every section")
@@ -153,7 +152,7 @@ struct SkillExampleCorpusTests {
             contentsOf: root.appendingPathComponent("examples/skill/comprehensive_workflows.merconfig"),
             encoding: .utf8
         )
-        let cfg = try MerConfigParser(trace: .silent()).parse(
+        let cfg = try MerConfigParser().parse(
             cfgSource,
             file: "comprehensive_workflows.merconfig"
         )

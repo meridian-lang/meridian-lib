@@ -4,7 +4,7 @@ import Testing
 @Suite("StatementParser — coverage of less-common idioms")
 struct StatementParserCoverageTests {
     private func parse(_ source: String) throws -> ASTBlock {
-        try StatementParser(symbols: SymbolTable(), trace: .silent())
+        try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize(source))
     }
 
@@ -468,8 +468,8 @@ struct StatementParserCoverageTests {
                 rewrite: "`{command}` -- {purpose}"
             )
         ])
-        let engine = RewriteEngine(rulebook: rulebook, trace: .silent())
-        let parser = StatementParser(symbols: SymbolTable(), trace: .silent(), rewriteEngine: engine)
+        let engine = RewriteEngine(rulebook: rulebook)
+        let parser = StatementParser(symbols: SymbolTable(), rewriteEngine: engine)
         let block = try parser.parseBlock(
             IndentTokenizer().tokenize("Run `echo hi` to say hello."),
             sourceFile: "t.meridian"
@@ -705,8 +705,8 @@ struct StatementParserCoverageTests {
                 rewrite: "if {cond}, {action}."
             )
         ])
-        let engine = RewriteEngine(rulebook: rulebook, trace: .silent())
-        let parser = StatementParser(symbols: SymbolTable(), trace: .silent(), rewriteEngine: engine)
+        let engine = RewriteEngine(rulebook: rulebook)
+        let parser = StatementParser(symbols: SymbolTable(), rewriteEngine: engine)
         let line = SourceLine(indent: 0, text: "If ready -> complete", raw: "If ready -> complete", number: 1)
         let (stmt, _) = try parser.parseStatement([line], at: 0, sourceFile: "t.meridian")
         guard case .conditional = stmt else {
@@ -724,7 +724,7 @@ struct StatementParserCoverageTests {
             | 1 | 2 |
             """).first?.text
         )
-        let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+        let parser = StatementParser(symbols: SymbolTable())
         let line = SourceLine(indent: 0, text: "Setup: \(sentinel)", raw: "", number: 1)
         #expect(throws: CompilerError.self) {
             _ = try parser.parseStatement([line], at: 0, sourceFile: "t.meridian")

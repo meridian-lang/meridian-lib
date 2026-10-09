@@ -100,7 +100,6 @@ public struct RuleAnalyzer {
 
     public let lexicon: EnglishLexicon
     private let exprParser: ExpressionParser
-    private let trace: ParserTrace
 
     /// `symbols` has no default — every caller must decide explicitly.
     /// Every real pipeline call site (`Compiler.compile`, `ASTToIR.lower`,
@@ -118,12 +117,10 @@ public struct RuleAnalyzer {
     /// already-fully-populated table here has no ordering/side-effect risk.
     public init(
         lexicon: EnglishLexicon = .default,
-        trace: ParserTrace = .shared,
         symbols: SymbolTable?
     ) {
         self.lexicon = lexicon
-        self.trace = trace
-        self.exprParser = ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+        self.exprParser = ExpressionParser(symbols: symbols, lexicon: lexicon)
     }
 
     /// True when `text` has the shape a genuine Phase-8 rule sentence starts
@@ -163,6 +160,7 @@ public struct RuleAnalyzer {
     /// rule text does not match any known pattern. Throws when a matched
     /// deontic norm carries a condition that cannot be lowered to checkable IR.
     public func classify(_ rule: RuleAST) throws -> ParsedRule? {
+        let trace = ParserTrace.current
         let text = rule.text.trimmingCharacters(in: .whitespaces)
         let lower = text.lowercased()
         let markers = lexicon.grammar.ruleMarkers

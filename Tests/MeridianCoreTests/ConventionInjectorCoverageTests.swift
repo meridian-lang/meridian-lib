@@ -13,7 +13,7 @@ struct ConventionInjectorCoverageTests {
             [.complete(CompleteIR(reason: "injected"))]
         }
     ) -> ConventionInjector {
-        ConventionInjector(lexicon: .default, trace: .silent(), lowerBody: lowerBody)
+        ConventionInjector(lexicon: .default, lowerBody: lowerBody)
     }
 
     private func matchingWorkflow(body: [IRPrimitive] = [.complete(CompleteIR())]) -> IRWorkflow {

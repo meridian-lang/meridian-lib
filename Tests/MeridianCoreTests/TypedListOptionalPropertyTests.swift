@@ -6,7 +6,7 @@ import Testing
 struct TypedListOptionalPropertyTests {
 
     private func parseAllProperties(_ cfg: String) throws -> [PropertyEntry] {
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
         return config.vocabulary.compactMap { stmt -> [PropertyEntry]? in
             if case .property(let p) = stmt { return p.properties }
             return nil
@@ -94,8 +94,8 @@ struct TypedListOptionalPropertyTests {
         A shipment is a kind of thing.
         A shipment has orders, which is a list of order.
         """
-        let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
-        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
+        let config = try MerConfigParser().parse(cfg, file: "t.merconfig")
+        let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig")
         guard case .listOf(.explicit("order")) = symbols.propertyType(of: "shipment", property: "orders") else {
             Issue.record("expected listOf(order) on shipment.orders")
             return

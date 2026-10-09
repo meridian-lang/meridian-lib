@@ -233,7 +233,7 @@ struct ReportCompilerErrorTests {
     func compilerErrorBothFormats() throws {
         // Force a real CompilerError by compiling a broken file.
         let broken = "to do a thing:\n    frobnicate the wibble\n"
-        let compiler = Compiler(options: .init(trace: ParserTrace.silent()))
+        let compiler = Compiler(options: .init())
         do {
             _ = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: broken, file: "broken.meridian")], vocabularies: [], rulebooks: []))["broken.meridian"]!.swift
             Issue.record("expected a compiler error")
@@ -297,7 +297,7 @@ struct ApplyQuickFixesTests {
     @Test("a CompilerError without ranged single-suggestions applies nothing")
     func noRangedSuggestions() throws {
         let broken = "to do a thing:\n    frobnicate the wibble\n"
-        let compiler = Compiler(options: .init(trace: ParserTrace.silent()))
+        let compiler = Compiler(options: .init())
         do {
             _ = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: broken, file: "b.meridian")], vocabularies: [], rulebooks: []))["b.meridian"]!.swift
             Issue.record("expected a compiler error")
@@ -311,7 +311,7 @@ struct ApplyQuickFixesTests {
     private func compileTypoTool(t: TempDir) throws -> (Error, String, URL) {
         let merURL = t.write("t.meridian", cliTypoMeridian)
         _ = t.write("t.merconfig", cliToolVocab)
-        let compiler = Compiler(options: .init(trace: ParserTrace.silent()))
+        let compiler = Compiler(options: .init())
         do {
             _ = try compiler.compile(
                 meridianSource: cliTypoMeridian, meridianFile: "t.meridian",

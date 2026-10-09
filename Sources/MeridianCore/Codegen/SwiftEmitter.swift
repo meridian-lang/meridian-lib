@@ -44,7 +44,6 @@ public struct SwiftEmitter {
     }
 
     public let options: Options
-    public let trace: ParserTrace
 
     /// Populated at the top of `emit` so `.definitionPredicate` call sites
     /// throughout emission can look up a referenced definition's body/subject
@@ -52,9 +51,8 @@ public struct SwiftEmitter {
     /// `definitionRequiresState`.
     var definitionsByName: [String: LoweredDefinition] = [:]
 
-    public init(options: Options = Options(), trace: ParserTrace = .shared) {
+    public init(options: Options = Options()) {
         self.options = options
-        self.trace = trace
     }
 
     // MARK: - Public entry point
@@ -110,7 +108,8 @@ public struct SwiftEmitter {
         fileMetadata: FileMetadataAST?,
         definitions: [LoweredDefinition]
     ) throws -> Output {
-        try IRValidator.validate(workflows, sourceFile: options.sourceFileName, trace: trace)
+        let trace = ParserTrace.current
+        try IRValidator.validate(workflows, sourceFile: options.sourceFileName)
         trace.log(.codegen, "emit file: \(workflows.count) workflow(s), \(definitions.count) definition(s)\(options.namespaceEnum.map { ", namespace \($0)" } ?? "")")
         if let namespace = options.namespaceEnum {
             trace.log(.codegen, "emit namespace wrapper: public enum \(namespace)")
@@ -167,6 +166,7 @@ public struct SwiftEmitter {
         fileMetadata: FileMetadataAST?,
         definitions: [LoweredDefinition]
     ) throws -> String {
+        let trace = ParserTrace.current
         let hasConstants = constantsDecl != nil
         let hasInstances = instancesDecl != nil
         // Set of Swift type names produced by the Domain section. The grammar
@@ -383,7 +383,7 @@ public struct SwiftEmitter {
 
     func emitPrimitive(_ p: IRPrimitive, ctx: Ctx, workflow: IRWorkflow, path: String = "0") -> StringTemplate {
         let range = p.sourceRange
-        trace.log(.codegen, "emit \(primitiveTraceName(p)) L\(range.startLine)")
+        ParserTrace.current.log(.codegen, "emit \(primitiveTraceName(p)) L\(range.startLine)")
         switch p {
         case .invoke(let ir):   return emitInvoke(ir, ctx: ctx)
         case .bind(let ir):     return emitBind(ir, ctx: ctx)

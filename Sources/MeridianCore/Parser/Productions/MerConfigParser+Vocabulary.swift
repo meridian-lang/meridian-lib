@@ -27,7 +27,7 @@ extension MerConfigParser {
                 if headerText.hasSuffix(":") {
                     let patternText = String(headerText.dropFirst(lexicon.grammar.merconfig.workflowHeaderPrefix.count).dropLast(1))
                         .trimmingCharacters(in: .whitespaces)
-                    let pattern = PhrasePatternParser(trace: trace, lexicon: lexicon).parse(patternText)
+                    let pattern = PhrasePatternParser(lexicon: lexicon).parse(patternText)
                     // Body lines: strictly deeper indent than the header itself,
                     // starting after all header continuation lines.
                     let headerIndent = line.indent
@@ -38,7 +38,7 @@ extension MerConfigParser {
                         if l.indent > headerIndent { bodyLines.append(l); k += 1 }
                         else { break }
                     }
-                    let body = try StatementParser(symbols: toolsBootstrap, trace: trace, lexicon: lexicon).parseBlock(bodyLines, sourceFile: file)
+                    let body = try StatementParser(symbols: toolsBootstrap, lexicon: lexicon).parseBlock(bodyLines, sourceFile: file)
                     results.append(.phrase(PhraseDefinition(
                         pattern: pattern, body: body,
                         sourceLine: line.number, sourceFile: file
@@ -85,7 +85,7 @@ extension MerConfigParser {
 
             // 2B: "Definition: a {kind} is {adjective} if {condition}."
             if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
-                if let def = DefinitionParser(lexicon: lexicon, symbols: nil, trace: trace)
+                if let def = DefinitionParser(lexicon: lexicon, symbols: nil)
                     .parse(t, line: line.number) {
                     results.append(.definition(def))
                 } else {

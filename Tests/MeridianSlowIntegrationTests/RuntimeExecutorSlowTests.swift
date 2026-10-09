@@ -140,7 +140,7 @@ struct RuntimeExecutorExtendedCoverageTests {
             )
         ))
         let swift = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
-        let ast = try MeridianParser(symbols: SymbolTable.build(from: MerConfigFile()), trace: .silent())
+        let ast = try MeridianParser(symbols: SymbolTable.build(from: MerConfigFile()))
             .parse(mer, file: "t.meridian")
         let workflows = try ASTToIR(symbols: SymbolTable.build(from: MerConfigFile()), sourceFile: "t.meridian", engine: DiagnosticEngine())
             .lower(ast)

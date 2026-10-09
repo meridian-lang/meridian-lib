@@ -72,7 +72,7 @@ Escalate
 """
 
 private func wave3Symbols() throws -> SymbolTable {
-    let cfg = try MerConfigParser(trace: .silent()).parse(wave3Vocab, file: "w3.merconfig")
+    let cfg = try MerConfigParser().parse(wave3Vocab, file: "w3.merconfig")
     return SymbolTable.build(from: cfg)
 }
 
@@ -239,7 +239,7 @@ struct VerbTests {
     @Test("an active verb condition parses to a verbPredicate")
     func activeVerbParses() throws {
         let sym = try wave3Symbols()
-        let expr = ExpressionParser(symbols: sym, trace: .silent()).parse("the user owns the page")
+        let expr = ExpressionParser(symbols: sym).parse("the user owns the page")
         guard case .verbPredicate(_, let verb, _) = expr else {
             Issue.record("expected verbPredicate, got \(expr)"); return
         }
@@ -251,7 +251,7 @@ struct VerbTests {
         let sym = try wave3Symbols()
         // `pages that mention …` is a description's relative clause, not a
         // subject-verb-object condition.
-        let expr = ExpressionParser(symbols: sym, trace: .silent()).parse("the pages that mention the entity")
+        let expr = ExpressionParser(symbols: sym).parse("the pages that mention the entity")
         if case .verbPredicate = expr {
             Issue.record("relative clause should not be a verbPredicate")
         }
@@ -276,7 +276,7 @@ struct VerbTests {
     @Test("a negated active verb (`does not own`) parses to not(verbPredicate)")
     func negatedActiveVerbParses() throws {
         let sym = try wave3Symbols()
-        let expr = ExpressionParser(symbols: sym, trace: .silent()).parse("the user does not own the page")
+        let expr = ExpressionParser(symbols: sym).parse("the user does not own the page")
         guard case .logical(let op, let operands) = expr, op == .not, operands.count == 1,
               case .verbPredicate(_, let verb, _) = operands[0] else {
             Issue.record("expected not(verbPredicate), got \(expr)"); return
@@ -323,7 +323,7 @@ struct VerbTests {
 struct DescriptionTests3C {
 
     private func parse(_ s: String) throws -> ExpressionAST {
-        ExpressionParser(symbols: try wave3Symbols(), trace: .silent()).parse(s)
+        ExpressionParser(symbols: try wave3Symbols()).parse(s)
     }
 
     @Test("a passive relation clause restricts a described collection")
@@ -562,7 +562,7 @@ struct DescriptionTests3C {
     @Test("a `that`-clause restricts a quantified description via a declared relation")
     func quantifierThatClauseParses() throws {
         let sym = try wave3Symbols()
-        guard case .quantified(let q) = ExpressionParser(symbols: sym, trace: .silent())
+        guard case .quantified(let q) = ExpressionParser(symbols: sym)
             .parse("no pages that mention the entity") else {
             Issue.record("expected quantifier"); return
         }
@@ -575,7 +575,7 @@ struct DescriptionTests3C {
     @Test("a passive `by`-clause restricts a quantified description via a declared relation")
     func quantifierPassiveClauseParses() throws {
         let sym = try wave3Symbols()
-        guard case .quantified(let q) = ExpressionParser(symbols: sym, trace: .silent())
+        guard case .quantified(let q) = ExpressionParser(symbols: sym)
             .parse("any pages owned by the user") else {
             Issue.record("expected quantifier"); return
         }

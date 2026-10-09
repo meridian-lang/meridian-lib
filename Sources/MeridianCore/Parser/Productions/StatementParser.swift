@@ -9,7 +9,6 @@ import MeridianRuntime
 public struct StatementParser {
 
     public let symbols: SymbolTable?
-    public let trace: ParserTrace
     let lexicon: EnglishLexicon
     /// Optional rulebook-driven desugar engine. When present, surface idioms are
     /// rewritten to canonical statements before the parser's own fallback runs.
@@ -22,7 +21,7 @@ public struct StatementParser {
     private let diagnostics: DiagnosticEngine?
 
     var exprParser: ExpressionParser {
-        ExpressionParser(symbols: symbols, trace: trace, lexicon: lexicon)
+        ExpressionParser(symbols: symbols, lexicon: lexicon)
     }
 
     /// Shared with the `for each <adjectives> <singular kind> <verb clause>:`
@@ -34,12 +33,11 @@ public struct StatementParser {
         return DescriptionGrammar(lexicon: lexicon, symbols: symbols, atom: parser.parseAtom, recurse: parser.parse)
     }
 
-    public init(symbols: SymbolTable?, trace: ParserTrace = .shared,
+    public init(symbols: SymbolTable?,
                 lexicon: EnglishLexicon = .default,
                 rewriteEngine: RewriteEngine? = nil,
                 diagnostics: DiagnosticEngine? = nil) {
         self.symbols = symbols
-        self.trace = trace
         self.lexicon = lexicon
         self.rewriteEngine = rewriteEngine
         self.diagnostics = diagnostics
@@ -135,6 +133,7 @@ public struct StatementParser {
 
 
     func parseStatement(_ lines: [SourceLine], at i: Int, sourceFile: String) throws -> (StatementAST?, Int) {
+        let trace = ParserTrace.current
         let line = lines[i]
         let t = line.statement
         trace.log(.statement, "L\(line.number): \(ParserTrace.short(t))")
@@ -186,6 +185,7 @@ public struct StatementParser {
     /// Separated so the hook can re-enter parsing exactly once on the rewritten
     /// line without risking an infinite loop.
     func parseStatementWithoutRewrite(_ lines: [SourceLine], at i: Int, sourceFile: String) throws -> (StatementAST?, Int) {
+        let trace = ParserTrace.current
         let line = lines[i]
         let t = line.statement
         let lower = t.lowercased()

@@ -13,11 +13,11 @@ struct SentenceBreaker: Sendable {
         case other(Character)
     }
 
-    func statementText(from line: String, trace: ParserTrace = .shared) -> String {
+    func statementText(from line: String) -> String {
         guard shouldTrimTerminatingPeriod(line) else {
             return line
         }
-        trace.log(.tokenize, "sentence-break: trimmed terminating period from \"\(line)\"")
+        ParserTrace.current.log(.tokenize, "sentence-break: trimmed terminating period from \"\(line)\"")
         return String(line.dropLast())
     }
 

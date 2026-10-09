@@ -7,7 +7,6 @@ import MeridianRuntime
 struct RuleInjector {
     let symbols: SymbolTable
     let lexicon: EnglishLexicon
-    let trace: ParserTrace
     /// Closure used to lower an action text as if it were a phrase invocation
     /// inside a workflow body. Trigger synthesis uses this to produce real
     /// IR for the action, instead of a stub comment. Injected to break the
@@ -27,7 +26,6 @@ struct RuleInjector {
     init(
         symbols: SymbolTable,
         lexicon: EnglishLexicon = .default,
-        trace: ParserTrace = .shared,
         lowerAction: ((String, SourceRange) throws -> [IRPrimitive])? = nil,
         fallbackPolicy: FallbackPolicy = .strict,
         sourceFile: String = "",
@@ -35,7 +33,6 @@ struct RuleInjector {
     ) {
         self.symbols = symbols
         self.lexicon = lexicon
-        self.trace = trace
         self.lowerAction = lowerAction
         self.fallbackPolicy = fallbackPolicy
         self.sourceFile = sourceFile
@@ -45,6 +42,7 @@ struct RuleInjector {
     // MARK: - Injection
 
     mutating func inject(rules: [ParsedRule], into workflows: [IRWorkflow], sourceFile: String) throws -> [IRWorkflow] {
+        let trace = ParserTrace.current
         var result = workflows
 
         // Track which rules attached to at least one workflow. Anything left
@@ -448,6 +446,7 @@ struct RuleInjector {
         sourceLine: Int,
         sourceFile: String
     ) throws -> IRWorkflow {
+        let trace = ParserTrace.current
         let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
         let stopwords = lexicon.toolStopwords.union(lexicon.articles).union(lexicon.prepositions)
         let condTokens = tokenize(conditionText, stopwords: stopwords)

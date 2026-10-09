@@ -6,7 +6,6 @@ struct AGENTSSharpEdgeRegressionTests {
     private func compile(_ mer: String, _ cfg: String = "=== vocabulary ===\n") throws -> String {
         try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
-            trace: .silent()
         )).compile(
             meridianSource: mer,
             meridianFile: "sharp.meri",
@@ -121,7 +120,7 @@ struct AGENTSSharpEdgeRegressionTests {
           complete.
         """
 
-        let block = try StatementParser(symbols: SymbolTable(), trace: .silent())
+        let block = try StatementParser(symbols: SymbolTable())
             .parseBlock(IndentTokenizer().tokenize(mer).filter { $0.headingLevel == nil }.dropFirst().map { $0 })
 
         #expect(block.statements.count == 2)
@@ -211,7 +210,7 @@ struct AGENTSSharpEdgeRegressionTests {
 
     @Test("pitfall #14: blockquoted normative prose in executable sections is non-executable")
     func blockquotedExecutableProseIsDroppedAsComment() throws {
-        let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse("""
+        let ast = try MeridianParser(symbols: SymbolTable()).parse("""
         ## Steps
         > every entity must have a back-link.
         complete.
@@ -243,7 +242,7 @@ struct AGENTSSharpEdgeRegressionTests {
         #expect(!swift.contains("_unresolved"), Comment(rawValue: swift))
 
         let migrated = try await SkillMigrator(
-            compiler: Compiler(options: .init(trace: .silent())),
+            compiler: Compiler(options: .init()),
             vocabularies: [],
             options: .init(routeFuzzy: true)
         ).migrate("""
@@ -262,7 +261,7 @@ struct AGENTSSharpEdgeRegressionTests {
         complete.
         """
 
-        let ast = try MeridianParser(symbols: SymbolTable(), trace: .silent()).parse(source, file: "sharp.meri")
+        let ast = try MeridianParser(symbols: SymbolTable()).parse(source, file: "sharp.meri")
 
         #expect(ast.skillSections.first?.role == "procedure")
         #expect(ast.skillSections.first?.executes == true)

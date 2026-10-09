@@ -272,7 +272,7 @@ struct IndentTokenizerTraceTests {
         let x = 1
         ```
         """
-        _ = IndentTokenizer().tokenize(source, trace: cap.trace)
+        _ = cap.trace.run { IndentTokenizer().tokenize(source) }
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("block marker → table") })
         #expect(lines.contains { $0.contains("block marker → checklist") })

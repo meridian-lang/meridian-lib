@@ -12,7 +12,6 @@ public struct ASTToIR {
 
     public let symbols: SymbolTable
     public let sourceFile: String
-    public let trace: ParserTrace
     public let lexicon: EnglishLexicon
     public let fallbackPolicy: FallbackPolicy
     /// Rulebook supplying section-role mappings and Inform-style conventions.
@@ -42,7 +41,7 @@ public struct ASTToIR {
         throw CompilerError.diagnostics([diagnostic])
     }
 
-    public init(symbols: SymbolTable, sourceFile: String = "", trace: ParserTrace = .shared,
+    public init(symbols: SymbolTable, sourceFile: String = "",
                 lexicon: EnglishLexicon = .default,
                 fallbackPolicy: FallbackPolicy = .strict,
                 rulebook: Rulebook = .empty,
@@ -51,7 +50,6 @@ public struct ASTToIR {
                 engine: DiagnosticEngine) {
         self.symbols = symbols
         self.sourceFile = sourceFile
-        self.trace = trace
         self.lexicon = lexicon
         self.fallbackPolicy = fallbackPolicy
         self.rulebook = rulebook
@@ -166,13 +164,13 @@ public struct ASTToIR {
 
         // C1-C4: Classify and inject rules into lowered workflows.
         if !file.rules.isEmpty {
-            let analyzer = RuleAnalyzer(lexicon: lexicon, trace: trace, symbols: symbols)
+            let analyzer = RuleAnalyzer(lexicon: lexicon, symbols: symbols)
             let lowerActionClosure: (String, SourceRange) throws -> [IRPrimitive] = { text, range in
                 let invocation = PhraseInvocationAST(words: text, sourceLine: range.startLine)
                 return try self.lowerPhraseInvocation(invocation, mode: .strict, depth: 0)
             }
             var injector = RuleInjector(
-                symbols: symbols, lexicon: lexicon, trace: trace,
+                symbols: symbols, lexicon: lexicon,
                 lowerAction: lowerActionClosure,
                 fallbackPolicy: fallbackPolicy, sourceFile: sourceFile,
                 reportFallback: { [self] diagnostic in reportFallbackWarning(diagnostic) }
@@ -262,7 +260,7 @@ public struct ASTToIR {
         // a hard error just like inline source.
         if !rulebook.conventions.isEmpty {
             let conventionInjector = ConventionInjector(
-                lexicon: lexicon, trace: trace,
+                lexicon: lexicon,
                 lowerBody: { [self] text, line in try lowerConventionBody(text, sourceLine: line) }
             )
             workflows = try conventionInjector.inject(
@@ -302,7 +300,7 @@ public struct ASTToIR {
     }
 
     func reportFallbackWarning(_ diagnostic: Diagnostic) {
-        trace.log(.lowering, "fallback warning \(diagnostic.code.id): \(diagnostic.message)")
+        ParserTrace.current.log(.lowering, "fallback warning \(diagnostic.code.id): \(diagnostic.message)")
         engine.report(diagnostic)
     }
 
@@ -370,7 +368,7 @@ public struct ASTToIR {
     /// pipeline. Used by `ConventionInjector` to turn `before/after/…` rule
     /// bodies into prepended/appended primitives.
     private func lowerConventionBody(_ text: String, sourceLine: Int) throws -> [IRPrimitive] {
-        let sp = StatementParser(symbols: symbols, trace: trace, lexicon: lexicon)
+        let sp = StatementParser(symbols: symbols, lexicon: lexicon)
         let bodyText = text.hasSuffix(".") ? text : text + "."
         let line = SourceLine(indent: 0, text: bodyText, raw: text, number: sourceLine)
         let block = try sp.parseBlock([line], sourceFile: sourceFile)
@@ -409,6 +407,7 @@ public struct ASTToIR {
     }
 
     public func lowerWorkflow(_ ast: WorkflowAST) throws -> IRWorkflow {
+        let trace = ParserTrace.current
         let token = trace.push(.lowering, "lowerWorkflow: \(ast.pattern.displayText)")
         defer { trace.pop(token) }
         let parameters = phraseParameters(ast.pattern)

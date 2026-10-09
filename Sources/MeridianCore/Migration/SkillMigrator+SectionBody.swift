@@ -12,7 +12,7 @@ extension SkillMigrator {
         var sawContent = false
         var pendingTableMarker = false
         var pendingChecklistMarker = false
-        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon, trace: trace)
+        let classifier = ConditionClassifier(symbols: knowledge.symbols, lexicon: knowledge.lexicon)
         let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
 
         var i = body.startIndex

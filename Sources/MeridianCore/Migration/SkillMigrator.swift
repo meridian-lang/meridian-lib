@@ -108,10 +108,6 @@ public struct SkillMigrator {
     let rulebookInputs: [RulebookInput]
     let options: Options
     let repair: (@Sendable (RepairRequest) async throws -> String)?
-    /// Opt-in debug trace for the migration pass, under `.skill`. Defaults to
-    /// the compiler's own trace so `--trace skill` on the CLI covers migration
-    /// without a second flag; pass an explicit trace to decouple them.
-    let trace: ParserTrace
     let probeSession = ProbeSession()
 
     /// Holds optional trial-lowering probe tallies during the marking pass without
@@ -124,17 +120,16 @@ public struct SkillMigrator {
                 vocabularies: [Compiler.VocabularyInput],
                 rulebooks: [RulebookInput] = [],
                 options: Options = Options(),
-                repair: (@Sendable (RepairRequest) async throws -> String)? = nil,
-                trace: ParserTrace? = nil) {
+                repair: (@Sendable (RepairRequest) async throws -> String)? = nil) {
         self.compiler = compiler
         self.vocabularies = vocabularies
         self.rulebookInputs = rulebooks
         self.options = options
         self.repair = repair
-        self.trace = trace ?? compiler.options.trace
     }
 
     public func migrate(_ markdown: String, file: String = "skill.meri") async throws -> Result {
+        let trace = ParserTrace.current
         trace.log(.skill, "migrate \"\(file)\": \(markdown.components(separatedBy: "\n").count) source line(s)")
         let (transformed, addedKeys, aliases, unminedContracts) = try deterministicTransform(markdown)
         let originalLineCount = markdown.components(separatedBy: "\n").count

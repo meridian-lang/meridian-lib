@@ -845,7 +845,7 @@ TraceStatisticalQuery(
 
     func validateExpressionForDirectEmission(_ expr: IRExpression) throws {
         do {
-            try IRValidator.validate(expr, sourceFile: options.sourceFileName, trace: trace)
+            try IRValidator.validate(expr, sourceFile: options.sourceFileName)
         } catch IRValidationError.diagnostics(let diagnostics) {
             throw CompilerError.diagnostics(diagnostics)
         }

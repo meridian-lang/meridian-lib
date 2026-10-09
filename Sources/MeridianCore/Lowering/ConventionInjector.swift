@@ -25,7 +25,6 @@ import MeridianRuntime
 //   • instead of            → replace the workflow body
 struct ConventionInjector {
     let lexicon: EnglishLexicon
-    let trace: ParserTrace
     /// Parse + lower a convention body statement to IR. Injected by `ASTToIR`
     /// to avoid a parser/lowerer cycle; runs the full strict pipeline so an
     /// unresolved body is a hard error exactly like inline source.
@@ -33,6 +32,7 @@ struct ConventionInjector {
 
     func inject(conventions: [RulebookRule], into workflows: [IRWorkflow]) throws -> [IRWorkflow] {
         guard !conventions.isEmpty else { return workflows }
+        let trace = ParserTrace.current
         var result = workflows
         for convention in conventions {
             for idx in result.indices where actionMatches(convention.action, workflow: result[idx]) {

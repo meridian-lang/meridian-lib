@@ -38,7 +38,7 @@ struct DeonticBrokenTwinTests {
 
     private func requireDiagnostics(_ merBody: String, cfg: String) throws -> [Diagnostic] {
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
+            _ = try Compiler(options: .init()).compile(
                 meridianSource: merBody,
                 meridianFile: "test.meridian",
                 merconfigSource: cfg,
@@ -52,7 +52,7 @@ struct DeonticBrokenTwinTests {
     }
 
     private func requireExpressionDiagnostic(_ expression: String, code: DiagnosticCode) throws {
-        let parsed = ExpressionParser(trace: .silent()).parse(expression)
+        let parsed = ExpressionParser().parse(expression)
         guard case .malformed(_, let actualCode, _, _) = parsed else {
             Issue.record("expected malformed expression for \(code.id), got \(parsed)")
             throw CompilerError.codegenError(message: "expected malformed expression \(code.id)")

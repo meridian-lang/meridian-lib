@@ -1,5 +1,5 @@
 ---
-description: ParserTrace conventions — category hierarchy, MERIDIAN_TRACE env var, thread safety, adding a trace point, the trace parameter convention. Read when editing diagnostics/tracing.
+description: ParserTrace conventions — category hierarchy, MERIDIAN_TRACE env var, thread safety, adding a trace point, the task-local trace convention. Read when editing diagnostics/tracing.
 globs: Sources/MeridianCore/Diagnostics/**/*.swift
 alwaysApply: false
 ---
@@ -93,8 +93,8 @@ preserves `[category] …` lines with `▶`/`◀` markers.
   `.codegen` summaries; `compile(_:)` also times `domainDecl`,
   `manifestRules`, `obligationDocument`. See `docs/08_TRACING.md` phase map.
 - **Lint:** `LintCommand` uses `@OptionGroup var traceOptions: CLITraceOptions`;
-  `MeridianLinter(trace:)` threads trace into `IndentTokenizer` and opens a
-  `lint <file>` span under `.diagnostics`.
+  `trace.run { MeridianLinter().lint(…) }` lets the tokenizer read the
+  task-local and opens a `lint <file>` span under `.diagnostics`.
 
 ### Adding a trace point
 
@@ -102,29 +102,45 @@ preserves `[category] …` lines with `▶`/`◀` markers.
 2. Call `trace.log(.category, "…")` or `trace.push/pop` in the relevant method.
 3. Add a `capturing(categories:)` test to `ParserTraceTests.swift`.
 
-### The `trace` parameter convention
+### The task-local trace convention
 
-Every compiler component that can produce trace output takes
-`trace: ParserTrace = .shared` as a constructor parameter.
-- Default is `.shared` (works in production).
-- Unit tests pass a fresh `ParserTrace()` (via `ParserTrace.capturing(categories:)`)
-  or `ParserTrace.silent()`.
+The active trace is a task-local — compiler components do **not** take a
+`trace:` parameter:
+
+```swift
+@TaskLocal public static var current: ParserTrace = .shared
+```
+
+- **Injection point 1 — `Compiler.Options.trace`:** every `Compiler` entry
+  point (`compile(_:)`, `bootstrap(_:)`, `emit(workflows:)`,
+  `emitManifest(_:)`) installs `options.trace` as `ParserTrace.current` for the
+  duration of the call; the whole pipeline sees it with no threading.
+- **Injection point 2 — `trace.run { … }`:** wrap a direct API call
+  (parser/emitter/linter/verbalizer used outside a compile). An async `run`
+  overload exists for `await`ed bodies.
+- Hot paths (`IndentTokenizer.tokenize`, `StatementParser` entry points,
+  `ExpressionParser.parse`, `ASTToIR.lowerWorkflow`, `SwiftEmitter.emit`,
+  `DiagnosticEngine.report`) read `ParserTrace.current` once per entry call
+  into a local, not per loop iteration.
+- `@TaskLocal` values are inherited by child tasks; `Task.detached` does not
+  inherit (nothing in the compiler detaches).
 - The CLI never mutates `.shared`: `compile`, `check`, `verify`, `run`,
   `lint`, `migrate-skill`, `preview-skill`, `explain`, `drift`, `inert-yield`, and
   `skill-deviation` each build a fresh, isolated instance via
   `makeCLITrace(spec:file:format:)` (`Sources/MeridianCLIKit/CLISupport.swift`)
   from their `@OptionGroup` `CLITraceOptions` (`--trace`, `--trace-file`,
-  `--trace-format`) and thread it down into `Compiler`, `MeridianLinter`,
-  `SkillMigrator`, `SkillMarkdownImporter`, `ManifestEmitter`, `Verbalizer`,
-  `DriftEngine`, and analysis helpers.
+  `--trace-format`), pass it through `Compiler.Options.trace`, and wrap any
+  direct-API work in `traceInstance.run { … }`.
+- Tests: pass `cap.trace` through `Compiler.Options` when driving a compile;
+  wrap direct type calls in `cap.trace.run { … }` (async variant for async
+  bodies). Captures are per-task, so parallel suites cannot leak into each
+  other.
 
 ### No silent-trace components
 
-Nothing in the compile pipeline is allowed to hardcode `.silent()` for a
-`trace` it was handed — that would silently discard a caller's `--trace`
-request. `SkillMigrator` and `SkillMarkdownImporter` both default their `trace`
-parameter to `.shared`/the owning `Compiler`'s trace, never to `.silent()`;
-only test call sites should pass `.silent()` explicitly.
+Nothing in the compile pipeline is allowed to hardcode `.silent()` — that would
+silently discard a caller's `--trace` request. Only test call sites may pass
+`.silent()` explicitly.
 
 Production-source exceptions must stay on the machine-checked allowlist in
 `docs/coverage/SILENT_FALLBACK_ALLOWLIST.md`: `TrialLowering` and

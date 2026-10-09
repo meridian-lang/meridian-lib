@@ -68,14 +68,14 @@ struct ReachableCoverageBatch3Tests {
 
     @Test("StatementParser methodize delegates to shared naming")
     func statementParserMethodize() {
-        let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+        let parser = StatementParser(symbols: SymbolTable())
         #expect(parser.methodize("the Validate-Order tool") == "validateOrderTool")
         #expect(parser.methodize("!!!") == "!!!")
     }
 
     @Test("ConditionClassifier: negated checkable predicate + comparison-marker condition")
     func conditionClassifier() {
-        let cc = ConditionClassifier(symbols: nil, lexicon: .default, trace: .silent())
+        let cc = ConditionClassifier(symbols: nil, lexicon: .default)
         let cmp = ExpressionAST.comparison(.literal(.integer(1)), .greaterThan, .literal(.integer(5)))
         let eq1 = ExpressionAST.comparison(.literal(.integer(1)), .equal, .literal(.integer(1)))
         let eq2 = ExpressionAST.comparison(.literal(.integer(2)), .equal, .literal(.integer(2)))

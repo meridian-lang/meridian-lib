@@ -5,7 +5,7 @@ import Testing
 @Suite("StatementParser+Checklists coverage")
 struct StatementParserChecklistsCoverageTests {
 
-    private let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+    private let parser = StatementParser(symbols: SymbolTable())
 
     private func parse(_ source: String) throws -> ASTBlock {
         try parser.parseBlock(IndentTokenizer().tokenize(source))
@@ -122,7 +122,7 @@ struct StatementParserChecklistsCoverageTests {
 @Suite("StatementParser+Collector coverage")
 struct StatementParserCollectorCoverageTests {
 
-    private let parser = StatementParser(symbols: SymbolTable(), trace: .silent())
+    private let parser = StatementParser(symbols: SymbolTable())
 
     @Test("collectMultiLineCounted returns immediately for period-terminated headers")
     func collectStopsOnPeriod() {
