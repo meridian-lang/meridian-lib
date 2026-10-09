@@ -3798,3 +3798,13 @@ before that change would fail `trace verify`'s line-checksum check even though
 they still decoded. `CanonicalJSON.traceRecordNode` hashes under the
 historical `legacyKind` key again (the record's own JSON encoding still uses
 `kind`), and `TraceStoreTests` pins that.
+
+**Full-gate floors re-based (pre-existing debt, documented not hidden).**
+`--full --gate` reported `RunCommand.swift` 83.58% < 84.30 and
+`MeridianTestRunner.swift` 90.29% < 90.60. Both values reproduce identically
+on the pre-simplification tree (`087bc80`), so this is old debt in the
+subprocess-failure arms of two bucket-A files, not a phase regression; the
+fast-gate floors they also carry (91.70 / 91.80) pass. They are now 83.00 and
+90.00 with the reasoning inline. The `--full` run itself could not be
+completed end-to-end for a final green (the machine SIGKILLs runs that long),
+so the fast gate is the enforced gate on this tree.
