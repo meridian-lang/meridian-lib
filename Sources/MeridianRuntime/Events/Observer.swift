@@ -146,7 +146,7 @@ public extension JSONLObserver {
 // MARK: - ISO8601DateFormatter cache
 
 public extension ISO8601DateFormatter {
-    nonisolated(unsafe) static public let meridianFormatter: ISO8601DateFormatter = {
+    nonisolated(unsafe) static let meridianFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return f
