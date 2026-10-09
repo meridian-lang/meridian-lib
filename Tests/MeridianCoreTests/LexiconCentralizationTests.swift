@@ -109,10 +109,9 @@ struct FixedGrammarDefaultsTests {
 
     @Test("merging preserves the grammar passthrough unchanged")
     func mergingPreservesGrammar() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: ["fortnight": .week]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .duration: [.duration("fortnight", .week)],
+        ])
         #expect(merged.grammar.discretionMarker == "with discretion")
         #expect(merged.grammar.relativeClauseMarkers == [" that "])
     }
@@ -171,26 +170,24 @@ struct EnglishLexiconMorphologyBranchTests {
         #expect(lex.regularPastParticiple("try") == "tried")
         #expect(lex.regularPastParticiple("walk") == "walked")
 
-        let merged = lex.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: ["fortnight": .week],
-            timestampProperty: "createdAt",
-            emptySynonyms: ["lacks"],
-            filledSynonyms: ["includes"],
-            pastWindowSynonyms: ["during the past"],
-            futureWindowSynonyms: ["during the next"],
-            timestampAliasSynonyms: ["touched"],
-            superlativeSynonyms: ["freshest": .newest],
-            sortBySynonyms: ["ordered by"],
-            ascendingSynonyms: ["up"],
-            descendingSynonyms: ["down"],
-            possessiveSynonyms: ["our"],
-            anaphoraSynonyms: ["that value"],
-            conditionHeaderSynonyms: ["given"],
-            actionHeaderSynonyms: ["outcome"],
-            wildcardSynonyms: ["whatever"],
-            shellFenceSynonyms: ["fish"]
-        )
+        let merged = lex.merging(entries: [
+            .duration: [.duration("fortnight", .week)],
+            .empty: [.phrase("lacks")],
+            .filled: [.phrase("includes")],
+            .pastWindow: [.phrase("during the past")],
+            .futureWindow: [.phrase("during the next")],
+            .timestampAlias: [.phrase("touched")],
+            .superlative: [.superlative("freshest", .newest)],
+            .sortBy: [.phrase("ordered by")],
+            .ascending: [.phrase("up")],
+            .descending: [.phrase("down")],
+            .possessive: [.phrase("our")],
+            .anaphora: [.phrase("that value")],
+            .conditionHeader: [.phrase("given")],
+            .actionHeader: [.phrase("outcome")],
+            .wildcard: [.phrase("whatever")],
+            .shellFence: [.phrase("fish")],
+        ], timestampProperty: "createdAt")
         #expect(merged.parseDuration("2 fortnights")?.1 == .week)
         #expect(merged.parseDuration("2 widgets") == nil)
         #expect(merged.timestampProperty == "createdAt")
@@ -281,11 +278,9 @@ struct ShellFenceLexiconTests {
 
     @Test("=== language === Shell fence synonyms extends the dialect set")
     func authorExtends() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            shellFenceSynonyms: ["fish", "PWSH", "nu"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .shellFence: [.phrase("fish"), .phrase("PWSH"), .phrase("nu")],
+        ])
         #expect(merged.isShellFence("fish"))
         #expect(merged.isShellFence("pwsh")) // synonyms lower-cased on merge
         #expect(merged.isShellFence("nu"))
@@ -303,11 +298,9 @@ struct FenceToolMappingLexiconTests {
 
     @Test("=== language === Fence tool mapping populates a non-shell fence lookup")
     func authorExtends() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            fenceToolSynonyms: ["Python": "interpreter.run", "node": "interpreter.runJS"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .fenceTool: [.mapping("Python", "interpreter.run"), .mapping("node", "interpreter.runJS")],
+        ])
         #expect(merged.fenceTool(for: "python") == "interpreter.run") // key lower-cased on merge
         #expect(merged.fenceTool(for: "PYTHON") == "interpreter.run") // lookup is case-insensitive too
         #expect(merged.fenceTool(for: "node") == "interpreter.runJS") // tool ID keeps its original case
@@ -319,26 +312,20 @@ struct FenceToolMappingLexiconTests {
 
     @Test("author-supplied mapping overrides a same-key default on merge")
     func authorOverrides() {
-        let base = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            fenceToolSynonyms: ["python": "interpreter.run"]
-        )
-        let overridden = base.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            fenceToolSynonyms: ["python": "custom.pythonRunner"]
-        )
+        let base = EnglishLexicon.default.merging(entries: [
+            .fenceTool: [.mapping("python", "interpreter.run")],
+        ])
+        let overridden = base.merging(entries: [
+            .fenceTool: [.mapping("python", "custom.pythonRunner")],
+        ])
         #expect(overridden.fenceTool(for: "python") == "custom.pythonRunner")
     }
 
     @Test("a ```python fence with a configured mapping lowers to one plain invoke, end to end")
     func toolFenceLowersToPlainInvoke() throws {
-        let lexicon = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            fenceToolSynonyms: ["python": "interpreter.run"]
-        )
+        let lexicon = EnglishLexicon.default.merging(entries: [
+            .fenceTool: [.mapping("python", "interpreter.run")],
+        ])
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent(), lexicon: lexicon).parse("""
         To score, with discretion:
@@ -369,11 +356,9 @@ struct FenceToolMappingLexiconTests {
 
     @Test("a fenced language with no configured mapping is rejected, not silently misrouted")
     func unmappedNonShellFenceIsRejected() throws {
-        let lexicon = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            fenceToolSynonyms: ["python": "interpreter.run"]
-        )
+        let lexicon = EnglishLexicon.default.merging(entries: [
+            .fenceTool: [.mapping("python", "interpreter.run")],
+        ])
         let symbols = SymbolTable()
         // ```ruby has no mapping entry, so it is not a code-block sentinel
         // this production recognizes. Pre-existing "orphaned fenced code
@@ -599,11 +584,9 @@ struct LexiconPhase1RecipeTests {
 
     @Test("definite-article take prefix still works after article synonym merge")
     func articleTakePrefix() throws {
-        let lex = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            articleSynonyms: ["das"]
-        )
+        let lex = EnglishLexicon.default.merging(entries: [
+            .article: [.phrase("das")],
+        ])
         let out = try Compiler(options: .init(lexicon: lex, fallbackPolicy: .lenient)).compile(
             meridianSource: """
             To process:

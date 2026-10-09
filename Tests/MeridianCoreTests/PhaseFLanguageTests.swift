@@ -135,11 +135,7 @@ struct PhaseFLanguageTests {
     @Test("gradable adjective metadata enables most-adjective superlative")
     func gradableAdjectiveSuperlative() throws {
         let config = try MerConfigParser(trace: .silent()).parse(gradableCfg, file: "g.merconfig")
-        let lexicon = EnglishLexicon.default.merging(
-            comparisonSynonyms: config.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: config.languageSynonyms.durationSynonyms,
-            gradableAdjectiveSynonyms: config.languageSynonyms.gradableAdjectiveSynonyms
-        )
+        let lexicon = EnglishLexicon.default.merging(from: config.languageSynonyms)
         let symbols = SymbolTable.build(from: config, trace: .silent(), lexicon: lexicon)
         let parser = ExpressionParser(symbols: symbols, trace: .silent(), lexicon: lexicon)
         let expr = parser.parse("the most urgent deal")

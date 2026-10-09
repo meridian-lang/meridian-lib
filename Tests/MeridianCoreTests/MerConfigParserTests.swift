@@ -2,6 +2,19 @@ import Foundation
 import Testing
 @testable import MeridianCore
 
+/// Reads of a parsed `=== language ===` section, by category.
+private extension LanguageSynonyms {
+    /// Every entry the section declared for `category` (empty when absent).
+    func list(_ category: LexiconCategory) -> [LexiconEntry] {
+        entries[category] ?? []
+    }
+
+    /// The surface phrases the section declared for `category`.
+    func phrases(_ category: LexiconCategory) -> [String] {
+        list(category).map(\.phrase)
+    }
+}
+
 @Suite("MerConfigParser — language section")
 struct MerConfigLanguageSectionTests {
     private func parse(_ src: String) throws -> MerConfigFile {
@@ -81,40 +94,40 @@ struct MerConfigLanguageSectionTests {
         let cfg = try parse(src)
         let syn = cfg.languageSynonyms
 
-        #expect(syn.comparisonSynonyms.contains { $0.0 == "exceeds" })
-        #expect(syn.comparisonSynonyms.contains { $0.0 == "below" })
-        #expect(syn.aggregateSynonyms.contains { $0.0 == "tally" })
-        #expect(syn.aggregateSynonyms.contains { $0.0 == "everything" })
-        #expect(syn.superlativeSynonyms["freshest"] == .newest)
-        #expect(syn.superlativeSynonyms["eldest"] == .oldest)
-        #expect(syn.assertionSynonyms.contains("verify"))
-        #expect(syn.assertionSynonyms.contains("guarantee"))
-        #expect(syn.emptySynonyms.contains("is blank"))
-        #expect(syn.filledSynonyms.contains("is present"))
-        #expect(syn.pastWindowSynonyms.contains("recently"))
-        #expect(syn.futureWindowSynonyms.contains("soon"))
-        #expect(syn.timestampAliasSynonyms.contains("modified"))
-        #expect(syn.sortBySynonyms.contains("ordered by"))
-        #expect(syn.ascendingSynonyms.contains("rising"))
-        #expect(syn.descendingSynonyms.contains("falling"))
-        #expect(syn.possessiveSynonyms.contains("belonging to"))
-        #expect(syn.anaphoraSynonyms.contains("the same"))
-        #expect(syn.conditionHeaderSynonyms.contains("provided that"))
-        #expect(syn.actionHeaderSynonyms.contains("then do"))
+        #expect(syn.list(.comparison).contains(.comparison("exceeds", .greaterThan)))
+        #expect(syn.list(.comparison).contains(.comparison("below", .lessThan)))
+        #expect(syn.list(.aggregate).contains(.aggregate("tally", .count)))
+        #expect(syn.list(.aggregate).contains(.aggregate("everything", .list)))
+        #expect(syn.list(.superlative).contains(.superlative("freshest", .newest)))
+        #expect(syn.list(.superlative).contains(.superlative("eldest", .oldest)))
+        #expect(syn.phrases(.assertion).contains("verify"))
+        #expect(syn.phrases(.assertion).contains("guarantee"))
+        #expect(syn.phrases(.empty).contains("is blank"))
+        #expect(syn.phrases(.filled).contains("is present"))
+        #expect(syn.phrases(.pastWindow).contains("recently"))
+        #expect(syn.phrases(.futureWindow).contains("soon"))
+        #expect(syn.phrases(.timestampAlias).contains("modified"))
+        #expect(syn.phrases(.sortBy).contains("ordered by"))
+        #expect(syn.phrases(.ascending).contains("rising"))
+        #expect(syn.phrases(.descending).contains("falling"))
+        #expect(syn.phrases(.possessive).contains("belonging to"))
+        #expect(syn.phrases(.anaphora).contains("the same"))
+        #expect(syn.phrases(.conditionHeader).contains("provided that"))
+        #expect(syn.phrases(.actionHeader).contains("then do"))
         // Wildcard captures the original (non-lowercased) token.
-        #expect(syn.wildcardSynonyms.contains("ANY"))
-        #expect(syn.shellFenceSynonyms.contains("fish"))
-        #expect(syn.conditionVagueHedgeSynonyms.contains("kinda"))
-        #expect(syn.effectfulJudgmentCueSynonyms.contains("scrub"))
-        #expect(syn.articleSynonyms.contains("da"))
-        #expect(syn.parameterArticleSynonyms.contains("ein"))
-        #expect(syn.prepositionSynonyms.contains("durch"))
-        #expect(syn.copulaSynonyms.contains("sein"))
-        #expect(syn.participleSynonyms.contains("gekauft"))
-        #expect(syn.toolStopwordSynonyms.contains("ausführen"))
-        #expect(syn.irregularPluralSynonyms["maus"] == "mäuse")
-        #expect(syn.contractReferenceSynonyms.contains("bereits erzwungen"))
-        #expect(syn.fenceToolMapping["python"] == "interpreter.run")
+        #expect(syn.phrases(.wildcard).contains("ANY"))
+        #expect(syn.phrases(.shellFence).contains("fish"))
+        #expect(syn.phrases(.conditionVagueHedge).contains("kinda"))
+        #expect(syn.phrases(.effectfulJudgment).contains("scrub"))
+        #expect(syn.phrases(.article).contains("da"))
+        #expect(syn.phrases(.parameterArticle).contains("ein"))
+        #expect(syn.phrases(.preposition).contains("durch"))
+        #expect(syn.phrases(.copula).contains("sein"))
+        #expect(syn.phrases(.participle).contains("gekauft"))
+        #expect(syn.phrases(.toolStopword).contains("ausführen"))
+        #expect(syn.list(.irregularPlural).contains(.mapping("maus", "mäuse")))
+        #expect(syn.phrases(.contractReference).contains("bereits erzwungen"))
+        #expect(syn.list(.fenceTool).contains(.mapping("python", "interpreter.run")))
         #expect(syn.timestampProperty == "lastTouchedAt")
     }
 
@@ -130,9 +143,9 @@ struct MerConfigLanguageSectionTests {
           sorted on
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.pastWindowSynonyms.contains("lately"))
-        #expect(syn.futureWindowSynonyms.contains("shortly"))
-        #expect(syn.sortBySynonyms.contains("sorted on"))
+        #expect(syn.phrases(.pastWindow).contains("lately"))
+        #expect(syn.phrases(.futureWindow).contains("shortly"))
+        #expect(syn.phrases(.sortBy).contains("sorted on"))
     }
 
     @Test("comparison value resolves via the spelling table and via copula-stripping")
@@ -144,8 +157,8 @@ struct MerConfigLanguageSectionTests {
           eq = equals
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.comparisonSynonyms.contains { $0.0 == "gt" && $0.1 == .greaterThan })
-        #expect(syn.comparisonSynonyms.contains { $0.0 == "eq" && $0.1 == .equal })
+        #expect(syn.list(.comparison).contains(.comparison("gt", .greaterThan)))
+        #expect(syn.list(.comparison).contains(.comparison("eq", .equal)))
     }
 
     @Test("normative-cue, inference-cue, and reference-heading synonym headers are captured")
@@ -160,9 +173,9 @@ struct MerConfigLanguageSectionTests {
           background
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.normativeCueSynonyms.contains("must always"))
-        #expect(syn.inferenceCueSynonyms.contains("exercise judgment"))
-        #expect(syn.referenceHeadingSynonyms.contains("background"))
+        #expect(syn.phrases(.normativeCue).contains("must always"))
+        #expect(syn.phrases(.inferenceCue).contains("exercise judgment"))
+        #expect(syn.phrases(.referenceHeading).contains("background"))
     }
 
     @Test("a keyed-mode line without an ` = ` pair is ignored, not crashed on")
@@ -174,8 +187,8 @@ struct MerConfigLanguageSectionTests {
           gt = greater than
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.comparisonSynonyms.count == 1)
-        #expect(syn.comparisonSynonyms.contains { $0.0 == "gt" })
+        #expect(syn.list(.comparison).count == 1)
+        #expect(syn.list(.comparison).contains(.comparison("gt", .greaterThan)))
     }
 
     @Test("an aggregate synonym with an unrecognized value is dropped")
@@ -187,8 +200,8 @@ struct MerConfigLanguageSectionTests {
           bogus = whatever
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.aggregateSynonyms.contains { $0.0 == "tally" })
-        #expect(!syn.aggregateSynonyms.contains { $0.0 == "bogus" })
+        #expect(syn.list(.aggregate).contains(.aggregate("tally", .count)))
+        #expect(!syn.phrases(.aggregate).contains("bogus"))
     }
 
     @Test("guarded-fence, fallback-chain, and approval-tool synonym headers parse")
@@ -202,9 +215,9 @@ struct MerConfigLanguageSectionTests {
         Approval-tool synonyms:
           signoff
         """).languageSynonyms
-        #expect(syn.guardedFenceIntroducerSynonyms == [", proceed:"])
-        #expect(syn.fallbackChainIntroducerSynonyms == ["try these in order:"])
-        #expect(syn.approvalToolSynonyms == ["signoff"])
+        #expect(syn.phrases(.guardedFenceIntroducer) == [", proceed:"])
+        #expect(syn.phrases(.fallbackChainIntroducer) == ["try these in order:"])
+        #expect(syn.phrases(.approvalTool) == ["signoff"])
     }
 
     @Test("gradable adjectives parse property + direction; invalid rows are dropped")
@@ -217,12 +230,12 @@ struct MerConfigLanguageSectionTests {
           broken = sideways
           onetoken = descending
         """).languageSynonyms
-        #expect(syn.gradableAdjectiveSynonyms["fresh"] ==
-                GradableAdjectiveMetadata(property: "updatedat", ascending: true))
-        #expect(syn.gradableAdjectiveSynonyms["stale"] ==
-                GradableAdjectiveMetadata(property: "updatedat", ascending: false))
-        #expect(syn.gradableAdjectiveSynonyms["broken"] == nil)
-        #expect(syn.gradableAdjectiveSynonyms["onetoken"] == nil)
+        #expect(syn.list(.gradableAdjective).contains(.gradable(
+            "fresh", GradableAdjectiveMetadata(property: "updatedat", ascending: true))))
+        #expect(syn.list(.gradableAdjective).contains(.gradable(
+            "stale", GradableAdjectiveMetadata(property: "updatedat", ascending: false))))
+        #expect(!syn.phrases(.gradableAdjective).contains("broken"))
+        #expect(!syn.phrases(.gradableAdjective).contains("onetoken"))
     }
 
     @Test("parseGradableDirection and resolveComparisonOp edge branches")
@@ -236,6 +249,10 @@ struct MerConfigLanguageSectionTests {
         #expect(parser.resolveComparisonOp("equals") == .equal)
         #expect(parser.stripLeadingCopula("is less than") == "less than")
         #expect(parser.stripLeadingCopula("less than") == "less than")
+        // Only keyed shapes reach the keyed-line parser; a bare-phrase block
+        // keeps its line (including a `key = value` one) as a whole phrase.
+        #expect(parser.parseKeyedEntry("x = y", shape: .phraseList) == nil)
+        #expect(parser.parseKeyedEntry("x = y", shape: .phraseListVerbatim) == nil)
     }
 
     @Test("trace-auxiliary synonyms are captured as bare phrases, like assertion synonyms")
@@ -246,7 +263,7 @@ struct MerConfigLanguageSectionTests {
           shall
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.traceAuxiliarySynonyms.contains("shall"))
+        #expect(syn.phrases(.traceAuxiliary).contains("shall"))
     }
 
     @Test("trace outcome synonyms are captured keyed by their mapped value")
@@ -258,8 +275,62 @@ struct MerConfigLanguageSectionTests {
           finished = succeeded
         """
         let syn = try parse(src).languageSynonyms
-        #expect(syn.traceOutcomeSynonyms["crashed"] == "failed")
-        #expect(syn.traceOutcomeSynonyms["finished"] == "succeeded")
+        #expect(syn.list(.traceOutcome).contains(.mapping("crashed", "failed")))
+        #expect(syn.list(.traceOutcome).contains(.mapping("finished", "succeeded")))
+    }
+
+    @Test("a repeated key in a dictionary-shaped block keeps the last value")
+    func repeatedKeyKeepsLastValue() throws {
+        // The lexicon fields behind these blocks are dictionaries, so a repeated
+        // key must replace its earlier entry rather than append a second one.
+        let syn = try parse("""
+        === language ===
+        Duration synonyms:
+          tick = second
+          tick = minute
+        Superlative synonyms:
+          best = largest
+          best = smallest
+        Irregular-plural mapping:
+          maus = mäuse
+          maus = mäuslein
+        """).languageSynonyms
+        #expect(syn.list(.duration) == [.duration("tick", .minute)])
+        #expect(syn.list(.superlative) == [.superlative("best", .smallest)])
+        #expect(syn.list(.irregularPlural) == [.mapping("maus", "mäuslein")])
+    }
+
+    @Test("an unrecognized keyed value is dropped, not stored")
+    func unrecognizedKeyedValuesDropped() throws {
+        let syn = try parse("""
+        === language ===
+        Superlative synonyms:
+          freshest = freshest
+          eldest = oldest
+        Gradable adjectives:
+          fresh = updatedAt sideways
+          stale = updatedAt ascending
+        """).languageSynonyms
+        #expect(syn.list(.superlative) == [.superlative("eldest", .oldest)])
+        #expect(syn.list(.gradableAdjective) == [.gradable(
+            "stale", GradableAdjectiveMetadata(property: "updatedat", ascending: true))])
+    }
+
+    @Test("a punctuation-only line carries no phrase")
+    func punctuationOnlyLineIgnored() throws {
+        // `SentenceBreaker` strips the trailing period, so such a line reaches
+        // the block with an empty statement.
+        let syn = try parse("""
+        === language ===
+        Assertion synonyms:
+          .
+          verify
+        Wildcard synonyms:
+          .
+          ANY
+        """).languageSynonyms
+        #expect(syn.phrases(.assertion) == ["verify"])
+        #expect(syn.phrases(.wildcard) == ["ANY"])
     }
 }
 
@@ -584,10 +655,10 @@ struct MerConfigParserDeclarationCoverageTests {
         Comparison synonyms:
           sameas = equal
         """)
-        guard let pair = cfg.languageSynonyms.comparisonSynonyms.first(where: { $0.0 == "sameas" }) else {
+        guard let entry = cfg.languageSynonyms.list(.comparison).first(where: { $0.phrase == "sameas" }) else {
             Issue.record("expected comparison synonym"); return
         }
-        #expect(pair.1 == .equal)
+        #expect(entry == .comparison("sameas", .equal))
     }
 
     @Test("language keyed lines outside a synonym header are ignored")
@@ -598,8 +669,8 @@ struct MerConfigParserDeclarationCoverageTests {
         Assertion synonyms:
           verify
         """)
-        #expect(cfg.languageSynonyms.assertionSynonyms.contains("verify"))
-        #expect(cfg.languageSynonyms.comparisonSynonyms.isEmpty)
+        #expect(cfg.languageSynonyms.phrases(.assertion).contains("verify"))
+        #expect(cfg.languageSynonyms.list(.comparison).isEmpty)
     }
 
     @Test("malformed tool signatures throw when no batch diagnostics engine is set")

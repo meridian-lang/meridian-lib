@@ -77,7 +77,8 @@ let out = try Compiler(options: opts).compile(
   `Productions/`), `Symbols/`, `Lowering/ASTToIR.swift`, `Codegen/`
   (`SwiftEmitter.swift`, `ManifestEmitter.swift`, `DomainEmitter`),
   `Diagnostics/` (`ParserTrace.swift`, diagnostic engine), `Language/`
-  (`EnglishLexicon.swift`, `FixedGrammar.swift`), `Rulebook/`, `Skill/`,
+  (`EnglishLexicon.swift`, `LexiconCategory.swift` + `LexiconRegistry.swift`,
+  `FixedGrammar.swift`), `Rulebook/`, `Skill/`,
   `Migration/` (`SkillMigrator`, `SkillDeviation`, `Difflib`).
 - `Sources/MeridianCLI/` — thin `@main` shell. `Sources/MeridianCLIKit/` —
   testable command library (`Commands/`, one file per subcommand).
@@ -185,25 +186,28 @@ Concretely, when you reach for a literal like `["make sure ", "ensure "]` or
 `if lower.hasPrefix("every ")` in a `Parser/` or `Lowering/` file, **stop** and
 instead:
 
-1. Add (or reuse) a field on `EnglishLexicon` (e.g. `assertionMarkers`), with a
-   sensible default in `.default`.
-2. Thread it through `EnglishLexicon.init` and `merging(...)`.
-3. If it should be author-extensible, add a matching `LanguageSynonyms` field,
-   parse it in `MerConfigParser.parseLanguageSection` (a new `=== language ===`
-   sub-block), concatenate it in `MerConfigFile.merging`, and forward it from
-   both `Compiler.compile` overloads into `lexicon.merging(...)`.
-4. Read it via the threaded `lexicon` parameter at the call site.
+1. Add (or reuse) a field on `EnglishLexicon`, with a sensible default in
+   `.default`, and — if it should be author-extensible — one `LexiconCategory`
+   case plus one `LexiconRegistry` spec row
+   (`Sources/MeridianCore/Language/LexiconRegistry.swift`): the header
+   spellings, the shape of its `=== language ===` lines, and the rule that
+   merges its entries into that field. `parseLanguageSection`,
+   `MerConfigFile.merging` and `EnglishLexicon.merging(from:)` all read that
+   table, so nothing else needs an edit.
+2. Read it via the threaded `lexicon` parameter at the call site.
 
 **A Swift default on the lexicon is necessary but not sufficient — "lexicon
-default ≠ extensible."** Step 1 alone just moves a hardcoded list from a
+default ≠ extensible."** A field alone just moves a hardcoded list from a
 `Parser`/`Lowering` file into `EnglishLexicon.swift`; it is still hardcoded
-from an author's point of view until steps 2–4 wire it through the full
-`=== language ===` recipe end-to-end. Treat a category as done only once a
-`.merconfig` can add to it without a Meridian recompile. `inferenceCueWords`,
-`normativeCueWords`, and `referenceHeadingWords` (the `SkillMigrator`
-classification vocabulary — see pitfall #15 and `docs/13_SKILL_MD_PORTING.md`)
-are current reference examples of the complete recipe, alongside
-`assertionMarkers`.
+from an author's point of view until a registry row wires it through the full
+`=== language ===` recipe. Treat a category as done only once a `.merconfig`
+can add to it without a Meridian recompile —
+`Tests/MeridianCoreTests/LexiconRegistryParityTests.swift` enforces that parity
+for every category and every accepted header spelling.
+`inferenceCueWords`, `normativeCueWords`, and `referenceHeadingWords` (the
+`SkillMigrator` classification vocabulary — see pitfall #15 and
+`docs/13_SKILL_MD_PORTING.md`) are reference examples of the complete recipe,
+alongside `assertionMarkers`.
 
 **Where the line is.** Two categories, two rules:
 

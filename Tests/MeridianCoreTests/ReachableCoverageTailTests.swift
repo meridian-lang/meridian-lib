@@ -104,41 +104,38 @@ struct ReachableCoverageTailTests {
 
     @Test("EnglishLexicon.merging threads every synonym family")
     func lexiconMerging() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [(" exceeds ", .greaterThan)],
-            durationSynonyms: ["fortnight": .week],
-            assertionSynonyms: ["verify", "guarantee that"],
-            timestampProperty: "modifiedAt",
-            emptySynonyms: ["is blank"],
-            filledSynonyms: ["is set"],
-            pastWindowSynonyms: ["over the past"],
-            futureWindowSynonyms: ["over the coming"],
-            timestampAliasSynonyms: ["touched at"],
-            aggregateSynonyms: [("the tally of", .count)],
-            superlativeSynonyms: ["freshest": .newest],
-            sortBySynonyms: ["ordered by"],
-            ascendingSynonyms: ["rising"],
-            descendingSynonyms: ["falling"],
-            possessiveSynonyms: ["thy"],
-            anaphoraSynonyms: ["said"],
-            conditionHeaderSynonyms: ["when"],
-            actionHeaderSynonyms: ["then do"],
-            wildcardSynonyms: ["whatever"],
-            shellFenceSynonyms: ["fish"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .comparison: [.comparison(" exceeds ", .greaterThan)],
+            .duration: [.duration("fortnight", .week)],
+            .assertion: [.phrase("verify"), .phrase("guarantee that")],
+            .empty: [.phrase("is blank")],
+            .filled: [.phrase("is set")],
+            .pastWindow: [.phrase("over the past")],
+            .futureWindow: [.phrase("over the coming")],
+            .timestampAlias: [.phrase("touched at")],
+            .aggregate: [.aggregate("the tally of", .count)],
+            .superlative: [.superlative("freshest", .newest)],
+            .sortBy: [.phrase("ordered by")],
+            .ascending: [.phrase("rising")],
+            .descending: [.phrase("falling")],
+            .possessive: [.phrase("thy")],
+            .anaphora: [.phrase("said")],
+            .conditionHeader: [.phrase("when")],
+            .actionHeader: [.phrase("then do")],
+            .wildcard: [.phrase("whatever")],
+            .shellFence: [.phrase("fish")],
+        ], timestampProperty: "modifiedAt")
         // Author synonyms are prepended/unioned, so the family must reflect them.
         #expect(merged.timestampProperty == "modifiedAt")
         #expect(merged.assertionMarkers.contains("guarantee that"))
         #expect(merged.isShellFence("fish"))
         #expect(merged.durationUnits["fortnight"] == .week)
         #expect(merged.parseDuration("2 fortnight")?.1 == .week)
-        let withFence = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            guardedFenceIntroducerSynonyms: [", proceed:"],
-            fallbackChainIntroducerSynonyms: ["try these in order:"],
-            approvalToolSynonyms: ["signoff"]
-        )
+        let withFence = EnglishLexicon.default.merging(entries: [
+            .guardedFenceIntroducer: [.phrase(", proceed:")],
+            .fallbackChainIntroducer: [.phrase("try these in order:")],
+            .approvalTool: [.phrase("signoff")],
+        ])
         #expect(withFence.guardedFenceIntroducers.first == ", proceed:")
         #expect(withFence.fallbackChainIntroducers.first == "try these in order:")
         #expect(withFence.approvalToolIDSubstrings.contains("signoff"))

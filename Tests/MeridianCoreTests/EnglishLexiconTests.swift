@@ -86,10 +86,9 @@ struct DurationParsingTests {
     func pluralFallback() {
         // Custom lexicon defines only the singular form. The parser should
         // still accept the pluralised input (`fortnights → fortnight → week`).
-        let custom = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: ["fortnight": .week]
-        )
+        let custom = EnglishLexicon.default.merging(entries: [
+            .duration: [.duration("fortnight", .week)],
+        ])
         guard let (a, u) = custom.parseDuration("2 fortnights") else {
             Issue.record("Expected plural fallback to find 'fortnight' for '2 fortnights'")
             return
@@ -100,13 +99,11 @@ struct DurationParsingTests {
 
     @Test("merging lowercases and unions normative-cue, inference-cue, and reference-heading synonyms")
     func mergingUnionsCueAndReferenceHeadingWords() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            normativeCueSynonyms: ["Must Always"],
-            inferenceCueSynonyms: ["Exercise Judgment"],
-            referenceHeadingSynonyms: ["Background"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .normativeCue: [.phrase("Must Always")],
+            .inferenceCue: [.phrase("Exercise Judgment")],
+            .referenceHeading: [.phrase("Background")],
+        ])
         #expect(merged.normativeCueWords.contains("must always"))
         #expect(merged.inferenceCueWords.contains("exercise judgment"))
         #expect(merged.referenceHeadingWords.contains("background"))
@@ -350,11 +347,9 @@ struct LanguageSynonymTests {
 
     @Test("merging sorts assertion markers longest-first and de-dupes")
     func assertionMarkerMerge() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            assertionSynonyms: ["assert", "guarantee that"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .assertion: [.phrase("assert"), .phrase("guarantee that")],
+        ])
         // "guarantee that" (author) is retained; "assert" is de-duped (already a
         // default); ordering is longest-first.
         #expect(merged.assertionMarkers.first == "guarantee that")
@@ -510,11 +505,9 @@ struct EnglishLexiconEdgeCaseCoverageTests {
 
     @Test("merging maps a recognized trace outcome synonym and silently skips an unrecognized one")
     func mergingTraceOutcomeSynonyms() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            traceOutcomeSynonyms: ["crashed": "failed", "bogus": "not-a-real-outcome"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .traceOutcome: [.mapping("crashed", "failed"), .mapping("bogus", "not-a-real-outcome")],
+        ])
         #expect(merged.traceOutcomeVerbs["crashed"] == .failed)
         #expect(merged.traceOutcomeVerbs["bogus"] == nil)
         // Defaults are preserved alongside the merged synonym.
@@ -523,11 +516,9 @@ struct EnglishLexiconEdgeCaseCoverageTests {
 
     @Test("merging lowercases and unions trace-auxiliary synonyms")
     func mergingTraceAuxiliarySynonyms() {
-        let merged = EnglishLexicon.default.merging(
-            comparisonSynonyms: [],
-            durationSynonyms: [:],
-            traceAuxiliarySynonyms: ["Shall"]
-        )
+        let merged = EnglishLexicon.default.merging(entries: [
+            .traceAuxiliary: [.phrase("Shall")],
+        ])
         #expect(merged.tracePerfectAuxiliaries.contains("shall"))
         #expect(merged.tracePerfectAuxiliaries.isSuperset(of: EnglishLexicon.default.tracePerfectAuxiliaries))
     }

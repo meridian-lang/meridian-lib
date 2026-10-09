@@ -69,13 +69,17 @@ Sources/MeridianCore/
 │       └── ConditionClassifier.swift ← checkable / dispatch-phrase / fuzzy
 │
 ├── AST/
-│   └── MeridianAST.swift           ← All AST node types (+ LanguageSynonyms)
+│   └── MeridianAST.swift           ← All AST node types
 │
 ├── Language/
 │   ├── EnglishLexicon.swift        ← Author-extensible surface vocabulary
 │   │                                  (articles, copulas, comparison/duration/
 │   │                                  assertion markers, emptiness, temporal,
 │   │                                  aggregates, superlatives, …) + .grammar
+│   ├── LexiconCategory.swift       ← The `=== language ===` categories +
+│   │                                  `LanguageSynonyms` entry table
+│   ├── LexiconRegistry.swift       ← One row per category: header spellings,
+│   │                                  line shape, lexicon merge rule
 │   ├── FixedGrammar.swift          ← Closed grammar skeleton (relativizers,
 │   │                                  prose/idiom introducers, relational
 │   │                                  markers) — centralized, not extensible

@@ -3,177 +3,6 @@ import MeridianRuntime
 
 // MARK: - MerConfig AST
 
-/// Language-surface synonyms loaded from a `=== language ===` section in a
-/// .merconfig file. Merged into the effective `EnglishLexicon` at compile time.
-public struct LanguageSynonyms: Sendable {
-    public let comparisonSynonyms: [(String, ComparisonOpAST)]
-    public let durationSynonyms: [String: TimeUnitAST]
-    /// Extra leading keywords that introduce an invariant/assertion statement
-    /// (`=== language ===` `Assertion synonyms:` block). Merged ahead of the
-    /// lexicon defaults (`make sure` / `ensure` / `assert`).
-    public let assertionSynonyms: [String]
-    /// Extra operational/normative cue words (`=== language ===`
-    /// `Normative-cue synonyms:` block) — see `EnglishLexicon.normativeCueWords`.
-    public let normativeCueSynonyms: [String]
-    /// Extra AI-inference cue words (`=== language ===` `Inference-cue
-    /// synonyms:` block) — see `EnglishLexicon.inferenceCueWords`.
-    public let inferenceCueSynonyms: [String]
-    /// Extra documentary heading/body words (`=== language ===`
-    /// `Reference-heading synonyms:` block) — see
-    /// `EnglishLexicon.referenceHeadingWords`.
-    public let referenceHeadingSynonyms: [String]
-    /// Extra vague condition hedges (`=== language ===` `Vague-hedge synonyms:`).
-    public let conditionVagueHedgeSynonyms: [String]
-    /// Extra effectful-judgment goal cues (`=== language ===`
-    /// `Effectful-judgment synonyms:`).
-    public let effectfulJudgmentCueSynonyms: [String]
-    /// Extra definite/indefinite articles (`=== language ===` `Article synonyms:`).
-    public let articleSynonyms: [String]
-    /// Extra parameter-slot articles (`=== language ===`
-    /// `Parameter-article synonyms:`).
-    public let parameterArticleSynonyms: [String]
-    /// Extra preposition stop-words (`=== language ===` `Preposition synonyms:`).
-    public let prepositionSynonyms: [String]
-    /// Extra copula connectors (`=== language ===` `Copula synonyms:`).
-    public let copulaSynonyms: [String]
-    /// Extra past-participle stop signals (`=== language ===` `Participle synonyms:`).
-    public let participleSynonyms: [String]
-    /// Extra tool-resolution stop-words (`=== language ===`
-    /// `Tool-stopword synonyms:`).
-    public let toolStopwordSynonyms: [String]
-    /// Irregular plural overrides (`=== language ===` `Irregular-plural mapping:`).
-    public let irregularPluralSynonyms: [String: String]
-    /// Documentary contract-guard body phrases (`=== language ===`
-    /// `Contract-reference synonyms:`) — see `EnglishLexicon.contractReferencePhrases`.
-    public let contractReferenceSynonyms: [String]
-    /// Optional override for the temporal-iteration timestamp property
-    /// (`=== language ===` `timestamp:` entry). `nil` keeps the lexicon default.
-    public let timestampProperty: String?
-    // 3B author-extensible category synonyms (each a `=== language ===` block).
-    public let emptySynonyms: [String]
-    public let filledSynonyms: [String]
-    public let pastWindowSynonyms: [String]
-    public let futureWindowSynonyms: [String]
-    public let timestampAliasSynonyms: [String]
-    public let aggregateSynonyms: [(String, AggregateKindAST)]
-    public let superlativeSynonyms: [String: SuperlativeDirection]
-    /// Measurable backing for checkable adjectives (`Gradable adjectives:` block).
-    public let gradableAdjectiveSynonyms: [String: GradableAdjectiveMetadata]
-    public let sortBySynonyms: [String]
-    public let ascendingSynonyms: [String]
-    public let descendingSynonyms: [String]
-    public let possessiveSynonyms: [String]
-    public let anaphoraSynonyms: [String]
-    public let conditionHeaderSynonyms: [String]
-    public let actionHeaderSynonyms: [String]
-    public let wildcardSynonyms: [String]
-    /// Outcome verb synonyms for trace event patterns (`foo = failed`).
-    public let traceOutcomeSynonyms: [String: String]
-    /// Extra perfect/passive auxiliary tokens a trace event-pattern subject may
-    /// carry ahead of its outcome verb (`=== language ===` `Trace-auxiliary
-    /// synonyms:`) — see `EnglishLexicon.tracePerfectAuxiliaries`.
-    public let traceAuxiliarySynonyms: [String]
-    /// Extra fence info-string tags treated as shell-command blocks
-    /// (`=== language ===` `Shell fence synonyms:` — e.g. `fish`, `pwsh`, `nu`).
-    public let shellFenceSynonyms: [String]
-    /// Non-shell fence info-string tag → tool ID (`=== language ===` `Fence
-    /// tool mapping:` — e.g. `python = interpreter.run`). Lets a non-shell
-    /// skill repo lower a fenced code block deterministically to a configured
-    /// tool instead of falling to inert or AI dispatch. See
-    /// `EnglishLexicon.fenceToolMapping`.
-    public let fenceToolMapping: [String: String]
-    /// Extra guarded-fence trailing markers (`=== language ===`
-    /// `Guarded-fence synonyms:`).
-    public let guardedFenceIntroducerSynonyms: [String]
-    /// Extra fallback-chain lead-ins (`=== language ===`
-    /// `Fallback-chain synonyms:`).
-    public let fallbackChainIntroducerSynonyms: [String]
-    /// Extra approval-tool ID substrings (`=== language ===`
-    /// `Approval-tool synonyms:`).
-    public let approvalToolSynonyms: [String]
-    public init(comparisonSynonyms: [(String, ComparisonOpAST)] = [],
-                durationSynonyms: [String: TimeUnitAST] = [:],
-                assertionSynonyms: [String] = [],
-                normativeCueSynonyms: [String] = [],
-                inferenceCueSynonyms: [String] = [],
-                referenceHeadingSynonyms: [String] = [],
-                conditionVagueHedgeSynonyms: [String] = [],
-                effectfulJudgmentCueSynonyms: [String] = [],
-                articleSynonyms: [String] = [],
-                parameterArticleSynonyms: [String] = [],
-                prepositionSynonyms: [String] = [],
-                copulaSynonyms: [String] = [],
-                participleSynonyms: [String] = [],
-                toolStopwordSynonyms: [String] = [],
-                irregularPluralSynonyms: [String: String] = [:],
-                contractReferenceSynonyms: [String] = [],
-                timestampProperty: String? = nil,
-                emptySynonyms: [String] = [],
-                filledSynonyms: [String] = [],
-                pastWindowSynonyms: [String] = [],
-                futureWindowSynonyms: [String] = [],
-                timestampAliasSynonyms: [String] = [],
-                aggregateSynonyms: [(String, AggregateKindAST)] = [],
-                superlativeSynonyms: [String: SuperlativeDirection] = [:],
-                gradableAdjectiveSynonyms: [String: GradableAdjectiveMetadata] = [:],
-                sortBySynonyms: [String] = [],
-                ascendingSynonyms: [String] = [],
-                descendingSynonyms: [String] = [],
-                possessiveSynonyms: [String] = [],
-                anaphoraSynonyms: [String] = [],
-                conditionHeaderSynonyms: [String] = [],
-                actionHeaderSynonyms: [String] = [],
-                wildcardSynonyms: [String] = [],
-                traceOutcomeSynonyms: [String: String] = [:],
-                traceAuxiliarySynonyms: [String] = [],
-                shellFenceSynonyms: [String] = [],
-                fenceToolMapping: [String: String] = [:],
-                guardedFenceIntroducerSynonyms: [String] = [],
-                fallbackChainIntroducerSynonyms: [String] = [],
-                approvalToolSynonyms: [String] = []) {
-        self.comparisonSynonyms = comparisonSynonyms
-        self.durationSynonyms = durationSynonyms
-        self.assertionSynonyms = assertionSynonyms
-        self.normativeCueSynonyms = normativeCueSynonyms
-        self.inferenceCueSynonyms = inferenceCueSynonyms
-        self.referenceHeadingSynonyms = referenceHeadingSynonyms
-        self.conditionVagueHedgeSynonyms = conditionVagueHedgeSynonyms
-        self.effectfulJudgmentCueSynonyms = effectfulJudgmentCueSynonyms
-        self.articleSynonyms = articleSynonyms
-        self.parameterArticleSynonyms = parameterArticleSynonyms
-        self.prepositionSynonyms = prepositionSynonyms
-        self.copulaSynonyms = copulaSynonyms
-        self.participleSynonyms = participleSynonyms
-        self.toolStopwordSynonyms = toolStopwordSynonyms
-        self.irregularPluralSynonyms = irregularPluralSynonyms
-        self.contractReferenceSynonyms = contractReferenceSynonyms
-        self.timestampProperty = timestampProperty
-        self.emptySynonyms = emptySynonyms
-        self.filledSynonyms = filledSynonyms
-        self.pastWindowSynonyms = pastWindowSynonyms
-        self.futureWindowSynonyms = futureWindowSynonyms
-        self.timestampAliasSynonyms = timestampAliasSynonyms
-        self.aggregateSynonyms = aggregateSynonyms
-        self.superlativeSynonyms = superlativeSynonyms
-        self.gradableAdjectiveSynonyms = gradableAdjectiveSynonyms
-        self.sortBySynonyms = sortBySynonyms
-        self.ascendingSynonyms = ascendingSynonyms
-        self.descendingSynonyms = descendingSynonyms
-        self.possessiveSynonyms = possessiveSynonyms
-        self.anaphoraSynonyms = anaphoraSynonyms
-        self.conditionHeaderSynonyms = conditionHeaderSynonyms
-        self.actionHeaderSynonyms = actionHeaderSynonyms
-        self.wildcardSynonyms = wildcardSynonyms
-        self.traceOutcomeSynonyms = traceOutcomeSynonyms
-        self.traceAuxiliarySynonyms = traceAuxiliarySynonyms
-        self.shellFenceSynonyms = shellFenceSynonyms
-        self.fenceToolMapping = fenceToolMapping
-        self.guardedFenceIntroducerSynonyms = guardedFenceIntroducerSynonyms
-        self.fallbackChainIntroducerSynonyms = fallbackChainIntroducerSynonyms
-        self.approvalToolSynonyms = approvalToolSynonyms
-    }
-}
-
 public struct TraceConfigValue<T: Sendable & Equatable>: Sendable, Equatable {
     public let value: T
     public let file: String
@@ -269,46 +98,8 @@ public struct MerConfigFile: Sendable {
     /// colliding kind / phrase / tool names with a sourced error.
     public func merging(_ other: MerConfigFile) throws -> MerConfigFile {
         let mergedSynonyms = LanguageSynonyms(
-            comparisonSynonyms: languageSynonyms.comparisonSynonyms + other.languageSynonyms.comparisonSynonyms,
-            durationSynonyms: languageSynonyms.durationSynonyms.merging(other.languageSynonyms.durationSynonyms) { _, new in new },
-            assertionSynonyms: languageSynonyms.assertionSynonyms + other.languageSynonyms.assertionSynonyms,
-            normativeCueSynonyms: languageSynonyms.normativeCueSynonyms + other.languageSynonyms.normativeCueSynonyms,
-            inferenceCueSynonyms: languageSynonyms.inferenceCueSynonyms + other.languageSynonyms.inferenceCueSynonyms,
-            referenceHeadingSynonyms: languageSynonyms.referenceHeadingSynonyms + other.languageSynonyms.referenceHeadingSynonyms,
-            conditionVagueHedgeSynonyms: languageSynonyms.conditionVagueHedgeSynonyms + other.languageSynonyms.conditionVagueHedgeSynonyms,
-            effectfulJudgmentCueSynonyms: languageSynonyms.effectfulJudgmentCueSynonyms + other.languageSynonyms.effectfulJudgmentCueSynonyms,
-            articleSynonyms: languageSynonyms.articleSynonyms + other.languageSynonyms.articleSynonyms,
-            parameterArticleSynonyms: languageSynonyms.parameterArticleSynonyms + other.languageSynonyms.parameterArticleSynonyms,
-            prepositionSynonyms: languageSynonyms.prepositionSynonyms + other.languageSynonyms.prepositionSynonyms,
-            copulaSynonyms: languageSynonyms.copulaSynonyms + other.languageSynonyms.copulaSynonyms,
-            participleSynonyms: languageSynonyms.participleSynonyms + other.languageSynonyms.participleSynonyms,
-            toolStopwordSynonyms: languageSynonyms.toolStopwordSynonyms + other.languageSynonyms.toolStopwordSynonyms,
-            irregularPluralSynonyms: languageSynonyms.irregularPluralSynonyms.merging(other.languageSynonyms.irregularPluralSynonyms) { _, new in new },
-            contractReferenceSynonyms: languageSynonyms.contractReferenceSynonyms + other.languageSynonyms.contractReferenceSynonyms,
-            timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty,
-            emptySynonyms: languageSynonyms.emptySynonyms + other.languageSynonyms.emptySynonyms,
-            filledSynonyms: languageSynonyms.filledSynonyms + other.languageSynonyms.filledSynonyms,
-            pastWindowSynonyms: languageSynonyms.pastWindowSynonyms + other.languageSynonyms.pastWindowSynonyms,
-            futureWindowSynonyms: languageSynonyms.futureWindowSynonyms + other.languageSynonyms.futureWindowSynonyms,
-            timestampAliasSynonyms: languageSynonyms.timestampAliasSynonyms + other.languageSynonyms.timestampAliasSynonyms,
-            aggregateSynonyms: languageSynonyms.aggregateSynonyms + other.languageSynonyms.aggregateSynonyms,
-            superlativeSynonyms: languageSynonyms.superlativeSynonyms.merging(other.languageSynonyms.superlativeSynonyms) { _, new in new },
-            gradableAdjectiveSynonyms: languageSynonyms.gradableAdjectiveSynonyms.merging(other.languageSynonyms.gradableAdjectiveSynonyms) { _, new in new },
-            sortBySynonyms: languageSynonyms.sortBySynonyms + other.languageSynonyms.sortBySynonyms,
-            ascendingSynonyms: languageSynonyms.ascendingSynonyms + other.languageSynonyms.ascendingSynonyms,
-            descendingSynonyms: languageSynonyms.descendingSynonyms + other.languageSynonyms.descendingSynonyms,
-            possessiveSynonyms: languageSynonyms.possessiveSynonyms + other.languageSynonyms.possessiveSynonyms,
-            anaphoraSynonyms: languageSynonyms.anaphoraSynonyms + other.languageSynonyms.anaphoraSynonyms,
-            conditionHeaderSynonyms: languageSynonyms.conditionHeaderSynonyms + other.languageSynonyms.conditionHeaderSynonyms,
-            actionHeaderSynonyms: languageSynonyms.actionHeaderSynonyms + other.languageSynonyms.actionHeaderSynonyms,
-            wildcardSynonyms: languageSynonyms.wildcardSynonyms + other.languageSynonyms.wildcardSynonyms,
-            traceOutcomeSynonyms: languageSynonyms.traceOutcomeSynonyms.merging(other.languageSynonyms.traceOutcomeSynonyms) { _, new in new },
-            traceAuxiliarySynonyms: languageSynonyms.traceAuxiliarySynonyms + other.languageSynonyms.traceAuxiliarySynonyms,
-            shellFenceSynonyms: languageSynonyms.shellFenceSynonyms + other.languageSynonyms.shellFenceSynonyms,
-            fenceToolMapping: languageSynonyms.fenceToolMapping.merging(other.languageSynonyms.fenceToolMapping) { _, new in new },
-            guardedFenceIntroducerSynonyms: languageSynonyms.guardedFenceIntroducerSynonyms + other.languageSynonyms.guardedFenceIntroducerSynonyms,
-            fallbackChainIntroducerSynonyms: languageSynonyms.fallbackChainIntroducerSynonyms + other.languageSynonyms.fallbackChainIntroducerSynonyms,
-            approvalToolSynonyms: languageSynonyms.approvalToolSynonyms + other.languageSynonyms.approvalToolSynonyms
+            entries: Self.mergedSynonymEntries(languageSynonyms.entries, other.languageSynonyms.entries),
+            timestampProperty: other.languageSynonyms.timestampProperty ?? languageSynonyms.timestampProperty
         )
         return MerConfigFile(
             vocabulary: vocabulary + other.vocabulary,
@@ -319,6 +110,29 @@ public struct MerConfigFile: Sendable {
             traceConfiguration: try traceConfiguration.merging(other.traceConfiguration),
             imports: imports + other.imports
         )
+    }
+
+    /// Concatenate two files' synonym entries per category. List categories
+    /// concatenate (order preserved, duplicates kept — a duplicate marker is
+    /// harmless); keyed categories keep dictionary semantics, so a key the
+    /// right-hand file declares overrides the left-hand one.
+    private static func mergedSynonymEntries(
+        _ left: [LexiconCategory: [LexiconEntry]],
+        _ right: [LexiconCategory: [LexiconEntry]]
+    ) -> [LexiconCategory: [LexiconEntry]] {
+        var merged: [LexiconCategory: [LexiconEntry]] = [:]
+        for spec in LexiconRegistry.allSpecs {
+            let lhs = left[spec.category] ?? []
+            let rhs = right[spec.category] ?? []
+            guard !lhs.isEmpty || !rhs.isEmpty else { continue }
+            guard spec.shape.replacesDuplicateKeys else {
+                merged[spec.category] = lhs + rhs
+                continue
+            }
+            let overridden = Set(rhs.map(\.phrase))
+            merged[spec.category] = lhs.filter { !overridden.contains($0.phrase) } + rhs
+        }
+        return merged
     }
 
     private func mergeTools(with otherTools: [ToolDeclaration]) throws -> [ToolDeclaration] {

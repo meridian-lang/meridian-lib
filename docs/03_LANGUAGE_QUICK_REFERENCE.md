@@ -750,6 +750,16 @@ mapping:` (`singular = plural` pairs), `Contract-reference synonyms:`
 `Trace-auxiliary synonyms:` (extra outcome verbs after a trace subject, e.g.
 `occurred`).
 
+Every sub-block is one row in `LexiconRegistry`
+(`Sources/MeridianCore/Language/LexiconRegistry.swift`) — its accepted header
+spellings, the shape of its lines, and the rule that merges its entries into the
+`EnglishLexicon` field it names. `MerConfigParser.parseLanguageSection`,
+`MerConfigFile.merging` and `EnglishLexicon.merging(from:)` all read that one
+table, so adding a category is a `LexiconCategory` case plus a spec row, nothing
+else. `Tests/MeridianCoreTests/LexiconRegistryParityTests.swift` checks, for
+every category and every accepted header spelling, that a block lands in its own
+lexicon field and leaves every other category untouched.
+
 Three cleanup synonym blocks tune structural sugar introduced in the quality
 closeout (same merge recipe as every other `=== language ===` category):
 
@@ -782,10 +792,11 @@ Three more `=== language ===` sub-blocks tune how `meridian migrate-skill`
 classifies a non-lowerable line or block into judgment / reference / hard
 error (see [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the full
 policy). Like every other category above, a Swift default is not sufficient —
-these are wired through the complete `EnglishLexicon` → `LanguageSynonyms` →
-`MerConfigParser.parseLanguageSection` → `MerConfigFile`/`Compiler.compile`
-recipe (AGENTS.md §3), so a corpus tunes classification entirely through its
-own `.merconfig`, never a Meridian recompile:
+these are wired through the complete `LexiconCategory` registry recipe
+(`LexiconRegistry` spec row → `MerConfigParser.parseLanguageSection` →
+`LanguageSynonyms.entries` → `EnglishLexicon.merging(from:)` →
+`Compiler.compile`, AGENTS.md §3), so a corpus tunes classification entirely
+through its own `.merconfig`, never a Meridian recompile:
 
 ```
 === language ===

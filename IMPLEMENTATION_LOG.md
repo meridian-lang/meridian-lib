@@ -3340,3 +3340,92 @@ committed input uses that form.
 `git diff --stat corpora examples sample-gbrain` **empty** (byte-identical
 outputs); coverage gate green with **no floor re-basing** (the two files whose
 covered code moved out regained coverage via the new tests). Net: +148/−410.
+
+## 2026-10-09 — Simplification Phase 5c: one table-driven lexicon registry
+
+**Design.** `=== language ===` had five parallel hand-written lists for the same
+40 categories (a `LanguageSynonyms` field, a `MerConfigFile.merging` line, a
+parser local + `Mode` case + header row + switch arm, a `merging(...)` parameter
+and field assignment). Now there is one:
+
+- `Language/LexiconCategory.swift` (70 lines, new): `LexiconCategory` (39 cases),
+  `LexiconEntry` (phrase / comparison / duration / aggregate / superlative /
+  gradable / mapping) and `LanguageSynonyms` moved out of `MeridianAST.swift`
+  (174 lines deleted there) as `entries: [LexiconCategory: [LexiconEntry]]` +
+  the `timestampProperty` scalar.
+- `Language/LexiconRegistry.swift` (265 lines, new): 39 spec rows
+  (`LexiconCategorySpec`: header spellings, `ValueShape`, merge closure) holding
+  the old 59-row header table and each old `merging(...)` field assignment,
+  ported verbatim (prepend / union / spaced-marker / possessive / sorted-dedupe /
+  dictionary-override / temporal-window).
+- `MerConfigParser+Language.swift` 317 → 164 lines: the header table, `Mode`
+  enum, 40 locals and the per-mode switch became one table walk plus
+  `parseKeyedEntry` / `record` helpers. `wildcard` still stores the raw token,
+  `fenceTool` still keeps the value's case, `duration` still resolves through
+  `lexicon.durationUnits`, `timestamp = <prop>` still has its own rule.
+- `MerConfigFile.merging` now concatenates `entries` per category (keyed
+  categories keep dictionary override semantics via `ValueShape`).
+- `EnglishLexicon.swift` 988 → 821 lines: the 40-parameter `merging(...)` is
+  gone; `merging(from:)` walks the registry and `merging(entries:)` is the
+  hand-built-table convenience. The 41 stored fields became `internal(set) var`
+  so the registry closures can write them (public API stays read-only); no merge
+  rule was changed.
+- `LexiconRegistryParityTests.swift` (515 lines, 7 tests): registry integrity
+  (one row per case, header spellings re-derived from the header text), a
+  per-category × per-header isolation matrix, prepend-order pins, a
+  mismatched-entry robustness test, and a scan of all 32 parseable
+  `=== language ===` fixtures on disk and inline in the test sources that
+  asserts each merges into exactly the categories it declares and nowhere else.
+  Mutation-checked: wiring the `sortBy` row to `ascendingMarkers` fails it.
+
+**Decisions worth noting.** (1) The registry applies `futureWindow` before
+`pastWindow` — the only cross-category pair — so both prepends compose to the
+old `past + future + defaults` order; pinned by a test. (2) `MerConfigFile`'s
+keyed-category merge drops a left-hand entry whose key the right-hand file also
+declares (dictionary semantics) instead of concatenating duplicates.
+(3) `parseKeyedEntry` is internal, not private, so the "phrase-list shapes never
+reach the keyed parser" branch is covered directly, matching how
+`parseGradableDirection` / `resolveComparisonOp` are already tested.
+
+**Validation.** `swift build --build-tests` clean; fast suite 2752 tests / 351
+suites, 0 failures (one environment flake in `ToolRegistryCoverageTests`'s
+subprocess-spawn test — passes in isolation and on the re-run);
+`git diff --stat corpora examples sample-gbrain` **empty**;
+`swift scripts/coverage.swift --gate` green with **no floor re-basing**
+(`LexiconCategory.swift` and `LexiconRegistry.swift` at 100%, as is
+`MerConfigParser+Language.swift`; `MeridianAST.swift` 88.00 → 94.97%,
+`EnglishLexicon.swift` 92.89 → 95.36%); `--filter GeneratedSwiftTypecheckSlowTests`
+3 tests pass. Net: +508/−903 across 15 tracked files, plus the three new ones.
+
+## 2026-10-09 — Simplification Phase 5c: table-driven lexicon registry
+
+The `=== language ===` surface's 39 synonym categories were maintained as five
+parallel lists (`LanguageSynonyms` fields, `MerConfigFile.merging`,
+`parseLanguageSection`'s locals + `Mode` enum + 60-row header table,
+`EnglishLexicon.merging(…40 params…)`, and the lexicon's own fields). They are
+now one registry: `LexiconCategory` (39 cases), `LexiconEntry`
+(phrase / comparison / duration / aggregate / superlative / gradable /
+mapping) and `LexiconRegistry.allSpecs` (39 rows, 59 header spellings moved
+verbatim, per-category `ValueShape` and a `merge` closure that is a straight
+port of the old per-field rule). `EnglishLexicon.merging(from:)` iterates
+`allCases`; the 40-parameter `merging(...)` and `LanguageSynonyms`' fields are
+gone. Adding a category is now one case + one spec row.
+
+Sizes: `EnglishLexicon.swift` 988 → 821, `MerConfigParser+Language.swift`
+317 → 164, `MeridianAST.swift` 1605 → 1419, new registry 335 lines;
+net +508/−903. `LexiconRegistryParityTests` (7 tests) asserts, per category,
+that every fixture's merged lexicon holds exactly the declared entries (plus a
+per-category × per-header isolation matrix and the temporal-window prepend
+order); it is mutation-checked (mis-wiring a row fails it).
+
+Notable ports: `wildcard` keeps its verbatim (non-lowercased) statement,
+`fenceTool` keeps the value's case, keyed categories keep today's
+dictionary-override semantics in `MerConfigFile.merging`, and the
+`pastWindow`/`futureWindow` rows are ordered so their prepends compose to the
+old `past + future + defaults` order. `EnglishLexicon`'s stored fields became
+`public internal(set) var` (public API unchanged) so merge closures can write
+them. `AGENTS.md`'s lexicon recipe is now 2 steps; `docs/03` updated.
+
+**Validation:** build clean; fast suite 2752 tests / 351 suites; corpus/example
+diff empty; coverage gate green with **no floor re-basing** (MeridianAST
+88.00 → 94.97%, EnglishLexicon 92.89 → 95.36%, new files 100%).

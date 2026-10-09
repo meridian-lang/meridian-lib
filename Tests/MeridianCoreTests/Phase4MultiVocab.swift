@@ -131,24 +131,24 @@ struct Phase4MultiVocab {
         }
     }
 
-    @Test("merging LanguageSynonyms dictionaries prefers the other side on key collision")
+    @Test("merging LanguageSynonyms entries prefers the other side on key collision")
     func languageSynonymDictMergeConflictsPreferOther() throws {
-        let base = MerConfigFile(languageSynonyms: LanguageSynonyms(
-            durationSynonyms: ["tick": .second],
-            superlativeSynonyms: ["biggest": .largest],
-            fenceToolMapping: ["python": "python.run"]
-        ))
-        let overlay = MerConfigFile(languageSynonyms: LanguageSynonyms(
-            durationSynonyms: ["tick": .minute],
-            superlativeSynonyms: ["biggest": .smallest],
-            fenceToolMapping: ["python": "interpreter.run"]
-        ))
+        let base = MerConfigFile(languageSynonyms: LanguageSynonyms(entries: [
+            .duration: [.duration("tick", .second)],
+            .superlative: [.superlative("biggest", .largest)],
+            .fenceTool: [.mapping("python", "python.run")],
+        ]))
+        let overlay = MerConfigFile(languageSynonyms: LanguageSynonyms(entries: [
+            .duration: [.duration("tick", .minute)],
+            .superlative: [.superlative("biggest", .smallest)],
+            .fenceTool: [.mapping("python", "interpreter.run")],
+        ]))
 
         let merged = try base.merging(overlay)
 
-        #expect(merged.languageSynonyms.durationSynonyms["tick"] == .minute)
-        #expect(merged.languageSynonyms.superlativeSynonyms["biggest"] == .smallest)
-        #expect(merged.languageSynonyms.fenceToolMapping["python"] == "interpreter.run")
+        #expect(merged.languageSynonyms.entries[.duration] == [.duration("tick", .minute)])
+        #expect(merged.languageSynonyms.entries[.superlative] == [.superlative("biggest", .smallest)])
+        #expect(merged.languageSynonyms.entries[.fenceTool] == [.mapping("python", "interpreter.run")])
     }
 
     @Test("duplicate vocabulary name (same logical import) is rejected")

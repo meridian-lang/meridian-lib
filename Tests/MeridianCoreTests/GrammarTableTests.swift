@@ -53,13 +53,12 @@ struct GrammarTableTests {
 
     @Test("anchors are threaded from custom lexicon data")
     func customLexiconAnchors() {
-        let lexicon = EnglishLexicon.default.merging(
-            comparisonSynonyms: [("dominates", .greaterThan)],
-            durationSynonyms: [:],
-            aggregateSynonyms: [("bundle of ", .list)],
-            superlativeSynonyms: ["freshest": .newest],
-            sortBySynonyms: ["ranked by"]
-        )
+        let lexicon = EnglishLexicon.default.merging(entries: [
+            .comparison: [.comparison("dominates", .greaterThan)],
+            .aggregate: [.aggregate("bundle of ", .list)],
+            .superlative: [.superlative("freshest", .newest)],
+            .sortBy: [.phrase("ranked by")],
+        ])
         let table = PegexSurfaceGrammar(lexicon: lexicon).table
 
         #expect(table.production(named: "comparison")?.anchors.contains("dominates") == true)

@@ -83,10 +83,9 @@ struct ProductionGrammarBranchCoverageTests {
         #expect(p.parse("nowish").traceDescription(detail: .verbose) == "id(nowish)")
         #expect(p.parse("true story").traceDescription(detail: .verbose) == "id(true story)")
 
-        let lexicon = EnglishLexicon.default.merging(
-            comparisonSynonyms: [("x-y", .equal)],
-            durationSynonyms: [:]
-        )
+        let lexicon = EnglishLexicon.default.merging(entries: [
+            .comparison: [.comparison("x-y", .equal)],
+        ])
         let comparison = ComparisonGrammar(lexicon: lexicon, atom: atom)
         #expect(comparison.parse("a x-y b")?.traceDescription(detail: .verbose) == "(id(a) equal id(b))")
     }
