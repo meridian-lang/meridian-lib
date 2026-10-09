@@ -104,8 +104,14 @@ public struct DefaultMCPClient: MCPClient {
         request.httpBody = try jsonRPCRequest(method: method, params: params)
 
         let finalRequest = request
+        // A per-request ephemeral session, invalidated when this call returns.
+        // `URLSession.shared` keeps a timed-out request (and its connection to a
+        // server that never responds) alive for the process lifetime; that both
+        // leaks the connection and keeps the host process from exiting.
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
         let (data, response) = try await withThrowingTaskGroup(of: (Data, URLResponse).self) { group in
-            group.addTask { try await URLSession.shared.data(for: finalRequest) }
+            group.addTask { try await session.data(for: finalRequest) }
             group.addTask {
                 try await Task.sleep(for: timeout)
                 throw ToolError.timeout(timeout)
@@ -399,8 +405,12 @@ public actor ToolRegistry {
         }
 
         let finalRequest = request
+        // See `callHTTP`: a per-request ephemeral session so a timed-out request
+        // cannot outlive the call.
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
         let (data, response) = try await withThrowingTaskGroup(of: (Data, URLResponse).self) { group in
-            group.addTask { try await URLSession.shared.data(for: finalRequest) }
+            group.addTask { try await session.data(for: finalRequest) }
             group.addTask {
                 try await Task.sleep(for: spec.timeout)
                 throw ToolError.timeout(spec.timeout)

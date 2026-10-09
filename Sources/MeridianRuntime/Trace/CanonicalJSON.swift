@@ -61,7 +61,11 @@ public enum CanonicalJSON {
         if let operationalDetail = record.operationalDetail {
             object["operationalDetail"] = .string(operationalDetail)
         }
-        object["kind"] = .string(record.kind.rawValue)
+        // Hashed under the historical key so records written before the
+        // Event/TraceRecord unification still verify: their stored checksum was
+        // computed over a node whose event-kind field was named `legacyKind`.
+        // The record's own JSON encoding uses `kind` (see `TraceRecord.encode`).
+        object["legacyKind"] = .string(record.kind.rawValue)
         return .object(object)
     }
 

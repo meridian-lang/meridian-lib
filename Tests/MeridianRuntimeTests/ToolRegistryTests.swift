@@ -569,16 +569,41 @@ struct ToolRegistryTests {
 
 private final class JSONRPCServer: @unchecked Sendable {
     let listener: NWListener
-    let url: String
+    private(set) var url: String = ""
+    private let lock = NSLock()
+    private var connections: [NWConnection] = []
 
-    private init(listener: NWListener, port: UInt16) {
+    private init(listener: NWListener) {
         self.listener = listener
-        self.url = "http://127.0.0.1:\(port)"
+    }
+
+    private func ready(port: UInt16) {
+        url = "http://127.0.0.1:\(port)"
+    }
+
+    /// Cancel the listener and every accepted connection. Without this the
+    /// network.framework connections (in particular the deliberately
+    /// unresponsive one) outlive the test and keep the test process alive.
+    func cancel() {
+        lock.lock()
+        let open = connections
+        connections = []
+        lock.unlock()
+        for connection in open { connection.cancel() }
+        listener.cancel()
+    }
+
+    fileprivate func track(_ connection: NWConnection) {
+        lock.lock()
+        connections.append(connection)
+        lock.unlock()
     }
 
     static func start(responseBody: String, statusLine: String = "200 OK") async throws -> JSONRPCServer {
         let listener = try NWListener(using: .tcp, on: .any)
-        listener.newConnectionHandler = { connection in
+        let server = JSONRPCServer(listener: listener)
+        listener.newConnectionHandler = { [weak server] connection in
+            server?.track(connection)
             connection.start(queue: .global())
             connection.receive(minimumIncompleteLength: 1, maximumLength: 64 * 1024) { _, _, _, _ in
                 let response = """
@@ -612,7 +637,8 @@ private final class JSONRPCServer: @unchecked Sendable {
         guard let port = listener.port?.rawValue else {
             throw ToolError.implementation(code: "test.server", message: "listener did not expose a port", cause: nil)
         }
-        return JSONRPCServer(listener: listener, port: port)
+        server.ready(port: port)
+        return server
     }
 
     /// A listener that accepts the TCP connection but never writes a
@@ -621,7 +647,9 @@ private final class JSONRPCServer: @unchecked Sendable {
     /// flaky network dependency.
     static func startUnresponsive() async throws -> JSONRPCServer {
         let listener = try NWListener(using: .tcp, on: .any)
-        listener.newConnectionHandler = { connection in
+        let server = JSONRPCServer(listener: listener)
+        listener.newConnectionHandler = { [weak server] connection in
+            server?.track(connection)
             connection.start(queue: .global())
             // Keep reading so the connection doesn't reset before the client
             // gives up on its own timeout.
@@ -645,10 +673,7 @@ private final class JSONRPCServer: @unchecked Sendable {
         guard let port = listener.port?.rawValue else {
             throw ToolError.implementation(code: "test.server", message: "listener did not expose a port", cause: nil)
         }
-        return JSONRPCServer(listener: listener, port: port)
-    }
-
-    func cancel() {
-        listener.cancel()
+        server.ready(port: port)
+        return server
     }
 }

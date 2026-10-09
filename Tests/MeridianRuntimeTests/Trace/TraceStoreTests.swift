@@ -114,7 +114,10 @@ struct TraceUtilityTests {
         let json = String(data: try CanonicalJSON.data(for: record), encoding: .utf8) ?? ""
         #expect(json.contains("\"subjectKey\":\"key\""))
         #expect(json.contains("\"operationalDetail\":\"detail\""))
-        #expect(json.contains("\"kind\":\"violated\""))
+        // The canonical (hashed) form keeps the historical `legacyKind` key so
+        // pre-unification trace files still verify; the record's JSON encoding
+        // uses `kind`.
+        #expect(json.contains("\"legacyKind\":\"violated\""))
     }
 
     @Test("monotonic ULID stays lexicographically ordered")

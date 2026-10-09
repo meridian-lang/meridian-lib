@@ -3771,3 +3771,30 @@ coverage-instrumented run occasionally stalls with an idle process in the
 re-run passes, so it is a cross-suite interaction under instrumentation, not a
 product bug. When it happens the harness leaves a stale SwiftPM lock that
 blocks the next run until the leftover `swift-test` process is killed.
+
+## 2026-10-09 — Post-audit fixes: two resource leaks and a checksum-compat regression
+
+**Root cause of the "intermittent stall" found and fixed (it was never a
+product hang).** Deep sampling of the test process in the stalled state showed
+no Swift task running, only CFNetwork threads — i.e. the run had finished its
+work and the process could not exit. Two leaks kept network.framework /
+URLSession resources alive:
+
+1. **`ToolRegistry`'s HTTP paths** used `URLSession.shared` for a request that
+   races a timeout. When the timeout wins, the pending request (and its
+   connection to a server that never answers) outlived the call forever —
+   a real leak for hosts too, not just tests. Both paths (`callHTTP` for
+   `mcp.call` and the plain `http` tool) now use a per-request
+   `URLSession(configuration: .ephemeral)` that is `invalidateAndCancel()`ed
+   when the call returns.
+2. **The test-side `JSONRPCServer.cancel()`** cancelled only the `NWListener`,
+   never the accepted connections — and the deliberately-unresponsive one is
+   never closed by design, so it stayed open. `cancel()` now cancels every
+   tracked connection and the listener.
+
+**Checksum-compatibility regression fixed.** Phase 4 renamed the canonical
+node's event-kind key from `legacyKind` to `kind`, so trace files written
+before that change would fail `trace verify`'s line-checksum check even though
+they still decoded. `CanonicalJSON.traceRecordNode` hashes under the
+historical `legacyKind` key again (the record's own JSON encoding still uses
+`kind`), and `TraceStoreTests` pins that.
