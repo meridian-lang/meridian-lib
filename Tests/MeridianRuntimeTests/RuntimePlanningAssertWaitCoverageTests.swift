@@ -90,7 +90,7 @@ struct RuntimeAssertCoverageTests {
         let runtime = Runtime(toolRegistry: ToolRegistry(), observer: observer, runID: "assert-indet")
         try await runtime.assert(.indeterminate, message: "maybe", step: "s")
         let passed = await observer.events.first { $0.kind == .assertPassed }
-        #expect(passed?.payload["outcome"] == .string(TruthValue.indeterminate.rawValue))
+        #expect((passed?.payload ?? [:])["outcome"] == .string(TruthValue.indeterminate.rawValue))
     }
 
     @Test("recordViolation non-blocking emits violated without throwing")
@@ -104,8 +104,8 @@ struct RuntimeAssertCoverageTests {
             toolID: "t1"
         )
         let hit = await observer.events.first { $0.kind == .violated }
-        #expect(hit?.payload["norm_id"] == .string("obl-1"))
-        #expect(hit?.payload["tool_id"] == .string("t1"))
+        #expect((hit?.payload ?? [:])["norm_id"] == .string("obl-1"))
+        #expect((hit?.payload ?? [:])["tool_id"] == .string("t1"))
     }
 
     @Test("recordRecoverEngaged emits recoverEngaged")

@@ -9,8 +9,8 @@ Swift code imports and depends on at runtime. It provides:
 4. `State` struct — local mutable store inside a workflow run
 5. `MeridianComparison` — comparison helpers for `Value?` types
 6. `WorkflowResult` — what `run()` returns
-7. `Event` + `EventKind` — structured events emitted during a run
-8. `Observer` protocol + implementations — event sinks (`record` is `async throws`; failures abort under fail-closed policy)
+7. `TraceRecord` + `EventKind` — the single runtime record type (one record per emission; `kind` plus the projected `tag`)
+8. `Observer` protocol + implementations — record sinks (`record(_ record: TraceRecord)` is `async throws`; failures abort under fail-closed policy)
 9. `ToolRegistry` — tool dispatch (closure, subprocess, HTTP, MCP)
 10. `InstanceRegistry` — named instance lookup
 11. `Checkpointer` — checkpoint persistence (in-memory + filesystem-backed)
@@ -73,7 +73,7 @@ public actor Runtime {
 }
 
 public protocol Observer: Sendable {
-    func record(_ event: Event) async throws
+    func record(_ record: TraceRecord) async throws
 }
 ```
 
@@ -188,7 +188,7 @@ public func deliverApproval(
 
 // Unblock any event waiter whose predicate matches.
 // Also triggered automatically when emit(event:) fires a matching event.
-public func deliverEvent(_ event: Event) async
+public func deliverEvent(id: String, payload: [String: Value] = [:]) async
 ```
 
 ---
@@ -200,7 +200,7 @@ public enum WaitCondition: Sendable {
     case duration(Duration)
     case signal(String)
     case approval(of: Value, by: RoleRef)
-    case event(String, matching: (@Sendable (Event) -> Bool)?)
+    case event(String, matching: (@Sendable (TraceRecord) -> Bool)?)
     case choice(prompt: String, options: [String])
 }
 ```
@@ -212,7 +212,7 @@ All five variants are implemented end-to-end:
 | `.duration` | Suspends via `Clock.sleep`; honours the `timeout:` parameter |
 | `.signal` | Blocks until `deliverSignal(_:)` is called with the matching name. Signals delivered while no waiter exists are dropped. |
 | `.approval` | Blocks until `deliverApproval(of:by:verdict:)` fires. `.approved` resumes normally; `.denied` throws `MeridianRuntimeError.approvalDenied`. |
-| `.event` | Blocks until `deliverEvent(_:)` or any `emit(event:)` call fires an event matching the event ID and optional predicate. `nil` predicate = accept any event with matching ID. |
+| `.event` | Blocks until `deliverEvent(id:payload:)` or any `emit(event:)` call fires a record matching the event ID and optional predicate. `nil` predicate = accept any record with matching ID. |
 | `.choice` | Blocks until `deliverChoice(_:)` supplies a selected option for a choice gate. |
 
 **Timeout note:** The `timeout:` parameter is enforced for all wait variants in
@@ -294,8 +294,8 @@ JSON-round-trip dotted lookups (`customer.email`).
 The `Meridian` prefix is mandatory. Several of the bare names already
 resolve to other types in scope:
 
-- `Event` is a public struct in `MeridianRuntime` (telemetry record, see
-  `## Event and EventKind` below).
+- `EventKind` is the public emission-discriminator enum in `MeridianRuntime`
+  (the `kind` field on `TraceRecord`, see `## TraceRecord and EventKind` below).
 - `Process` is a Foundation class.
 - `Tool` is used as a discriminating noun in many runtime APIs.
 
@@ -484,20 +484,46 @@ The internal `numeric(_:)` extractor recognises:
 
 ---
 
-## `Event` and `EventKind`
+## `TraceRecord` and `EventKind`
+
+There is exactly one runtime record type. `TraceRecord` carries the emission
+(`kind`, payload, source range, parent correlation) *and* the semantic
+projection (`tag`, `subject`, `outcome`, `operationalDetail`, `payloadHash`)
+derived from `kind` by the kind table in `Trace/TraceRecord.swift`.
 
 ```swift
-public struct Event: Sendable {
-    public let timestamp: Date
-    public let runID: String
-    public let sequence: Int
+public struct TraceRecord: Sendable {
+    public let schemaVersion: Int
+    public let id: String
+    public let at: Date
+    public let ingestOrder: Int
+    public let run: String
+    public let step: String
+    public let skillName: String
+    public let skillVersionHash: String
+    public let tag: TraceTag
+    public let subject: String?
+    public let subjectKey: String?
+    public let payload: [String: Value]?
+    public let payloadHash: String
+    public let outcome: TraceOutcome?
+    public let operationalDetail: String?
     public let kind: EventKind
-    public let payload: [String: Value]
     public let sourceRange: SourceRange?
     public let parentRunID: String?
     public let parentSequence: Int?
 }
+```
 
+`Runtime` builds the record once per emission (via
+`TraceRecord(kind:at:run:ingestOrder:skillName:skillVersionHash:id:…)`),
+appends it to the configured `TraceStore` (when any), then hands the *same*
+record to its `Observer`. `JSONLObserver` writes the golden JSONL shape from
+it (`ts`/`run_id`/`seq`/`kind`/`payload`/`source`/`parent_run_id`/`parent_seq`).
+`EventKind` decodes as `.emit` when a record has no kind, and older JSONL files
+that still carry the `legacyKind` key keep loading.
+
+```swift
 public enum EventKind: String, Codable, Sendable {
     case workflowStarted    = "workflow.started"
     case workflowCompleted  = "workflow.completed"
@@ -542,7 +568,7 @@ deontic-violation events.
 
 ```swift
 public protocol Observer: Sendable {
-    func record(_ event: Event) async throws
+    func record(_ record: TraceRecord) async throws
 }
 ```
 
@@ -551,8 +577,11 @@ public protocol Observer: Sendable {
 | Type | Description |
 |---|---|
 | `JSONLObserver` | Writes JSONL to stdout or a file. Default: `JSONLObserver.stdout` |
-| `InMemoryObserver` | Actor; accumulates events in `events: [Event]`. Use in tests. |
+| `InMemoryObserver` | Actor; accumulates records in `events: [TraceRecord]`. Use in tests. |
 | `CompositeObserver` | Fan-out to multiple observers. |
+
+`TraceStore` refines `Observer`: a store can be installed as the runtime's
+observer and its default `record(_:)` appends.
 
 `JSONLObserver` follows the golden JSONL shape — fields like `tool`, `parent_run_id`,
 `source` are promoted to top-level per event kind.
@@ -765,8 +794,9 @@ extension SourceRange {
 }
 ```
 
-Attached to IR primitives during lowering. Propagated through to `Event.sourceRange`
-and written to JSONL as `"source": {"file": …, "line": …, "col": …}`.
+Attached to IR primitives during lowering. Propagated through to
+`TraceRecord.sourceRange` and written to JSONL as
+`"source": {"file": …, "line": …, "col": …}`.
 
 ---
 
@@ -962,12 +992,12 @@ See [10_BUILTIN_TOOLS.md](10_BUILTIN_TOOLS.md) for its argument/return shape.
 
 ## Semantic traces (Wave 8)
 
-Wave 8 adds an optional semantic trace layer on top of the legacy `Event` /
-`EventKind` stream:
+Wave 8's semantic trace layer lives on the same record that observers receive;
+there is no separate event stream:
 
 | Type | Role |
 |---|---|
-| `TraceRecord` | Persisted semantic row (`TraceTag`, subject, payload hash, outcome, …) |
+| `TraceRecord` | The single runtime record: `EventKind` + projected `TraceTag`, subject, payload hash, outcome, … |
 | `TraceStore` | `append`, scoped `query`, `compact`, `verifyChain` |
 | `InMemoryTraceStore` | Tests and in-process replay |
 | `JSONLTraceStore` | Append-only local audit trail (checksum envelope per line) |
@@ -980,8 +1010,8 @@ configured `storeFailurePolicy` (`fail-open` / `fail-closed` / `auto` resolved
 at compile time).
 
 Monitored assertions call `registerMonitor` to re-check a statistical query on a
-cadence. Legacy `EventKind` values still emit for observers; semantic projection
-maps them to `TraceTag` for temporal/statistical operators.
+cadence. Every emission carries its `EventKind`; the kind table maps it to a
+`TraceTag` on the same record for temporal/statistical operators.
 
 Full schema, ordering, capture policy, and CLI replay commands:
 [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).

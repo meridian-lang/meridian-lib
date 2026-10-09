@@ -59,6 +59,22 @@ struct WorkflowTestHarnessTests {
         #expect(kinds.contains(.workflowStarted))
     }
 
+    @Test("firstEvent(kind:) returns the first captured record of that kind")
+    func firstEventLookup() async throws {
+        let harness = await WorkflowTestHarness()
+        await harness.stub(tool: "noop", return: .null)
+        _ = try await harness.run { runtime in
+            await runtime.workflowStarted(workflowName: "Lookup", parameters: [:])
+            _ = try await runtime.invoke(tool: "noop", args: [:])
+            await runtime.complete(reason: nil)
+            return .null
+        }
+        let started = await harness.firstEvent(kind: .workflowStarted)
+        #expect(started?.kind == .workflowStarted)
+        #expect((started?.payload ?? [:])["workflow"] == .string("Lookup"))
+        #expect(await harness.firstEvent(kind: .waitStart) == nil)
+    }
+
     @Test("FixedClock keeps event timestamps deterministic across the run")
     func fixedClockIsDeterministic() async throws {
         let start = Date(timeIntervalSince1970: 1_700_000_000)
@@ -72,6 +88,6 @@ struct WorkflowTestHarnessTests {
             return .null
         }
         let events = await harness.events()
-        #expect(events.first?.timestamp == start)
+        #expect(events.first?.at == start)
     }
 }

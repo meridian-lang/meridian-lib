@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Observer protocol
 
 public protocol Observer: Sendable {
-    func record(_ event: Event) async throws
+    func record(_ record: TraceRecord) async throws
 }
 
 // MARK: - JSONLObserver
@@ -26,8 +26,8 @@ public struct JSONLObserver: Observer {
         self.encoder = enc
     }
 
-    public func record(_ event: Event) async throws {
-        let line = try formatEvent(event)
+    public func record(_ record: TraceRecord) async throws {
+        let line = try formatEvent(record)
         switch destination {
         case .standardOutput:
             print(line)
@@ -46,20 +46,20 @@ public struct JSONLObserver: Observer {
         }
     }
 
-    private func formatEvent(_ event: Event) throws -> String {
+    private func formatEvent(_ record: TraceRecord) throws -> String {
         var dict: [String: Any] = [
-            "ts": ISO8601DateFormatter.meridianFormatter.string(from: event.timestamp),
-            "run_id": event.runID,
-            "seq": event.sequence,
-            "kind": event.kind.rawValue
+            "ts": ISO8601DateFormatter.meridianFormatter.string(from: record.at),
+            "run_id": record.run,
+            "seq": record.ingestOrder,
+            "kind": record.kind.rawValue
         ]
 
         var payloadDict: [String: Any] = [:]
-        for (k, v) in event.payload {
+        for (k, v) in record.payload ?? [:] {
             payloadDict[k] = v.jsonEncodableObject
         }
 
-        switch event.kind {
+        switch record.kind {
         case .invokeStart, .invokeEnd, .invokeError:
             if let tool = payloadDict["tool"] as? String {
                 dict["tool"] = tool
@@ -74,10 +74,10 @@ public struct JSONLObserver: Observer {
                 dict["payload"] = payloadDict
             }
         case .workflowStarted, .workflowCompleted, .workflowFailed:
-            if let parentRunID = event.parentRunID {
+            if let parentRunID = record.parentRunID {
                 dict["parent_run_id"] = parentRunID
             }
-            if let parentSeq = event.parentSequence {
+            if let parentSeq = record.parentSequence {
                 dict["parent_seq"] = parentSeq
             }
             dict["payload"] = payloadDict
@@ -87,13 +87,13 @@ public struct JSONLObserver: Observer {
             }
         }
 
-        if let source = event.sourceRange {
+        if let source = record.sourceRange {
             dict["source"] = ["file": source.file, "line": source.startLine, "col": source.startColumn]
         }
 
         let data = try JSONSerialization.data(withJSONObject: dict)
         guard let str = String(data: data, encoding: .utf8) else {
-            throw ObserverError.serializationFailed(event)
+            throw ObserverError.serializationFailed(record)
         }
         return str
     }
@@ -102,14 +102,14 @@ public struct JSONLObserver: Observer {
 // MARK: - InMemoryObserver
 
 public actor InMemoryObserver: Observer {
-    private var _events: [Event] = []
+    private var _events: [TraceRecord] = []
 
     public init() {}
 
-    public var events: [Event] { _events }
+    public var events: [TraceRecord] { _events }
 
-    public func record(_ event: Event) async throws {
-        _events.append(event)
+    public func record(_ record: TraceRecord) async throws {
+        _events.append(record)
     }
 
     public func clear() async {
@@ -126,9 +126,9 @@ public struct CompositeObserver: Observer {
         self.observers = observers
     }
 
-    public func record(_ event: Event) async throws {
+    public func record(_ record: TraceRecord) async throws {
         for observer in observers {
-            try await observer.record(event)
+            try await observer.record(record)
         }
     }
 }

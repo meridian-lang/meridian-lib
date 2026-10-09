@@ -22,6 +22,30 @@ struct ReachableCoverageRuntimeTests {
         ]
     }
 
+    private func makeRecord(
+        _ kind: EventKind,
+        at timestamp: Date,
+        sequence: Int,
+        payload: [String: Value] = [:],
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
+    ) throws -> TraceRecord {
+        try TraceRecord(
+            kind: kind,
+            at: timestamp,
+            run: "r",
+            ingestOrder: sequence,
+            skillName: "skill",
+            skillVersionHash: "h",
+            id: "id-\(sequence)",
+            payload: payload,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        )
+    }
+
     @Test("every Value case renders through description/json/scalar projections")
     func valueProjections() {
         for v in allKinds {
@@ -155,23 +179,31 @@ struct ReachableCoverageRuntimeTests {
         let obs = try JSONLObserver.file(file)
         let ts = Date(timeIntervalSince1970: 0)
 
-        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 1, kind: .invokeEnd,
+        try await obs.record(makeRecord(
+            .invokeEnd,
+            at: ts,
+            sequence: 1,
             payload: ["tool": .string("http.get"), "duration_ms": .number(12),
-                      "output_summary": .string("ok"), "extra": .string("x")]))
-        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 2, kind: .workflowStarted,
-            payload: ["foo": .string("bar")], sourceRange: SourceRange(file: "f", line: 1, column: 1),
-            parentRunID: "parent", parentSequence: 7))
+                      "output_summary": .string("ok"), "extra": .string("x")]
+        ))
+        try await obs.record(makeRecord(
+            .workflowStarted,
+            at: ts,
+            sequence: 2,
+            payload: ["foo": .string("bar")],
+            sourceRange: SourceRange(file: "f", line: 1, column: 1),
+            parentRunID: "parent",
+            parentSequence: 7
+        ))
         // Second write: the file now exists, so the FileHandle(forWritingTo:)
         // append path (not the create fallback) is taken.
-        try await obs.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .workflowCompleted,
-            payload: [:]))
+        try await obs.record(makeRecord(.workflowCompleted, at: ts, sequence: 3))
         #expect(FileManager.default.fileExists(atPath: file.path))
 
         // Composite + InMemory observers
         let mem = InMemoryObserver()
         let comp = CompositeObserver([mem])
-        try await comp.record(Event(timestamp: ts, runID: "r", sequence: 3, kind: .invokeEnd,
-            payload: ["tool": .string("t")]))
+        try await comp.record(makeRecord(.invokeEnd, at: ts, sequence: 3, payload: ["tool": .string("t")]))
         let count = await mem.events.count
         #expect(count == 1)
     }

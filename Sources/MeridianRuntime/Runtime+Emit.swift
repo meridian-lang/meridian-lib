@@ -19,9 +19,68 @@ extension Runtime {
         _monitorTasks.removeAll()
     }
 
-    func emitOrThrow(event: Event, hashedPayload: [String: Value]? = nil) async throws {
-        await emit(event: event, hashedPayload: hashedPayload)
+    /// Strict emission: builds the record, appends it to the trace store (when
+    /// configured), hands it to the observer, and rethrows any store/observer
+    /// failure under the fail-closed policy.
+    func emitOrThrow(
+        kind: EventKind,
+        at timestamp: Date? = nil,
+        ingestOrder: Int? = nil,
+        step: String? = nil,
+        subject: String? = nil,
+        subjectKey: String? = nil,
+        payload: [String: Value]? = nil,
+        hashedPayload: [String: Value]? = nil,
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
+    ) async throws {
+        let record = try await traceRecord(
+            kind: kind,
+            at: timestamp,
+            ingestOrder: ingestOrder,
+            step: step,
+            subject: subject,
+            subjectKey: subjectKey,
+            payload: payload,
+            hashedPayload: hashedPayload,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        )
+        await emit(record: record)
         try rethrowOperationalFailureIfNeeded()
+    }
+
+    /// Lenient emission: the same build → store → observer → waiter flow as
+    /// `emitOrThrow`, but the fail-closed rethrow is swallowed (the diagnostics
+    /// and cancellation bookkeeping already happened inside `emit(record:)`).
+    func emit(
+        kind: EventKind,
+        at timestamp: Date? = nil,
+        ingestOrder: Int? = nil,
+        step: String? = nil,
+        subject: String? = nil,
+        subjectKey: String? = nil,
+        payload: [String: Value]? = nil,
+        hashedPayload: [String: Value]? = nil,
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
+    ) async {
+        _ = try? await emitOrThrow(
+            kind: kind,
+            at: timestamp,
+            ingestOrder: ingestOrder,
+            step: step,
+            subject: subject,
+            subjectKey: subjectKey,
+            payload: payload,
+            hashedPayload: hashedPayload,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        )
     }
 
     var isFailClosedPolicy: Bool {
@@ -45,6 +104,44 @@ extension Runtime {
         fputs("meridian-runtime[\(code)] run=\(runID): \(redacted)\n", stderr)
     }
 
+    /// Builds the single record for one runtime emission: the call site owns
+    /// kind/payload/step/subject, the runtime owns identity, timing, and skill
+    /// attribution. The result is appended to the trace store (when configured)
+    /// and handed to the observer — never rebuilt.
+    func traceRecord(
+        kind: EventKind,
+        at timestamp: Date? = nil,
+        ingestOrder: Int? = nil,
+        step: String? = nil,
+        subject: String? = nil,
+        subjectKey: String? = nil,
+        payload: [String: Value]? = nil,
+        hashedPayload: [String: Value]? = nil,
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
+    ) async throws -> TraceRecord {
+        let at = timestamp ?? clock.now()
+        let workflowName = payload?["workflow"]?.scalarDescription
+        return try TraceRecord(
+            kind: kind,
+            at: at,
+            run: runID,
+            ingestOrder: ingestOrder ?? nextSeq(),
+            skillName: workflowName ?? _traceSkillIdentity.name,
+            skillVersionHash: _traceSkillIdentity.versionHash,
+            id: await traceIDGenerator.nextID(at: at),
+            step: step,
+            subject: subject,
+            subjectKey: subjectKey,
+            payload: payload,
+            hashedPayload: hashedPayload,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        )
+    }
+
     func surfacePendingArtifactWarnings() async {
         var warnings: [RuntimeArtifactWarning] = []
         if let source = checkpointer as? any ArtifactWarningSource {
@@ -55,10 +152,7 @@ extension Runtime {
         }
         for warning in warnings {
             recordOperationalDiagnostic(code: warning.code, message: warning.message)
-            await emit(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            await emit(
                 kind: .emit,
                 payload: [
                     "event": .string("runtime.artifact.warning"),
@@ -66,16 +160,14 @@ extension Runtime {
                     "message": .string(RuntimeSecretRedaction.redact(warning.message)),
                     "correlation_run_id": .string(warning.runID),
                     "artifact_path": warning.artifactPath.map(Value.string) ?? .null
-                ],
-                sourceRange: nil
-            ))
+                ]
+            )
         }
     }
 
-    func emit(event: Event, hashedPayload: [String: Value]? = nil) async {
+    func emit(record: TraceRecord) async {
         if let traceStore {
             do {
-                let record = try await semanticTraceRecord(for: event, hashedPayload: hashedPayload)
                 try await traceStore.append(record)
                 if _degradedTraceMarkerPending {
                     let degradedRecord = try await degradedTraceRecoveryRecord()
@@ -100,7 +192,7 @@ extension Runtime {
         }
 
         do {
-            try await observer.record(event)
+            try await observer.record(record)
             _observerFailure = nil
         } catch is CancellationError {
             return
@@ -111,12 +203,12 @@ extension Runtime {
                 _isCancelled = true
             }
         }
-        // Wake any event waiters that match this newly emitted event.
+        // Wake any event waiters that match this newly emitted record.
         if !_eventWaiters.isEmpty {
             var remaining: [EventWaiterEntry] = []
             for entry in _eventWaiters {
-                let idMatches = entry.eventID.isEmpty || event.payload["event"] == .string(entry.eventID)
-                let predMatches = entry.predicate.map { $0(event) } ?? true
+                let idMatches = entry.eventID.isEmpty || record.payload?["event"] == .string(entry.eventID)
+                let predMatches = entry.predicate.map { $0(record) } ?? true
                 if idMatches && predMatches {
                     entry.continuation.resume()
                 } else {
@@ -164,27 +256,9 @@ extension Runtime {
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .failure,
             operationalDetail: "prevented",
-            legacyKind: nil
+            kind: .violated
         )
         try await traceStore.append(record)
-    }
-
-    private func semanticTraceRecord(for event: Event, hashedPayload: [String: Value]?) async throws -> TraceRecord {
-        let workflowName = event.payload["workflow"]?.scalarDescription
-        let skillIdentity = workflowName.map { TraceSkillIdentity(name: $0, versionHash: _traceSkillIdentity.versionHash) } ?? _traceSkillIdentity
-        let step = event.payload["step"]?.scalarDescription ?? event.kind.rawValue
-        let subjectKey = event.payload["subject_key"]?.scalarDescription
-        return try TraceRecord(
-            legacy: event,
-            step: step,
-            skillName: skillIdentity.name,
-            skillVersionHash: skillIdentity.versionHash,
-            id: await traceIDGenerator.nextID(at: event.timestamp),
-            ingestOrder: event.sequence,
-            subjectKey: subjectKey,
-            payload: event.payload,
-            hashedPayload: hashedPayload
-        )
     }
 
     private func degradedTraceRecoveryRecord() async throws -> TraceRecord {
@@ -207,7 +281,7 @@ extension Runtime {
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .failure,
             operationalDetail: "degraded-witnessing-marker",
-            legacyKind: nil
+            kind: .emit
         )
     }
 

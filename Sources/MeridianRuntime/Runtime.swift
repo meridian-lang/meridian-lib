@@ -70,7 +70,7 @@ public actor Runtime {
     /// An entry in the event-waiter queue.
     struct EventWaiterEntry: @unchecked Sendable {
         let eventID: String
-        let predicate: (@Sendable (Event) -> Bool)?
+        let predicate: (@Sendable (TraceRecord) -> Bool)?
         var continuation: CheckedContinuation<Void, any Error>
     }
     /// Event waiters: checked against every `emit` and every `deliverEvent` call.

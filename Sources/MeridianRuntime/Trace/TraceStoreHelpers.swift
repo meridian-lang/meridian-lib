@@ -34,7 +34,10 @@ enum TraceStoreHelpers {
             payloadHash: event.payloadHash,
             outcome: event.outcome,
             operationalDetail: event.operationalDetail,
-            legacyKind: event.legacyKind
+            kind: event.kind,
+            sourceRange: event.sourceRange,
+            parentRunID: event.parentRunID,
+            parentSequence: event.parentSequence
         )
     }
 

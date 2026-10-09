@@ -118,12 +118,12 @@ struct FinalWaveMutationGateTests {
         let ends = await observer.events.filter { $0.kind == .invokeEnd }
         #expect(starts.count == 1)
         #expect(ends.count == 1)
-        if case .record(let args) = starts[0].payload["args"] {
+        if case .record(let args) = (starts[0].payload ?? [:])["args"] {
             #expect(args["command"] == .string("<redacted>"))
             #expect(args["cwd"] == .string("/tmp"))
         } else {
             Issue.record("expected invoke args record")
         }
-        #expect(ends[0].payload["output_summary"] == .string("<redacted>"))
+        #expect((ends[0].payload ?? [:])["output_summary"] == .string("<redacted>"))
     }
 }

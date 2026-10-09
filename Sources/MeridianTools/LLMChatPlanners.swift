@@ -13,7 +13,7 @@ public struct LLMChatProvider: LLMProvider {
     }
 }
 
-public struct LLMChatDiscretion: LLMBackedDiscretion {
+public struct LLMChatDiscretion: Discretion {
     private let provider: any LLMProvider
 
     public init(provider: any LLMProvider) {
@@ -35,7 +35,7 @@ public struct LLMChatDiscretion: LLMBackedDiscretion {
     }
 }
 
-public struct LLMChatPlanner: LLMBackedPlanner {
+public struct LLMChatPlanner: Planner {
     private let provider: any LLMProvider
 
     public init(provider: any LLMProvider) {
@@ -55,7 +55,7 @@ public struct LLMChatPlanner: LLMBackedPlanner {
     }
 }
 
-public struct LLMChatActPlanner: LLMBackedActPlanner {
+public struct LLMChatActPlanner: ActPlanner {
     private let provider: any LLMProvider
 
     public init(provider: any LLMProvider) {

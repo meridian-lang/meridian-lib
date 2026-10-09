@@ -35,7 +35,7 @@ struct MonitorLifecycleTests {
         await settle()
 
         let events = await observer.events
-        #expect(events.contains { $0.kind == .assertPassed && $0.payload["outcome"] == .string(TruthValue.true.rawValue) })
+        #expect(events.contains { $0.kind == .assertPassed && ($0.payload ?? [:])["outcome"] == .string(TruthValue.true.rawValue) })
     }
 
     @Test("8D monitor tick emits an indeterminate assertPassed when the sample floor is not met")
@@ -71,7 +71,7 @@ struct MonitorLifecycleTests {
 
         let events = await observer.events
         #expect(events.contains {
-            $0.kind == .assertPassed && $0.payload["outcome"] == .string(TruthValue.indeterminate.rawValue)
+            $0.kind == .assertPassed && ($0.payload ?? [:])["outcome"] == .string(TruthValue.indeterminate.rawValue)
         }, Comment(rawValue: "\(events)"))
     }
 
@@ -131,8 +131,7 @@ struct MonitorLifecycleTests {
             payload: [:],
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            operationalDetail: nil,
-            legacyKind: nil
+            operationalDetail: nil
         )
     }
 

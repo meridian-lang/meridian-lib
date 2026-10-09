@@ -144,7 +144,7 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payloadHash: try CanonicalJSON.sha256Hex(for: validatePayload),
         outcome: .success,
         operationalDetail: nil,
-        legacyKind: "invoke.start"
+        kind: .invokeStart
     ))
 
     let riskPayload: [String: Value] = [
@@ -165,7 +165,7 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payloadHash: try CanonicalJSON.sha256Hex(for: riskPayload),
         outcome: .success,
         operationalDetail: nil,
-        legacyKind: "plan.end"
+        kind: .planEnd
     ))
 
     let completePayload: [String: Value] = [
@@ -185,7 +185,7 @@ private func makeTraceVerifyFixture() async throws -> TraceVerifyFixture {
         payloadHash: try CanonicalJSON.sha256Hex(for: completePayload),
         outcome: .success,
         operationalDetail: nil,
-        legacyKind: "workflow.completed"
+        kind: .workflowCompleted
     ))
 
     return TraceVerifyFixture(dir: t, fileURL: fileURL, runID: runID)
@@ -222,7 +222,10 @@ private func tamperTracePayload(in fileURL: URL, targetLine: Int) throws {
         payloadHash: envelope.record.payloadHash,
         outcome: envelope.record.outcome,
         operationalDetail: envelope.record.operationalDetail,
-        legacyKind: envelope.record.legacyKind
+        kind: envelope.record.kind,
+        sourceRange: envelope.record.sourceRange,
+        parentRunID: envelope.record.parentRunID,
+        parentSequence: envelope.record.parentSequence
     )
     let tampered = try encoder.encode(envelope)
     lines[targetLine - 1] = String(decoding: tampered, as: UTF8.self)

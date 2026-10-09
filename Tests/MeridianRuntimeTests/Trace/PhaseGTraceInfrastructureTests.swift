@@ -19,12 +19,12 @@ struct PhaseGTraceInfrastructureTests {
 
         let starts = await observer.events.filter { $0.kind == .invokeStart }
         let ends = await observer.events.filter { $0.kind == .invokeEnd }
-        if case .record(let args) = starts[0].payload["args"] {
+        if case .record(let args) = (starts[0].payload ?? [:])["args"] {
             #expect(args["command"] == .string("<redacted>"))
         } else {
             Issue.record("expected invoke args record")
         }
-        #expect(ends[0].payload["output_summary"] == .string("<redacted>"))
+        #expect((ends[0].payload ?? [:])["output_summary"] == .string("<redacted>"))
     }
 
     @Test("recordViolation emits a violated record on the trace store")

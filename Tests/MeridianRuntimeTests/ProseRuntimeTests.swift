@@ -50,7 +50,7 @@ struct ProseRuntimeTests {
 
         #expect(results["answer"] == .string("do useful work"))
         let planStart = try #require(await observer.events.first { $0.kind == .planStart })
-        #expect(planStart.payload["scoped_tools"] == .list([.string("demo.tool")]))
+        #expect((planStart.payload ?? [:])["scoped_tools"] == .list([.string("demo.tool")]))
     }
 
     @Test("executeProsePlan rejects planner actions outside the scoped tools")
@@ -107,16 +107,16 @@ struct ProseRuntimeTests {
         let planStart = try #require(events.first { $0.kind == .planStart })
         let planEnd = try #require(events.first { $0.kind == .planEnd })
 
-        let startHash = try #require(planStart.payload["input_payload_hash"])
+        let startHash = try #require((planStart.payload ?? [:])["input_payload_hash"])
         guard case .string(let startHashValue) = startHash, !startHashValue.isEmpty else {
             Issue.record("expected a non-empty string input_payload_hash, got \(startHash)")
             return
         }
-        #expect(planEnd.payload["input_payload_hash"] == startHash)
-        #expect(planStart.payload["output_kind"] == .string("text"))
-        #expect(planEnd.payload["output_kind"] == .string("text"))
+        #expect((planEnd.payload ?? [:])["input_payload_hash"] == startHash)
+        #expect((planStart.payload ?? [:])["output_kind"] == .string("text"))
+        #expect((planEnd.payload ?? [:])["output_kind"] == .string("text"))
 
-        let outputHash = try #require(planEnd.payload["output_payload_hash"])
+        let outputHash = try #require((planEnd.payload ?? [:])["output_payload_hash"])
         guard case .string(let outputHashValue) = outputHash, !outputHashValue.isEmpty else {
             Issue.record("expected a non-empty string output_payload_hash, got \(outputHash)")
             return
@@ -138,7 +138,7 @@ struct ProseRuntimeTests {
 
         let starts = await observer.events.filter { $0.kind == .planStart }
         #expect(starts.count == 2)
-        #expect(starts[0].payload["input_payload_hash"] != starts[1].payload["input_payload_hash"])
+        #expect((starts[0].payload ?? [:])["input_payload_hash"] != (starts[1].payload ?? [:])["input_payload_hash"])
     }
 
     @Test("output_kind defaults to record when the judgment step declares no explicit output kind")
@@ -149,6 +149,6 @@ struct ProseRuntimeTests {
         _ = try await runtime.executeProsePlan(prose: "goal", snapshot: State().snapshot(), scopedTools: [])
 
         let planStart = try #require(await observer.events.first { $0.kind == .planStart })
-        #expect(planStart.payload["output_kind"] == .string("record"))
+        #expect((planStart.payload ?? [:])["output_kind"] == .string("record"))
     }
 }

@@ -42,15 +42,12 @@ extension Runtime {
         let fullArgsPayload = mergeDicts(["tool": .string(toolID)], ["args": .record(args)])
         let stepPayload: [String: Value] = traceStep.map { ["step": Value.string($0)] } ?? [:]
         try await emitOrThrow(
-            event: Event(
-                timestamp: startDate,
-                runID: runID,
-                sequence: seq,
-                kind: .invokeStart,
-                payload: mergeDicts(mergeDicts(["tool": .string(toolID)], argsPayload), stepPayload),
-                sourceRange: sourceRange
-            ),
-            hashedPayload: mergeDicts(fullArgsPayload, stepPayload)
+            kind: .invokeStart,
+            at: startDate,
+            ingestOrder: seq,
+            payload: mergeDicts(mergeDicts(["tool": .string(toolID)], argsPayload), stepPayload),
+            hashedPayload: mergeDicts(fullArgsPayload, stepPayload),
+            sourceRange: sourceRange
         )
 
         do {
@@ -78,30 +75,26 @@ extension Runtime {
                 )
             }
 
-            try await emitOrThrow(event: Event(
-                timestamp: endDate,
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .invokeEnd,
+                at: endDate,
                 payload: endPayload,
                 sourceRange: sourceRange
-            ))
+            )
             return result
         } catch {
             recordOperationalDiagnostic(code: "tool.dispatch", message: String(describing: error))
             let endDate = clock.now()
-            try await emitOrThrow(event: Event(
-                timestamp: endDate,
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .invokeError,
+                at: endDate,
                 payload: [
                     "tool": .string(toolID),
                     "error": .string(RuntimeSecretRedaction.redact(String(describing: error))),
                     "step": traceStep.map(Value.string) ?? .null
                 ],
                 sourceRange: sourceRange
-            ))
+            )
             throw error
         }
     }

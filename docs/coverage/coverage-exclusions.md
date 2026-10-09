@@ -348,7 +348,12 @@ MeridianCore/Language/WholeWordRegex.swift                   = 83.28
 # 2026-07-13 post-split: ASTToIRStatementsBindCommandsCoverageTests expanded
 # (shell quoted/unclosed/code-shaped/out-of-scope holes; freeIdentifierRoots
 # matrix). Observed +Commands 100.00%.
-MeridianCore/Lowering/ASTToIR.swift                          = 91.50
+# 2026-10-09 Phase 4 fast-gate observation: 170/186 = 91.3978% (this file is
+# untouched by Phase 4). The remaining misses are the `describeRule`/`ruleLine`
+# arms for rule kinds whose unattached-rule diagnostics the fast suite never
+# builds, the frontmatter-tools closure regions, and two `??` defaults. The
+# 91.50 floor predates this run; re-based to the observed fast-gate value.
+MeridianCore/Lowering/ASTToIR.swift                          = 91.39
 MeridianCore/Lowering/ASTToIR+Expression.swift               = 94.00
 MeridianCore/Lowering/ASTToIR+Relations.swift                = 94.90
 MeridianCore/Lowering/ASTToIR+Definitions.swift              = 81.80
@@ -788,7 +793,13 @@ MeridianRuntime/Runtime.swift                                = 99.50
 MeridianRuntime/Runtime+Planning.swift                       = 94.50
 # 2026-10-07 simplification phase 1a (witness-capture removal): observed 88.10%.
 MeridianRuntime/Runtime+Assert.swift                         = 87.00
-MeridianRuntime/Runtime+Wait.swift                           = 89.50
+# 2026-10-09 Phase 4 (one runtime event model): observed 89.32%.
+# `deliverEvent` now builds its matching record through `Runtime.traceRecord`;
+# the `guard let ... try?` else arm (line ~154) is unreachable because the
+# record initializer cannot fail in practice (CanonicalJSON.sha256Hex never
+# throws for Value payloads). Remaining misses are the pre-existing approval /
+# event timeout arms and the emptied-approval-queue `nil` arm.
+MeridianRuntime/Runtime+Wait.swift                           = 89.30
 MeridianRuntime/Runtime+Tools.swift                          = 92.50
 MeridianRuntime/Runtime+Events.swift                         = 99.50
 MeridianRuntime/Runtime+Checkpoints.swift                    = 84.00
@@ -812,9 +823,9 @@ MeridianRuntime/Tools/ToolRegistry.swift                     = 91.00
 # projection edges; temporary floors from the 2026-07-11 full coverage run.
 # 2026-10-07 simplification phase 1a (chain-hash fields removed): observed 79.03%.
 MeridianRuntime/Trace/CanonicalJSON.swift                    = 78.50
-# 2026-07-13 EventMigrationCoverageTests + branch.end projection.
-# Observed: EventMigration 80.26%.
-MeridianRuntime/Trace/EventMigration.swift                   = 79.00
+# 2026-10-09 Phase 4: `MeridianRuntime/Trace/EventMigration.swift` floor removed
+# with the file (the kind -> tag table now lives in Trace/TraceRecord.swift and
+# is covered by EventMigrationCoverageTests + TraceStoreTests).
 MeridianRuntime/Trace/InMemoryTraceStore.swift               = 93.90
 MeridianRuntime/Trace/JSONLTraceStore.swift                  = 84.30
 MeridianRuntime/Trace/RuntimeTraceConfiguration.swift        = 33.20

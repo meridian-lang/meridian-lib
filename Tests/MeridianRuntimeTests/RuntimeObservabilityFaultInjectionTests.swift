@@ -86,8 +86,8 @@ struct RuntimeObservabilityFaultInjectionTests {
         #expect(diagnostics.contains { $0.code == "checkpoint.decode" && $0.runID == "resume-run" })
 
         let warnings = await observer.events.filter {
-            $0.payload["event"] == .string("runtime.artifact.warning")
-                && $0.payload["code"] == .string("checkpoint.decode")
+            ($0.payload ?? [:])["event"] == .string("runtime.artifact.warning")
+                && ($0.payload ?? [:])["code"] == .string("checkpoint.decode")
         }
         #expect(!warnings.isEmpty)
     }
@@ -130,7 +130,7 @@ struct RuntimeObservabilityFaultInjectionTests {
             try await observedRuntime.invoke(tool: "boom", args: [:])
         }
         let invokeError = await observer.events.first { $0.kind == .invokeError }
-        if case .string(let errorText) = invokeError?.payload["error"] {
+        if case .string(let errorText) = (invokeError?.payload ?? [:])["error"] {
             #expect(errorText.contains("<redacted>") == true)
             #expect(errorText.contains("supersecret") == false)
         } else {
@@ -189,8 +189,7 @@ struct RuntimeObservabilityFaultInjectionTests {
             payload: [:],
             payloadHash: "payload",
             outcome: .success,
-            operationalDetail: nil,
-            legacyKind: nil
+            operationalDetail: nil
         ))
 
         if let handle = try? FileHandle(forWritingTo: fileURL) {
@@ -218,7 +217,7 @@ struct RuntimeObservabilityFaultInjectionTests {
         let diagnostics = await runtime.operationalDiagnostics()
         #expect(diagnostics.contains { $0.code == "trace-store.read" })
         let warnings = await observer.events.filter {
-            $0.payload["code"] == .string("trace-store.read")
+            ($0.payload ?? [:])["code"] == .string("trace-store.read")
         }
         #expect(!warnings.isEmpty)
     }

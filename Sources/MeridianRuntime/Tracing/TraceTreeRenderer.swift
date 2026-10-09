@@ -87,8 +87,8 @@ public struct TraceTreeRenderer {
     // MARK: - Raw event model
     //
     // A minimal projection of the JSONL shape — keeps the renderer free of
-    // any direct dependency on `Event` / `EventKind`. CLI callers can feed
-    // raw decoded JSON in too.
+    // any direct dependency on `TraceRecord` / `EventKind`. CLI callers can
+    // feed raw decoded JSON in too.
 
     /// `payload` is `[String: Any]` because the renderer reads heterogeneous
     /// JSON shapes the runtime promotes (numbers, bools, nested dicts, …)
@@ -369,10 +369,13 @@ public struct TraceTreeRenderer {
         else { return nil }
 
         var payload = record["payload"] as? [String: Any] ?? [:]
-        for key in ["subject", "skillName", "skillVersionHash", "outcome", "operationalDetail", "legacyKind"] {
+        for key in ["subject", "skillName", "skillVersionHash", "outcome", "operationalDetail"] {
             if let value = record[key], payload[key] == nil {
                 payload[key] = value
             }
+        }
+        if payload["kind"] == nil, let kind = record["kind"] ?? record["legacyKind"] {
+            payload["kind"] = kind
         }
         if payload["workflowName"] == nil, let skillName = record["skillName"] {
             payload["workflowName"] = skillName

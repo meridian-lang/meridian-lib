@@ -12,7 +12,7 @@ import MeridianRuntime
 // The harness also exposes:
 //   - `stub(tool:_:)` — register a closure tool with one line.
 //   - `stub(tool:return:)` — even shorter, for fixed-value stubs.
-//   - `events()` — captured `Event` array.
+//   - `events()` — captured `TraceRecord` array.
 //   - `assertEvents { $0 .startsWith(...) }` — DSL-like assertions.
 //
 // Lifecycle: each `WorkflowTestHarness` is single-shot. Re-create one per
@@ -85,12 +85,12 @@ public actor WorkflowTestHarness {
     /// Captured outcome of a workflow run.
     public struct RunResult: Sendable {
         public let result: Value
-        public let events: [Event]
+        public let events: [TraceRecord]
         public let durationMS: Decimal?
         /// `true` when the captured event stream ends with a workflow.completed.
         public let succeeded: Bool
 
-        public init(result: Value, events: [Event], durationMS: Decimal?, succeeded: Bool) {
+        public init(result: Value, events: [TraceRecord], durationMS: Decimal?, succeeded: Bool) {
             self.result = result
             self.events = events
             self.durationMS = durationMS
@@ -130,7 +130,7 @@ public actor WorkflowTestHarness {
     // MARK: - Event accessors
 
     /// Snapshot of all captured events.
-    public func events() async -> [Event] {
+    public func events() async -> [TraceRecord] {
         await observer.events
     }
 
@@ -140,17 +140,17 @@ public actor WorkflowTestHarness {
     }
 
     /// Convenience: lookup the first event with a given kind, or nil.
-    public func firstEvent(kind: EventKind) async -> Event? {
+    public func firstEvent(kind: EventKind) async -> TraceRecord? {
         await observer.events.first(where: { $0.kind == kind })
     }
 
     // MARK: - Helpers
 
-    private func durationFromEvents(_ events: [Event]) -> Decimal? {
+    private func durationFromEvents(_ events: [TraceRecord]) -> Decimal? {
         guard let last = events.last(where: { $0.kind == .workflowCompleted }) else {
             return nil
         }
-        if case .number(let n) = last.payload["duration_ms"] {
+        if case .number(let n) = (last.payload ?? [:])["duration_ms"] {
             return n
         }
         return nil

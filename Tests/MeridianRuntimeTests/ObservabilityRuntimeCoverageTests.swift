@@ -40,7 +40,7 @@ struct ObservabilityRuntimeCoverageTests {
 
         let starts = await observer.events.filter { $0.kind == .invokeStart }
         #expect(starts.count == 3)
-        if case .record(let args) = starts[2].payload["args"] {
+        if case .record(let args) = (starts[2].payload ?? [:])["args"] {
             #expect(args["token"] == .string("<redacted>"))
         } else {
             Issue.record("expected redacted invoke args")
@@ -55,7 +55,7 @@ struct ObservabilityRuntimeCoverageTests {
         try await runtime.workflowFailed(workflowName: "Checkout", error: toolError)
 
         let failed = await observer.events.first { $0.kind == .workflowFailed }
-        #expect(failed?.payload["error_code"] == .string("payment.declined"))
+        #expect((failed?.payload ?? [:])["error_code"] == .string("payment.declined"))
     }
 
     @Test("evaluateTrace returns indeterminate without a trace store and evaluates with one")
@@ -184,8 +184,7 @@ struct ObservabilityRuntimeCoverageTests {
             payload: [:],
             payloadHash: "payload",
             outcome: outcome,
-            operationalDetail: nil,
-            legacyKind: nil
+            operationalDetail: nil
         )
     }
 

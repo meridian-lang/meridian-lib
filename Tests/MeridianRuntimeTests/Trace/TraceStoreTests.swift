@@ -109,12 +109,12 @@ struct TraceUtilityTests {
             payloadHash: "payload",
             outcome: .failure,
             operationalDetail: "detail",
-            legacyKind: "legacy"
+            kind: .violated
         )
         let json = String(data: try CanonicalJSON.data(for: record), encoding: .utf8) ?? ""
         #expect(json.contains("\"subjectKey\":\"key\""))
         #expect(json.contains("\"operationalDetail\":\"detail\""))
-        #expect(json.contains("\"legacyKind\":\"legacy\""))
+        #expect(json.contains("\"kind\":\"violated\""))
     }
 
     @Test("monotonic ULID stays lexicographically ordered")
@@ -130,24 +130,68 @@ struct TraceUtilityTests {
         #expect(first.count == 26)
     }
 
-    @Test("legacy Event Codable round-trips")
-    func legacyEventDecodes() throws {
-        let event = Event(
-            timestamp: Date(timeIntervalSince1970: 1_700_000_001),
-            runID: "run-1",
-            sequence: 2,
-            kind: .emit,
-            payload: ["event": .string("hello"), "count": .number(2)]
+    @Test("TraceRecord Codable round-trips kind and correlation fields")
+    func recordCodableRoundTrip() throws {
+        let record = TraceRecord(
+            id: "A",
+            at: Date(timeIntervalSince1970: 1_700_000_001),
+            ingestOrder: 2,
+            run: "run-1",
+            step: "invoke.start",
+            skillName: "skill",
+            skillVersionHash: "hash",
+            tag: .invoked,
+            payload: ["event": .string("hello"), "count": .number(2)],
+            payloadHash: "payload",
+            kind: .invokeStart,
+            sourceRange: SourceRange(file: "order.meridian", startLine: 4, startColumn: 9, endLine: 4, endColumn: 20),
+            parentRunID: "parent-run",
+            parentSequence: 7
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let decoded = try decoder.decode(Event.self, from: encoder.encode(event))
+        let decoded = try decoder.decode(TraceRecord.self, from: encoder.encode(record))
 
-        #expect(decoded.kind == .emit)
-        #expect(decoded.payload["event"] == .string("hello"))
-        #expect(decoded.payload["count"] == .number(2))
+        #expect(decoded.kind == .invokeStart)
+        #expect(decoded.sourceRange?.startLine == 4)
+        #expect(decoded.parentRunID == "parent-run")
+        #expect(decoded.parentSequence == 7)
+        #expect((decoded.payload ?? [:])["event"] == .string("hello"))
+        #expect((decoded.payload ?? [:])["count"] == .number(2))
+    }
+
+    @Test("pre-Phase-4 records decode their kind from the legacyKind key")
+    func legacyKindKeyStillDecodes() throws {
+        let json: [String: Any] = [
+            "schemaVersion": 2,
+            "id": "legacy-kind",
+            "at": "2024-07-18T00:00:00Z",
+            "ingestOrder": 1,
+            "run": "run-legacy",
+            "step": "plan.start",
+            "skillName": "skill",
+            "skillVersionHash": "hash",
+            "tag": "judged",
+            "payloadHash": "payload",
+            "legacyKind": "plan.start"
+        ]
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decoded = try decoder.decode(
+            TraceRecord.self,
+            from: try JSONSerialization.data(withJSONObject: json)
+        )
+        #expect(decoded.kind == .planStart)
+
+        var withoutKind = json
+        withoutKind.removeValue(forKey: "legacyKind")
+        let kindless = try decoder.decode(
+            TraceRecord.self,
+            from: try JSONSerialization.data(withJSONObject: withoutKind)
+        )
+        #expect(kindless.kind == .emit)
     }
 }
 
@@ -156,14 +200,18 @@ struct TraceMigrationTests {
     @Test("SEM_4_04 judgment boundary maps to a judged record carrying a payload hash, kind, and tool scope")
     func sem404JudgmentBoundary() throws {
         // A judgment boundary (`use judgment to …`) lowers to a plan-execution
-        // step; its plan/plan-end events project to the `judged` trace tag. The
-        // record must carry a content hash (the payload hash), preserve the kind
-        // (`legacyKind`), and retain the explicit scoped tool ids from the payload.
-        let event = Event(
-            timestamp: Date(timeIntervalSince1970: 1_700_000_100),
-            runID: "run-judge",
-            sequence: 9,
+        // step; its plan/plan-end records project to the `judged` trace tag. The
+        // record must carry a content hash (the payload hash), preserve the kind,
+        // and retain the explicit scoped tool ids from the payload.
+        let record = try TraceRecord(
             kind: .planStart,
+            at: Date(timeIntervalSince1970: 1_700_000_100),
+            run: "run-judge",
+            ingestOrder: 9,
+            skillName: "release-sentinel",
+            skillVersionHash: "v1",
+            id: "01TESTJUDGED0000000000000",
+            step: "root/aiJudgment",
             payload: [
                 "mode": .string("plan_then_execute"),
                 "tool_count": .number(Decimal(2)),
@@ -176,36 +224,24 @@ struct TraceMigrationTests {
                 "step": .string("root/aiJudgment")
             ]
         )
-        let record = try TraceRecord(
-            legacy: event,
-            step: "root/aiJudgment",
-            skillName: "release-sentinel",
-            skillVersionHash: "v1",
-            id: "01TESTJUDGED0000000000000",
-            ingestOrder: 9
-        )
         #expect(record.tag == .judged)
-        #expect(record.legacyKind == EventKind.planStart.rawValue)
+        #expect(record.kind == .planStart)
         #expect(!record.payloadHash.isEmpty)
         #expect(record.payload?["tool_count"] == .number(Decimal(2)))
         #expect(record.payload?["scoped_tools"] == .list([.string("ci.fix"), .string("shell.run")]))
         #expect(record.payload?["input_payload_hash"] == .string("deadbeef"))
         #expect(record.payload?["output_kind"] == .string("record"))
 
-        let failure = Event(
-            timestamp: Date(timeIntervalSince1970: 1_700_000_200),
-            runID: "run-judge",
-            sequence: 10,
-            kind: .planError,
-            payload: ["step": .string("root/aiJudgment")]
-        )
         let failureRecord = try TraceRecord(
-            legacy: failure,
-            step: "root/aiJudgment",
+            kind: .planError,
+            at: Date(timeIntervalSince1970: 1_700_000_200),
+            run: "run-judge",
+            ingestOrder: 10,
             skillName: "release-sentinel",
             skillVersionHash: "v1",
             id: "01TESTJUDGED0000000000001",
-            ingestOrder: 10
+            step: "root/aiJudgment",
+            payload: ["step": .string("root/aiJudgment")]
         )
         #expect(failureRecord.tag == .judged)
         #expect(failureRecord.outcome == .failure)
@@ -240,6 +276,28 @@ struct TraceStoreTests {
             #expect(records[0].tag == .emitted)
             #expect(records[0].subject == "semantic.trace")
         }
+    }
+
+    @Test("a TraceStore can be installed directly as the runtime observer")
+    func storeAsObserver() async throws {
+        let store = InMemoryTraceStore()
+        let runtime = try Runtime.Builder()
+            .setObserver(store)
+            .setTraceSkillIdentity(TraceSkillIdentity(name: "trace-skill", versionHash: "v1"))
+            .build()
+
+        await runtime.recordEvent(.emit, payload: ["event": .string("store.observer")])
+
+        let records = try await store.query(
+            scope: .currentRun,
+            scopeSkills: [],
+            runID: runtime.runID,
+            skillName: "trace-skill",
+            window: nil,
+            pattern: TraceQueryPattern(tags: [.emitted], subject: "store.observer")
+        )
+        #expect(records.count == 1)
+        #expect(records[0].kind == .emit)
     }
 
     @Test("8A capability flags: both shipped stores report payload retention and persistence")
@@ -302,7 +360,7 @@ struct TraceStoreTests {
         )
         #expect(records.count == 1)
         #expect(records[0].id == "01V1RECORD0000000000000000")
-        #expect(records[0].legacyKind == "emit")
+        #expect(records[0].kind == .emit)
     }
 
     @Test("SEM-4-01 append-only within retention and retention compaction drops expired only")

@@ -257,8 +257,7 @@ struct TraceEvaluatorTests {
             payload: payload,
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            operationalDetail: operationalDetail,
-            legacyKind: nil
+            operationalDetail: operationalDetail
         )
     }
 
@@ -725,8 +724,7 @@ struct TraceStatisticalEvaluatorTests {
             payload: [:],
             payloadHash: "payload-\(id)",
             outcome: outcome,
-            operationalDetail: nil,
-            legacyKind: nil
+            operationalDetail: nil
         )
     }
 

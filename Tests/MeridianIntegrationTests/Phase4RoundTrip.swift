@@ -117,7 +117,7 @@ struct Phase4RoundTrip {
 
         let events = await observer.events
         let invokes = events.filter { $0.kind == .invokeStart }.compactMap { e -> String? in
-            if case .string(let t) = e.payload["tool"] { return t } else { return nil }
+            if case .string(let t) = (e.payload ?? [:])["tool"] { return t } else { return nil }
         }
         // chargePayment must run, fraud + approval branches stay dormant.
         #expect(invokes.contains("validateOrder"))
@@ -126,7 +126,7 @@ struct Phase4RoundTrip {
         #expect(!invokes.contains("requestApproval"))
 
         let emits = events.filter { $0.kind == .emit }.compactMap { e -> String? in
-            if case .string(let s) = e.payload["event"] { return s } else { return nil }
+            if case .string(let s) = (e.payload ?? [:])["event"] { return s } else { return nil }
         }
         #expect(emits.contains("order.approved"))
     }
@@ -145,11 +145,11 @@ struct Phase4RoundTrip {
 
         let events = await observer.events
         let rejected = events.filter { $0.kind == .emit }.first { e in
-            if case .string("order.rejected") = e.payload["event"] { return true }
+            if case .string("order.rejected") = (e.payload ?? [:])["event"] { return true }
             return false
         }
         #expect(rejected != nil)
-        if case .string(let reason)? = rejected?.payload["reason"] {
+        if case .string(let reason)? = (rejected?.payload ?? [:])["reason"] {
             #expect(reason == "validation_failed")
         }
     }
@@ -169,11 +169,11 @@ struct Phase4RoundTrip {
 
         let events = await observer.events
         let rejected = events.filter { $0.kind == .emit }.first { e in
-            if case .string("order.rejected") = e.payload["event"] { return true }
+            if case .string("order.rejected") = (e.payload ?? [:])["event"] { return true }
             return false
         }
         #expect(rejected != nil)
-        if case .string(let reason)? = rejected?.payload["reason"] {
+        if case .string(let reason)? = (rejected?.payload ?? [:])["reason"] {
             #expect(reason == "insufficient_credit")
         }
     }
@@ -197,7 +197,7 @@ struct Phase4RoundTrip {
         let events = await observer.events
         // chargePayment must NOT run after a denied approval.
         let charged = events.filter { $0.kind == .invokeStart }.contains { e in
-            if case .string("chargePayment") = e.payload["tool"] { return true }
+            if case .string("chargePayment") = (e.payload ?? [:])["tool"] { return true }
             return false
         }
         #expect(!charged)

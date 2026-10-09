@@ -101,10 +101,10 @@ struct HandWrittenOrderProcessingTests {
         #expect(kinds.first == .workflowStarted)
         #expect(kinds.last == .workflowCompleted)
         let invokeStarts = events.filter { $0.kind == .invokeStart }
-        #expect(invokeStarts.contains { $0.payload["tool"] == .string("validateOrder") })
-        #expect(invokeStarts.contains { $0.payload["tool"] == .string("chargePayment") })
+        #expect(invokeStarts.contains { ($0.payload ?? [:])["tool"] == .string("validateOrder") })
+        #expect(invokeStarts.contains { ($0.payload ?? [:])["tool"] == .string("chargePayment") })
         let emits = events.filter { $0.kind == .emit }
-        #expect(emits.contains { $0.payload["event"] == .string("order.approved") })
+        #expect(emits.contains { ($0.payload ?? [:])["event"] == .string("order.approved") })
     }
 
     @Test("happy path: event sequence numbers are strictly increasing")
@@ -126,7 +126,7 @@ struct HandWrittenOrderProcessingTests {
 
         let events = await observer.events
         for (i, event) in events.enumerated() {
-            #expect(event.sequence == i + 1)
+            #expect(event.ingestOrder == i + 1)
         }
     }
 
@@ -159,11 +159,11 @@ struct HandWrittenOrderProcessingTests {
 
         let events = await observer.events
         let invokeStarts = events.filter { $0.kind == .invokeStart }
-        #expect(invokeStarts.contains { $0.payload["tool"] == .string("requestApproval") })
+        #expect(invokeStarts.contains { ($0.payload ?? [:])["tool"] == .string("requestApproval") })
         let emits = events.filter { $0.kind == .emit }
-        #expect(emits.contains { $0.payload["event"] == .string("order.rejected") })
+        #expect(emits.contains { ($0.payload ?? [:])["event"] == .string("order.rejected") })
         #expect(events.last?.kind == .workflowCompleted)
-        if case .string(let reason) = events.last?.payload["reason"] {
+        if case .string(let reason) = (events.last?.payload ?? [:])["reason"] {
             #expect(reason == "approval_denied")
         }
     }
@@ -189,7 +189,7 @@ struct HandWrittenOrderProcessingTests {
 
         let events = await observer.events
         let invokeStarts = events.filter { $0.kind == .invokeStart }
-        #expect(!invokeStarts.contains { $0.payload["tool"] == .string("chargePayment") })
+        #expect(!invokeStarts.contains { ($0.payload ?? [:])["tool"] == .string("chargePayment") })
     }
 
     // MARK: - Fraud review
@@ -227,7 +227,7 @@ struct HandWrittenOrderProcessingTests {
 
         let events = await observer.events
         let emits = events.filter { $0.kind == .emit }
-        #expect(emits.contains { $0.payload["event"] == .string("order.held") })
+        #expect(emits.contains { ($0.payload ?? [:])["event"] == .string("order.held") })
     }
 
     // MARK: - EventAssertions normalization

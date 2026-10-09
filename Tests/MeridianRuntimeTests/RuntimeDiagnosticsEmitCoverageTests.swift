@@ -37,13 +37,7 @@ struct RuntimeEmitCoverageTests {
     func emitOrThrowAdvances() async throws {
         let observer = InMemoryObserver()
         let runtime = Runtime(toolRegistry: ToolRegistry(), observer: observer, runID: "emit-core")
-        try await runtime.emitOrThrow(event: Event(
-            timestamp: Date(),
-            runID: "emit-core",
-            sequence: await runtime.nextSeq(),
-            kind: .bind,
-            payload: ["name": .string("x")]
-        ))
+        try await runtime.emitOrThrow(kind: .bind, payload: ["name": .string("x")])
         let kinds = await observer.events.map(\.kind)
         #expect(kinds.contains(.bind))
         #expect(await runtime.eventCount() >= 1)

@@ -32,7 +32,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planRejected &&
-                $0.payload["code"] == .string(PlanningFailureCode.prosePayloadTooLarge.rawValue)
+                ($0.payload ?? [:])["code"] == .string(PlanningFailureCode.prosePayloadTooLarge.rawValue)
         })
     }
 
@@ -60,7 +60,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planError &&
-                $0.payload["error_code"] == .string(PlanningFailureCode.tooManyActions.rawValue)
+                ($0.payload ?? [:])["error_code"] == .string(PlanningFailureCode.tooManyActions.rawValue)
         })
     }
 
@@ -90,7 +90,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planRejected &&
-                $0.payload["code"] == .string(PlanningFailureCode.toolArgumentsPayloadTooLarge.rawValue)
+                ($0.payload ?? [:])["code"] == .string(PlanningFailureCode.toolArgumentsPayloadTooLarge.rawValue)
         })
     }
 
@@ -118,7 +118,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planRejected &&
-                $0.payload["code"] == .string(PlanningFailureCode.hostPolicyDenied.rawValue)
+                ($0.payload ?? [:])["code"] == .string(PlanningFailureCode.hostPolicyDenied.rawValue)
         })
     }
 
@@ -142,7 +142,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planError &&
-                $0.payload["error_code"] == .string(PlanningFailureCode.toolOutOfScope.rawValue)
+                ($0.payload ?? [:])["error_code"] == .string(PlanningFailureCode.toolOutOfScope.rawValue)
         })
     }
 
@@ -166,7 +166,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planError &&
-                $0.payload["error_code"] == .string(PlanningFailureCode.toolNotRegistered.rawValue)
+                ($0.payload ?? [:])["error_code"] == .string(PlanningFailureCode.toolNotRegistered.rawValue)
         })
     }
 
@@ -239,7 +239,7 @@ struct PlanningFailureCodeTests {
         let events = await observer.events
         #expect(events.contains {
             $0.kind == .planRejected &&
-                $0.payload["code"] == .string(PlanningFailureCode.snapshotPayloadTooLarge.rawValue)
+                ($0.payload ?? [:])["code"] == .string(PlanningFailureCode.snapshotPayloadTooLarge.rawValue)
         })
     }
 

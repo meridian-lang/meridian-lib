@@ -15,7 +15,7 @@ extension Runtime {
     ///   is dropped (logged at warning level). FIFO when multiple waiters share a name.
     /// - `.approval`: blocks until `deliverApproval(of:by:verdict:)` is called.
     ///   `.approved` resumes normally; `.denied` throws `MeridianRuntimeError.approvalDenied`.
-    /// - `.event`: blocks until `deliverEvent(_:)` fires an event whose `id` and
+    /// - `.event`: blocks until `deliverEvent(id:payload:)` fires an event whose `id` and
     ///   predicate (if any) both match. The spec notes this is v1-supported for internal
     ///   events; external delivery uses `deliverEvent`.
     ///
@@ -26,14 +26,11 @@ extension Runtime {
         timeout: Duration? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .waitStart,
             payload: waitStartPayload(condition),
             sourceRange: sourceRange
-        ))
+        )
 
         switch condition {
         case .duration(let d):
@@ -85,14 +82,11 @@ extension Runtime {
             }
         }
 
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .waitResume,
             payload: [:],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     // MARK: - Wait delivery APIs
@@ -151,11 +145,19 @@ extension Runtime {
 
     /// Deliver an external event to any matching `wait(.event(id, matching:))` callers.
     /// Wakes every waiter whose `eventID` and predicate both match; all others remain.
-    public func deliverEvent(_ event: Event) async {
+    /// The matching record is never persisted, so it consumes no sequence number.
+    public func deliverEvent(id: String, payload: [String: Value] = [:]) async {
+        guard let record = try? await traceRecord(
+            kind: .emit,
+            ingestOrder: 0,
+            payload: mergeDicts(["event": .string(id)], payload)
+        ) else {
+            return
+        }
         var remaining: [EventWaiterEntry] = []
         for entry in _eventWaiters {
-            let idMatches = entry.eventID.isEmpty || event.payload["event"] == .string(entry.eventID)
-            let predMatches = entry.predicate.map { $0(event) } ?? true
+            let idMatches = entry.eventID.isEmpty || record.payload?["event"] == .string(entry.eventID)
+            let predMatches = entry.predicate.map { $0(record) } ?? true
             if idMatches && predMatches {
                 entry.continuation.resume()
             } else {
@@ -181,7 +183,7 @@ extension Runtime {
 
     func parkForEvent(
         eventID: String,
-        matching: (@Sendable (Event) -> Bool)?
+        matching: (@Sendable (TraceRecord) -> Bool)?
     ) async throws {
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, any Error>) in
             _eventWaiters.append(EventWaiterEntry(eventID: eventID, predicate: matching, continuation: cont))

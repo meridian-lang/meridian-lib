@@ -91,7 +91,7 @@ struct AutonomyRuntimeTests {
         #expect(await planner.calls == 1)
         let events = await observer.events
         #expect(events.contains {
-            $0.kind == .autonomyEnd && $0.payload["reason"] == .string("until_condition_met")
+            $0.kind == .autonomyEnd && ($0.payload ?? [:])["reason"] == .string("until_condition_met")
         })
     }
 
@@ -162,16 +162,16 @@ struct AutonomyRuntimeTests {
         let start = try #require(events.first { $0.kind == .autonomyStart })
         let end = try #require(events.first { $0.kind == .autonomyEnd })
 
-        let startHash = try #require(start.payload["input_payload_hash"])
+        let startHash = try #require((start.payload ?? [:])["input_payload_hash"])
         guard case .string(let startHashValue) = startHash, !startHashValue.isEmpty else {
             Issue.record("expected a non-empty string input_payload_hash, got \(startHash)")
             return
         }
-        #expect(end.payload["input_payload_hash"] == startHash)
-        #expect(start.payload["output_kind"] == .string("text"))
-        #expect(end.payload["output_kind"] == .string("text"))
+        #expect((end.payload ?? [:])["input_payload_hash"] == startHash)
+        #expect((start.payload ?? [:])["output_kind"] == .string("text"))
+        #expect((end.payload ?? [:])["output_kind"] == .string("text"))
 
-        let outputHash = try #require(end.payload["output_payload_hash"])
+        let outputHash = try #require((end.payload ?? [:])["output_payload_hash"])
         guard case .string(let outputHashValue) = outputHash, !outputHashValue.isEmpty else {
             Issue.record("expected a non-empty string output_payload_hash, got \(outputHash)")
             return
@@ -195,8 +195,8 @@ struct AutonomyRuntimeTests {
         )
 
         let end = try #require(await observer.events.first { $0.kind == .autonomyEnd })
-        #expect(end.payload["output_kind"] == .string("record"))
-        #expect(end.payload["output_payload_hash"] != nil)
+        #expect((end.payload ?? [:])["output_kind"] == .string("record"))
+        #expect((end.payload ?? [:])["output_payload_hash"] != nil)
         #expect(await planner.calls == 0)
     }
 }

@@ -202,7 +202,10 @@ public struct TraceRecord: Sendable, Equatable, Codable {
     public let payloadHash: String
     public let outcome: TraceOutcome?
     public let operationalDetail: String?
-    public let legacyKind: String?
+    public let kind: EventKind
+    public let sourceRange: SourceRange?
+    public let parentRunID: String?
+    public let parentSequence: Int?
 
     public init(
         schemaVersion: Int = TraceRecord.currentSchemaVersion,
@@ -220,7 +223,10 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         payloadHash: String,
         outcome: TraceOutcome? = nil,
         operationalDetail: String? = nil,
-        legacyKind: String? = nil
+        kind: EventKind = .emit,
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.id = id
@@ -237,7 +243,10 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         self.payloadHash = payloadHash
         self.outcome = outcome
         self.operationalDetail = operationalDetail
-        self.legacyKind = legacyKind
+        self.kind = kind
+        self.sourceRange = sourceRange
+        self.parentRunID = parentRunID
+        self.parentSequence = parentSequence
     }
 
     enum CodingKeys: String, CodingKey {
@@ -256,12 +265,19 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         case payloadHash
         case outcome
         case operationalDetail
+        case kind
+        case sourceRange
+        case parentRunID
+        case parentSequence
+        /// Pre-Phase-4 files encoded the kind under this key; still accepted on read.
         case legacyKind
     }
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let encodedPayload = try container.decodeIfPresent([String: AnyCodable].self, forKey: .payload)
+        let encodedKind = try container.decodeIfPresent(String.self, forKey: .kind)
+            ?? container.decodeIfPresent(String.self, forKey: .legacyKind)
         self.init(
             schemaVersion: try container.decode(Int.self, forKey: .schemaVersion),
             id: try container.decode(String.self, forKey: .id),
@@ -278,7 +294,10 @@ public struct TraceRecord: Sendable, Equatable, Codable {
             payloadHash: try container.decode(String.self, forKey: .payloadHash),
             outcome: try container.decodeIfPresent(TraceOutcome.self, forKey: .outcome),
             operationalDetail: try container.decodeIfPresent(String.self, forKey: .operationalDetail),
-            legacyKind: try container.decodeIfPresent(String.self, forKey: .legacyKind)
+            kind: encodedKind.flatMap(EventKind.init(rawValue:)) ?? .emit,
+            sourceRange: try container.decodeIfPresent(SourceRange.self, forKey: .sourceRange),
+            parentRunID: try container.decodeIfPresent(String.self, forKey: .parentRunID),
+            parentSequence: try container.decodeIfPresent(Int.self, forKey: .parentSequence)
         )
     }
 
@@ -301,8 +320,145 @@ public struct TraceRecord: Sendable, Equatable, Codable {
         try container.encode(payloadHash, forKey: .payloadHash)
         try container.encodeIfPresent(outcome, forKey: .outcome)
         try container.encodeIfPresent(operationalDetail, forKey: .operationalDetail)
-        try container.encodeIfPresent(legacyKind, forKey: .legacyKind)
+        try container.encode(kind.rawValue, forKey: .kind)
+        try container.encodeIfPresent(sourceRange, forKey: .sourceRange)
+        try container.encodeIfPresent(parentRunID, forKey: .parentRunID)
+        try container.encodeIfPresent(parentSequence, forKey: .parentSequence)
     }
+}
+
+// MARK: - Runtime emission construction
+
+public extension TraceRecord {
+    /// Builds the record for one runtime call site, deriving the semantic
+    /// projection (`tag` / `outcome` / `operationalDetail` / `subject`) from
+    /// `kind` plus the payload. This is the single construction path for
+    /// runtime emissions: `Runtime` appends the result to its trace store (when
+    /// configured) and hands the same record to its observer.
+    init(
+        kind: EventKind,
+        at: Date,
+        run: String,
+        ingestOrder: Int,
+        skillName: String,
+        skillVersionHash: String,
+        id: String,
+        step: String? = nil,
+        subject: String? = nil,
+        subjectKey: String? = nil,
+        payload: [String: Value]? = nil,
+        hashedPayload: [String: Value]? = nil,
+        sourceRange: SourceRange? = nil,
+        parentRunID: String? = nil,
+        parentSequence: Int? = nil
+    ) throws {
+        let emissionPayload = payload ?? [:]
+        let mapping = traceKindMapping(kind: kind, payload: emissionPayload)
+        let canonicalPayload = hashedPayload ?? payload ?? [:]
+        self.init(
+            id: id,
+            at: at,
+            ingestOrder: ingestOrder,
+            run: run,
+            step: step ?? emissionPayload["step"]?.scalarDescription ?? kind.rawValue,
+            skillName: skillName,
+            skillVersionHash: skillVersionHash,
+            tag: mapping.tag,
+            subject: subject ?? mapping.subject,
+            subjectKey: subjectKey ?? emissionPayload["subject_key"]?.scalarDescription,
+            payload: emissionPayload.isEmpty ? nil : emissionPayload,
+            payloadHash: try CanonicalJSON.sha256Hex(for: canonicalPayload),
+            outcome: mapping.outcome,
+            operationalDetail: mapping.operationalDetail,
+            kind: kind,
+            sourceRange: sourceRange,
+            parentRunID: parentRunID,
+            parentSequence: parentSequence
+        )
+    }
+}
+
+// MARK: - Kind → semantic projection
+
+private struct TraceKindMapping {
+    let tag: TraceTag
+    let outcome: TraceOutcome?
+    let operationalDetail: String?
+    let subject: String?
+}
+
+/// The single kind → tag/outcome/detail/subject table. Temporal and
+/// statistical operators query the projected `tag` layer; `kind` remains the
+/// raw emission discriminator on the same record.
+private func traceKindMapping(kind: EventKind, payload: [String: Value]) -> TraceKindMapping {
+    switch kind {
+    case .workflowStarted:
+        return TraceKindMapping(tag: .invoked, outcome: .success, operationalDetail: kind.rawValue, subject: payload["workflow"]?.scalarDescription ?? "workflow")
+    case .workflowCompleted:
+        return TraceKindMapping(tag: .completed, outcome: .success, operationalDetail: nil, subject: payload["workflow"]?.scalarDescription ?? "workflow")
+    case .workflowFailed:
+        return TraceKindMapping(tag: .failed, outcome: .failure, operationalDetail: nil, subject: payload["workflow"]?.scalarDescription ?? "workflow")
+    case .workflowCancelled, .workflowSuspended, .workflowResumed, .bind, .waitStart, .waitResume:
+        return TraceKindMapping(tag: .emitted, outcome: .indeterminate, operationalDetail: kind.rawValue, subject: traceSubject(payload))
+    case .invokeStart:
+        return TraceKindMapping(tag: .invoked, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .invokeEnd:
+        return TraceKindMapping(tag: .completed, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .invokeError:
+        return TraceKindMapping(tag: .failed, outcome: .failure, operationalDetail: nil, subject: traceSubject(payload))
+    case .planStart, .planEnd:
+        return TraceKindMapping(tag: .judged, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .planError, .planRejected:
+        return TraceKindMapping(tag: .judged, outcome: .failure, operationalDetail: nil, subject: traceSubject(payload))
+    case .autonomyStart, .autonomyStep, .autonomyEnd:
+        let outcome: TraceOutcome?
+        if kind == .autonomyStep, payload["status"] == .string("failure") {
+            outcome = .failure
+        } else {
+            outcome = .success
+        }
+        return TraceKindMapping(tag: .judged, outcome: outcome, operationalDetail: nil, subject: traceSubject(payload))
+    case .branchTaken, .branchEnded:
+        return TraceKindMapping(tag: .branched, outcome: .success, operationalDetail: kind == .branchEnded ? kind.rawValue : nil, subject: traceSubject(payload))
+    case .iterateStart, .iterateIteration, .iterateEnd:
+        return TraceKindMapping(tag: .iterated, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .assertPassed:
+        let outcome: TraceOutcome = payload["outcome"] == .string(TruthValue.indeterminate.rawValue)
+            ? .indeterminate
+            : .success
+        return TraceKindMapping(tag: .asserted, outcome: outcome, operationalDetail: nil, subject: traceSubject(payload))
+    case .assertFailed:
+        return TraceKindMapping(tag: .assertFailed, outcome: .failure, operationalDetail: nil, subject: traceSubject(payload))
+    case .emit:
+        return TraceKindMapping(tag: .emitted, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .emitError:
+        return TraceKindMapping(tag: .failed, outcome: .failure, operationalDetail: kind.rawValue, subject: traceSubject(payload))
+    case .commit:
+        return TraceKindMapping(tag: .committed, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .recoverEngaged:
+        return TraceKindMapping(tag: .recovered, outcome: .success, operationalDetail: nil, subject: traceSubject(payload))
+    case .violated:
+        let disposition = payload["disposition"]?.scalarDescription ?? "prevented"
+        return TraceKindMapping(tag: .violated, outcome: .failure, operationalDetail: disposition, subject: payload["tool_id"]?.scalarDescription ?? traceSubject(payload))
+    }
+}
+
+/// Subject priority shared by every kind that has no bespoke subject rule:
+/// tool → emitted event → workflow → payload-declared kind.
+private func traceSubject(_ payload: [String: Value]) -> String? {
+    if let tool = payload["tool"]?.scalarDescription, !tool.isEmpty {
+        return tool
+    }
+    if let emitted = payload["event"]?.scalarDescription, !emitted.isEmpty {
+        return emitted
+    }
+    if let workflow = payload["workflow"]?.scalarDescription, !workflow.isEmpty {
+        return workflow
+    }
+    if let kind = payload["kind"]?.scalarDescription, !kind.isEmpty {
+        return kind
+    }
+    return nil
 }
 
 extension Duration {

@@ -12,8 +12,8 @@ struct RuntimeEventsCoverageTests {
         await runtime.emitLenient(event: "order.noted", payload: [:], step: "s2")
         let events = await observer.events.filter { $0.kind == .emit }
         #expect(events.count == 2)
-        #expect(events[0].payload["event"] == .string("order.placed"))
-        #expect(events[1].payload["event"] == .string("order.noted"))
+        #expect((events[0].payload ?? [:])["event"] == .string("order.placed"))
+        #expect((events[1].payload ?? [:])["event"] == .string("order.noted"))
     }
 }
 

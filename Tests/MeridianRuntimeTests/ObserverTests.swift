@@ -2,14 +2,37 @@ import Testing
 import Foundation
 @testable import MeridianRuntime
 
+private func makeRecord(
+    _ kind: EventKind,
+    at timestamp: Date = Date(),
+    runID: String = "r-1",
+    sequence: Int = 1,
+    payload: [String: Value] = [:],
+    parentRunID: String? = nil,
+    parentSequence: Int? = nil
+) throws -> TraceRecord {
+    try TraceRecord(
+        kind: kind,
+        at: timestamp,
+        run: runID,
+        ingestOrder: sequence,
+        skillName: "skill",
+        skillVersionHash: "h",
+        id: "id-\(sequence)",
+        payload: payload,
+        parentRunID: parentRunID,
+        parentSequence: parentSequence
+    )
+}
+
 @Suite("InMemoryObserver")
 struct ObserverTests {
 
     @Test("records events in order")
     func recordsInOrder() async throws {
         let observer = InMemoryObserver()
-        let e1 = Event(timestamp: Date(), runID: "r-1", sequence: 1, kind: .workflowStarted, payload: [:])
-        let e2 = Event(timestamp: Date(), runID: "r-1", sequence: 2, kind: .bind, payload: ["name": .string("x")])
+        let e1 = try makeRecord(.workflowStarted, sequence: 1)
+        let e2 = try makeRecord(.bind, sequence: 2, payload: ["name": .string("x")])
         try await observer.record(e1)
         try await observer.record(e2)
         let events = await observer.events
@@ -21,7 +44,7 @@ struct ObserverTests {
     @Test("clear empties the store")
     func clearEmpties() async throws {
         let observer = InMemoryObserver()
-        try await observer.record(Event(timestamp: Date(), runID: "r-1", sequence: 1, kind: .bind, payload: [:]))
+        try await observer.record(try makeRecord(.bind))
         await observer.clear()
         let events = await observer.events
         #expect(events.isEmpty)
@@ -32,7 +55,7 @@ struct ObserverTests {
         let o1 = InMemoryObserver()
         let o2 = InMemoryObserver()
         let composite = CompositeObserver([o1, o2])
-        let e = Event(timestamp: Date(), runID: "r-1", sequence: 1, kind: .workflowStarted, payload: [:])
+        let e = try makeRecord(.workflowStarted)
         try await composite.record(e)
         let c1 = await o1.events.count
         let c2 = await o2.events.count
@@ -53,7 +76,7 @@ struct ObserverTests {
         let failing = try JSONLObserver.file(failingDir.appendingPathComponent("blocked.jsonl"))
 
         let composite = CompositeObserver([succeeding, failing])
-        let event = Event(timestamp: Date(), runID: "r-1", sequence: 1, kind: .bind, payload: [:])
+        let event = try makeRecord(.bind)
 
         await #expect(throws: (any Error).self) {
             try await composite.record(event)
@@ -75,11 +98,10 @@ struct JSONLObserverTests {
         FileManager.default.createFile(atPath: tmpURL.path, contents: nil)
 
         let observer = try JSONLObserver.file(tmpURL)
-        let event = Event(
-            timestamp: Date(timeIntervalSince1970: 1_745_913_600),
+        let event = try makeRecord(
+            .workflowStarted,
+            at: Date(timeIntervalSince1970: 1_745_913_600),
             runID: "r-test",
-            sequence: 1,
-            kind: .workflowStarted,
             payload: ["workflow": .string("ProcessOrder")]
         )
         try await observer.record(event)
@@ -105,7 +127,7 @@ struct JSONLObserverTests {
         try FileManager.default.setAttributes([.posixPermissions: 0o444], ofItemAtPath: failingDir.path)
 
         let observer = try JSONLObserver.file(failingDir.appendingPathComponent("events.jsonl"))
-        let event = Event(timestamp: Date(), runID: "r-1", sequence: 1, kind: .bind, payload: [:])
+        let event = try makeRecord(.bind)
 
         await #expect(throws: (any Error).self) {
             try await observer.record(event)

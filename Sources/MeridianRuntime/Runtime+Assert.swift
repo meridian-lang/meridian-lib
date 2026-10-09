@@ -122,10 +122,7 @@ extension Runtime {
         let subjectKeyPayload = subjectKey.map { ["subject_key": Value.string($0)] } ?? [:]
         switch condition {
         case .true:
-            try await emitOrThrow(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .assertPassed,
                 payload: mergeDicts([
                     "message": .string(message),
@@ -133,12 +130,9 @@ extension Runtime {
                     "step": step.map(Value.string) ?? .null
                 ], subjectKeyPayload),
                 sourceRange: sourceRange
-            ))
+            )
         case .indeterminate:
-            try await emitOrThrow(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .assertPassed,
                 payload: mergeDicts([
                     "message": .string(message),
@@ -146,19 +140,16 @@ extension Runtime {
                     "step": step.map(Value.string) ?? .null
                 ], subjectKeyPayload),
                 sourceRange: sourceRange
-            ))
+            )
         case .false:
-            try await emitOrThrow(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .assertFailed,
                 payload: mergeDicts([
                     "message": .string(message),
                     "step": step.map(Value.string) ?? .null
                 ], subjectKeyPayload),
                 sourceRange: sourceRange
-            ))
+            )
             if throwOnFailure {
                 throw MeridianRuntimeError.assertion(message: message, sourceRange: sourceRange)
             }
@@ -172,10 +163,7 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .branchTaken,
             payload: [
                 "condition": .string(condition),
@@ -183,7 +171,7 @@ extension Runtime {
                 "step": step.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     /// Closes a branch arm opened by `recordBranchTaken`, so trace trees can
@@ -193,17 +181,14 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .branchEnded,
             payload: [
                 "into": .string(into),
                 "step": step.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     /// Records a deontic violation witness (`TraceTag.violated`) without invoking
@@ -227,15 +212,10 @@ extension Runtime {
             payload["tool_id"] = .string(toolID)
         }
         try await emitOrThrow(
-            event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
-                kind: .violated,
-                payload: payload,
-                sourceRange: sourceRange
-            ),
-            hashedPayload: payload
+            kind: .violated,
+            payload: payload,
+            hashedPayload: payload,
+            sourceRange: sourceRange
         )
         if blocking {
             throw MeridianRuntimeError.violation(
@@ -251,14 +231,11 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .iterateStart,
             payload: ["over": .string(over), "step": step.map(Value.string) ?? .null],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     /// One loop body execution, keyed by its zero-based `index`.
@@ -267,14 +244,11 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .iterateIteration,
             payload: ["index": .number(Decimal(index)), "step": step.map(Value.string) ?? .null],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     /// A loop finished; `count` is the total number of iterations run.
@@ -284,14 +258,11 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .iterateEnd,
             payload: ["over": .string(over), "count": .number(Decimal(count)), "step": step.map(Value.string) ?? .null],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     /// A `recover`'s catch handler engaged for the given error `pattern` description.
@@ -300,14 +271,11 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .recoverEngaged,
             payload: ["pattern": .string(pattern), "step": step.map(Value.string) ?? .null],
             sourceRange: sourceRange
-        ))
+        )
     }
 
 }

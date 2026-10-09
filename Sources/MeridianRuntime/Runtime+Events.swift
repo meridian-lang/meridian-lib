@@ -14,14 +14,7 @@ extension Runtime {
         sourceRange: SourceRange? = nil
     ) async throws {
         let fullPayload = mergeDicts(mergeDicts(["event": .string(eventID)], payload), step.map { ["step": Value.string($0)] } ?? [:])
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
-            kind: .emit,
-            payload: fullPayload,
-            sourceRange: sourceRange
-        ))
+        try await emitOrThrow(kind: .emit, payload: fullPayload, sourceRange: sourceRange)
     }
 
     /// Emit a domain event in lenient mode — logs failure but does not halt.
@@ -31,14 +24,11 @@ extension Runtime {
         step: String? = nil,
         sourceRange: SourceRange? = nil
     ) async {
-        await emit(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        await emit(
             kind: .emit,
             payload: mergeDicts(mergeDicts(["event": .string(eventID)], payload), step.map { ["step": Value.string($0)] } ?? [:]),
             sourceRange: sourceRange
-        ))
+        )
     }
 
 

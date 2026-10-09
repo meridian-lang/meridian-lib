@@ -44,7 +44,10 @@ The persisted record is `TraceRecord`
 | `payloadHash` | String | Always present; canonical-JSON SHA-256. |
 | `outcome` | `TraceOutcome`? | `success`, `failure`, or `indeterminate`. |
 | `operationalDetail` | String? | Non-semantic runtime detail retained for audit. |
-| `legacyKind` | String? | Source `EventKind.rawValue` for legacy round-trip. |
+| `kind` | `EventKind` | Emission discriminator (`EventKind.rawValue`); decodes `.emit` when absent and still reads the pre-Phase-4 `legacyKind` key. |
+| `sourceRange` | `SourceRange`? | Source span when the emission carries one. |
+| `parentRunID` | String? | Parent run for nested workflows. |
+| `parentSequence` | Int? | Parent emission sequence for nested workflows. |
 
 Tested invariants:
 
@@ -52,8 +55,8 @@ Tested invariants:
   versions.
 - `payloadHash` is stable across JSON key order (`canonical JSON hash is stable
   across key order`).
-- legacy `EventKind` values round-trip through semantic projection
-  (`all legacy EventKind cases round-trip through semantic trace projection`).
+- every `EventKind` projects to its `TraceTag`/outcome/subject through the kind
+  table (`the kind table maps every EventKind with subject priority`).
 - `skillVersionHash` does not partition `across all runs` history
   (`SEM_4_09 across-all-runs ignores version hash when skill identity is stable`).
 
@@ -81,12 +84,12 @@ defines a stable semantic projection. The important mappings are:
 
 This is pinned by:
 
-- `all legacy EventKind cases round-trip through semantic trace projection`
+- `the kind table maps every EventKind with subject priority`
 - `SEM_4_04 judgment boundary maps to a judged record carrying a payload hash, kind, and tool scope`
 
-Judgment boundaries retain a content hash, the legacy/runtime kind, a
-tool-scope summary (`tool_count`), and the explicit scoped-tool-id list
-(`scoped_tools`) in the payload.
+Judgment boundaries retain a content hash, the runtime `kind`, a tool-scope
+summary (`tool_count`), and the explicit scoped-tool-id list (`scoped_tools`)
+in the payload.
 
 ---
 

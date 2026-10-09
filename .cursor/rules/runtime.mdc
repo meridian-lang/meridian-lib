@@ -1,5 +1,5 @@
 ---
-description: Runtime conventions for MeridianRuntime — Value enum, Value.from, NumericConvertible, State.get keys, Runtime.init signature, sync elapsedMS/eventCount, RuntimeApprovalVerdict, Observer/Event naming. Read when editing the runtime.
+description: Runtime conventions for MeridianRuntime — Value enum, Value.from, NumericConvertible, State.get keys, Runtime.init signature, sync elapsedMS/eventCount, RuntimeApprovalVerdict, Observer/TraceRecord naming. Read when editing the runtime.
 globs: Sources/MeridianRuntime/**/*.swift
 alwaysApply: false
 ---
@@ -95,13 +95,15 @@ domain type generated from vocabulary. They are distinct.
 
 ### `Observer` not `EventSink`
 
-The event sink protocol is `Observer` (not `EventSink`):
+The record sink protocol is `Observer` (not `EventSink`):
 ```swift
 public protocol Observer: Sendable {
-    func record(_ event: Event) async throws
+    func record(_ record: TraceRecord) async throws
 }
 ```
 Implementations: `JSONLObserver`, `InMemoryObserver`, `CompositeObserver`.
+`TraceStore` refines `Observer` (its default `record(_:)` appends), so a store
+can be installed as the runtime's observer.
 `JSONLObserver` throws on serialization/write failure (`ObserverError`) instead
 of dropping events. Under `.failClosed` trace policy, `Runtime` surfaces observer
 and trace-store failures on the next strict emit (`MeridianRuntimeError`).
@@ -116,27 +118,31 @@ Use `InMemoryObserver` in tests.
   unresolved `.auto` (runtime treats `.auto` like fail-closed, but planner
   removes ambiguity).
 
-### `Event` not `MeridianEvent`
+### `TraceRecord` is the one record type; `EventKind` is the discriminator
 
-The event type is `Event`, not `MeridianEvent`. It has 31 `EventKind` cases
-(including `violated`). See `docs/06_RUNTIME.md` for the full list.
+There is no `Event` struct: every runtime emission is a `TraceRecord` carrying
+`kind: EventKind` (31 cases, including `violated`), the projected `tag`, the
+payload, source range, and parent correlation. `Runtime` builds it once, appends
+it to the trace store (when configured), then hands the same record to the
+observer. `EventKind` lives in `Trace/EventKind.swift`; the kind → tag/outcome/
+detail/subject table lives in `Trace/TraceRecord.swift`. See
+`docs/06_RUNTIME.md` for the full case list.
 
 ### Trace subsystem (Wave 8) — `Sources/MeridianRuntime/Trace/`
 
-- **`TraceRecord` is the persisted semantic record**, distinct from `Event`. Its
-  `tag` is the closed `TraceTag` set (`invoked` `completed` `failed` `emitted`
-  `asserted` `assert-failed` `branched` `iterated` `judged` `committed`
-  `recovered` `violated`), and temporal/statistical operators query the tag
-  layer — never raw `EventKind`.
-- **`payloadHash` is always present** (non-optional `String`). `TraceRecord(legacy:
-  event, …)` computes it via `CanonicalJSON.sha256Hex` (key-order-independent).
-  Capture policy (`full`/`hash-only`/`redacted`) may drop `payload` but never the
-  hash.
-- **`EventKind` → `TraceTag` mapping lives in `EventMigration.swift`** and must
-  stay bijective enough that `Event(fromSemantic:)` round-trips (`legacyKind`
-  carries the original raw value). `planStart/End/Error/Rejected` and
-  `autonomyStart/Step/End` all map to `judged` (that is the judgment-boundary
-  witness — SEM-4-04).
+- **`TraceRecord` is both the emitted record and the persisted semantic row.**
+  Its `tag` is the closed `TraceTag` set (`invoked` `completed` `failed`
+  `emitted` `asserted` `assert-failed` `branched` `iterated` `judged`
+  `committed` `recovered` `violated`), and temporal/statistical operators query
+  the tag layer — never raw `EventKind`.
+- **`payloadHash` is always present** (non-optional `String`). The
+  `TraceRecord(kind:at:run:…)` initializer computes it via
+  `CanonicalJSON.sha256Hex` (key-order-independent). Capture policy
+  (`full`/`hash-only`/`redacted`) may drop `payload` but never the hash.
+- **The `EventKind` → `TraceTag` table lives in `Trace/TraceRecord.swift`** and
+  `kind` carries the original raw value on the same record.
+  `planStart/End/Error/Rejected` and `autonomyStart/Step/End` all map to
+  `judged` (that is the judgment-boundary witness — SEM-4-04).
 - **`skillVersionHash` is audit metadata only (D10).** `TraceEvaluator`
   `.acrossAllRuns` scopes by `skillName` + step path and must NOT partition on
   the version hash.

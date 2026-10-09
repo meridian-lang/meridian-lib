@@ -51,8 +51,8 @@ struct SignalWaitTests {
         }
         let startEvent = await observer.events.first { $0.kind == .waitStart }
         #expect(startEvent != nil)
-        #expect(startEvent?.payload["kind"] == .string("signal"))
-        #expect(startEvent?.payload["name"] == .string("review"))
+        #expect((startEvent?.payload ?? [:])["kind"] == .string("signal"))
+        #expect((startEvent?.payload ?? [:])["name"] == .string("review"))
     }
 
     @Test("two sequential deliveries each wake exactly one waiter")
@@ -157,9 +157,7 @@ struct EventWaitTests {
             group.addTask { try await runtime.wait(.event("payment.confirmed", matching: nil)) }
             group.addTask {
                 try await Task.sleep(for: .milliseconds(10))
-                let evt = Event(timestamp: Date(), runID: "ext", sequence: 1, kind: .emit,
-                                payload: ["event": .string("payment.confirmed")])
-                await runtime.deliverEvent(evt)
+                await runtime.deliverEvent(id: "payment.confirmed")
             }
             try await group.waitForAll()
         }
@@ -175,9 +173,7 @@ struct EventWaitTests {
         let waitTask = Task { try await runtime.wait(.event("payment.confirmed", matching: nil)) }
         try await Task.sleep(for: .milliseconds(10))
 
-        let wrongEvt = Event(timestamp: Date(), runID: "ext", sequence: 1, kind: .emit,
-                             payload: ["event": .string("payment.failed")])
-        await runtime.deliverEvent(wrongEvt)
+        await runtime.deliverEvent(id: "payment.failed")
         try await Task.sleep(for: .milliseconds(10))
         #expect(!waitTask.isCancelled, "waiter should still be parked")
         waitTask.cancel()
@@ -200,23 +196,19 @@ struct EventWaitTests {
     func eventPredicateFilter() async throws {
         let runtime = makeRuntime()
         let waitTask = Task {
-            try await runtime.wait(.event("payment.confirmed", matching: { e in
-                e.payload["order_id"] == .string("o-999")
+            try await runtime.wait(.event("payment.confirmed", matching: { record in
+                (record.payload ?? [:])["order_id"] == .string("o-999")
             }))
         }
         try await Task.sleep(for: .milliseconds(10))
 
         // Wrong payload — should not wake.
-        let wrongPayload = Event(timestamp: Date(), runID: "ext", sequence: 1, kind: .emit,
-                                 payload: ["event": .string("payment.confirmed"), "order_id": .string("o-111")])
-        await runtime.deliverEvent(wrongPayload)
+        await runtime.deliverEvent(id: "payment.confirmed", payload: ["order_id": .string("o-111")])
         try await Task.sleep(for: .milliseconds(10))
         #expect(!waitTask.isCancelled, "should still be waiting")
 
         // Correct payload — should wake.
-        let rightPayload = Event(timestamp: Date(), runID: "ext", sequence: 1, kind: .emit,
-                                 payload: ["event": .string("payment.confirmed"), "order_id": .string("o-999")])
-        await runtime.deliverEvent(rightPayload)
+        await runtime.deliverEvent(id: "payment.confirmed", payload: ["order_id": .string("o-999")])
         try await waitTask.value
     }
 
@@ -261,9 +253,9 @@ struct ChoiceWaitTests {
         #expect(clearedAfterConsume == "")
 
         let startEvent = await observer.events.first { $0.kind == .waitStart }
-        #expect(startEvent?.payload["kind"] == .string("choice"))
-        #expect(startEvent?.payload["prompt"] == .string("Pick one"))
-        #expect(startEvent?.payload["options"] == .list([.string("a"), .string("b")]))
+        #expect((startEvent?.payload ?? [:])["kind"] == .string("choice"))
+        #expect((startEvent?.payload ?? [:])["prompt"] == .string("Pick one"))
+        #expect((startEvent?.payload ?? [:])["options"] == .list([.string("a"), .string("b")]))
     }
 
     @Test("deliverChoice with no waiter still records the selection for a later read")

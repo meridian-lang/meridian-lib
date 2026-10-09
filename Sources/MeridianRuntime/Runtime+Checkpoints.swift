@@ -31,14 +31,12 @@ extension Runtime {
                 sourceRange: sourceRange
             )
         }
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: seq,
+        try await emitOrThrow(
             kind: .commit,
+            ingestOrder: seq,
             payload: mergeDicts(label.map { ["label": Value.string($0)] } ?? [:], step.map { ["step": Value.string($0)] } ?? [:]),
             sourceRange: sourceRange
-        ))
+        )
         try await recordStateSnapshotIfEnabled(
             state: state,
             operation: "commit",
@@ -77,8 +75,7 @@ extension Runtime {
             payload: payload,
             payloadHash: try CanonicalJSON.sha256Hex(for: payload),
             outcome: .success,
-            operationalDetail: operation,
-            legacyKind: nil
+            operationalDetail: operation
         )
         try await traceStore.append(record)
         try rethrowOperationalFailureIfNeeded()
@@ -128,17 +125,14 @@ extension Runtime {
     public func prepareResume(runID: String) async throws -> ResumeContext {
         let context = try await resume(runID: runID)
         _activeResumeContext = context
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: self.runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .workflowResumed,
             payload: [
                 "resumed_run_id": .string(runID),
                 "last_checkpoint_label": context.lastCheckpointLabel.map(Value.string) ?? .null
             ],
             sourceRange: nil
-        ))
+        )
         return context
     }
 

@@ -81,7 +81,7 @@ struct SEM202NothingRecoverRuntimeTests {
         #expect(kinds.contains(.recoverEngaged))
         let events = await harness.events()
         let recoverEvent = events.first { $0.kind == .recoverEngaged }
-        #expect(recoverEvent?.payload["pattern"] == .string("any"))
-        #expect(recoverEvent?.payload["step"] == .string("/ReviewPage/recover"))
+        #expect((recoverEvent?.payload ?? [:])["pattern"] == .string("any"))
+        #expect((recoverEvent?.payload ?? [:])["step"] == .string("/ReviewPage/recover"))
     }
 }

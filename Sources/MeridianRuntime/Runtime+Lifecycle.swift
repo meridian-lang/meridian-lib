@@ -15,14 +15,7 @@ extension Runtime {
             "event_count": .number(Decimal(_eventCount + 1)),
             "step": step.map(Value.string) ?? .null
         ]
-        await emit(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
-            kind: .workflowCompleted,
-            payload: payload,
-            sourceRange: sourceRange
-        ))
+        await emit(kind: .workflowCompleted, payload: payload, sourceRange: sourceRange)
     }
 
     // MARK: - Cancellation
@@ -70,17 +63,13 @@ extension Runtime {
         _activeWorkflowName = workflowName
         var payload: [String: Value] = ["workflow": .string(workflowName)]
         for (k, v) in parameters { payload[k] = v }
-        let event = Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        await emit(
             kind: .workflowStarted,
             payload: payload,
             sourceRange: sourceRange,
             parentRunID: parentRunID,
             parentSequence: parentSequence
         )
-        await emit(event: event)
     }
 
     /// Emit a terminal workflow.failed event before rethrowing a run() error.
@@ -104,16 +93,13 @@ extension Runtime {
         if let code = implementationErrorCode(error) {
             payload["error_code"] = .string(code)
         }
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .workflowFailed,
             payload: payload,
             sourceRange: sourceRange,
             parentRunID: parentRunID,
             parentSequence: parentSequence
-        ))
+        )
     }
 
     /// Emit a structural event (branch.taken, bind, assert.passed, etc.) from generated code.
@@ -122,14 +108,7 @@ extension Runtime {
         payload: [String: Value],
         sourceRange: SourceRange? = nil
     ) async {
-        await emit(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
-            kind: kind,
-            payload: payload,
-            sourceRange: sourceRange
-        ))
+        await emit(kind: kind, payload: payload, sourceRange: sourceRange)
     }
 
 }

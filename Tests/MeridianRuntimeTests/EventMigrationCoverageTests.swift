@@ -5,38 +5,35 @@ import Testing
 @Suite("EventMigration coverage")
 struct EventMigrationCoverageTests {
 
-    private func event(
+    private func record(
         _ kind: EventKind,
         payload: [String: Value] = [:],
         sequence: Int = 0
-    ) -> Event {
-        Event(
-            timestamp: Date(timeIntervalSince1970: Double(sequence)),
-            runID: "run-1",
-            sequence: sequence,
+    ) throws -> TraceRecord {
+        try TraceRecord(
             kind: kind,
+            at: Date(timeIntervalSince1970: Double(sequence)),
+            run: "run-1",
+            ingestOrder: sequence,
+            skillName: "skill",
+            skillVersionHash: "h",
+            id: "id-\(sequence)",
             payload: payload
         )
     }
 
-    @Test("TraceRecord(legacy:) maps every EventKind with subject priority")
-    func legacyMappingMatrix() throws {
+    @Test("the kind table maps every EventKind with subject priority")
+    func mappingMatrix() throws {
         var seq = 0
         func next(_ kind: EventKind, payload: [String: Value]) throws -> TraceRecord {
             defer { seq += 1 }
-            return try TraceRecord(
-                legacy: event(kind, payload: payload, sequence: seq),
-                step: "s",
-                skillName: "skill",
-                skillVersionHash: "h",
-                id: "id-\(seq)",
-                ingestOrder: seq
-            )
+            return try record(kind, payload: payload, sequence: seq)
         }
 
         let workflow = try next(.workflowStarted, payload: ["workflow": .string("OrderFlow")])
         #expect(workflow.tag == .invoked)
         #expect(workflow.subject == "OrderFlow")
+        #expect(workflow.kind == .workflowStarted)
 
         let completed = try next(.workflowCompleted, payload: [:])
         #expect(completed.tag == .completed)
@@ -83,10 +80,36 @@ struct EventMigrationCoverageTests {
         #expect(violated.operationalDetail == "blocked")
         #expect(violated.subject == "charge")
 
+        let planStart = try next(.planStart, payload: [
+            "scoped_tools": .list([.string("ci.fix")]),
+            "input_payload_hash": .string("deadbeef"),
+            "output_kind": .string("record"),
+            "step": .string("root/aiJudgment"),
+        ])
+        #expect(planStart.tag == .judged)
+        #expect(planStart.step == "root/aiJudgment")
+        #expect(planStart.payload?["scoped_tools"] == .list([.string("ci.fix")]))
+        #expect(planStart.payload?["input_payload_hash"] == .string("deadbeef"))
+        #expect(!planStart.payloadHash.isEmpty)
+
         // Sweep remaining kinds so every switch arm is warm.
         for kind in EventKind.allCases {
             _ = try next(kind, payload: samplePayload(for: kind))
         }
+    }
+
+    @Test("subjectKey and empty payloads keep the legacy record shape")
+    func payloadShape() throws {
+        let keyed = try record(.emit, payload: [
+            "event": .string("order.placed"),
+            "subject_key": .string("orders"),
+        ])
+        #expect(keyed.subjectKey == "orders")
+        #expect(keyed.payload?["event"] == .string("order.placed"))
+
+        let empty = try record(.waitResume, payload: [:])
+        #expect(empty.payload == nil)
+        #expect(empty.step == EventKind.waitResume.rawValue)
     }
 
     private func samplePayload(for kind: EventKind) -> [String: Value] {

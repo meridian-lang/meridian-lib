@@ -175,7 +175,7 @@ struct RuntimeExecutor {
         lines.append("        print(event.kind.rawValue)")
         lines.append("    }")
         lines.append("    if let final = events.last(where: { $0.kind == .workflowCompleted || $0.kind == .workflowFailed }),")
-        lines.append("       case .string(let reason)? = final.payload[\"reason\"] {")
+        lines.append("       case .string(let reason)? = (final.payload ?? [:])[\"reason\"] {")
         lines.append("        print(\"\(Self.finalReasonSentinel)\\(reason)\")")
         lines.append("    }")
         if let expectBinding = spec.expectFinalBindingContains {

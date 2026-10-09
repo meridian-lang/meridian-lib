@@ -72,7 +72,7 @@ struct RuntimeTests {
         let events = await observer.events
         let completedEvent = events.first { $0.kind == .workflowCompleted }
         #expect(completedEvent != nil)
-        if case .string(let r) = completedEvent?.payload["reason"] {
+        if case .string(let r) = (completedEvent?.payload ?? [:])["reason"] {
             #expect(r == "test_reason")
         }
     }
@@ -84,7 +84,7 @@ struct RuntimeTests {
         await runtime.complete(reason: nil)
         let events = await observer.events
         let completedEvent = events.first { $0.kind == .workflowCompleted }
-        #expect(completedEvent?.payload["reason"] == .null)
+        #expect((completedEvent?.payload ?? [:])["reason"] == .null)
     }
 
     @Test("eventCount increments with each event")
@@ -223,7 +223,7 @@ struct RuntimeTests {
         let events = await observer.events
         let failed = events.first { $0.kind == .assertFailed }
         #expect(failed != nil)
-        #expect(failed?.payload["message"] == .string("x is non-nil"))
+        #expect((failed?.payload ?? [:])["message"] == .string("x is non-nil"))
     }
 
     // MARK: - Primitive-boundary instrumentation (8B/E)
@@ -236,9 +236,9 @@ struct RuntimeTests {
         let events = await observer.events
         let event = events.first { $0.kind == .branchTaken }
         #expect(event != nil)
-        #expect(event?.payload["condition"] == .string("x > 0"))
-        #expect(event?.payload["into"] == .string("then"))
-        #expect(event?.payload["step"] == .string("branch.step"))
+        #expect((event?.payload ?? [:])["condition"] == .string("x > 0"))
+        #expect((event?.payload ?? [:])["into"] == .string("then"))
+        #expect((event?.payload ?? [:])["step"] == .string("branch.step"))
     }
 
     @Test("recordBranchEnded emits branchEnded with into/step payload")
@@ -249,8 +249,8 @@ struct RuntimeTests {
         let events = await observer.events
         let event = events.first { $0.kind == .branchEnded }
         #expect(event != nil)
-        #expect(event?.payload["into"] == .string("then"))
-        #expect(event?.payload["step"] == .string("branch.step"))
+        #expect((event?.payload ?? [:])["into"] == .string("then"))
+        #expect((event?.payload ?? [:])["step"] == .string("branch.step"))
     }
 
     @Test("recordIterateStart/Iteration/End emit the paired iterate events")
@@ -265,9 +265,9 @@ struct RuntimeTests {
         let kinds = events.map(\.kind)
         #expect(kinds.filter { $0 == .iterateIteration }.count == 2)
         let start = events.first { $0.kind == .iterateStart }
-        #expect(start?.payload["over"] == .string("the items"))
+        #expect((start?.payload ?? [:])["over"] == .string("the items"))
         let end = events.first { $0.kind == .iterateEnd }
-        #expect(end?.payload["count"] == .number(2))
+        #expect((end?.payload ?? [:])["count"] == .number(2))
     }
 
     @Test("recordRecoverEngaged emits recoverEngaged with the pattern payload")
@@ -277,8 +277,8 @@ struct RuntimeTests {
         try await runtime.recordRecoverEngaged(pattern: "any", step: "recover.step")
         let events = await observer.events
         let event = events.first { $0.kind == .recoverEngaged }
-        #expect(event?.payload["pattern"] == .string("any"))
-        #expect(event?.payload["step"] == .string("recover.step"))
+        #expect((event?.payload ?? [:])["pattern"] == .string("any"))
+        #expect((event?.payload ?? [:])["step"] == .string("recover.step"))
     }
 
     // MARK: - Resume (Phase 5)

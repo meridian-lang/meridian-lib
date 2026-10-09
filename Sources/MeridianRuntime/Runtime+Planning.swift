@@ -38,10 +38,7 @@ extension Runtime {
         // snapshot — so replaying the same judgment call is detectable.
         let inputHash = judgmentPayloadHash(judgmentInputPayload(prose: prose, guidance: guidance, snapshot: snapshot))
 
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .planStart,
             payload: [
                 "mode": .string("plan_then_execute"),
@@ -52,7 +49,7 @@ extension Runtime {
                 "step": traceStep.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
-        ))
+        )
 
         do {
             let proposal = try await planner.plan(context)
@@ -75,10 +72,7 @@ extension Runtime {
                 try await checkpoint(label: "prose.plan.action.\(action.toolID)", state: snapshot, step: traceStep, sourceRange: sourceRange)
             }
 
-            try await emitOrThrow(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .planEnd,
                 payload: [
                     "action_count": .number(Decimal(proposal.actions.count)),
@@ -89,20 +83,17 @@ extension Runtime {
                     "step": traceStep.map(Value.string) ?? .null
                 ],
                 sourceRange: sourceRange
-            ))
+            )
             return bindings
         } catch {
-            try await emitOrThrow(event: Event(
-                timestamp: clock.now(),
-                runID: runID,
-                sequence: nextSeq(),
+            try await emitOrThrow(
                 kind: .planError,
                 payload: mergeDicts(
                     mergeDicts(errorPayload(error), ["scoped_tools": scopePayload]),
                     traceStep.map { ["step": Value.string($0)] } ?? [:]
                 ),
                 sourceRange: sourceRange
-            ))
+            )
             throw error
         }
     }
@@ -136,10 +127,7 @@ extension Runtime {
         // autonomy dispatch path.
         let inputHash = judgmentPayloadHash(judgmentInputPayload(prose: prose, guidance: guidance, snapshot: snapshot))
 
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .autonomyStart,
             payload: [
                 "tool_count": .number(Decimal(schemas.count)),
@@ -149,7 +137,7 @@ extension Runtime {
                 "step": traceStep.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
-        ))
+        )
 
         let initialSnapshot = makeSnapshot(from: loopValues)
         if let reason = checkAutonomyPredicates(snapshot: initialSnapshot, until: until, unless: unless) {
@@ -189,25 +177,19 @@ extension Runtime {
                     try await checkpoint(label: "autonomy.action.\(action.toolID)", state: makeSnapshot(from: loopValues), step: traceStep, sourceRange: sourceRange)
                     observations.append(ObservationTurn(action: action, outcome: .success(result)))
                     consecutiveFailures = 0
-                    try await emitOrThrow(event: Event(
-                        timestamp: clock.now(),
-                        runID: runID,
-                        sequence: nextSeq(),
+                    try await emitOrThrow(
                         kind: .autonomyStep,
                         payload: ["tool": .string(action.toolID), "status": .string("success"), "step": traceStep.map(Value.string) ?? .null],
                         sourceRange: sourceRange
-                    ))
+                    )
                 } catch {
                     observations.append(ObservationTurn(action: action, outcome: .failure(String(describing: error))))
                     consecutiveFailures += 1
-                    try await emitOrThrow(event: Event(
-                        timestamp: clock.now(),
-                        runID: runID,
-                        sequence: nextSeq(),
+                    try await emitOrThrow(
                         kind: .autonomyStep,
                         payload: mergeDicts(autonomyFailurePayload(toolID: action.toolID, error: error), traceStep.map { ["step": Value.string($0)] } ?? [:]),
                         sourceRange: sourceRange
-                    ))
+                    )
 
                     if replanAfterFailures > 0, consecutiveFailures >= replanAfterFailures {
                         try await enforceHistoryLimits(observations, sourceRange: sourceRange)
@@ -378,10 +360,7 @@ extension Runtime {
         maxBytes: Int,
         sourceRange: SourceRange?
     ) async throws {
-        try await emitOrThrow(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        try await emitOrThrow(
             kind: .planRejected,
             payload: [
                 "code": .string(code.rawValue),
@@ -389,14 +368,11 @@ extension Runtime {
                 "max_bytes": .number(Decimal(maxBytes))
             ],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     func emitAutonomyEnd(reason: String, scopedTools: Value, inputHash: Value, outputKind: String, bindings: [String: Value], step: String?, sourceRange: SourceRange?) async {
-        await emit(event: Event(
-            timestamp: clock.now(),
-            runID: runID,
-            sequence: nextSeq(),
+        await emit(
             kind: .autonomyEnd,
             payload: [
                 "reason": .string(reason),
@@ -407,7 +383,7 @@ extension Runtime {
                 "step": step.map(Value.string) ?? .null
             ],
             sourceRange: sourceRange
-        ))
+        )
     }
 
     func scopedToolPayload(_ scope: Set<String>) -> Value {

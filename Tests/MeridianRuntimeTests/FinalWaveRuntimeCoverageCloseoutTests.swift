@@ -117,7 +117,7 @@ struct FinalWaveRuntimeCoverageCloseoutTests {
             args: ["command": .string("echo secret")]
         )
         let start = await observer.events.first { $0.kind == .invokeStart }
-        if case .record(let args) = start?.payload["args"] {
+        if case .record(let args) = (start?.payload ?? [:])["args"] {
             #expect(args["command"] == .string("<redacted>"))
         } else {
             Issue.record("expected invoke args record")

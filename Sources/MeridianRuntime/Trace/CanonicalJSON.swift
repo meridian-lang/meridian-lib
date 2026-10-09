@@ -61,9 +61,7 @@ public enum CanonicalJSON {
         if let operationalDetail = record.operationalDetail {
             object["operationalDetail"] = .string(operationalDetail)
         }
-        if let legacyKind = record.legacyKind {
-            object["legacyKind"] = .string(legacyKind)
-        }
+        object["kind"] = .string(record.kind.rawValue)
         return .object(object)
     }
 

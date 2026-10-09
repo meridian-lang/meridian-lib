@@ -77,8 +77,7 @@ struct RuntimeBuilderTraceStoreTests {
             payload: [:],
             payloadHash: "payload",
             outcome: .success,
-            operationalDetail: nil,
-            legacyKind: nil
+            operationalDetail: nil
         ))
         let temporal = TraceTemporalQuery(kind: .ever(
             TraceEventPatternQuery(subject: .step("deploy"), outcome: .succeeded)))

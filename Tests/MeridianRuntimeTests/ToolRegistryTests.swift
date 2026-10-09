@@ -63,7 +63,7 @@ struct ToolRegistryTests {
         ])
 
         let event = try #require(await observer.events.first { $0.kind == .invokeStart })
-        guard case .record(let args)? = event.payload["args"] else {
+        guard case .record(let args)? = (event.payload ?? [:])["args"] else {
             Issue.record("Expected invoke.start args record")
             return
         }
