@@ -14,7 +14,7 @@ Composition Gallery) enforce them; this folder is the human-readable source.
 
 ## Related docs elsewhere
 
-- [../03_LANGUAGE_QUICK_REFERENCE.md](../03_LANGUAGE_QUICK_REFERENCE.md) — practical author guide for `.meridian` / `.merconfig`
-- [../11_RULEBOOKS.md](../11_RULEBOOKS.md) — per-domain `.merrules` extensions
-- [../18_VERBALIZER.md](../18_VERBALIZER.md) — verbalizer API and round-trip law
-- [../19_TRACES_AND_TIME.md](../19_TRACES_AND_TIME.md) — operational Wave 8 trace/time write-up
+- [../03_LANGUAGE.md](../03_LANGUAGE.md) — practical author guide for `.meridian` / `.merconfig`
+- [../03_LANGUAGE.md](../03_LANGUAGE.md) — per-domain `.merrules` extensions
+- [../06_DEVELOPER_EXPERIENCE.md](../06_DEVELOPER_EXPERIENCE.md) — verbalizer API and round-trip law
+- [../04_RUNTIME.md](../04_RUNTIME.md) — operational Wave 8 trace/time write-up

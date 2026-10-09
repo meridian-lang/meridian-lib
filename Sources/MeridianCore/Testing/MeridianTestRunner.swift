@@ -24,7 +24,7 @@ import Foundation
 //     expect_event_kinds_prefix: workflow.started
 //     expect_run_succeeded: true
 //
-// See docs/09_MERIDIAN_TESTS.md for the full format reference.
+// See docs/08_TESTING.md for the full format reference.
 
 public struct MeridianTestRunner: Sendable {
 

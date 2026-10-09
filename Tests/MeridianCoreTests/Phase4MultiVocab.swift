@@ -4,7 +4,7 @@ import Foundation
 
 // MARK: - multi-vocabulary
 //
-// deliverable (docs/status.md):
+// deliverable (.ai/implementation-log-archive/docs-history/status.md):
 //   "Multi-vocabulary — support `import` of multiple `.merconfig` files."
 //
 // These tests exercise the `Compiler.compile(_:)` entry point with a

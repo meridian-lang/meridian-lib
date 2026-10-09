@@ -6,7 +6,7 @@ import GeneratedOrderProcessing
 
 // MARK: - Round Trip
 //
-// forcing function (docs/status.md):
+// forcing function (.ai/implementation-log-archive/docs-history/status.md):
 //   compile examples/order_processing.meridian
 //     → swift build (the generated module)
 //     → swift run with canned tools

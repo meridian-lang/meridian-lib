@@ -136,7 +136,7 @@ struct BuiltinToolsTests {
         // register their own closure to delegate to a real LLM (or a mock
         // that captures the question text). This proves the override path
         // works end-to-end with the runtime dispatcher, which is the
-        // mechanism documented for hosts in docs/06_RUNTIME.md.
+        // mechanism documented for hosts in docs/04_RUNTIME.md.
         let registry = ToolRegistry()
         await registry.registerBuiltins()
         // Override after the default was registered. ToolRegistry's

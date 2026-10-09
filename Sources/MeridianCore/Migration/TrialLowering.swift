@@ -115,7 +115,7 @@ struct TrialLowering {
     /// Whole-word (case-insensitive) match against `EnglishLexicon.inferenceCueWords`
     /// — the ONLY signal that permits routing non-lowerable content to an AI
     /// marker (judgment/autonomy/`ai-discretion`/`ai-autonomy`). See P1 in the
-    /// "Eliminate `(( inert ))`" plan / `docs/13_SKILL_MD_PORTING.md`.
+    /// "Eliminate `(( inert ))`" plan / `docs/09_SKILL_PORTING.md`.
     func hasInferenceCue(_ text: String) -> Bool {
         let words = text.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber })
         return words.contains { knowledge.lexicon.inferenceCueWords.contains(String($0)) }

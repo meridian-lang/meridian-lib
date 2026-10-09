@@ -21,7 +21,7 @@ extension CatalogLink {
 /// A structured design decision behind the diagnostics/developer-experience
 /// surface. Decisions are reachable *at the point of error*: a `DiagnosticCode`
 /// may carry a `DecisionRef`, and both `meridian explain-diag` and the rendered
-/// diagnostic surface the linked rationale. `docs/15_DECISIONS.md` is generated
+/// diagnostic surface the linked rationale. `docs/07_DECISIONS.md` is generated
 /// from this catalog (`meridian decisions --render`) so the human-readable log
 /// can never drift from the source of truth.
 public struct DecisionRecord: Sendable, Hashable {
@@ -213,14 +213,14 @@ public enum DecisionCatalog {
         return all.first { $0.id.uppercased() == needle }
     }
 
-    /// Render the catalog as the canonical `docs/15_DECISIONS.md`. The
+    /// Render the catalog as the canonical `docs/07_DECISIONS.md`. The
     /// `decisions --render` CLI mode writes this; a staleness test re-renders
     /// and diffs against the committed file so the doc never drifts.
     public static func renderMarkdown() -> String {
         var out = """
         # Meridian design decisions (diagnostics & developer experience)
 
-        > Generated from `DecisionCatalog` by `meridian decisions --render docs/15_DECISIONS.md`.
+        > Generated from `DecisionCatalog` by `meridian decisions --render docs/07_DECISIONS.md`.
         > Do not edit by hand — update `Sources/MeridianCore/Diagnostics/DecisionCatalog.swift`
         > and re-render. A test fails if this file drifts from the catalog.
 

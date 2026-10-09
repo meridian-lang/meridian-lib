@@ -5,7 +5,7 @@ import MeridianRuntime
 
 // MARK: - Golden Diff
 //
-// deliverable (docs/status.md):
+// deliverable (.ai/implementation-log-archive/docs-history/status.md):
 //   "Generated Swift output is byte-for-byte stable against a checked-in
 //    expected file. A drift triggers a test failure that surfaces a unified
 //    diff so a reviewer can decide whether the change is intentional."

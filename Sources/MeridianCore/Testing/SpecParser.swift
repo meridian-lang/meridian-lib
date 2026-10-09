@@ -269,7 +269,7 @@ struct SpecParser {
                             among: Self.recognizedKeys,
                             range: SourceRange(file: fileURL.lastPathComponent, line: 1, column: 1),
                             noun: "test-spec key",
-                            help: "Check for a typo; see docs/09_MERIDIAN_TESTS.md for recognized keys.")
+                            help: "Check for a typo; see docs/08_TESTING.md for recognized keys.")
                     ])
                 }
             }

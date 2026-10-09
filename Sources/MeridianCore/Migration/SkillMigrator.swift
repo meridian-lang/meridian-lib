@@ -12,7 +12,7 @@ import MeridianRuntime
 //      pre-heading preamble and classifies every heading per the P1 four-way
 //      precedence (lower / AI-inference-cue judgment / documentary `reference`
 //      / cue-less operational error — see AGENTS.md §6 item 15 and
-//      `docs/13_SKILL_MD_PORTING.md`): prose Contract/Anti-Patterns → role-
+//      `docs/09_SKILL_PORTING.md`): prose Contract/Anti-Patterns → role-
 //      typed non-executable or split by cue, executable unknown → a reusable
 //      `procedure` section alias, other unknown, non-lowerable, documentary →
 //      `(( role: reference ))`. The migrator never emits `(( inert ))`.

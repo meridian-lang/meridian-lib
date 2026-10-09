@@ -6,7 +6,7 @@ import MeridianCore
 //
 // Makes the design-decision log queryable from the CLI: list/search every
 // record, print one in full (`--id`), or regenerate the human-readable
-// `docs/15_DECISIONS.md` from the catalog (`--render`). The render mode is what
+// `docs/07_DECISIONS.md` from the catalog (`--render`). The render mode is what
 // keeps the doc from drifting — a test re-renders and diffs.
 
 public struct DecisionsCommand: ParsableCommand {
@@ -23,7 +23,7 @@ public struct DecisionsCommand: ParsableCommand {
     @Argument(help: "Optional search term to filter decisions by title/rationale.")
     var query: String?
 
-    @Option(name: .long, help: "Render the full catalog as Markdown to this path (regenerates docs/15_DECISIONS.md).")
+    @Option(name: .long, help: "Render the full catalog as Markdown to this path (regenerates docs/07_DECISIONS.md).")
     var render: String?
 
     public func run() throws {

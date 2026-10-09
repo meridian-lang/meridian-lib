@@ -150,10 +150,10 @@ Prose opt-out is **markers/comments only**: `(( role: reference ))`,
 `(( inert ))`, and `#`/`>` comment lines — never inferred from content. AI-
 routed steps (`use judgment to …:`, `with discretion`, `with autonomy`,
 `ai-discretion`/`ai-autonomy` markers) are executable, not a prose opt-out.
-Full precedence + examples: `docs/03_LANGUAGE_QUICK_REFERENCE.md` § "gbrain
+Full precedence + examples: `docs/03_LANGUAGE.md` § "gbrain
 SKILL surface"; migrator-side classification of the same source text during
 `SKILL.md` porting is a separate policy — see `AGENTS.md` §6 pitfall #15 and
-`docs/13_SKILL_MD_PORTING.md`.
+`docs/09_SKILL_PORTING.md`.
 
 ### `SkillSectionRole.reference` — the non-executable role `(( inert ))` maps to
 
@@ -171,7 +171,7 @@ both switches — the compiler will refuse to build otherwise, which is the
 point: there is no `default:` escape hatch on either switch. Migrator-side
 classification logic (which role to *assign*) lives in
 `Sources/MeridianCore/Migration/SkillMigrator+{SplitPlan,Marking}.swift`, out
-of this file's glob — see `docs/13_SKILL_MD_PORTING.md` for that policy.
+of this file's glob — see `docs/09_SKILL_PORTING.md` for that policy.
 
 ---
 

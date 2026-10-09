@@ -54,11 +54,11 @@ struct DecisionCatalogTests {
         }
     }
 
-    @Test("docs/15_DECISIONS.md matches the rendered catalog (no drift)")
+    @Test("docs/07_DECISIONS.md matches the rendered catalog (no drift)")
     func docIsInSync() throws {
-        let docURL = repoRoot.appendingPathComponent("docs/15_DECISIONS.md")
+        let docURL = repoRoot.appendingPathComponent("docs/07_DECISIONS.md")
         let onDisk = try String(contentsOf: docURL, encoding: .utf8)
         #expect(onDisk == DecisionCatalog.renderMarkdown(),
-                Comment(rawValue: "docs/15_DECISIONS.md is stale — run `meridian decisions --render docs/15_DECISIONS.md`"))
+                Comment(rawValue: "docs/07_DECISIONS.md is stale — run `meridian decisions --render docs/07_DECISIONS.md`"))
     }
 }

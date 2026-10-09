@@ -42,10 +42,10 @@ struct CLICommandCatalogTests {
                 """))
     }
 
-    @Test("every catalog leaf path is documented in docs/07_CLI.md")
+    @Test("every catalog leaf path is documented in docs/05_CLI.md")
     func cliDocCoversCatalog() throws {
         let doc = try String(
-            contentsOf: repoRoot.appendingPathComponent("docs/07_CLI.md"),
+            contentsOf: repoRoot.appendingPathComponent("docs/05_CLI.md"),
             encoding: .utf8
         )
         var missing: [String] = []
@@ -62,7 +62,7 @@ struct CLICommandCatalogTests {
             missing.append(entry.path)
         }
         #expect(missing.isEmpty,
-                Comment(rawValue: "docs/07_CLI.md missing sections for: \(missing.sorted())"))
+                Comment(rawValue: "docs/05_CLI.md missing sections for: \(missing.sorted())"))
     }
 
     @Test("AGENTS.md CLI table mentions every catalog leaf or nested parent")

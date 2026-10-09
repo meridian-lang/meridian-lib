@@ -1,4 +1,8 @@
-# Meridian — CLI Reference
+# Meridian — CLI
+
+Every `meridian` subcommand and flag. One section per command — the section
+headings are parity-tested against `MeridianCommandCatalog`, so keep the
+`## \`meridian <path>\`` shape when editing.
 
 The `meridian` executable has a thin `Sources/MeridianCLI/` entry point; command
 implementations live in the testable `Sources/MeridianCLIKit/` module.
@@ -17,7 +21,7 @@ meridian --version
 
 Four compile-family commands accept repeatable `--module-path <dir>` to search
 for shared Meridian module packages (`import module …` in source). See
-[22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md).
+[03_LANGUAGE.md](03_LANGUAGE.md).
 
 | Command | `--module-path` |
 |---|---|
@@ -113,7 +117,7 @@ meridian compile <source> [options]
 |---|---|---|
 | `--merconfig <path>` | auto-detected | Path to a `.merconfig` file. **Repeatable** — pass once per vocabulary. If omitted, all `.merconfig` files in the same directory as `<source>` are loaded (sorted alphabetically). Falls back to the parent directory if none are found there. |
 | `--rulebook <path>` | auto-detected | Path to a `.merrules` rulebook. **Repeatable**. If omitted, all `.merrules` files in the same directory as `<source>` are loaded (sorted alphabetically), falling back to the parent directory. Required for skill files that reference `rulebook:` in frontmatter. |
-| `--module-path <dir>` | (none) | Directory searched for shared module packages. **Repeatable**. See [22_MODULES_AND_IMPORTS.md](22_MODULES_AND_IMPORTS.md). |
+| `--module-path <dir>` | (none) | Directory searched for shared module packages. **Repeatable**. See [03_LANGUAGE.md](03_LANGUAGE.md). |
 | `-o, --output <dir>` | `build` | Directory to write the generated `.swift` and `.meridian.manifest.json`. Created with intermediate directories if needed. |
 | `--timestamp` | false | Include a generation timestamp in the generated file header. |
 | `--no-line-comments` | false | Suppress `// L{n}` source-line comments in generated code. |
@@ -515,7 +519,7 @@ swift run meridian test Tests/MeridianCoreTests/MeridianTestSpecs --update-golde
 swift run meridian test Tests/MeridianCoreTests/MeridianTestSpecs/runtime_happy.meridian.test --verbose
 ```
 
-See [09_MERIDIAN_TESTS.md](09_MERIDIAN_TESTS.md) for the full spec format reference.
+See [08_TESTING.md](08_TESTING.md) for the full spec format reference.
 
 ---
 
@@ -592,7 +596,7 @@ meridian explain corpora/erp/skills/placeorder.meri \
 ```
 
 Deontic norms and contract asserts are annotated with stable norm ids by
-default (Wave 9). See [20_DEONTIC.md](20_DEONTIC.md).
+default (Wave 9). See [03_LANGUAGE.md](03_LANGUAGE.md).
 
 ---
 
@@ -715,7 +719,7 @@ meridian decisions [query] [options]
 |---|---|---|
 | `[query]` | (none) | Filter decisions by id/title/rationale substring. |
 | `--id <D-DX-n>` | (none) | Print one decision in full (rationale, alternatives, consequences, see-also). |
-| `--render <path>` | (none) | Regenerate the readable decision log Markdown (`docs/15_DECISIONS.md`) from the catalog. A test fails if the committed file drifts. |
+| `--render <path>` | (none) | Regenerate the readable decision log Markdown (`docs/07_DECISIONS.md`) from the catalog. A test fails if the committed file drifts. |
 
 ```bash
 # List every decision
@@ -728,11 +732,11 @@ meridian decisions tool
 meridian decisions --id D-DX-5
 
 # Regenerate the readable log (kept in sync by a staleness test)
-meridian decisions --render docs/15_DECISIONS.md
+meridian decisions --render docs/07_DECISIONS.md
 ```
 
-See [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) for the full
-diagnostics + decisions story and [15_DECISIONS.md](15_DECISIONS.md) for the
+See [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md) for the full
+diagnostics + decisions story and [07_DECISIONS.md](07_DECISIONS.md) for the
 generated log.
 
 ---
@@ -752,13 +756,13 @@ If none is found, the compiler proceeds without a vocabulary. The compiler is
 **strict by default**: an unresolved phrase or unknown tool is a coded error
 (MER2001 / MER2002) with a did-you-mean, not a silent `_unresolved` bind. Opt
 into placeholders per-file with frontmatter `allow-fallbacks: unresolved-phrases`
-(see [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md) §6).
+(see [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md) §6).
 
 ---
 
 ## Trace categories
 
-See [08_TRACING.md](08_TRACING.md) for the full list. The most useful ones
+See [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md) for the full list. The most useful ones
 during development:
 
 | Category | What it shows |
@@ -914,7 +918,7 @@ The stable JSON report includes:
 Compare the stable step-path identities recorded in two `.meridian.manifest.json`
 files. Use it to confirm that a source edit did not silently shift other steps'
 trace identities (step paths are meant to be stable across unrelated edits —
-see [08_TRACING.md](08_TRACING.md)) or to flag a skill-version-hash change
+see [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md)) or to flag a skill-version-hash change
 between a baseline and a candidate build.
 
 ```bash
@@ -947,7 +951,7 @@ meridian trace drift build/baseline/release-sentinel.meridian.manifest.json \
 
 Not to be confused with the top-level `meridian drift`, which diffs *authored
 source* against its canonical verbalization (see
-[18_VERBALIZER.md](18_VERBALIZER.md)) — `meridian trace drift` instead diffs
+[06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md)) — `meridian trace drift` instead diffs
 *manifest step-path sets* between two compiled builds.
 
 ---
@@ -999,7 +1003,7 @@ vocabularies (not shape heuristics), so a line only counts as prose if it
 actually fails to trial-lower:
 
 The migrator **never emits `(( inert ))`** — every content unit is classified
-into exactly one of four buckets (P1, `docs/13_SKILL_MD_PORTING.md`
+into exactly one of four buckets (P1, `docs/09_SKILL_PORTING.md`
 §"The governing principle"):
 
 1. **Per-line classification.** Every body line is trial-parsed and lowered:
@@ -1120,7 +1124,7 @@ meridian migrate-skill skills/ --batch \
     --report /tmp/coverage.txt
 ```
 
-See [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the full porting
+See [09_SKILL_PORTING.md](09_SKILL_PORTING.md) for the full porting
 playbook and the per-tier edit budget.
 
 ---

@@ -9,7 +9,7 @@ alwaysApply: false
 ### Category hierarchy
 
 Group prefixes enable entire groups. Leaves enable one stream. Full list
-lives in `docs/08_TRACING.md`; `meridian trace categories` prints it live.
+lives in `docs/06_DEVELOPER_EXPERIENCE.md`; `meridian trace categories` prints it live.
 
 | Enum case | Raw value (CLI / env var string) |
 |---|---|
@@ -91,7 +91,7 @@ preserves `[category] …` lines with `▶`/`◀` markers.
 - **Post-lower:** `Compiler.annotateAndStampObligations` times
   `traceIdentity.hash`, `traceIdentity.annotate`, `obligationStamp` and logs
   `.codegen` summaries; `compile(_:)` also times `domainDecl`,
-  `manifestRules`, `obligationDocument`. See `docs/08_TRACING.md` phase map.
+  `manifestRules`, `obligationDocument`. See `docs/06_DEVELOPER_EXPERIENCE.md` phase map.
 - **Lint:** `LintCommand` uses `@OptionGroup var traceOptions: CLITraceOptions`;
   `trace.run { MeridianLinter().lint(…) }` lets the tokenizer read the
   task-local and opens a `lint <file>` span under `.diagnostics`.
@@ -158,5 +158,5 @@ Compile-time default is `FallbackPolicy.strict` (empty `allowed` set). Opt-in
 only via frontmatter `allow-fallbacks:` (`FallbackKind` tokens) or
 `Compiler.Options.fallbackPolicy = .lenient`. Every allowed fallback emits a
 warning diagnostic plus a `.lowering` trace line. Deontic conditions have no
-fallback — unlowerable norms raise `MER-DEO-007`. See `docs/08_TRACING.md`
+fallback — unlowerable norms raise `MER-DEO-007`. See `docs/06_DEVELOPER_EXPERIENCE.md`
 §"Strict-by-default fallback policy".

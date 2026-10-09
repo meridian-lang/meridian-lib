@@ -6,7 +6,7 @@ Status: v0.3 Final Wave oracle with maintainer confirmations folded in on 2026-0
 
 Style note: this document defines MEANING, not surface grammar and not implementation. Surface English forms are quoted only as examples; the grammar lives in the language reference. Notation is lightweight: `⟦X⟧` is "the denotation of X", `Γ` is an environment, `σ` is a snapshot, `τ` is a trace.
 
-v0.3 changelog (Final Wave oracle amendments, 2026-07-12): violation witness envelopes (SEM-7-05); D11/D12 confirmed; D4 superseded by D4a (explicit cross-skill scopes); Wilson confidence intervals; state-history retention (closed-world); bounded future monitors in Contract/obligation contexts; calendar amounts and deployment timezone distinct from physical duration; clock-skew and hybrid ingest ordering; formalized commit/recover; module/shared imports; prover-ready obligation artifacts; out-of-scope boundary in `docs/21_OUT_OF_SCOPE.md`.
+v0.3 changelog (Final Wave oracle amendments, 2026-07-12): violation witness envelopes (SEM-7-05); D11/D12 confirmed; D4 superseded by D4a (explicit cross-skill scopes); Wilson confidence intervals; state-history retention (closed-world); bounded future monitors in Contract/obligation contexts; calendar amounts and deployment timezone distinct from physical duration; clock-skew and hybrid ingest ordering; formalized commit/recover; module/shared imports; prover-ready obligation artifacts; out-of-scope boundary in `docs/01_OVERVIEW.md`.
 
 v0.2 changelog (Wave 8 oracle amendments): keying for temporal/statistical definitions; physical-time-only durations; K3 three-valued composition and decision-point totality; expanded trace schema and payload policy; trace append failure policy; history continuity by skill name plus stable step path; clarified temporal window boundaries and replay semantics; conservative possibly-indeterminate analysis; compound note form desugaring.
 
@@ -255,7 +255,7 @@ Deontic sentences relate a SCOPE (workflow, section, or kind), a NORM, and a SUB
 
 ## 8. The two projections and coherence
 
-8.1 Coherence requirement: for every kernel construct with both projections, and every trace `τ` produced by `⟦·⟧_exec`, the proof obligations of `⟦·⟧_proof` evaluated over `τ` must hold, and every runtime `violated`/`assert-failed` event must correspond to a falsified obligation. Exec and proof are two views of clause-level meaning, not two meanings. v1 establishes this by DIFFERENTIAL TESTING (replay traces through the obligation evaluator). Machine-checked discharge of obligations (Z3, Soufflé, or similar) is out of scope — see `docs/21_OUT_OF_SCOPE.md`. [SEM-8-01]
+8.1 Coherence requirement: for every kernel construct with both projections, and every trace `τ` produced by `⟦·⟧_exec`, the proof obligations of `⟦·⟧_proof` evaluated over `τ` must hold, and every runtime `violated`/`assert-failed` event must correspond to a falsified obligation. Exec and proof are two views of clause-level meaning, not two meanings. v1 establishes this by DIFFERENTIAL TESTING (replay traces through the obligation evaluator). Machine-checked discharge of obligations (Z3, Soufflé, or similar) is out of scope — see `docs/01_OVERVIEW.md` § "Out of scope". [SEM-8-01]
 
 8.2 Obligation artifact: a deterministic, versioned JSON document per skill: obligation id, source span, scope, kind (unreachability | invariant | coverage | statistical-monitor), the kernel condition in canonical IR form, its canonical English (8.3), and prover-ready metadata: schema version, hash of canonical IR, referenced trace event tags, and capture-policy hints for witness fields. Artifacts are byte-stable across clean builds when the source is unchanged and are structured for consumption by an external prover without Meridian recompilation. Emitting and diffing artifacts is in scope; discharging them formally is not. [SEM-8-02]
 
@@ -271,13 +271,13 @@ Deontic sentences relate a SCOPE (workflow, section, or kind), a NORM, and a SUB
 
 9.2 Versioning: this document is versioned with the language. A semantic change (any change to a `[SEM-...]` clause's meaning) is a major version event and requires a migration note in the changelog, even when no surface syntax changes.
 
-9.3 Out of scope boundary. Only formal prover discharge / a machine-checked coherence theorem (beyond the differential testing of 8.1) and localization / alternate canonical natural languages remain permanently out of scope — see `docs/21_OUT_OF_SCOPE.md`. Every item formerly listed as deferred in v0.2 (commit/recover formalization, confidence intervals, cross-skill scopes, state history, bounded future monitors, calendar amounts, clock skew, modules, SQLite/network stores, OTLP export, signed chains, and related infrastructure) is Final Wave in-scope unless explicitly listed in that out-of-scope document.
+9.3 Out of scope boundary. Only formal prover discharge / a machine-checked coherence theorem (beyond the differential testing of 8.1) and localization / alternate canonical natural languages remain permanently out of scope — see `docs/01_OVERVIEW.md` § "Out of scope". Every item formerly listed as deferred in v0.2 (commit/recover formalization, confidence intervals, cross-skill scopes, state history, bounded future monitors, calendar amounts, clock skew, modules, SQLite/network stores, OTLP export, signed chains, and related infrastructure) is Final Wave in-scope unless explicitly listed in that out-of-scope document.
 
 ---
 
 ## 10. Modules and shared vocabulary
 
-10.1 Shared imports. Skills may import shared vocabulary and rulebook fragments from declared modules (`import module <name>`). A module exports `=== domain ===`, `=== tools ===`, `=== language ===`, and rulebook sections under a stable module id; importers receive merged symbols with explicit conflict rules (importer wins on collision unless the module marks an export `sealed`). Surface grammar, lowering, and trace semantics for imports are specified in `docs/22_MODULES_AND_IMPORTS.md`. [SEM-MOD-01]
+10.1 Shared imports. Skills may import shared vocabulary and rulebook fragments from declared modules (`import module <name>`). A module exports `=== domain ===`, `=== tools ===`, `=== language ===`, and rulebook sections under a stable module id; importers receive merged symbols with explicit conflict rules (importer wins on collision unless the module marks an export `sealed`). Surface grammar, lowering, and trace semantics for imports are specified in `docs/03_LANGUAGE.md` § "Modules and shared imports". [SEM-MOD-01]
 
 10.2 Cross-skill coupling guard. Module imports and `across skills` scopes (4.3) both require explicit declaration plus deployment allow-lists; neither form introduces implicit global coupling. [SEM-MOD-02]
 

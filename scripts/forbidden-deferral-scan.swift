@@ -5,7 +5,7 @@
 // Scans active Sources/, Tests/, scripts/, and docs/ for user-facing deferral
 // promises (TODO, FIXME, not implemented, later wave, deferred feature).
 // Allowlisted categories:
-//   - docs/21_OUT_OF_SCOPE.md permanent boundary prose
+//   - docs/01_OVERVIEW.md permanent out-of-scope boundary prose
 //   - docs/coverage/* audit and matrix status vocabulary
 //   - documented internal-invariant false positives (see allowlist below)
 //
@@ -34,8 +34,9 @@ struct AllowRule {
 }
 
 let allowlist: [AllowRule] = [
-    // Permanent out-of-scope boundary (entire file is the allowlist).
-    AllowRule(fileSuffix: "docs/21_OUT_OF_SCOPE.md", lineContains: nil, reason: "permanent boundary"),
+    // Permanent out-of-scope boundary (the "Out of scope" section of the
+    // overview doc is the allowlist; the rest of the file is still scanned).
+    AllowRule(fileSuffix: "docs/01_OVERVIEW.md", lineContains: "of scope", reason: "permanent boundary"),
 
     // Coverage / audit docs use status vocabulary intentionally.
 
@@ -73,11 +74,12 @@ let allowlist: [AllowRule] = [
               lineContains: "deferred to Wave 9", reason: "historical suite comment"),
 
     // DX docs describing forbidden markers.
-    AllowRule(fileSuffix: "docs/09_MERIDIAN_TESTS.md", lineContains: nil, reason: "test policy doc"),
-    AllowRule(fileSuffix: "docs/14_DEVELOPER_EXPERIENCE.md", lineContains: "not implemented", reason: "MER0003 catalog doc"),
+    AllowRule(fileSuffix: "docs/08_TESTING.md", lineContains: nil, reason: "test policy doc"),
+    AllowRule(fileSuffix: "docs/06_DEVELOPER_EXPERIENCE.md", lineContains: "not implemented", reason: "MER0003 catalog doc"),
     AllowRule(fileSuffix: "docs/cookbook/MERIDIAN_DESIGN_RISKS_AND_REVIEW.md", lineContains: nil, reason: "design risks ledger"),
     AllowRule(fileSuffix: "docs/cookbook/INFORM7_DESIGN_NOTES.md", lineContains: "deferred", reason: "inform7 design sketch"),
-    AllowRule(fileSuffix: "docs/status.md", lineContains: nil, reason: "historical status log"),
+    // Historical status log, archived out of the scan roots.
+    AllowRule(fileSuffix: ".ai/implementation-log-archive/docs-history/status.md", lineContains: nil, reason: "historical status log"),
 ]
 
 let scanRoots = ["Sources", "Tests", "scripts", "docs"]

@@ -77,242 +77,27 @@ swift run meridian skill-deviation original-skills/ . \
 
 | Doc | Description |
 |---|---|
-| [docs/01_OVERVIEW.md](docs/01_OVERVIEW.md) | One-page pitch, mental model, three-layer diagram |
-| [docs/02_ARCHITECTURE.md](docs/02_ARCHITECTURE.md) | Module map, pipeline diagram, key types |
-| [docs/03_LANGUAGE_QUICK_REFERENCE.md](docs/03_LANGUAGE_QUICK_REFERENCE.md) | `.meridian` + `.merconfig` syntax at a glance |
-| [docs/04_COMPILER_PIPELINE.md](docs/04_COMPILER_PIPELINE.md) | Source → AST → IR → Swift in detail |
-| [docs/05_CODEGEN.md](docs/05_CODEGEN.md) | `SwiftEmitter`, replay guards, `Value` wrapping |
-| [docs/06_RUNTIME.md](docs/06_RUNTIME.md) | `MeridianRuntime` API — wait delivery, resume, checkpointing |
-| [docs/07_CLI.md](docs/07_CLI.md) | All `meridian` subcommands and flags |
-| [docs/08_TRACING.md](docs/08_TRACING.md) | `ParserTrace` categories, capturing API, `--trace` |
-| [docs/09_MERIDIAN_TESTS.md](docs/09_MERIDIAN_TESTS.md) | `.meridian.test` spec format and `meridian test` runner |
-| [docs/10_BUILTIN_TOOLS.md](docs/10_BUILTIN_TOOLS.md) | Blueprint built-in tool catalog, arguments, registration |
-| [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md) | `.merrules` desugars, section roles, conventions |
-| [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md) | Porting gbrain `SKILL.md` → `.meri` (playbook, tiers, migrator) |
-| [docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md) | **Debugging** — diagnostics, `MERxxxx` codes, did-you-mean, batch reporting, tracing, `explain-diag`/`decisions`/`--fix` |
-| [docs/15_DECISIONS.md](docs/15_DECISIONS.md) | The readable design-decision log (generated from `DecisionCatalog`) |
-| [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md) | Wave 7 canonical English, `meridian explain`, drift audit, and verbalizer API |
-| [docs/19_TRACES_AND_TIME.md](docs/19_TRACES_AND_TIME.md) | Wave 8 trace schema, temporal/statistical operators, monitors, and replay |
-| [docs/cookbook/](docs/cookbook/) | **Normative oracle** — semantics, syntax cookbook, north-star examples, design risks (Waves 7–8) |
-| [Tests/README.md](Tests/README.md) | Test suites, forcing functions, adding new tests |
-| [docs/status.md](docs/status.md) | Phase progress, what's done, decision references |
-
-Normative oracle and agent prompts: [`docs/cookbook/`](docs/cookbook/) (semantics/surface oracle) and [`.ai/`](.ai/) (wave implementation prompts).
+| [`docs/README.md`](docs/README.md) | **Start here** — reading-order index for the nine numbered docs (`01_OVERVIEW` … `09_SKILL_PORTING`), `15_PROBLEM_MESSAGES`, the `cookbook/` semantics oracle, and `coverage/` |
+| [`docs/01_OVERVIEW.md`](docs/01_OVERVIEW.md) | One-page pitch, mental model, quick start, project status, key caveats, permanent out-of-scope boundary |
+| [`AGENTS.md`](AGENTS.md) | AI contributor handbook — norms, phase gate, pitfalls, repo layout, CLI table |
+| [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md) | Append-only decision log (recent); older entries in [`.ai/implementation-log-archive/`](.ai/implementation-log-archive/) |
+| [`docs/cookbook/`](docs/cookbook/) | Normative semantics/surface oracle (Waves 7–9 / Final Wave) |
 
 ---
 
-## Source layout
+## Important caveats
 
-```
-Sources/
-├── MeridianRuntime/          # Runtime library (generated code imports this)
-├── MeridianCore/             # Compiler: parser, AST, IR, codegen, verbalizer, formatter, docs, testing
-├── MeridianCLI/              # thin @main executable
-├── MeridianCLIKit/           # command implementations (compile, run, check, test, format, docs, trace, explain, drift, grammar-doc, migrate-skill, skill-deviation...)
-├── MeridianTools/            # Blueprint built-in tool implementations
-├── MeridianTestKit/          # Test helpers: WorkflowTestHarness, MockRuntime, etc.
-└── SampleDemoFlows/          # Hand-written reference workflows (Phase 1)
-
-Tests/
-├── MeridianCoreTests/        # Compiler + Phase 3 forcing function
-├── MeridianRuntimeTests/     # Runtime actor + checkpointing
-├── MeridianToolsTests/       # Built-in tool behavior
-├── MeridianIntegrationTests/ # Round-trip (compile → build → run) tests
-└── README.md                 # Test suite guide
-
-examples/
-├── ecommerce.merconfig       # Vocabulary, constants, instances, tools
-├── order_processing.meridian # Workflows
-└── golden/                   # Expected compiler output (Phase 4 golden diff)
-
-sample-gbrain/                # Ported gbrain corpus (Phase G) — see its README
-├── README.md                 # Corpus guide: layout, artifacts, building, tests
-├── brain.merconfig           # Shared brain-domain vocabulary
-├── brain.merrules            # Desugars + section aliases + conventions
-├── RESOLVER.meri             # Trigger → skill dispatcher
-├── skills/*.meri             # 52 ported gbrain skills
-├── original-skills/          # Verbatim upstream gbrain tree (reference)
-├── migration-deviations/     # Per-skill diff vs. original SKILL.md (+ index)
-├── compile-outputs/          # Generated Swift for every skill (namespaced)
-└── Tests/                    # SampleGbrainTests SPM target (lives with the corpus)
-
-docs/                         # This documentation set
-AGENTS.md                     # AI contributor handbook (self-updating)
-IMPLEMENTATION_LOG.md         # Append-only decision log (recent entries)
-.ai/implementation-log-archive/  # Frozen older log snapshots
-```
-
----
-
-## Key features
-
-- **Controlled natural language** — spec-level intent, not prompt engineering.
-- **SKILL.md-shaped surface** — frontmatter parameters, markdown headings/lists,
-  topic labels, implicit entry workflows, `every`/`each`, `only when`/`unless`,
-  idiom/anaphora sugar, and `if you decide that …` compile to deterministic IR.
-- **Typed prose modes** — `with discretion` asks a `Planner` for a bounded plan;
-  `with autonomy` asks an `ActPlanner` one step at a time. Runtime validation,
-  host policy, and scoped tool execution remain deterministic.
-- **Deterministic compilation** — same source always produces the same Swift.
-- **Canonical English verbalizer** — `meridian explain` prints the compiled IR
-  back as Canonical English; `meridian drift` compares authored source against
-  that canonical form. See [docs/18_VERBALIZER.md](docs/18_VERBALIZER.md).
-- **13 IR primitives** — invoke, bind, rebind, branch, emit, complete, iterate, assert, wait, commit, recover, simultaneously, aiJudgment, aiAutonomy.
-- **Phrase inlining** — vocabulary phrases expand at compile time.
-- **Workflow recursion** — workflows can call themselves or other workflows.
-- **Typed domain** — kinds become typed Swift `struct`s; generated inits are fully typed.
-- **Replay-safe resume** — generated code automatically restores state from checkpoints
-  and skips already-executed side effects using stable progress labels.
-- **Blueprint built-ins** — `registerBuiltins()` provides HTTP, file, JSON, regex, shell,
-  MCP, validation, time, UUID tools out of the box.
-- **`ParserTrace`** — opt-in category-scoped diagnostic tracing for debugging the compiler.
-- **`MeridianTestKit`** — `WorkflowTestHarness`, `MockRuntime`, `RecordingTool`, `GoldenFile` for integration tests.
-- **`.meridian.test` specs** — declarative compile/run test files; `meridian test` runs them.
-- **Rulebooks (`.merrules`)** — extend the deterministic English surface with
-  external, declarative desugar idioms, section-role aliases, and Inform-style
-  conventions — no compiler edit. See [docs/11_RULEBOOKS.md](docs/11_RULEBOOKS.md).
-- **gbrain SKILL.md surface** — any file with `##`/`###` headings maps Markdown
-  sections to deterministic roles (Contract→assert, Phases→procedure,
-  When-To-Use→applicability) — no `skill: true` flag. A trailing
-  `(( inert ))` / `(( inert, role: R ))` / `(( role: R ))` marker is
-  authoritative for documentation. Fenced `bash` blocks → `shell.run`,
-  `use judgment to …:` markers → prose steps, `triggers:` → dispatch,
-  choice-gates, and background spawn. Every section is recorded into
-  `meridian_skill.sections`; fuzzy conditions, unmarked narrative headings, and
-  pre-heading content are hard errors (no silent drops).
-- **`meridian migrate-skill`** — convert a `SKILL.md` to a strict-compiling
-  `.meri`. Runs a deterministic marking pass (blockquote pre-heading preamble;
-  route documentary sections to `(( role: reference ))`, recognized procedure
-  headings unmarked, normative-but-unlowerable lines left unmarked for precise
-  compiler errors, inference-cue lines to judgment markers — the migrator never
-  emits `(( inert ))`), then strict-compiles; optional bounded LLM-assisted
-  repair, always compiler-gated. See [docs/13_SKILL_MD_PORTING.md](docs/13_SKILL_MD_PORTING.md).
-- **`meridian skill-deviation`** — audit how a ported `.meri` deviates from its
-  original `SKILL.md`: frontmatter delta, tier, similarity, structural
-  categories, and a unified diff. The diff engine is a faithful Swift port of
-  Python's `difflib`, so reports are byte-for-byte reproducible. `--batch
-  --index` regenerates the whole `sample-gbrain/migration-deviations/` audit.
-- **gbrain corpus** — `sample-gbrain/` ships a shared brain vocabulary, a
-  rulebook, and 52 ported skills + a resolver, all compiling strict. It also
-  carries the verbatim upstream skills, a per-skill migration-deviation audit,
-  and the generated Swift for every skill. All 53 emitted files type-check
-  against `MeridianRuntime`. See [sample-gbrain/README.md](sample-gbrain/README.md).
-- **Namespaced codegen** — `meridian compile` defaults to wrapping each file's
-  output in `public enum <SkillName> { … }` (`--namespace auto`) so many
-  generated files share one Swift module without colliding; `--namespace none`
-  restores flat output. `compile` also takes repeatable `--rulebook`.
-
----
-
-## Phase status
-
-| Phase | Name | Status |
-|---|---|---|
-| 0 | Scaffolding + Runtime | ✅ Done |
-| 1 | Hand-written reference flows | ✅ Done |
-| 2 | Parser + AST | ✅ Done |
-| 3 | IR + Codegen | ✅ Done |
-| 4 | Typed domain codegen + golden diffs | ✅ Done |
-| 5 | Hard IR primitives + checkpointing | ✅ Done |
-| 6 | Built-in tools + full CLI + TestKit + DocC | ✅ Done |
-| 6.5 | EnglishLexicon + SKILL-shaped extensions | ✅ Done |
-| 8 | Executable rules | ✅ Done |
-| G | Expressive SKILL.md surface + gbrain corpus | ✅ Done |
-| W7 | Canonical verbalizer + drift audit | ✅ Done |
-| W8 | Traces, time, and oracle gate | ✅ Done |
-
-Full detail: [`docs/status.md`](docs/status.md)
-Implementation decisions: [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md)
-(recent) and [`.ai/implementation-log-archive/`](.ai/implementation-log-archive/)
-(older entries)
-
----
-
-## AI contributor guide
-
-See [`AGENTS.md`](AGENTS.md) for the self-updating AI contributor handbook.
-
----
-
-## ⚠️  Permissions: default is actor-blind
-
-Meridian's `may` rules produce `AssertIR` gates and `Permission` struct entries
-at compile time. At runtime the `PermissionRegistry` evaluates these as *data
-predicates* — checking workflow parameters like `customer.status` or
-`order.totalAmount`. **It does not check the identity of the caller** unless you
-wire actor context in explicitly.
-
-**What this means:**
-- Data-driven caps (e.g. `may approve any order up to $10000`) are enforced
-  against the order's `totalAmount` value.
-- Role-based checks (e.g. "only account managers may approve") require the host
-  to populate `scope.actor` via a custom `PermissionRegistry`.
-
-**To enable actor-aware permissions:**
-```swift
-let registry = PermissionRegistry()
-await registry.register(Permission(
-    subjectKind: "order",
-    actionDisplayName: "approve orders",
-    description: "account manager may approve orders up to $10000",
-    isBounded: true,
-    predicate: { scope in
-        guard let actor = scope.actor,
-              let role = actor["role"]?.stringValue else { return false }
-        let amount = scope.parameters["order"]?["totalAmount"]?.decimalValue ?? 0
-        return role == "account_manager" && amount <= 10_000
-    }
-))
-let runtime = Runtime(toolRegistry: registry, permissionRegistry: registry)
-```
-
-See [`docs/06_RUNTIME.md`](docs/06_RUNTIME.md) §"Permissions and Policy" for details.
-
----
-
-## ⚠️  No silent fallbacks: every resolution failure is a hard error
-
-Meridian compiles **strictly by default**. If something can't be resolved at
-compile time, the compiler raises a coded, sourced `Diagnostic` (with a source
-caret and a `did you mean`/`help` hint) instead of silently emitting a
-placeholder:
-
-| Failure | What used to happen (V1) | What happens now |
-|---|---|---|
-| Phrase doesn't match any phrase or workflow | `_unresolved` BindIR placeholder | MER2001 error with did-you-mean |
-| Unknown tool id | invoke that failed only at runtime | MER2002 error with did-you-mean |
-| Rule that the analyser can't classify | dropped silently | MER1004 error |
-| Rule whose action verb matches no workflow | dropped silently | MER3006 error |
-| `When …, do X` trigger whose action doesn't lower | stub comment | MER3007 error |
-| Malformed header / unknown config key / rulebook section | dropped silently | MER1001 / MER1007 / MER5003 error |
-| `swift-format` failure | swallowed | MER5001 **warning** (valid output kept) |
-
-The full diagnostics, tracing, and decision-log surface is documented in
-[docs/14_DEVELOPER_EXPERIENCE.md](docs/14_DEVELOPER_EXPERIENCE.md). Every
-compile error is queryable: `meridian explain-diag MER2002`.
-
-**Opting back into a fallback is per-file**, via the `.meridian` frontmatter
-key `allow-fallbacks:` (comma-separated list, or `all`/`*` for everything):
-
-```
----
-name: experimental
-allow-fallbacks: unresolved-phrases, unattached-rules
----
-```
-
-The kinds:
-- `unresolved-phrases` — emit `_unresolved` BindIR for unknown phrase
-  invocations.
-- `unknown-tools` — emit an unrecognized tool id as-is (for host-provided tools
-  registered only at runtime).
-- `unparseable-rules` — drop rules the analyser can't classify (still in
-  manifest).
-- `unattached-rules` — drop rules whose action doesn't match any workflow
-  (still in manifest).
-- `unresolved-trigger-actions` — keep the `trigger.X.fired` fan-out event
-  even when the action workflow doesn't exist.
-
-The host-level escape hatch `Compiler.Options.fallbackPolicy = .lenient`
-applies the same opt-in process-wide; the frontmatter list is OR-merged
-with this option, so both have to be off for the strict default.
+- **Permissions are actor-blind by default.** `may` rules compile to `Permission`
+  structs + `AssertIR` gates that evaluate *data predicates* (e.g.
+  `order.totalAmount`), not caller identity. Role-based checks need a custom
+  `PermissionRegistry`. See [`docs/01_OVERVIEW.md`](docs/01_OVERVIEW.md)
+  § "Permission enforcement is actor-blind by default" and
+  [`docs/04_RUNTIME.md`](docs/04_RUNTIME.md) § "Permissions and Policy".
+- **No silent fallbacks.** Every resolution failure is a hard, coded `MERxxxx`
+  error with a source caret and a did-you-mean hint; opt back in per file with
+  the `.meridian` frontmatter key `allow-fallbacks:`. See
+  [`docs/01_OVERVIEW.md`](docs/01_OVERVIEW.md) § "No silent fallbacks" and
+  [`docs/06_DEVELOPER_EXPERIENCE.md`](docs/06_DEVELOPER_EXPERIENCE.md).
+- **`llm.decide` / `llm.judge` return `false` without an LLM host** — deliberate
+  test safety. Register your own closure tool under the same ID to connect a
+  provider.

@@ -8,7 +8,7 @@ rulebook: governance.merrules
 # rules, no headings). The same rule shapes now express in-section inside
 # corpora/governance/skills/*.meri (grantaccess.meri, reviewrequests.meri,
 # escalatepending.meri) — this fixture keeps the original flat path exercised
-# too. See docs/13_SKILL_MD_PORTING.md and AGENTS.md §6 pitfall #15.
+# too. See docs/09_SKILL_PORTING.md and AGENTS.md §6 pitfall #15.
 
 # Rules
 

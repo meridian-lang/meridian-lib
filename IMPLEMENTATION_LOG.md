@@ -3652,3 +3652,57 @@ killed run, one on an idle CFNetwork thread in an HTTP test; both passed on a
 clean re-run and in isolation, and are unrelated to this comment-only change);
 `git diff` shows only one test file changed under the corpus/example dirs and
 the committed generated demo still equals its golden.
+
+## 2026-10-09 — Simplification Phase 8: docs consolidation + AGENTS.md shrink
+
+Consolidated `docs/` from 22 numbered docs (+`status.md`) to nine, under the
+"merge, don't drop" rule: every retired section landed **verbatim** in its new
+home (heading levels demoted one step under a provenance wrapper; cross-doc
+links rewritten), then wave-history narrative / point-in-time reports were
+`git mv`'d to `.ai/implementation-log-archive/docs-history/` (never deleted,
+indexed by that folder's new `README.md`).
+
+**New homes:** `01_OVERVIEW` (was 01 + 21 + the README "what Meridian is" half
++ `docs/README.md`'s status block and getting-started caveats),
+`02_ARCHITECTURE` (was 02 + 04 + 05), `03_LANGUAGE` (was 03 + 17 + 11 + 12 + 20
++ 22), `04_RUNTIME` (was 06 + 10 + 19 + 24), `05_CLI` (was 07, one section per
+command — `## \`meridian <path>\`` headings preserved because
+`CLICommandCatalogTests` parses them), `06_DEVELOPER_EXPERIENCE` (was 14 + 08 +
+18), `07_DECISIONS` (regenerated from `DecisionCatalog`; the archived
+`15_DECISIONS.md` is byte-identical apart from the header path), `08_TESTING`
+(was 09 + the body of `Tests/README.md`, which is now a pointer + a
+`docs/coverage/README.md` pointer), `09_SKILL_PORTING` (was 13 + the long form
+of AGENTS pitfalls #14/#15 + `corpora/GENERATING_A_CORPUS.md`, now a pointer).
+`docs/15_PROBLEM_MESSAGES.md`, `docs/cookbook/**` and `docs/coverage/**` keep
+their paths. `docs/README.md` is now the reading-order index + oracle table +
+key-files tree.
+
+**Deliberate de-duplications** (post-landing): the root README's "What it does"
+example block (identical to 01_OVERVIEW's "What it is" example) and its
+"Source layout" tree now live once, in `01_OVERVIEW`; `docs/README.md`'s
+permissions caveat paragraph was folded into `01_OVERVIEW`'s fuller version
+(its "intentional design decision" sentence kept). Nothing else was removed.
+
+**AGENTS.md** shrank 734 → 177 lines, seven sections; the CLI table and the
+"### CLI commands" → `---` delimiters are verbatim (parity-tested against
+`MeridianCommandCatalog`), pitfalls 1–22 are one line each with long-form
+pointers (#14/#15 → 09_SKILL_PORTING, #17 → 03_LANGUAGE, #19–22 →
+06_DEVELOPER_EXPERIENCE), and the "Wave 5 parser infrastructure norm" heading
+was folded into the norms as the GrammarTable bullet. 177 rather than ~150 is
+the floor without dropping the 30-row CLI table or a pitfall.
+
+**Also fixed while in the area:** `02_ARCHITECTURE.md`'s dependency table said
+`pegex`/`modelhike` were local (both stale — pegex is remote, StringTemplate is
+vendored); `ManifestEmitter.swift`'s comment pointed at the nonexistent
+`docs/05_CODEGEN_SPEC.md`; `forbidden-deferral-scan.swift`'s `AllowRule`s now
+point at `docs/01_OVERVIEW.md` (out-of-scope section, `lineContains: "of scope"`
+rather than a whole-file allowlist), `docs/08_TESTING.md`,
+`docs/06_DEVELOPER_EXPERIENCE.md`, and the archived status path.
+
+**Validation:** focused `DocumentationParityTests|CLICommandCatalogTests|
+DecisionCatalogTests|ProblemMessageTests|DXTraceDiagnosticAuditTests` 28 tests
+green; `swift test --skip MeridianSlowIntegrationTests` 2757 tests / 351 suites
+green; `meridian decisions --render docs/07_DECISIONS.md` re-render is a no-op
+(identical md5); `forbidden-deferral-scan` OK; `scripts/coverage.swift --gate`
+green (TOTAL 90.08% / 93.70%, no floors re-based); `docs/<NN>_` references
+outside the new names are gone from Sources/Tests/scripts/README/AGENTS/.cursor.

@@ -13,7 +13,7 @@ struct DocumentationParityTests {
             .deletingLastPathComponent()
     }
 
-    private static let numberedDocs: [Int] = Array(1 ... 22) + [24]
+    private static let numberedDocs: [Int] = Array(1 ... 9)
 
     private static let activeDocRoots: [String] = [
         "docs",
@@ -27,7 +27,7 @@ struct DocumentationParityTests {
         ".ai/implementation-log-archive",
     ]
 
-    @Test("active docs do not link to nonexistent docs/22_MODULES.md")
+    @Test("active docs do not link to the stale 22_MODULES.md name")
     func noStaleModulesDocLinks() throws {
         let root = repositoryRoot()
         var offenders: [String] = []
@@ -60,10 +60,10 @@ struct DocumentationParityTests {
         }
     }
 
-    @Test("docs/06_RUNTIME.md documents 31 event kinds including violated")
+    @Test("docs/04_RUNTIME.md documents 31 event kinds including violated")
     func runtimeEventKindCount() throws {
         let text = try String(
-            contentsOf: repositoryRoot().appendingPathComponent("docs/06_RUNTIME.md"),
+            contentsOf: repositoryRoot().appendingPathComponent("docs/04_RUNTIME.md"),
             encoding: .utf8
         )
         #expect(text.contains("31 event kinds"))
@@ -71,7 +71,7 @@ struct DocumentationParityTests {
         #expect(text.contains("branch.end"))
     }
 
-    @Test("numbered docs 01-22 plus 24 exist and appear in docs/README.md reading-order table")
+    @Test("numbered docs 01-09 exist and appear in docs/README.md reading-order table")
     func numberedDocsIndexed() throws {
         let root = repositoryRoot()
         let index = try String(
@@ -120,7 +120,7 @@ struct DocumentationParityTests {
         }
         let text = try String(contentsOf: url, encoding: .utf8)
         if text.contains("22_MODULES.md") {
-            offenders.append("\(rel): references docs/22_MODULES.md (use 22_MODULES_AND_IMPORTS.md)")
+            offenders.append("\(rel): references the stale 22_MODULES.md name (modules live in 03_LANGUAGE.md)")
         }
     }
 }

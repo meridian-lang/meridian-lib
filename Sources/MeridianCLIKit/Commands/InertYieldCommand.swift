@@ -4,7 +4,7 @@ import MeridianCore
 
 /// measurement-spike CLI surface for `InertYieldAnalyzer`. Read-only:
 /// it never rewrites the input `.meri`/SKILL.md, only reports what the
-/// trial-lowering oracle found. See docs/13_SKILL_MD_PORTING.md and the
+/// trial-lowering oracle found. See docs/09_SKILL_PORTING.md and the
 /// "Deterministic lowering for gbrain" plan for context.
 public struct InertYieldCommand: AsyncParsableCommand {
     public init() {}

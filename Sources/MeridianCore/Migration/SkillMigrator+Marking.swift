@@ -267,7 +267,7 @@ extension SkillMigrator {
             if try bodyRestatesConvention(body) { return .inline("(( role: convention-ref ))") }
             // An unrecognized *executable* heading is routed to
             // `procedure` via a rulebook alias — preferred over an inline marker
-            // (see docs/13). Other unknowns are classified per P1.
+            // (see docs/09_SKILL_PORTING.md). Other unknowns are classified per P1.
             if sectionIsExecutableOnly(body, knowledge: knowledge) { return .alias(.procedure) }
             if bodyIsJudgmentWrapped(heading: heading, body: body, lexicon: knowledge.lexicon) { return .alias(.procedure) }
             if heading.contains(Self.splitHeadingSeparator) { return .leaveUnmarked }

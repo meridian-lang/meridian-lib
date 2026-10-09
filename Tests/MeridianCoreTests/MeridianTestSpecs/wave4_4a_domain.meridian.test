@@ -4,7 +4,8 @@ A `## Domain` section declares a kind lattice (`A deal is a kind of page.`)
 with property inheritance flattened onto the subkind's struct, plus a `can
 be`/`usually` enum property. Checkable-adjective definitions are registered
 globally (the documented global-adjective simplification — see
-IMPLEMENTATION_LOG.md and docs/16_EXPRESSIVENESS_REPORT.md), so a definition
+IMPLEMENTATION_LOG.md and the archived expressiveness report in
+.ai/implementation-log-archive/docs-history/16_EXPRESSIVENESS_REPORT.md), so a definition
 written against the parent kind (`page`) still applies when tested against a
 subkind (`deal`) instance.
 

@@ -158,7 +158,7 @@ public struct StatementParser {
                 help: "Fix the block marker syntax (`!!! table (( … ))`, `!!! checklist (( … ))`, etc.) or move it under a recognized section.")
         }
 
-        // Intentional inert consumes (see docs/14_DEVELOPER_EXPERIENCE.md §6.1):
+        // Intentional inert consumes (see docs/06_DEVELOPER_EXPERIENCE.md §6.1):
         // table/checklist sentinels that produce no executable statements.
         if t.hasPrefix(tableSentinelPrefix) { return (nil, 1) }
         if t.hasPrefix(checklistSentinelPrefix) { return (nil, 1) }

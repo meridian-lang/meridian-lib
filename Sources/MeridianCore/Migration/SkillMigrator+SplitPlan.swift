@@ -201,7 +201,7 @@ extension SkillMigrator {
         /// `otherwise,`, and every body line as independent `.documentation`,
         /// silently dropping real branch logic (`replay the pipeline run.` /
         /// `use judgment to …`) into inert narrative prose. See
-        /// `docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" and
+        /// `docs/09_SKILL_PORTING.md` §"Common porting fixes" and
         /// `IMPLEMENTATION_LOG.md` (2026-07-06T19:25:56Z, "Gotcha #2 fixed").
         var isIfChain: Bool = false
         /// When set, an `.exec`/`.aiInference`-classified block renders these
@@ -748,7 +748,7 @@ extension SkillMigrator {
 
             if target == .exec {
                 // The explicit AI-routing marker travels immediately above the
-                // block it's routing (no blank line between), per docs/13's
+                // block it's routing (no blank line between), per docs/09_SKILL_PORTING.md's
                 // syntax — never silently dropped into a plain exec run.
                 if kind == .fuzzyTable { pendingSegment.append("!!! table (( ai-discretion ))") }
                 else if kind == .fuzzyChecklist { pendingSegment.append("!!! checklist (( ai-autonomy ))") }

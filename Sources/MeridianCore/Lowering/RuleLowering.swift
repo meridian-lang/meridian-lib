@@ -111,7 +111,7 @@ public struct RuleAnalyzer {
     /// aggregate, superlative, or declared-verb predicate degrades to a bare
     /// identifier or a naive word-split guess instead of its real
     /// `ExpressionAST` form — see `buildSubjectFilter`'s use of `exprParser`
-    /// below and `corpora/GENERATING_A_CORPUS.md` gotcha #7. `ExpressionParser`
+    /// below and `docs/09_SKILL_PORTING.md §"Known gotchas"` gotcha #7. `ExpressionParser`
     /// only ever reads `symbols` (`kinds`/`resolveVerbForm`/…) to resolve
     /// lookups during parsing — never mutates it — so sharing the live,
     /// already-fully-populated table here has no ordering/side-effect risk.
@@ -705,7 +705,7 @@ public struct RuleAnalyzer {
         // which is strictly better than the shorthand split below silently
         // producing a syntactically valid but semantically meaningless
         // predicate (see the guard rail below, and
-        // `corpora/GENERATING_A_CORPUS.md` gotcha #7).
+        // `docs/09_SKILL_PORTING.md §"Known gotchas"` gotcha #7).
         //
         // Every OTHER shape — bare identifier (no structure found), but also
         // `.comparison`/`.propertyAccess`/`.literal`/etc. — falls through to
@@ -753,7 +753,7 @@ public struct RuleAnalyzer {
         //      accepts as-is — i.e. a WRONG predicate that silently compiles
         //      and enforces nothing meaningful, which is strictly worse than
         //      today's loud `MER3016` for a quantifier/table it at least
-        //      recognizes as unsupported. See `corpora/GENERATING_A_CORPUS.md`
+        //      recognizes as unsupported. See `docs/09_SKILL_PORTING.md §"Known gotchas"`
         //      gotcha #7.
         guard parts.count <= 5, !parts.contains(where: { lexicon.articles.contains($0.lowercased()) }) else {
             return nil

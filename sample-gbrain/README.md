@@ -85,7 +85,7 @@ sections:
   applicability precondition, `Phases`/`Protocol` → procedure).
 - `=== conventions ===` — Inform-style rules injected into matching workflows.
 
-See [`docs/11_RULEBOOKS.md`](../docs/11_RULEBOOKS.md) for the authoring guide.
+See [`docs/03_LANGUAGE.md`](../docs/03_LANGUAGE.md) for the authoring guide.
 
 ---
 

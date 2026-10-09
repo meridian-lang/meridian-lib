@@ -126,7 +126,7 @@ payload, source range, and parent correlation. `Runtime` builds it once, appends
 it to the trace store (when configured), then hands the same record to the
 observer. `EventKind` lives in `Trace/EventKind.swift`; the kind → tag/outcome/
 detail/subject table lives in `Trace/TraceRecord.swift`. See
-`docs/06_RUNTIME.md` for the full case list.
+`docs/04_RUNTIME.md` for the full case list.
 
 ### Trace subsystem (Wave 8) — `Sources/MeridianRuntime/Trace/`
 

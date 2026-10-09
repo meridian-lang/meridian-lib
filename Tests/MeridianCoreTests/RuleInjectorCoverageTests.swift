@@ -433,7 +433,7 @@ struct RuleInjectorCoverageTests {
 
     /// `lowerExprSimple`'s rejection arm covers eight structurally rich
     /// `ExpressionAST` shapes a rule body cannot express (see its doc
-    /// comment and `corpora/GENERATING_A_CORPUS.md` gotcha #7). The
+    /// comment and `docs/09_SKILL_PORTING.md §"Known gotchas"` gotcha #7). The
     /// `quantified` case above and the `relationTraversal` end-to-end case
     /// in `RuleLoweringTests` each exercise one arm through a different
     /// entry point; this covers the remaining six directly so every arm of

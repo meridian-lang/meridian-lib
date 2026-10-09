@@ -4,7 +4,7 @@ import MeridianRuntime
 // MARK: - ManifestEmitter
 //
 // Emits the {name}.meridian.manifest.json alongside the generated .swift file.
-// See docs/05_CODEGEN_SPEC.md §7 for the manifest schema.
+// See docs/02_ARCHITECTURE.md § "Manifest emission" for the manifest schema.
 
 public struct ManifestEmitter {
 

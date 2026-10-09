@@ -1,112 +1,43 @@
 # AGENTS.md — Meridian AI Contributor Handbook
 
-This file is the always-on, curated handbook for any AI agent working on this
-codebase: project orientation, development norms, the phase-gate rule, and the
-cross-cutting pitfalls. Keep it lean and accurate.
+Always-on, curated handbook: orientation, norms, the phase gate, and the cross-cutting pitfalls. Keep it lean — it is injected into *every* conversation.
 
-**Context budget:** this file is injected into *every* conversation. Do not let
-it grow into a changelog. Two homes for change history exist instead:
-
-- **`IMPLEMENTATION_LOG.md`** — the append-only decision log (UTC-timestamped).
-  Every assumption, decision, fix, or blocker goes here. Never delete entries.
-  Older entries are rotated into **`.ai/implementation-log-archive/`**; when
-  looking up task history or prior decisions, search the active log **and**
-  that archive folder (see its `README.md`).
-- **`.cursor/rules/*.mdc`** — area-scoped reference (codegen, runtime, compiler
-  internals, tracing, testing). These auto-attach only when you edit matching
-  files, so deep detail stays out of the always-on budget.
-
-**Self-update rule:** After a substantive session, append to
-`IMPLEMENTATION_LOG.md`. Update *this* file only when a **norm or pitfall**
-changes; update the relevant `.cursor/rules/*.mdc` when an **area convention**
-changes. Do not add per-session changelog entries here.
+**Context budget / self-update rule:** change history goes to `IMPLEMENTATION_LOG.md` (append-only, UTC-timestamped; older entries rotate into `.ai/implementation-log-archive/` — search both). Area conventions go to `.cursor/rules/*.mdc`. Update *this* file only when a **norm or pitfall** changes, never as a changelog.
 
 ---
 
-## Table of contents
+## 1. What Meridian is
 
-1. [Project overview](#1-project-overview)
-2. [Repository layout](#2-repository-layout)
-3. [Development norms](#3-development-norms)
-4. [Phase-gate rule](#4-phase-gate-rule)
-5. [Area-scoped reference rules](#5-area-scoped-reference-rules)
-6. [Known sharp edges and pitfalls](#6-known-sharp-edges-and-pitfalls)
-7. [Decision history](#7-decision-history)
-
----
-
-## 1. Project overview
-
-Meridian is a **controlled natural language compiler**. It converts `.meridian`
-workflow files (plus `.merconfig` vocabulary files) into async/await Swift
-source that runs against `MeridianRuntime`.
-
-The compiler pipeline is:
+Meridian is a **controlled natural language compiler**: it converts `.meridian` workflow files (plus `.merconfig` vocabulary files) into async/await Swift source that runs against `MeridianRuntime`.
 
 ```
-.merconfig source
-    → MerConfigParser → MerConfigFile
-    → SymbolTable.build(from:)
-.meridian source
-    → MeridianParser(symbols:) → MeridianFile
-    → ASTToIR(symbols:) → [IRWorkflow]
-    → SwiftEmitter → String (Swift source)
-    → swift-format → formatted Swift
+.merconfig source → MerConfigParser → MerConfigFile → SymbolTable.build(from:)
+.meridian source  → MeridianParser(symbols:) → MeridianFile
+                  → ASTToIR(symbols:) → [IRWorkflow]
+                  → SwiftEmitter → String (Swift source) → swift-format
 ```
 
 The entire pipeline is exposed as a single call:
 
 ```swift
 let out = try Compiler(options: opts).compile(
-    meridianSource: mer,
-    meridianFile: "order_processing.meridian",
-    merconfigSource: cfg,
-    merconfigFile: "ecommerce.merconfig"
-)
+    meridianSource: mer, meridianFile: "order_processing.meridian",
+    merconfigSource: cfg, merconfigFile: "ecommerce.merconfig")
 ```
-
----
-
 ## 2. Repository layout
 
-- `Sources/MeridianRuntime/` — runtime used by generated Swift (`Runtime/`
-  actor, `Value/`, `State/`, `Comparison/`, `Protocol/`, `Domain/`).
-- `Sources/MeridianCore/` — the compiler: `Compiler.swift` (entry point),
-  `AST/`, `IR/IRTypes.swift` (13 IR primitives, incl. the split
-  `aiJudgment`/`aiAutonomy` AI-inference pair), `Parser/` (`Lexical/`,
-  `Productions/`), `Symbols/`, `Lowering/ASTToIR.swift`, `Codegen/`
-  (`SwiftEmitter.swift`, `ManifestEmitter.swift`, `DomainEmitter`),
-  `Diagnostics/` (`ParserTrace.swift`, diagnostic engine), `Language/`
-  (`EnglishLexicon.swift`, `LexiconCategory.swift` + `LexiconRegistry.swift`,
-  `FixedGrammar.swift`), `Rulebook/`, `Skill/`,
-  `Migration/` (`SkillMigrator`, `SkillDeviation`, `Difflib`).
-- `Sources/MeridianCLI/` — thin `@main` shell. `Sources/MeridianCLIKit/` —
-  testable command library (`Commands/`, one file per subcommand).
-- `Sources/MeridianTools/` — built-in tools. `Sources/MeridianTestKit/` — test
-  helpers. `Sources/SampleDemoFlows/` — hand-written reference flows.
-- `Tests/MeridianCoreTests/`, `Tests/MeridianRuntimeTests/`,
-  `sample-gbrain/Tests/` — test targets.
-- `examples/` — `.merconfig` / `.meridian` samples + `golden/`; `examples/dx/`
-  holds DX diagnostics regression fixtures (MER1012, MER3018, lint, recovery).
-- `corpora/` — Wave 6 validation corpora: `erp/`, `procedures/`, `incident/`,
-  `etl/`, `governance/`, and `clinical/` synthetic proxy corpora (originals,
-  strict ports, compile outputs, deviation indexes). `governance/` and
-  `clinical/` also carry a flat `rules/*.meridian` fixture (top-of-file
-  Phase-8 rule sugar, retained as flat-path regression coverage alongside the
-  in-section rule firing both corpora otherwise use).
-- `docs/` — numbered docs (`01_OVERVIEW` … `19_TRACES_AND_TIME`, `coverage/`).
-- `docs/cookbook/` — **normative oracle** for Waves 7–8 (semantics, syntax
-  cookbook, north-star example, design risks, Inform-7 architecture notes).
-- `.ai/` — brainstorm archives and frozen log snapshots.
+- `Sources/MeridianRuntime/` — runtime used by generated Swift (`Runtime/` actor, `Value/`, `State/`, `Comparison/`, `Protocol/`, `Domain/`, `Trace/`). `Sources/MeridianTools/` — built-in tools. `Sources/MeridianTestKit/` — test helpers. `Sources/SampleDemoFlows/` — hand-written reference flows.
+- `Sources/MeridianCore/` — the compiler: `Compiler.swift` (entry point), `AST/`, `IR/IRTypes.swift` (13 IR primitives, incl. the split `aiJudgment`/`aiAutonomy` pair), `Parser/` (`Lexical/`, `Productions/`), `Symbols/`, `Lowering/`, `Codegen/` (`SwiftEmitter`, `ManifestEmitter`, `DomainEmitter`), `Language/` (`EnglishLexicon`, `LexiconCategory` + `LexiconRegistry`, `FixedGrammar`), `Rulebook/`, `Grammar/`, `Verbalizer/`, `Formatter/`, `Docs/`, `Testing/`, `Diagnostics/` (diagnostic engine, `DecisionCatalog`, `ParserTrace`), `Migration/` (`SkillMigrator`, `SkillDeviation`, `Difflib`).
+- `Sources/MeridianCLI/` — thin `@main` shell; `Sources/MeridianCLIKit/` — testable command library (`Commands/`, one file per subcommand).
+- `Tests/` — `MeridianCoreTests/`, `MeridianRuntimeTests/`, `MeridianToolsTests/`, `MeridianCLITests/`, `MeridianIntegrationTests/`, `MeridianSlowIntegrationTests/` (live-external-process suites), `CorporaTests/`; `sample-gbrain/Tests/` is a separate SwiftPM target.
+- `examples/` — `.merconfig` / `.meridian` samples + `golden/`; `examples/dx/` — DX diagnostics regression fixtures (MER1012, MER3018, lint, recovery).
+- `corpora/` — validation corpora `erp/`, `procedures/`, `incident/`, `etl/`, `governance/`, `clinical/` (originals, strict ports, compile outputs, deviation indexes); `governance/` and `clinical/` also carry a flat `rules/*.meridian` fixture (Phase-8 rule sugar, flat-path regression coverage).
+- `docs/` — nine numbered docs `01_OVERVIEW` … `09_SKILL_PORTING` plus `15_PROBLEM_MESSAGES`; `docs/README.md` is the index, `docs/cookbook/` the normative oracle, `docs/coverage/` the coverage policy and floors. `.ai/implementation-log-archive/docs-history/` holds the pre-consolidation docs.
 - `IMPLEMENTATION_LOG.md` — append-only decision log (recent entries only).
-- `.ai/implementation-log-archive/` — frozen older log snapshots + index
-  (`README.md`). Search here when the active log does not cover the date/topic.
 
 ### CLI commands
 
-`meridian <subcommand>` (see [`docs/07_CLI.md`](docs/07_CLI.md) for full flags).
-`MeridianCommandCatalog` in `Sources/MeridianCLIKit/` is the source of truth for
-leaf paths and `--module-path` support.
+`meridian <subcommand>` (see [`docs/05_CLI.md`](docs/05_CLI.md) for full flags). `MeridianCommandCatalog` in `Sources/MeridianCLIKit/` is the source of truth for leaf paths and `--module-path` support.
 
 | Command | Purpose |
 |---|---|
@@ -119,7 +50,7 @@ leaf paths and `--module-path` support.
 | `grammar-doc` | Emit live grammar-table Markdown reference. |
 | `lint` | `MeridianLinter` authoring diagnostics without compiling. |
 | `preview-skill` | Preview a `SKILL.md` via `SkillMarkdownImporter`. |
-| `migrate-skill` | Convert `SKILL.md` → strict `.meri` (`--batch` for directories). See `docs/13_SKILL_MD_PORTING.md`. |
+| `migrate-skill` | Convert `SKILL.md` → strict `.meri` (`--batch` for directories). See `docs/09_SKILL_PORTING.md`. |
 | `skill-deviation` | Audit ported `.meri` vs original `SKILL.md` (`--batch --index`). |
 | `inert-yield` | Measure inert-section lowering yield with real vocabulary/rulebook. |
 | `check` | Parse + lower only; report diagnostics (no codegen; `--module-path`). |
@@ -137,13 +68,11 @@ leaf paths and `--module-path` support.
 | `verify` | Alias for `check` (diagnostics only; no `--module-path` flag on this alias). |
 | `resume` | Resume a run from the latest `FilesystemCheckpointer` snapshot. |
 | `explain-diag` | Long-form diagnostic/decision explanations (`MERxxxx` / `D-DX-n`). |
-| `decisions` | List, search, or render `DecisionCatalog` (`--render docs/15_DECISIONS.md`). |
+| `decisions` | List, search, or render `DecisionCatalog` (`--render docs/07_DECISIONS.md`). |
 | `bench-parse` | Benchmark unscreened vs screened expression parsing. |
 | `bench-trace` | Benchmark trace replay query latency. |
 
-`migrate-skill` and `skill-deviation` are backed by `SkillMigrator` /
-`SkillDeviation` + `DiffMatcher` in `Sources/MeridianCore/Migration/` (single
-source of truth; the migration corpus is reproducible with no external scripts).
+`migrate-skill` and `skill-deviation` are backed by `SkillMigrator` / `SkillDeviation` + `DiffMatcher` in `Sources/MeridianCore/Migration/` (single source of truth; the migration corpus is reproducible with no external scripts).
 
 ---
 
@@ -151,131 +80,35 @@ source of truth; the migration corpus is reproducible with no external scripts).
 
 ### Files
 
-- **No file headers.** No `//  FileName.swift`, no `// Created by…` comments.
-- **No obvious comments.** Comments only explain non-obvious intent, trade-offs,
-  or constraints.
-- **Original `SKILL.md` files are read-only.** Never edit
-  `sample-gbrain/original-skills/**/SKILL.md` or other upstream/original corpus
-  `SKILL.md` sources to make strict compile pass. Fix compiler/migrator behavior
-  or generated/ported `.meri` files instead; preserve originals as the immutable
-  comparison baseline for deviation reports.
-- **Append-only log.** Every assumption, decision, or blocker goes in
-  `IMPLEMENTATION_LOG.md` with a UTC timestamp. Never delete entries.
+- **No file headers** (`//  FileName.swift`, `// Created by…`) and **no obvious comments** — comments only explain non-obvious intent, trade-offs, or constraints.
+- **Original `SKILL.md` files are read-only.** Never edit `sample-gbrain/original-skills/**/SKILL.md` or other upstream/original corpus `SKILL.md` sources to make strict compile pass; fix the compiler/migrator or the ported `.meri` and keep originals as the immutable deviation baseline.
+- **Append-only log.** Every assumption, decision, or blocker goes in `IMPLEMENTATION_LOG.md` with a UTC timestamp. Never delete entries.
 
 ### Coding style
 
-- Swift 5.10+. Strict concurrency (`Sendable`, `actor`, `async/await`).
-- Prefer `struct` over `class`. Only use `actor` for mutable shared state.
-- `public` only on types and members that are part of a module's public API.
-- No force-unwrap (`!`) in production code.
-- Prefer `guard let` / `guard else` for early exits over nested `if let`.
+Swift 5.10+, strict concurrency (`Sendable`, `actor`, `async/await`). Prefer `struct` over `class`; `actor` only for mutable shared state. `public` only on a module's public API. No force-unwrap (`!`) in production code; prefer `guard let`/`guard else` early exits over nested `if let`.
 
 ### No hardcoded English-surface vocabulary (load-bearing rule)
 
-**Never hardcode an English-surface word/keyword/phrase list inside parser,
-lowering, or codegen code.** Any set of surface tokens the grammar keys on —
-articles, prepositions, copulas, comparison markers, duration units, assertion
-introducers (`make sure`/`ensure`/`assert`), quantifier determiners, connector
-words, stop-words, etc. — belongs in `EnglishLexicon`
-(`Sources/MeridianCore/Language/EnglishLexicon.swift`), which is the single,
-domain-overridable source of surface vocabulary. The rulebook / `.merconfig`
-`=== language ===` section is the generalisation of this: it lets a domain
-*extend* the lexicon without recompiling Meridian.
+**Never hardcode an English-surface word/keyword/phrase list inside parser, lowering, or codegen code.** Any surface token the grammar keys on — articles, prepositions, copulas, comparison markers, duration units, assertion introducers (`make sure`/`ensure`/`assert`), quantifier determiners, connectors, stop-words — belongs in `EnglishLexicon` (`Sources/MeridianCore/Language/EnglishLexicon.swift`), the single, domain-overridable source of surface vocabulary. The `.merconfig` `=== language ===` section generalises this: it lets a domain *extend* the lexicon without recompiling Meridian. When you reach for a literal like `["make sure ", "ensure "]` or `if lower.hasPrefix("every ")` in a `Parser/`/`Lowering/` file, **stop** and instead (1) add/reuse an `EnglishLexicon` field with a sensible `.default` and — if it should be author-extensible — one `LexiconCategory` case plus one `LexiconRegistry` spec row (`Sources/MeridianCore/Language/LexiconRegistry.swift`: header spellings, the `=== language ===` line shape, and the merge rule — `parseLanguageSection`, `MerConfigFile.merging` and `EnglishLexicon.merging(from:)` all read that table, so nothing else needs an edit), then (2) read it via the threaded `lexicon` parameter at the call site.
 
-Concretely, when you reach for a literal like `["make sure ", "ensure "]` or
-`if lower.hasPrefix("every ")` in a `Parser/` or `Lowering/` file, **stop** and
-instead:
+**"Lexicon default ≠ extensible."** A field alone just moves a hardcoded list into `EnglishLexicon.swift`; a category is done only once a `.merconfig` can add to it without a Meridian recompile — `Tests/MeridianCoreTests/LexiconRegistryParityTests.swift` enforces that parity for every category and accepted header spelling. Reference examples of the complete recipe: `assertionMarkers`, `inferenceCueWords`, `normativeCueWords`, `referenceHeadingWords`.
 
-1. Add (or reuse) a field on `EnglishLexicon`, with a sensible default in
-   `.default`, and — if it should be author-extensible — one `LexiconCategory`
-   case plus one `LexiconRegistry` spec row
-   (`Sources/MeridianCore/Language/LexiconRegistry.swift`): the header
-   spellings, the shape of its `=== language ===` lines, and the rule that
-   merges its entries into that field. `parseLanguageSection`,
-   `MerConfigFile.merging` and `EnglishLexicon.merging(from:)` all read that
-   table, so nothing else needs an edit.
-2. Read it via the threaded `lexicon` parameter at the call site.
+**Fixed vs. extensible.** *Extensible vocabulary* — articles, prepositions, copulas, comparison markers, duration units, assertion introducers, stop-words, any domain-synonymisable term — MUST live in `EnglishLexicon` and SHOULD be author-extensible via `=== language ===`; a literal list of these in a `Parser/`/`Lowering/`/`Codegen/` file is a bug (use `EnglishLexicon.stripLeadingArticle`, never an inline `["the ", "a ", "an "]`). *Fixed control-flow syntax* — `if`/`while`/`until`/`for each`/`otherwise`/`unless`, the quantifier determiners (`every`/`all`/`any`/`some`/`no`), block headers, and the `let … be …` / `do … and …` shapes — defines *what the language is*, so it may stay literal, but keep each construct's trigger words in ONE commented place (its parse production), never copy-pasted. Centralized-but-fixed grammar lives in `FixedGrammar.swift`. Other narrow exceptions (justify in a comment): non-natural-language structural sentinels (`\u{E000}` code-block/shell markers), Swift-keyword output in the emitter, `(( … ))` section markers.
 
-**A Swift default on the lexicon is necessary but not sufficient — "lexicon
-default ≠ extensible."** A field alone just moves a hardcoded list from a
-`Parser`/`Lowering` file into `EnglishLexicon.swift`; it is still hardcoded
-from an author's point of view until a registry row wires it through the full
-`=== language ===` recipe. Treat a category as done only once a `.merconfig`
-can add to it without a Meridian recompile —
-`Tests/MeridianCoreTests/LexiconRegistryParityTests.swift` enforces that parity
-for every category and every accepted header spelling.
-`inferenceCueWords`, `normativeCueWords`, and `referenceHeadingWords` (the
-`SkillMigrator` classification vocabulary — see pitfall #15 and
-`docs/13_SKILL_MD_PORTING.md`) are reference examples of the complete recipe,
-alongside `assertionMarkers`.
+**GrammarTable data edits first.** New expression/description/template/idiom surface forms are registered in `PegexSurfaceGrammar` (name, canonical example, summary, anchors from `EnglishLexicon`/`FixedGrammar`) with the matching table-order test *before* parsing is wired. Do not add new expression-level quote-shielding or trailing-period scanners at call sites: pegex/grammar-table parsing owns expression markers and `SentenceBreaker` owns statement terminators.
 
-**Where the line is.** Two categories, two rules:
+### Dependencies & spec documents
 
-- **Extensible vocabulary** — articles, prepositions, copulas, comparison
-  markers, duration units, assertion introducers, stop-words, and any
-  domain-synonymisable term. These MUST live in `EnglishLexicon` and SHOULD be
-  author-extensible via `=== language ===`. A literal list of these in a
-  `Parser/`/`Lowering/`/`Codegen/` file is a bug. Reference examples:
-  `assertionMarkers` + `Assertion synonyms:` and
-  `EnglishLexicon.stripLeadingArticle` (the canonical article stripper — never
-  re-list `["the ", "a ", "an "]` inline; call the helper).
-- **Fixed control-flow syntax** — the structural skeleton of the grammar:
-  `if`/`while`/`until`/`for each`/`otherwise`/`unless`, the quantifier
-  determiners (`every`/`all`/`any`/`some`/`no`) that map 1:1 to
-  `QuantifierKindAST`, block headers, and the `let … be …` / `do … and …`
-  shapes. These define *what the language is*, not *what a domain calls things*,
-  so they may remain literals — but keep each construct's trigger words in ONE
-  place (its parse production), commented, never copy-pasted across files. If a
-  domain ever needs to rename one, promote it to the lexicon at that point.
-  Centralized-but-fixed grammar lives in `FixedGrammar.swift`
-  (`EnglishLexicon.grammar`).
-
-Other narrow exceptions (justify in a comment): non-natural-language structural
-sentinels (e.g. the `\u{E000}` code-block / shell markers), Swift-keyword output
-in the emitter, and section-marker syntax (`(( … ))`). When in doubt, it goes in
-the lexicon.
-
-### Wave 5 parser infrastructure norm
-
-New expression/description/template/idiom surface forms are **GrammarTable data
-edits first**. Register the production in `PegexSurfaceGrammar` (name, canonical
-example, summary, anchors from `EnglishLexicon`/`FixedGrammar`), add the matching
-table-order test, then wire parsing. Do not add new expression-level
-quote-shielding or trailing-period scanners at call sites: pegex/grammar-table
-parsing owns expression markers, and `SentenceBreaker` owns statement
-terminators.
-
-### Dependencies
-
-- `pegex` (remote, `https://github.com/modelhike/pegex.git`) — `PegexBuilder` grammar DSL.
-- Vendored `StringTemplate` (`Sources/MeridianCore/modelhike-vendored/`) — codegen builder DSL (formerly from `modelhike`).
-- Do not add new remote dependencies without explicit user approval.
-
-### Spec documents
-
-Normative oracle docs for Waves 7–8 live in `docs/cookbook/` (semantics,
-syntax cookbook, north-star example, design risks). Agent implementation prompts
-live in `.ai/meridian-*.md`. When the implementation diverges from the oracle,
-document the divergence in `IMPLEMENTATION_LOG.md`.
-
----
+`pegex` (remote, `https://github.com/modelhike/pegex.git`) — `PegexBuilder` grammar DSL; vendored `StringTemplate` (`Sources/MeridianCore/modelhike-vendored/`) — codegen builder DSL. Do not add new remote dependencies without explicit user approval. Normative oracle docs for Waves 7–9 live in `docs/cookbook/`; agent prompts in `.ai/meridian-*.md`; document any divergence from the oracle in `IMPLEMENTATION_LOG.md`.
 
 ## 4. Phase-gate rule
 
-**Do not start the next phase until the current one is signed off.**
-
-After completing a phase:
-
-1. Run `swift test` — all tests must pass.
-2. Run the CLI forcing function (compile → build → run → diff).
-3. Assign a confidence percentage.
-4. Record it in `IMPLEMENTATION_LOG.md` under `### Phase N confidence audit`.
-5. Ask the user to sign off before proceeding.
+**Do not start the next phase until the current one is signed off.** After completing a phase: (1) run `swift test` — all tests pass; (2) run the CLI forcing function (compile → build → run → diff); (3) assign a confidence percentage; (4) record it in `IMPLEMENTATION_LOG.md` under `### Phase N confidence audit`; (5) ask the user to sign off before proceeding.
 
 ### Three test workflows
 
-Pick the first row that applies; only run slower tiers when the change needs
-them. Full detail: [`Tests/README.md`](Tests/README.md).
+Pick the first row that applies; only run slower tiers when the change needs them. Full detail: [`docs/08_TESTING.md`](docs/08_TESTING.md).
 
 | Workflow | When | Command |
 |---|---|---|
@@ -283,452 +116,62 @@ them. Full detail: [`Tests/README.md`](Tests/README.md).
 | **Full test gate** | Phase sign-off, codegen/corpus/migration changes, before merge | `swift test` |
 | **Coverage gate** | Substantive production changes (per-file floors) | `scripts/coverage.swift --gate` |
 
-`MeridianSlowIntegrationTests` holds every live-external-process suite:
-`swift build`/`swift run` via temp SwiftPM packages, CLI `run`/`test`,
-per-file `swiftc -typecheck` over generated Swift (`GeneratedSwiftTypecheckSlowTests`),
-and process-level `meridian` binary E2E (DX fixtures, verbalizer, trace
-eval/verify). Plain `swift test` runs it; the fast inner loop skips it.
+`MeridianSlowIntegrationTests` holds every live-external-process suite: `swift build`/`swift run` via temp SwiftPM packages, CLI `run`/`test`, per-file `swiftc -typecheck` over generated Swift (`GeneratedSwiftTypecheckSlowTests`), and process-level `meridian` binary E2E. Plain `swift test` runs it; the fast inner loop skips it. Focused runs: `swift test --filter GeneratedSwiftTypecheckSlowTests` / `--filter MeridianSlowIntegrationTests`. Coverage's own three flows (fast `--gate`, rare `--full --gate`, occasional baseline regen): [`docs/coverage/README.md`](docs/coverage/README.md) § Commands.
 
-Focused slow runs: `swift test --filter GeneratedSwiftTypecheckSlowTests` or
-`swift test --filter MeridianSlowIntegrationTests`. Coverage has its own three
-flows (fast `--gate`, rare `--full --gate`, occasional baseline regen) —
-[`docs/coverage/README.md`](docs/coverage/README.md) § Commands.
+After any major implementation session (even outside a formal phase), run the full local gate unless the user explicitly narrows validation: `swift test` then `scripts/coverage.swift --gate`. `--gate` skips `MeridianSlowIntegrationTests` by default (those files carry permanent floors); use `scripts/coverage.swift --full --gate` when the session touched `RunCommand`, `TestCommand`, `RuntimeExecutor`, `SwiftPMPackageRunner`, generated-Swift `swiftc -typecheck`, or process-level `meridian` E2E checks. Never skip plain `swift test` when generated Swift, codegen, domain emission, migration, or any committed corpus changed — the `swiftc -typecheck` gates live there.
 
-After any major implementation session (even outside a formal phase), run the
-full local gate unless the user explicitly narrows validation:
+Regenerate committed artifacts with the shared scripts, never hand-written loops (`{…}` is a bash brace list — one line, once per corpus):
 
 ```bash
-swift test
-scripts/coverage.swift --gate
+swift scripts/generate-migration.swift       --corpus {gbrain,erp,procedures,incident,etl,governance,clinical}
+swift scripts/generate-compile-outputs.swift --corpus {gbrain,erp,procedures,incident,etl,governance,clinical}
+swift scripts/generate-deviations.swift      --corpus {gbrain,erp,procedures,incident,etl,governance,clinical}
+swift scripts/strict-compile-report.swift    [--root corpora/erp --vocab … --rulebook …]
 ```
 
-`scripts/coverage.swift` skips the slow, real-external-process
-`MeridianSlowIntegrationTests` target by default (its coverage lands on files
-that already carry permanent bucket-A floors), so prefer the plain, faster
-`--gate` above. Use `scripts/coverage.swift --full --gate` instead when the
-session touched `RunCommand`, `TestCommand`, `RuntimeExecutor`,
-`SwiftPMPackageRunner`, generated-Swift `swiftc -typecheck`, process-level
-`meridian` E2E checks, or another file whose reachable branches only that
-target exercises — plain `--gate` cannot accurately enforce those specific
-floors.
+`generate-migration` runs `migrate-skill <root>/original-skills --out <root>/skills --batch --force` plus a single-file call for `RESOLVER.md` → `RESOLVER.meri` (`--batch` never discovers it), and appends derived section-role aliases to the corpus `.merrules` (idempotent). `generate-compile-outputs` cleans and recompiles with `--no-format --namespace auto`. `generate-deviations` runs `skill-deviation --batch --index` and prints the deviation index plus a per-file operational-inert worklist (worst offenders first) as the actionable worklist. Regenerate goldens/compile-outputs/deviations/coverage baselines in the same change set as the code that affects them; never edit original `SKILL.md` sources to improve metrics. Coverage baseline/floor regeneration (`docs/coverage/coverage-baseline.md` / `docs/coverage/coverage-exclusions.md`) is its own occasional `--full` flow ([`docs/coverage/README.md`](docs/coverage/README.md) "Commands", flow 3), not part of routine `--gate`. If a gate cannot be run, say exactly why and record the residual risk in the final response and `IMPLEMENTATION_LOG.md`.
 
-If the change affects generated Swift, codegen, domain emission, migration, or
-any committed corpus, do not skip plain `swift test` — the
-`swiftc -typecheck` gates now live in `MeridianSlowIntegrationTests`
-(`GeneratedSwiftTypecheckSlowTests`). For a focused typecheck-only run:
-
-```bash
-swift test --filter GeneratedSwiftTypecheckSlowTests
-```
-When diagnosing strict-compile failures across any corpus ports, use the
-readable reporter instead of an inline shell loop:
-
-```bash
-swift scripts/strict-compile-report.swift
-swift scripts/strict-compile-report.swift --root corpora/erp --vocab corpora/erp/erp.merconfig --rulebook corpora/erp/erp.merrules
-```
-
-When batch re-migrating `SKILL.md` sources into `.meri`, use the shared script
-instead of hand-written `migrate-skill` invocations:
-
-```bash
-swift scripts/generate-migration.swift --corpus gbrain
-swift scripts/generate-migration.swift --corpus erp
-swift scripts/generate-migration.swift --corpus procedures
-swift scripts/generate-migration.swift --corpus incident
-swift scripts/generate-migration.swift --corpus etl
-swift scripts/generate-migration.swift --corpus governance
-swift scripts/generate-migration.swift --corpus clinical
-```
-
-It runs `migrate-skill <root>/original-skills --out <root>/skills --batch
---force` (plus a separate single-file `migrate-skill` call for
-`<root>/original-skills/RESOLVER.md` → `<root>/RESOLVER.meri`, since
-`RESOLVER.md` is never named `SKILL.md` so `--batch` never discovers it on its
-own). New section-role aliases the migrator derives are appended straight to
-`<root>`'s primary `.merrules`, matching `migrate-skill`'s own persistence
-behavior — re-running this script is idempotent. After migrating, regenerate
-`compile-outputs` and `migration-deviations` (below) before running the gates.
-
-When regenerating committed compile outputs, use the shared script instead of
-hand-written loops:
-
-```bash
-swift scripts/generate-compile-outputs.swift --corpus gbrain
-swift scripts/generate-compile-outputs.swift --corpus erp
-swift scripts/generate-compile-outputs.swift --corpus procedures
-swift scripts/generate-compile-outputs.swift --corpus incident
-swift scripts/generate-compile-outputs.swift --corpus etl
-swift scripts/generate-compile-outputs.swift --corpus governance
-swift scripts/generate-compile-outputs.swift --corpus clinical
-```
-
-It cleans each selected `<root>/compile-outputs/` directory and recompiles
-`skills/*.meri` plus `RESOLVER.meri` with `--no-format --namespace auto`.
-When regenerating migration deviation reports, use the shared script instead of
-hand-written loops:
-
-```bash
-swift scripts/generate-deviations.swift --corpus gbrain
-swift scripts/generate-deviations.swift --corpus erp
-swift scripts/generate-deviations.swift --corpus procedures
-swift scripts/generate-deviations.swift --corpus incident
-swift scripts/generate-deviations.swift --corpus etl
-swift scripts/generate-deviations.swift --corpus governance
-swift scripts/generate-deviations.swift --corpus clinical
-```
-
-It runs `skill-deviation --batch --index` for `sample-gbrain`, `corpora/erp`,
-`corpora/procedures`, `corpora/incident`, `corpora/etl`, `corpora/governance`,
-and `corpora/clinical`, then prints each corpus's generated `## Summary`
-block (the deviation index proper — tiers, similarity, inert/operational-inert/
-unclassified counts) *and* a per-file operational-inert breakdown (worst
-offenders first, parsed from the `## Per-skill` table) to stdout, so a run of
-the script is itself the actionable worklist for driving operational-inert
-toward zero — not just a confirmation that some file got written. Original
-`SKILL.md` sources remain immutable baselines; regenerate reports from the
-current originals and ported `.meri` files rather than editing originals to
-improve metrics.
-Do not skip the coverage gate for substantive production changes; it enforces
-the per-file coverage floors documented under `docs/coverage/`.
-If a change affects generated artifacts, regenerate and include the matching
-outputs in the change set (goldens, `sample-gbrain/compile-outputs/`,
-`sample-gbrain/migration-deviations/`, coverage baselines/floors) instead of
-leaving stale snapshots. Regenerating `docs/coverage/coverage-baseline.md` /
-adjusting `docs/coverage/coverage-exclusions.md` floors is its own separate,
-occasional maintenance flow — always `--full` (see
-[`docs/coverage/README.md`](docs/coverage/README.md) "Commands", flow 3) —
-not something the routine `--gate` check above triggers or needs.
-If any gate cannot be run, say exactly why and record the residual risk in the
-final response and `IMPLEMENTATION_LOG.md`.
-
-The user has explicitly stated: *"once impl for a phase is done, don't
-automatically start the next phase. First, check if the impl is
-comprehensive, give a confidence %. Get to near 100% confidence before
-proceeding to the next phase."*
-
----
+The user has explicitly stated: *"once impl for a phase is done, don't automatically start the next phase. First, check if the impl is comprehensive, give a confidence %. Get to near 100% confidence before proceeding to the next phase."*
 
 ## 5. Area-scoped reference rules
 
-Deep per-area conventions live in `.cursor/rules/*.mdc` (kept out of the
-always-on budget). Each carries both a `description` and `globs`, so it
-**auto-attaches when a matching file is in context** *and* can be pulled in by
-relevance from its description.
-
-**Always-on directive (do not skip):** before substantive work in any area below
-— including cross-cutting changes, and even if the rule did not auto-attach —
-open and read the matching `.cursor/rules/*.mdc` file first. This guarantees the
-guidance is applied regardless of how rule-matching resolves. When an area
-convention changes, update its rule file, not this handbook.
+Deep per-area conventions live in `.cursor/rules/*.mdc` (kept out of the always-on budget). Each carries a `description` and `globs`, so it auto-attaches when a matching file is in context. **Always-on directive (do not skip):** before substantive work in any area below — including cross-cutting changes, and even if the rule did not auto-attach — open and read the matching `.cursor/rules/*.mdc` first. When an area convention changes, update its rule file, not this handbook.
 
 | Rule file | Covers | Attaches when editing |
 |---|---|---|
 | `compiler-internals.mdc` | `matchPhrase`/lowering/parsing invariants + the 13 IR primitives & `IRExpression` cases | `Sources/MeridianCore/{Parser,Lowering,Symbols,IR}/**` |
 | `codegen.mdc` | `SwiftEmitter` escaping, namespacing, `emitValueExpr`, comparison emission, struct conventions | `Sources/MeridianCore/Codegen/**` |
-| `runtime.mdc` | `Value` enum, `State.get` keys, `Runtime.init`, `Observer`/`Event` naming, sync helpers | `Sources/MeridianRuntime/**` |
-| `tracing.mdc` | `ParserTrace` categories, `MERIDIAN_TRACE`, thread safety, the `trace` parameter convention | `Sources/MeridianCore/Diagnostics/**` |
+| `runtime.mdc` | `Value` enum, `State.get` keys, `Runtime.init`, `Observer`/`TraceRecord` naming, sync helpers | `Sources/MeridianRuntime/**` |
+| `tracing.mdc` | `ParserTrace` categories, `MERIDIAN_TRACE`, thread safety, the task-local trace convention | `Sources/MeridianCore/Diagnostics/**` |
 | `testing.mdc` | Running tests, the per-file coverage gate, forcing functions, golden/trace test patterns | `Tests/**`, `scripts/coverage.swift` |
-
-All five files are read directly from `.cursor/rules/` whenever you need them —
-do not wait for auto-attach.
-
----
 
 ## 6. Known sharp edges and pitfalls
 
-### 1. `findArticle` must pick the earliest article
-
-Phrase-pattern parsing must use `EnglishLexicon.findEarliestArticle(_:)`, which
-finds the **earliest** parameter article (`a`/`an`) by position, not by iteration order. An earlier bug
-picked the last, causing `state.get("l amount")` from `"total amount"`. Do
-not revert this to iteration order.
-
-### 2. Do not prefix identifiers with "the " in `exprToText`
-
-`ASTToIR.exprToText` must not add `"the "` prefix to bare identifier names.
-This was tried and reverted. It produces `state.get("the order.id")` which
-breaks at runtime.
-
-### 3. Possessive recognition without an article
-
-`ExpressionParser.parseAtom` must detect possessives (`X's Y`) even without
-a leading `the/a/an`. After argument substitution removes the article, bare
-possessives like `"order's id"` must still be parsed as property access, not
-as an identifier.
-
-### 4. Quote-aware splitting
-
-`ExpressionParser.rangeOfMarkerOutsideQuotes` prevents comparison markers
-(` is `, ` equals `, etc.) from matching inside double-quoted strings.
-`StatementParser.splitArgs` also respects double-quotes. Do not use
-single-quote as a string boundary — apostrophes in possessives (`customer's`)
-would be misinterpreted.
-
-### 5. Argument substitution order
-
-In `ASTToIR.substituteArgs`, always sort arguments by **descending key
-length** before substituting. Shorter keys would otherwise clobber the start
-of longer keys (e.g. `"amount"` clobbers `"total amount"`).
-
-### 6. Workflow call argument order
-
-`lowerPhraseInvocation` for workflow stubs orders arguments by iterating
-`phrase.pattern.parameters` (the declared order), not the dictionary. The
-generated struct's `init` parameters appear in pattern-declaration order.
-Passing them in a different order causes Swift compiler argument-label errors.
-
-### 7. `collectMultiLineCounted` vs `collectMultiLine`
-
-Always use `collectMultiLineCounted` when iterating with an explicit `i` index.
-The non-counted variant was left for backward compatibility only. Using it in
-a new loop will cause continuation lines to be re-processed as top-level
-statements (resulting in spurious `_unresolved` binds).
-
-### 8. `statementParser.splitArgs` and single quotes
-
-Single-quote (`'`) must NOT be used as a string delimiter in `splitArgs`.
-Possessives like `"customer's email"` contain single quotes; treating them
-as string boundaries splits arguments at possessives. Double-quote only.
-
-### 9. `Sendable` Constants struct
-
-`Constants` must be declared `public struct Constants: Sendable`. The
-`Sendable` conformance is required because `Constants` is used from async
-`run()` methods. Omitting it causes Swift concurrency warnings or errors.
-
-### 10. Vendored `StringTemplate` powers codegen
-
-`SwiftEmitter` uses the vendored `StringTemplate` builder in
-`Sources/MeridianCore/modelhike-vendored/`. `emit` calls
-`toString(separator: "\n")`, which recursively flattens nested templates.
-
-### 11. `StringConvertibleBuilder` must stay `public`
-
-The vendored `StringConvertible.swift` declares
-`public typealias StringConvertibleBuilder = ResultBuilder<StringConvertible>`.
-Without `public`, the result-builder attribute is unavailable across module
-boundaries.
-
-### 12. "Compiles" means Meridian emitted Swift *source* — not that it `swiftc`s
-
-`Compiler.compile(...)` and `SkillMigrator.compiledOK` only assert the pipeline
-produced Swift text without throwing; the result is **never** fed to a Swift
-parser there. So invalid Swift (unescaped strings, hyphenated identifiers,
-duplicate decls) can pass every compile/conformance test and only blow up later
-in swift-format or `swiftc`. When emitting anything new, assume the output will
-be type-checked. The `swiftc -typecheck` gates in
-`Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`
-(goldens, gbrain, corpora) are the real Swift validators — run them via plain
-`swift test` or the focused filter after emitter changes.
-
-### 13. Generated identifiers must be sanitized
-
-Struct names come from natural-language text via `EnglishLexicon.structName`,
-which splits on any non-identifier char and `_`-prefixes a leading digit — so a
-hyphenated name (`webhook-transforms`) yields `WebhookTransforms`, never
-`struct Webhook-transforms` (a syntax error that also mints a phantom
-redeclaration of a same-stem domain kind). Distinct trigger phrases that
-collapse to one struct name are disambiguated with a numeric suffix via
-`IRWorkflow.explicitStructName`. `DomainEmitter` drops an explicit merconfig
-`id` property because the `MeridianKind` identity `id` is synthesised
-unconditionally (otherwise: duplicate `id`).
-
-### 14. A `role` section's body must be exclusively executable — split, don't comment
-
-A section with an executable role (`(( role: procedure ))`, `(( role: invariants ))`,
-…) makes **every** non-blank, non-comment line a live statement that must lower.
-So you cannot flip an `(( role: reference ))` documentation heading to a role and
-keep its narrative paragraph — that prose errors as an unresolved phrase. The
-**correct** fix is a structural split: keep the narrative in its
-`(( role: reference ))` section (verbatim, uncommented — it stays real
-documentation) and add a **separate** sibling/child heading whose body is
-**only** executable statements. A `###` child re-resolves its own role under a
-`reference` `##` parent; for sections already at `###`, add a sibling `###`.
-`meridian migrate-skill` performs this split automatically now (see
-`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7); the gbrain
-back-linking conversions (`briefing` `### Enforce back-links`, `maintain`
-`### Repair missing back-links` / `### Create missing cross-references`) follow
-this shape as the manual-fallback worked example.
-
-**ANTI-PATTERN — do NOT blockquote the prose to silence the error.** Prefixing the
-narrative with `>` (so `IndentTokenizer` treats it as a comment) is lossy: a
-blockquoted line is *dropped from the IR* — no longer enforced, asserted, or
-executed. That hides a real requirement behind a comment and is the one place the
-"no silent drops" guarantee (§6 / `SkillSectionBuilder` strictness) can't protect
-you, because the drop is author-chosen via `>` rather than compiler-rejected. Full
-guidance: `docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" item 7.
-
-### 15. Narrative encodes executable contracts — mine it, route it, or let it hard-error; never auto-wrap or inert it
-
-The most-missed porting step (and the deeper lesson behind §14): SKILL.md prose
-rarely *only* describes — it usually states **conditions on execution** the
-language can lower. A sentence like "every entity the page mentions must have a
-back-link" reads like documentation but is a **post-condition** (`assert …` /
-`make sure …`, and/or a guarded loop that establishes it). "before X, Y must
-hold" is a **precondition** (`wait until …` / a leading guard). "if X, the rule
-applies" is an **applicability guard** (a branch). A qualifier like "fix the
-*missing* one" makes an action **conditional**, not unconditional (the
-back-linking loop is `if the entity does not link …`, never a bare `add`).
-
-**`SkillMigrator` resolves every non-lowerable content unit through a fixed
-four-way precedence — never a fuzzy auto-wrap, never a blanket `inert`:**
-
-1. **Lowerable** → lower it (unmarked, or split into a `— steps` child).
-2. **Not lowerable, but carries an `EnglishLexicon.inferenceCueWords` cognitive-verb
-   cue** (`analyse`/`decide`/`assess`/`evaluate`/…) → the **only** case that may
-   emit an AI marker: `use judgment to …:` / `ai-discretion` / `ai-autonomy`.
-3. **Not lowerable, no inference cue, genuinely documentary** (rationale,
-   examples, external references, formatting templates) → `(( role: reference ))`
-   — never `(( inert ))`; the migrator does not emit that keyword.
-4. **Not lowerable, no inference cue, but normative/operational** (an
-   `EnglishLexicon.normativeCueWords` cue — `must`/`never`/`always`/`require*`/
-   `refuse*`/…, or a role heading that already asserts a checkable contract) →
-   **left unmarked** so the real compiler raises its own precise
-   `uncheckablePredicate`/`unresolvedPhrase` error naming the reword needed.
-   This is an **intentional hard error** (P3), not a bug: re-migration can now
-   fail by design, and the fix is to reword the line or add a genuine
-   inference-cue verb if AI judgment really is intended — never to silently
-   file it as `reference` or wrap it in judgment.
-
-**Before marking any normative sentence `(( role: reference ))`, classify it:
-post-condition, precondition, invariant, or guard? If it's any of those, lower
-it (or, failing that, let category 4 catch it — don't paper over it).**
-`assert`/`ensure`/`make sure` are aliases (extensible via `=== language ===`
-`Assertion synonyms:`); pick the one closest to the source wording.
-`(( inert ))` remains valid, compiler-accepted hand-authored syntax (a synonym
-of `(( role: reference ))`) — but a bare `(( inert ))` surviving in a
-*migrator-generated* file is a deviation-report violation
-(`SkillMetrics.inertMarkerCount`), since the migrator itself never emits it.
-Full guidance + the contract-shape table + the four-way precedence:
-`docs/13_SKILL_MD_PORTING.md` §"Common porting fixes" items 7–8; the
-`=== language ===` recipe for the three classification categories:
-`docs/03_LANGUAGE_QUICK_REFERENCE.md` §"SkillMigrator classification synonyms".
-
-### 16. `(( role: procedure ))` is redundant on a recognized procedure heading
-
-`procedure` is the **implicit** role for any heading whose text normalizes to a
-recognized procedure synonym — `Phases`, `Workflow`, `Pipeline`, `Protocol`,
-`Steps`, `Process`, `Procedure`, or a `Phase N:` prefix
-(`SkillSectionRole.builtinRole`, `Sources/MeridianCore/Rulebook/Rulebook.swift`).
-On such a heading, writing `(( role: procedure ))` is noise — during migration,
-**name the executable section with one of those words and add no marker.**
-
-It is **not** a blanket default. A content-bearing heading whose text is *not* a
-recognized role (e.g. `### Enforce back-links`) is a **hard `semanticError`** —
-"unrecognized section heading … has content but no role" — never a silent
-fall-through to procedure (the no-silent-drops guarantee). So: never *add* the
-marker to a `Protocol`/`Steps`/`Phase N:` heading; never *strip* it from a custom
-heading unless you also rename the heading to a recognized synonym (or add a
-`=== sections ===` rulebook alias). The gbrain back-link sections use custom
-headings (`### Enforce back-links`, `### Repair missing back-links`), so their
-`(( role: procedure ))` markers are load-bearing and must not be removed as-is.
-Full guidance: `docs/13_SKILL_MD_PORTING.md` (edit-budget callout after item 4).
-
-### 17. `NonterminalScreen` masks must fully represent a production's anchors
-
-`NonterminalScreen` is a live pre-filter for selected expression productions.
-Its bitmask vocabulary is fixed-capacity (`Bitset128`, 128 anchor slots). A
-production may only receive a nonzero screening mask when **every one** of its
-anchors is present in the vocabulary. If any anchor is outside the capacity
-budget, the whole production must fall back to mask `0` (always eligible).
-
-Never build a partial production mask by dropping missing anchors. A partial
-mask under-represents real trigger words and can wrongly screen out valid
-expressions. This previously broke quantifiers when some determiners
-(`every`/`any`/`no`/…) were not represented in the first 64 anchors.
-
-### 18. Authoring a new corpus: see `corpora/GENERATING_A_CORPUS.md`
-
-Adding a new `corpora/<name>/` corpus (vocabulary + rulebook + natural-
-language `SKILL.md` skills ported through `migrate-skill`) has its own
-playbook and a "Known gotchas" section (context-blind `normativeCueWords`
-matching, `if`/`otherwise` + judgment fragmentation, rule-attachment
-phrasings that silently don't attach, unsupported negative temporal
-definitions) — read `corpora/GENERATING_A_CORPUS.md` before starting one
-rather than rediscovering these corpus-by-corpus.
-
-### 19. `meridian explain` is the verbalizer; diagnostics are `explain-diag`
-
-Wave 7 reserves `meridian explain <source>` for Canonical English verbalization
-of compiled IR. Long-form diagnostic/decision explanations are
-`meridian explain-diag <code|decision>`. Do not reintroduce docs or CLI examples
-that use `explain` with `MERxxxx` diagnostic codes.
-
-The verbalizer is also a totality surface: every in-scope `IRPrimitive` /
-`IRExpression` case must print concrete canonical text that reparses to
-structurally equal IR. Never add placeholder/TODO text, `_unresolved`, or
-"malformed" fallback strings to make a new case compile; wire the real canonical
-form and cover it with verbalizer round-trip tests.
-
-### 20. Verbalizer canonical surface lives in `FixedGrammar`
-
-`Verbalizer.swift` must not hardcode structural or canonical-emit markers.
-Read them from `model.lexicon.grammar`: `statement`, `verbalizer`,
-`waitSignalIntroducer` / `choiceGateIntroducers` / `judgmentIntroducers`, etc.
-Add new emit tokens to `FixedVerbalizerSurface` or an existing `FixedGrammar`
-field first, then thread through the Verbalizer. Extensible synonym tables
-(`emptyMarkers`, `sortByMarkers`, `assertionMarkers`) stay in `EnglishLexicon`.
-
-### 21. `Verbalizer` / `SwiftEmitter` validate IR and throw
-
-`Verbalizer.verbalize()` and `SwiftEmitter.emit()` run `IRValidator` before
-printing Canonical English or Swift. Malformed hand-built IR must surface as
-structured `MER4002` diagnostics, not placeholder text, fallback comments, or
-best-effort output. Thread the throwing API through callers.
-
-Production CLI/compiler paths must also preserve the caller's trace instance.
-Do not add `.silent()` in `Sources/` except the allowlisted probe/benchmark
-sites (`TrialLowering`, `InertYieldAnalyzer`, `ParserBenchmark`) documented in
-`docs/coverage/SILENT_FALLBACK_ALLOWLIST.md`.
-
-### 22. `since the last` holds must reduce to an event pattern — never crash the emitter
-
-`TraceTemporalKind.sinceLast` stores the authored `holds: IRExpression` (for the
-verbalizer) **and** a resolved `holdsPattern: EventPatternIR` (for the emitter /
-`TraceEvaluator`). `holds` is only supportable when it lowers to an event pattern
-— directly, or via an adjective whose body is a `has ever`/event query, which is
-inlined. A **pure state predicate** holds (e.g. `the service is healthy`, where
-`healthy` compares a property) has no trace backing in v1 (no state-history
-retention, INFORM7 §5.5/§12). That case is a **compile-time `MER-TMP-019`
-(`traceStateHistorySince`)** — do NOT let it reach a `preconditionFailure` in
-`SwiftEmitter`. Fix authored skills by backing the predicate with a `has ever`
-adjective or dropping `since` for an ordinary `otherwise` guard (see
-`docs/19_TRACES_AND_TIME.md` §9.1). This is the Wave 8 instance of pitfall #21
-("emitters validate and throw, never best-effort output").
-
-The compound note form (`proceed, and note "<text>" in the <binding>`, INFORM7
-§2.9) is the companion no-new-primitive rule: it **desugars to an existing
-`rebind`** (`bind(isRebind:true)` with an `interpolatedString([identifierRef,
-literal])`). The target must already exist (`MER-REF-004`) and be text-typed
-(`MER-TYP-001`), enforced by `ASTToIR.validateNoteTargets`. Never add an IR
-primitive for it.
-
----
+1. **`findArticle` must pick the earliest article** — `EnglishLexicon.findEarliestArticle(_:)`, earliest by position, never iteration order (that bug produced `state.get("l amount")`).
+2. **No `"the "` prefix in `exprToText`** — `ASTToIR.exprToText` must not prefix bare identifiers; it produced `state.get("the order.id")`. Tried and reverted.
+3. **Possessive recognition without an article** — `ExpressionParser.parseAtom` must still detect `X's Y` after argument substitution strips `the/a/an`.
+4. **Quote-aware splitting** — `rangeOfMarkerOutsideQuotes` keeps comparison markers (` is `, ` equals `, …) out of double-quoted strings; never treat single-quote as a string boundary (possessives contain `'`).
+5. **Argument substitution order** — `ASTToIR.substituteArgs` sorts arguments by descending key length, or `"amount"` clobbers `"total amount"`.
+6. **Workflow call argument order** — `lowerPhraseInvocation` orders workflow-stub arguments by the declared `phrase.pattern.parameters`, not the dictionary; the generated `init` labels depend on it.
+7. **`collectMultiLineCounted` vs `collectMultiLine`** — always use the counted variant when iterating with an explicit index; the other re-processes continuation lines as top-level statements (spurious `_unresolved` binds).
+8. **`splitArgs` and single quotes** — double-quote only (see #4).
+9. **`Sendable` Constants struct** — `Constants` must be `public struct Constants: Sendable`; it is used from async `run()` methods.
+10. **Vendored `StringTemplate` powers codegen** — `SwiftEmitter` uses it and `emit` calls `toString(separator: "\n")`, which recursively flattens nested templates.
+11. **`StringConvertibleBuilder` must stay `public`** in the vendored `StringConvertible.swift`, or the result-builder attribute is unavailable across module boundaries.
+12. **"Compiles" means Meridian emitted Swift *source*** — `Compiler.compile` and `SkillMigrator.compiledOK` never run `swiftc`; invalid Swift can pass every compile test and only fail later. The real validators are the `swiftc -typecheck` gates in `Tests/MeridianSlowIntegrationTests/GeneratedSwiftTypecheckSlowTests.swift`.
+13. **Generated identifiers must be sanitized** — struct names go through `EnglishLexicon.structName` (`webhook-transforms` → `WebhookTransforms`); colliding trigger phrases get a numeric suffix via `IRWorkflow.explicitStructName`; `DomainEmitter` drops an explicit merconfig `id` because the `MeridianKind` identity `id` is synthesised.
+14. **A `role` section's body must be exclusively executable — split, don't comment.** Never blockquote prose to silence the error (a `>` line is dropped from the IR — lossy and author-chosen); add a separate sibling/child heading whose body is only executable statements. Long form: [`docs/09_SKILL_PORTING.md`](docs/09_SKILL_PORTING.md) § pitfalls #14–#15.
+15. **Narrative encodes executable contracts — mine it, route it, or let it hard-error; never auto-wrap or inert it.** `SkillMigrator`'s four-way precedence: lowerable → lower; inference-cue → the only AI-marker case; genuinely documentary → `(( role: reference ))` (never `(( inert ))`); cue-less normative → left unmarked for a precise compiler error. Classify every normative sentence before marking it. Long form: [`docs/09_SKILL_PORTING.md`](docs/09_SKILL_PORTING.md) § pitfalls #14–#15.
+16. **`(( role: procedure ))` is redundant on a recognized procedure heading** (`Phases`, `Workflow`, `Pipeline`, `Protocol`, `Steps`, `Process`, `Procedure`, `Phase N:`); never add it there, never strip it from a custom heading without renaming to a recognized synonym.
+17. **`NonterminalScreen` masks must fully represent a production's anchors** — the bitmask vocabulary is fixed-capacity (`Bitset128`); if any anchor is missing the whole production falls back to mask `0`, never a partial mask (that wrongly screens out valid expressions). Long form: [`docs/03_LANGUAGE.md`](docs/03_LANGUAGE.md) § "Architectural patterns".
+18. **Authoring a new corpus** has its own playbook and gotchas — read [`docs/09_SKILL_PORTING.md`](docs/09_SKILL_PORTING.md) § "Generating a new synthetic corpus" before starting rather than rediscovering them.
+19. **`meridian explain` is the verbalizer; diagnostics are `explain-diag`** — never reintroduce `explain` with `MERxxxx` codes. The verbalizer is a totality surface: no placeholder/TODO/`_unresolved`/"malformed" fallback text to make a new case compile. Long form: [`docs/06_DEVELOPER_EXPERIENCE.md`](docs/06_DEVELOPER_EXPERIENCE.md).
+20. **Verbalizer canonical surface lives in `FixedGrammar`** — read `model.lexicon.grammar` (`statement`, `verbalizer`, `waitSignalIntroducer`, `choiceGateIntroducers`, `judgmentIntroducers`, …); add emit tokens to `FixedVerbalizerSurface`/`FixedGrammar` first, extensible synonym tables stay in `EnglishLexicon`. Long form: [`docs/06_DEVELOPER_EXPERIENCE.md`](docs/06_DEVELOPER_EXPERIENCE.md).
+21. **`Verbalizer`/`SwiftEmitter` validate IR and throw** — `IRValidator` runs before printing; malformed IR is a structured `MER4002`, never placeholder output. No `.silent()` in `Sources/` except the machine-checked allowlist in `docs/coverage/SILENT_FALLBACK_ALLOWLIST.md` (`TrialLowering`, `InertYieldAnalyzer`, `ParserBenchmark`). Long form: [`docs/06_DEVELOPER_EXPERIENCE.md`](docs/06_DEVELOPER_EXPERIENCE.md).
+22. **`since the last` holds must reduce to an event pattern** — a pure state predicate is a compile-time `MER-TMP-019` (`traceStateHistorySince`), never an emitter `preconditionFailure`; the compound note form desugars to an existing `rebind`, never a new IR primitive. Long form: [`docs/06_DEVELOPER_EXPERIENCE.md`](docs/06_DEVELOPER_EXPERIENCE.md).
 
 ## 7. Decision history
 
-The decision log is split for context budget:
-
-- **`IMPLEMENTATION_LOG.md`** — active/recent entries (append new work here).
-- **`.ai/implementation-log-archive/`** — frozen older snapshots (see
-  `README.md` for date ranges).
-
-Read **both** on demand when you need rationale or history behind a pattern —
-start with the active log, then grep the archive if the topic predates it. Do
-**not** mirror log content back into this file.
-
-Useful pointers:
-
-- Architectural decision numbering (`D1`–`D30`):
-  `docs/15_DECISIONS.md` (and the implementation log archive for historical
-  handoff-era entries).
-- Generated decision catalog (`D-DX-*`) + diagnostic codes:
-  `docs/15_DECISIONS.md`, or `meridian explain-diag <code|decision>`.
-- SKILL.md expressiveness tags (`SkillMD-D1`…`SkillMD-D28`):
-  `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`. Any bare `D<N>`
-  outside `docs/15_DECISIONS.md` means `SkillMD-D<N>`.
-
-When you record a new decision in `IMPLEMENTATION_LOG.md` and it changes an
-ongoing norm or pitfall, reflect *only* that norm/pitfall here (§3/§6) or in the
-relevant `.cursor/rules/*.mdc` — keep this file a handbook, not a changelog.
+- **`IMPLEMENTATION_LOG.md`** — active/recent entries (append new work here); **`.ai/implementation-log-archive/`** — frozen older snapshots (see its `README.md`). Read both on demand; do not mirror log content into this file. Pre-consolidation docs (wave-history narrative, point-in-time reports) live in `.ai/implementation-log-archive/docs-history/`.
+- Architectural decision numbering (`D1`–`D30`) and the generated decision catalog (`D-DX-*`): [`docs/07_DECISIONS.md`](docs/07_DECISIONS.md), or `meridian explain-diag <code|decision>`.
+- SKILL.md expressiveness tags (`SkillMD-D1`…`SkillMD-D28`): `.ai/brainstorm-done/skill_md_expressiveness_d1_d28.md`. A bare `D<N>` outside `docs/07_DECISIONS.md` means `SkillMD-D<N>`.

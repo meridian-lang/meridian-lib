@@ -1,4 +1,11 @@
-# Meridian — Language Quick Reference
+# Meridian — Language
+
+The author-facing language reference: `.merconfig` vocabulary, `.meridian`
+workflow surface, the recurring architectural patterns behind its restrictions,
+`.merrules` rulebooks, prose/autonomy modes, deontic norms, and shared module
+imports. Normative semantics live in [`cookbook/`](cookbook/).
+
+---
 
 Two file types: `.merconfig` (vocabulary) and `.meridian` (workflows).
 
@@ -316,7 +323,7 @@ surface (`exceeds` -> `is more than`, `Check:` -> `assert`, `let ... be` ->
 `bind ... = ...`) and omits documentation that does not lower to IR. The law is
 semantic: compiling the canonical output must produce structurally equal IR
 (`SEM-8-03`). Use `meridian drift` to audit authored-vs-canonical differences.
-See [18_VERBALIZER.md](18_VERBALIZER.md).
+See [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md).
 
 ### Execution modes
 
@@ -386,7 +393,7 @@ forms `<action> only when <cond>` / `<action> unless <cond>` remain available.)
 The third modality is **match-branch** (`branch on <expr>:`), with indented
 `pattern:` arms and an optional `otherwise:` default (IR `thenBlock` → Swift
 `default:`). Patterns are string literals, bare enum identifiers, or
-`anything`/`_`. See [18_VERBALIZER.md](18_VERBALIZER.md) §Match-branch.
+`anything`/`_`. See [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md) §Match-branch.
 
 ### `wait` forms
 
@@ -475,7 +482,7 @@ registry for anchors, screening, and generated grammar reference text.
 `GrammarTable` entry (`Sources/MeridianCore/Parser/Lexical/Productions/`),
 each either a real `pegex` grammar or a dedicated hand-written Swift function
 per `GrammarProduction.implementation` — there is one parser implementation
-and no rollout flag (see `docs/04_COMPILER_PIPELINE.md`'s
+and no rollout flag (see `docs/02_ARCHITECTURE.md`'s
 `ExpressionParser.parse` section).
 
 | Form | Example |
@@ -605,7 +612,7 @@ something can't be resolved: an unknown phrase, an unknown tool, an unparseable
 rule, a rule whose action verb doesn't match any workflow, or a trigger whose
 action doesn't lower. Each of these raises a coded diagnostic (a stable
 `MERxxxx` code with a source caret and a did-you-mean — see
-[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md)). Set the
+[06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md)). Set the
 `allow-fallbacks` frontmatter key to a comma-separated list of fallback
 kinds to opt back into the older silent behaviour for **this file only**:
 
@@ -790,7 +797,7 @@ Approval-tool synonyms:
 
 Three more `=== language ===` sub-blocks tune how `meridian migrate-skill`
 classifies a non-lowerable line or block into judgment / reference / hard
-error (see [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md) for the full
+error (see [09_SKILL_PORTING.md](09_SKILL_PORTING.md) for the full
 policy). Like every other category above, a Swift default is not sufficient —
 these are wired through the complete `LexiconCategory` registry recipe
 (`LexiconRegistry` spec row → `MerConfigParser.parseLanguageSection` →
@@ -957,9 +964,9 @@ with minimal edits. The section model activates **structurally**: any file whose
 implicit-workflow body contains a `##`/`###` heading is a *sectioned document*
 and gets section-role lowering. A file with no headings keeps the flat-procedure
 behaviour byte-for-byte. There is **no `skill: true` flag** — it was removed.
-Section roles are driven by a rulebook (see [11_RULEBOOKS.md](11_RULEBOOKS.md));
+Section roles are driven by a rulebook (see [03_LANGUAGE.md](03_LANGUAGE.md));
 normal heading-less `.meridian` files are unaffected. The porting playbook is
-[13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md).
+[09_SKILL_PORTING.md](09_SKILL_PORTING.md).
 
 ### Section markers (`(( … ))`)
 
@@ -975,7 +982,7 @@ derive a role:
 
 A non-executable section runs nothing — the marker overrides even shell-block
 routing — but its verbatim text is **always** preserved in the manifest under
-`meridian_skill.sections` (see [05_CODEGEN.md](05_CODEGEN.md)).
+`meridian_skill.sections` (see [02_ARCHITECTURE.md](02_ARCHITECTURE.md)).
 
 ### gbrain frontmatter keys
 
@@ -1043,7 +1050,7 @@ section body lowers:
 | `prohibitions` (Anti-Patterns) | `must not` where checkable |
 | `template` (Output Format, Output Structure) | result template (non-executable) |
 | `reference` (explicit `(( role: reference ))` marker) | manifest/outline metadata, runs nothing — the preferred non-executable-documentation marker |
-| `inert` (explicit `(( inert ))` marker) | manifest/outline metadata, runs nothing — a hand-authorable synonym of `reference`; `meridian migrate-skill` never emits it (see [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md)) |
+| `inert` (explicit `(( inert ))` marker) | manifest/outline metadata, runs nothing — a hand-authorable synonym of `reference`; `meridian migrate-skill` never emits it (see [09_SKILL_PORTING.md](09_SKILL_PORTING.md)) |
 
 **No silent drops — three hard errors.** The strict builder never discards
 content:
@@ -1063,7 +1070,7 @@ content:
    to keep it as labelled documentation. (`meridian migrate-skill` never emits
    this marker itself — a cue-less non-checkable item is left for this exact
    `semanticError` to catch, naming the reword needed; see
-   [13_SKILL_MD_PORTING.md](13_SKILL_MD_PORTING.md).)
+   [09_SKILL_PORTING.md](09_SKILL_PORTING.md).)
 
 **Fuzzy applicability = hard error.** An applicability condition that is neither
 a literal dispatch phrase nor structurally checkable (e.g. "the request is
@@ -1102,7 +1109,7 @@ Natural-language imperative phrases (no literal `gbrain` prefix, e.g. "search
 the brain for the attendee") still resolve **strictly** against declared tool
 phrases; an unresolved NL phrase is a hard error (`MER2001`, with a did-you-mean
 against the declared phrases — see
-[14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_EXPERIENCE.md)).
+[06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md)).
 
 ### Inform 7-tier surface (Wave 1)
 
@@ -1140,7 +1147,7 @@ and truncated **pre-loop** (so `the first N` counts post-filter). `whose` lowers
 to a comparison on the loop element; `[is] within the last`/`[is] in the next`
 lower to a one-sided temporal window on a configurable timestamp property
 (`LanguageSynonyms.timestampProperty`, default `updatedAt`). New comparators:
-`contains`, `is one of`. See [04_COMPILER_PIPELINE.md](04_COMPILER_PIPELINE.md).
+`contains`, `is one of`. See [02_ARCHITECTURE.md](02_ARCHITECTURE.md).
 
 **Metadata sections (1D).** A `## Tools Used` section is non-executable but
 metadata-extracting: each bullet's tool id is mined into the workflow's
@@ -1408,7 +1415,7 @@ into one trigger workflow each, emitting a `trigger.<name>.fired` fan-out event:
 Classification keyword sets are **data**: built-in defaults live in
 `Rulebook.defaultTriggers`, and a rulebook's `=== triggers ===` block
 (`<kind>: word1, word2, …`) extends them per kind (see
-[11_RULEBOOKS.md](11_RULEBOOKS.md) Family 4). `keyword` is the fallback.
+[03_LANGUAGE.md](03_LANGUAGE.md) Family 4). `keyword` is the fallback.
 
 `sample-gbrain/RESOLVER.meri` is the trigger → skill dispatcher.
 
@@ -1534,7 +1541,7 @@ Wave 8 adds **trace-backed** conditions and monitors on top of the Wave 2–3
 condition grammar. Temporal and statistical expressions lower to
 `IRExpression.traceTemporal` / `.traceStatistical` and evaluate at runtime
 against a `TraceStore` (in-memory in tests; JSONL when configured). Full
-semantics: [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
+semantics: [04_RUNTIME.md](04_RUNTIME.md).
 
 ### Author-facing surface (at a glance)
 
@@ -1574,6 +1581,1119 @@ on tool entries in `=== tools ===`. A temporal window wider than configured
 retention is a compile error naming both durations (**MER-TMP-011**).
 
 CLI replay/audit: `meridian trace eval`, `meridian trace verify`,
-`meridian trace drift`, `meridian bench-trace` — see [07_CLI.md](07_CLI.md) and
-[08_TRACING.md](08_TRACING.md) for the compile-time `ParserTrace` vs semantic
+`meridian trace drift`, `meridian bench-trace` — see [05_CLI.md](05_CLI.md) and
+[06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md) for the compile-time `ParserTrace` vs semantic
 trace distinction.
+
+---
+
+## Architectural patterns
+
+*Was `docs/17_MERIDIAN_PATTERNS.md`.*
+
+This doc catalogs recurring architectural patterns behind Meridian's compiler
+— the "why is it built this way, and why is that intentional rather than a
+bug" reasoning that's too deep for `AGENTS.md` (always-injected, kept lean)
+and too cross-cutting for a single `.cursor/rules/*.mdc` (area-scoped,
+attaches per file glob). `docs/07_DECISIONS.md` (generated from
+`DecisionCatalog`) covers the same territory but only for decisions tied to a
+specific diagnostic code; a pattern here may span several diagnostics, or
+none. When you're about to "fix" something that turns out to already be
+intentional, check here first — and when you resolve a "why not fixed?"
+question that isn't captured yet, add a pattern for it instead of leaving the
+reasoning buried in a chat transcript or a single `IMPLEMENTATION_LOG.md`
+entry.
+
+---
+
+### Pattern: A restricted sub-language rejects unsupported forms loudly instead of approximating them
+
+**Where it shows up:** `RuleInjector.lowerExprSimple` (in-section rule
+filters/conditions/predicates — an `.invariant` filter, a bounded
+`.permission`'s conditions, a `.precondition`'s gate) and
+`RuleAnalyzer.isSelfEvaluatingTriggerCondition` (`When …, …` trigger
+conditions) are the two clearest instances, but the shape recurs anywhere a
+narrow grammar sits inside a broader one.
+
+**The pattern:** When a compiler position is deliberately given a *narrower*
+expression grammar than the language's full grammar supports elsewhere (rule
+filters accept only literals/comparisons/property-access/boolean
+combinations, not quantifiers/aggregates/relation-traversals/table-lookups;
+`When` conditions accept only opaque externally-raised events, not
+self-evaluating predicates), an input that falls outside the narrow grammar
+must raise a **named, specific diagnostic** (`MER3016`, `MER3017`) — never
+silently approximate, coerce to a default, or guess a plausible-looking
+substitute.
+
+**Why the narrow grammar itself is correct, not a gap to "fix" by widening it:**
+
+1. **The position has no IR to express the wider form.** A rule filter
+   compiles to a single `AssertIR.condition: IRExpression` with no
+   surrounding control-flow scaffold; a `When` trigger compiles to a
+   `wait for trigger.<event>.fired` stub with no scheduler. A quantifier or
+   aggregate implies iteration over a collection and (for aggregates) an
+   accumulation strategy — there is nowhere for that structure to live in a
+   single expression slot or an event-wait stub. Widening the grammar here
+   isn't a parser change; it's inventing new IR/runtime machinery
+   (a scheduler, a compound-assert-with-embedded-loop primitive) for a
+   position that was deliberately kept terse.
+2. **The narrow grammar has a genuine escape hatch elsewhere.** Anything that
+   needs a quantifier, aggregate, relation traversal, or table lookup can be
+   expressed as an ordinary statement in the skill's own `## Workflow`/`##
+   Rules` body (`if`/`assert`/`for each`/`until`), which goes through the
+   full `ASTToIR` lowerer with no restriction. The restriction is scoped to
+   *one syntactic position*, not to the language as a whole — so there is no
+   author need actually left unmet.
+3. **Approximating instead of rejecting produces a rule that "compiles" and
+   enforces nothing.** This is the concrete failure mode each of these was
+   *actually* observed to hit before the loud rejection existed: a relation
+   traversal like `"active prescriptions include a contraindicated drug"`
+   degraded (with no symbol table in scope) to a meaningless
+   `patient.active_prescriptions_include_a_contraindicated == drug`
+   comparison; a duration-based `When … has been on hold for more than 7
+   days, …` trigger silently compiled to an external-event stub nobody would
+   ever raise. Both "worked" (compiled, ran, never errored) while checking
+   or firing on literally nothing — strictly worse than a compile-time
+   error, because nothing surfaces the gap until an incident.
+
+   Both `MER3016`'s and `MER3017`'s `help:` text carry a worked before/after
+   rewrite inline (not just an abstract "move it to `## Workflow`"
+   instruction), each modeled on a real, already-compiling corpus file so an
+   agent fixing the error cold doesn't have to invent untested syntax:
+
+   - `MER3016`: `A patient whose active prescriptions include a
+     contraindicated drug must not receive the new order.` (relation
+     traversal — rejected) → `## Workflow` `if any of the patient's active
+     prescriptions is contraindicated: stop with "cannot administer:
+     contraindicated prescription".` — the same `if any of … is …` shape
+     `corpora/clinical/skills/triagepatient.meri` already uses (`if any of
+     the vital signs is critical, escalate the patient.`).
+   - `MER3017`: `When an order has been on hold for more than 7 days,
+     escalate the order.` (self-evaluating duration — rejected) →
+     `When an order is flagged as stale, escalate the order.` (opaque
+     event, the actual fix applied to `examples/order_processing.meridian`
+     in this repo), or a `## Workflow` `while`/`for each` polling loop
+     shaped like `corpora/incident/skills/cooldownwatch.meri`'s `while any
+     alerts whose status is "firing", for each alert …` loop if the
+     duration genuinely needs to be re-checked live.
+
+   **Any new diagnostic for this pattern should follow the same rule: the
+   `help:` text must include a concrete, validated before/after rewrite, not
+   just a description of the restriction.** An author (or an AI) fixing the
+   error cold, with no other context, should be able to copy the shape of
+   the "after" example directly.
+4. **A false negative is recoverable; a false positive is not.** Given a
+   choice between under- and over-detecting the unsupported shape, both
+   `isSelfEvaluatingTriggerCondition` and `lowerExprSimple`'s rejection list
+   are deliberately biased toward leaving today's behavior alone when
+   unsure (a false negative just keeps the status quo) rather than risking
+   blocking a legitimate simple form (a false positive breaks something that
+   worked). Bare equality/inequality is kept out of the self-evaluating
+   check for exactly this reason — it's indistinguishable from idiomatic
+   passive-voice event phrasing (`"a refund is requested"`).
+
+**How to tell whether you're looking at this pattern vs. a real bug:** ask
+whether the rejected input has a real IR shape to lower into *at that
+specific position* — not whether Meridian could express it *somewhere*. If
+the answer is "it already has a full-featured equivalent elsewhere
+(`## Workflow`), just not in this terse slot," the loud rejection is the
+pattern above, not a gap. If the answer is "this input's classifier itself
+is unreliable at the position it's checked" (e.g. the pre-fix `symbols: nil`
+bug, which was a real recognition failure, not a grammar restriction), that
+*is* a bug — fix the classifier, not the restriction.
+
+**See also:** `corpora/GENERATING_A_CORPUS.md` gotchas #6 and #7 (worked
+examples of this pattern for `When` triggers and rule predicates,
+respectively); `docs/07_DECISIONS.md` `D-DX-2` ("no silent compile-time
+fallbacks" — the general principle this pattern is a specific application
+of); `docs/09_SKILL_PORTING.md` §"Common porting fixes" item 8 (the
+four-way narrative-classification precedence, which draws the same
+loud-reject-over-silent-miscategorize line for prose rather than
+expressions).
+
+---
+
+### Pattern: A blunt, context-blind classifier is intentional when the alternative is guessing
+
+**Where it shows up:** `EnglishLexicon.normativeCueWords` matching
+(`TrialLowering.isNormativeNarrative`, `SkillMigrator+SplitPlan.swift`'s P1
+category-4 path) is the clearest instance.
+
+**The pattern:** `normativeCueWords` (`must`/`never`/`always`/`refuse*`/
+`require*`/`forbidden`/`mandatory`) flags **any** line containing one of
+these words as a candidate contract/invariant — including ordinary
+conversational prose that was never meant as a real rule (`"a classified
+grant is never issued without an approval record"` inside a narrative
+`## Contract` bullet). This looks like it should be smarter — e.g. only
+flag imperative/second-person phrasing, or auto-lower the declarative shape
+into a `must not` rule — and both of those "smarter" fixes were actually
+tried and rejected:
+
+- **A "does this look imperative" heuristic** would silently reclassify real
+  third-person-declarative invariants (`"a user's session must expire after
+  30 minutes"` — the *normal* way domain rules are phrased) as harmless
+  documentation. That's a silent loss of a real rule, which is strictly
+  worse than the current behavior.
+- **Auto-lowering the declarative shape** (`"X is never Y"` → `X must not
+  Y`) requires guessing a semantic mapping that is frequently wrong — `"is
+  never issued without an approval record"` is closer to a *precondition on
+  the action* than an *invariant on the subject*, and silently compiling the
+  wrong one is worse than a loud error asking the author to reword.
+
+**Why blunt-and-loud beats smart-and-silent here:** a word-level match can
+only ever produce two kinds of mistake — a false positive (flags harmless
+prose, forcing an unnecessary reword) or a false negative (misses a real
+rule, silently losing enforcement). Every refinement considered here traded
+a reduction in false positives for an increase in false negatives. Because a
+false positive costs a human a few seconds of rewording (and the diagnostic
+names exactly what to do), while a false negative costs a *silently
+unenforced domain rule* discovered only in production, the blunt matcher
+that over-flags is the correct trade — do not "fix" it by trying to make it
+context-aware unless the smarter version can be proven to never misclassify
+a genuine third-person declarative invariant as documentation.
+
+**See also:** `corpora/GENERATING_A_CORPUS.md` gotcha #1 (the full worked
+example, including the exact two rejected alternatives);
+`IMPLEMENTATION_LOG.md` 2026-07-06T19:25:56Z entry (the investigation that
+confirmed this).
+
+---
+
+### Pattern: A capability that needs a host/runtime integration is a compiler *hook*, not a missing compiler *feature*
+
+**Where it shows up:** `When …, …` triggers compile to an external-event
+wait stub, never a poller (see the first pattern above); `may` permission
+rules generate data-predicate `AssertIR` gates but are actor-blind by
+default (no caller-identity check without a custom `PermissionRegistry`,
+`docs/README.md` §"Permission enforcement is actor-blind by default");
+`llm.decide`/`llm.judge` deterministically return `.boolean(false)` with no
+LLM provider configured (`docs/README.md` §"`llm.decide` returns `false`
+without an LLM host").
+
+**The pattern:** Some things a workflow author writes in natural language
+(`"When an order has been on hold for 7 days"`, `"a manager may approve
+this"`, `"use judgment to decide"`) name a capability that fundamentally
+requires infrastructure outside the compiler's own scope — a task
+scheduler, a caller-identity/session model, a live LLM backend.
+`MeridianRuntime` deliberately ships none of these. The compiler's job stops
+at emitting a well-defined, inspectable **hook**: a `wait for
+trigger.<event>.fired` construct, a `Permission` struct + data-predicate
+gate, a `runtime.discretion.decide`/`AIJudgmentIR` call. Wiring the hook up
+to something real — a cron job that raises the event, a
+`PermissionRegistry` that checks caller identity, a registered `llm.decide`
+tool that calls a real API — is explicitly the **host's** job, done by
+injecting real implementations at `Runtime` construction time, not
+something to add inside `MeridianCore`/`MeridianRuntime` itself.
+
+**Why not build the missing piece in?** Each of these would require
+inventing genuinely new architecture with no existing home: a
+cron/poll-scheduler primitive, a user-identity/session model, a network
+client for an LLM provider — none of which are compiler concerns, and all
+of which vary per deployment (which scheduler, which identity system, which
+LLM vendor) in ways a single hard-coded implementation could never satisfy
+correctly for every host. Building one in blind, guessing at a host's real
+requirements, would be worse than leaving an explicit, documented seam.
+
+**How to tell whether you're looking at this pattern vs. a real gap:**
+check whether the *hook itself* is inspectable, real, and validated (not a
+silent no-op) — `buildTriggerWorkflow` really does resolve/validate its
+action and emit a real `wait`; the `Permission` struct really is emitted
+and really does gate on the data predicate; `llm.decide` really does return
+a deterministic, documented value rather than crashing or hanging. If the
+hook itself is broken (doesn't validate, doesn't emit, crashes), that's a
+bug. If the hook works exactly as documented and the missing piece is
+"nobody has wired in a real scheduler/identity system/LLM provider yet,"
+that's this pattern — the fix is host-side integration code, not a
+`MeridianCore`/`MeridianRuntime` change.
+
+**See also:** `corpora/GENERATING_A_CORPUS.md` gotcha #6; `docs/README.md`
+§"Getting started: key caveats"; `docs/04_RUNTIME.md` §"Permissions and
+Policy".
+
+---
+
+### Pattern: A passing gate proves exactly what it checks — not a stronger claim
+
+**Where it shows up:** AGENTS.md pitfall #12 ("`Compiles` means Meridian
+emitted Swift *source* — not that it `swiftc`s"); the tiered gate structure
+in `AGENTS.md` §4 (`swift test` vs. `GeneratedSwiftTypecheckSlowTests` in
+`MeridianSlowIntegrationTests` vs. `scripts/coverage.swift --gate`); `D-DX-3` ("swift-format failure
+is a recoverable warning, not an error").
+
+**The pattern:** `Compiler.compile(...)` and `SkillMigrator.compiledOK` only
+assert that the pipeline produced Swift *text* without throwing — the result
+is never fed to a Swift parser or `swiftc` in that path. So invalid Swift
+(unescaped strings, hyphenated identifiers, duplicate declarations) can pass
+every "compiles" test and every corpus-conformance test, and only surface
+later when `swift-format` chokes or `swiftc -typecheck` actually runs. This
+is not an oversight to "fix" by making every compile call typecheck its own
+output (that would make every unit test that calls `Compiler.compile` pay
+for a full `swiftc` invocation) — it's a deliberate tiering: fast structural
+tests run on every change, and generated-Swift typecheck
+(`swift test --filter GeneratedSwiftTypecheckSlowTests` / plain `swift test`)
+plus `scripts/coverage.swift --gate` are the real Swift validators, with the
+slow typecheck suite run on every full gate (once per
+substantive session, per `AGENTS.md` §4) because they're expensive.
+
+Similarly, `swift-format` failing on otherwise-valid generated Swift is
+surfaced as a **warning**, not a build failure (`D-DX-3`) — formatting is
+cosmetic, so keeping unformatted-but-valid output is strictly better than
+discarding a correct compile over a cosmetic step.
+
+**Why this matters in practice:** don't treat "the corpus conformance suite
+is green" as proof that generated Swift actually type-checks — it isn't
+that claim. When touching the emitter, codegen, domain emission, migration,
+or the gbrain/corpora corpora, always run the typecheck-gated re-run (see
+`AGENTS.md` §4) before trusting the result; a green `swift test` alone is
+not sufficient signal for those areas, by design, not by gap.
+
+**See also:** `AGENTS.md` §4 "Phase-gate rule" and pitfall #12;
+`docs/07_DECISIONS.md` `D-DX-3`.
+
+---
+
+## Rulebooks (`.merrules`)
+
+*Was `docs/11_RULEBOOKS.md`.*
+
+A **rulebook** extends Meridian's deterministic English surface with
+externally-authored, declarative rules. The compiler ships the *engine* plus a
+small closed set of roles/rule-kinds; every domain-specific idiom, section
+alias, and cross-cutting behaviour is **data** in a `.merrules` file. Adding a
+construct for a new domain is an authoring task, not a recompile.
+
+Rulebooks are the generalisation of the existing `=== language ===` synonym
+section. They are parsed by `RulebookParser`
+(`Sources/MeridianCore/Rulebook/RulebookParser.swift`) — a hand-written
+recursive-descent parser in the same style as `MerConfigParser` — and applied
+by `RewriteEngine` (desugars) and `ConventionInjector` (behavioural rules).
+
+> **Design rule — surface vocabulary is data, not code.** Never hardcode an
+> English-surface word/phrase list (articles, prepositions, comparison markers,
+> duration units, assertion introducers like `make sure`/`ensure`/`assert`,
+> quantifier determiners, connectors, stop-words, …) inside the parser, lowering,
+> or codegen. It belongs in `EnglishLexicon` and — when it should be
+> domain-extensible — in the `=== language ===` section (or a `.merrules`
+> rulebook), so authors can extend the surface without recompiling Meridian. See
+> AGENTS.md §3 "No hardcoded English-surface vocabulary" for the end-to-end
+> procedure; `assertionMarkers` / `Assertion synonyms:` is the reference example.
+
+---
+
+### The invariant that keeps the core clean
+
+Whatever a rule produces is validated by the **same** core checks as normal
+lowering: strict-mode phrase resolution, the scoped-tool allow-list, the
+no-unmarked-prose rule, and the no-new-primitives rule. A rule is a
+**compile-time equivalence**, never a runtime decision. It therefore can never:
+
+- widen the tool scope,
+- bypass strict mode, or
+- introduce an LLM call.
+
+Determinism holds by construction. A malformed rule fails loudly with source
+attribution rather than silently degrading.
+
+---
+
+### Wiring a rulebook into a compile
+
+Reference a rulebook from frontmatter with the `rulebook:` key (comma-separated,
+alongside `vocabulary:`):
+
+```
+---
+name: capture
+vocabulary: brain.merconfig
+rulebook: brain.merrules
+---
+```
+
+(There is no `skill: true` flag — the section-role model activates structurally
+whenever the body contains a `##`/`###` heading.)
+
+Programmatically, rulebooks are passed as `[RulebookInput]`, analogous to
+`[VocabularyInput]`:
+
+```swift
+let out = try Compiler(options: .init()).compile(
+    meridianSource: meri, meridianFile: "capture.meri",
+    vocabularies: [brainVocab],
+    rulebooks: [RulebookInput(name: "brain", file: "brain.merrules", source: rulesSrc)]
+)
+```
+
+The core's default rulebook is **empty**, so existing `.meridian`/`.meri` files
+that don't list a `rulebook:` are byte-for-byte unaffected.
+
+---
+
+### File structure
+
+A `.merrules` file has four section families, each introduced by a
+`=== name ===` header (the same delimiter style as `.merconfig`). `#` comment
+lines are ignored.
+
+```
+=== desugar ===
+=== sections ===
+=== conventions ===
+=== triggers ===
+```
+
+---
+
+### Family 1 — Desugar rules (`=== desugar ===`)
+
+A desugar rule rewrites an English surface form into a canonical Meridian
+statement. Each rule has a `match:` pattern with typed holes (`{name}`) and
+either a `rewrite:` template (re-parsed through the normal path) or a
+`lowers to:` template (the validated escape hatch).
+
+```
+rule "arrow-conditional":
+  match: If {condition} -> {action}
+  rewrite: {action} only when {condition}.
+
+rule "report-emit":
+  match: Report: {message}
+  lowers to: emit skill.report with message = {message}.
+```
+
+- **`rewrite:` (preferred, surface-only).** The output re-parses + lowers
+  through the strict pipeline, so a bad rewrite fails loudly. Use this for
+  anything expressible as an existing canonical statement.
+- **`lowers to:` (escape hatch).** Targets one of the 12 existing primitives
+  directly via the canonical statement surface (e.g. `emit …`). This is "use an
+  existing primitive directly," **not** hand-authored IR and **not** new
+  semantics. Reserve it for constructs with no clean canonical equivalent.
+
+Holes are matched by a hand-written matcher over `[SourceLine]`; captured holes
+are parsed by the existing Expression/Statement parsers. The engine applies
+rules ordered by priority then source order, as a bounded fixpoint (reusing the
+depth-8 inline limit); conflicts are first-match-wins. Every rewrite step is
+logged under the `rulebook` trace category.
+
+Idioms the shipped `brain.merrules` covers: `If … -> …` / `If … then …` arrow
+conditionals, `Report:` / `Output:` → `emit skill.report`, Markdown checklists
+(`- [ ] item`, `[x] item`, `□ item`) → `make sure …` asserts, and the
+command-with-annotation idiom below.
+
+#### Worked example — a desugar rule that reaches the command surface
+
+The deterministic command surface (a fenced ` ```bash ` block or an inline
+backticked command on its own line → one `shell.run` invoke) is detected by
+`parseInlineChain` / `inlineBacktickedCommand` **before** the per-statement
+desugar hook runs. So that a desugar rule's *output* can also become a command,
+the engine applies the desugar **at the top of `parseBlock`'s loop** (before the
+command/chain detectors), replacing the source line with its rewrite. A rule can
+therefore normalize a surface variant into the canonical
+backticked-command-with-annotation form and have it routed to the shell path:
+
+```
+rule "annotated-command":
+  match: Run `{command}` to {purpose}
+  rewrite: `{command}` -- {purpose}.
+```
+
+`` Run `gbrain doctor --json` to check index health. `` rewrites to
+`` `gbrain doctor --json` -- check index health ``, which lowers to a single
+`shell.run` invoke whose `command` is `gbrain doctor --json` and whose
+`-- check index health` note is emitted as a `//` source comment above the call.
+
+The annotation (a trailing ` -- <note>` recognized **outside** backticks — so a
+`--flag` or an in-backtick ` -- ` is never split) is a parser feature of the
+command surface itself; the rule above merely produces the canonical form. The
+rewrite is fixpoint-stable, so the downstream per-statement desugar hook is a
+no-op second pass, and the whole path is inert without a `rulebook:`.
+
+---
+
+### Family 2 — Section-role rules (`=== sections ===`)
+
+A section rule maps one or more Markdown heading aliases to one of the **closed**
+`SkillSectionRole` values. The roles and their lowering strategies are core; the
+alias → role mapping is data.
+
+```
+section "Contract", "Guarantees", "Invariants" -> invariants
+section "Phases", "Workflow", "Protocol", "Steps" -> procedure
+section "When To Use", "Primary Triggers" -> applicability
+section "When NOT To Use", "Do NOT Use" -> negative-applicability
+section "Anti-Patterns", "Pitfalls" -> prohibitions
+section "Output Format", "Result Format" -> template
+```
+
+The closed role set (exhaustive `switch`, no `default:`):
+
+| Role | Lowers to |
+|---|---|
+| `invariants` | `assert` (the skill's guarantees become runtime-checked). |
+| `procedure` | Executable statements (deterministic phrase invocations / idioms). |
+| `applicability` | Deterministic preconditions: checkable conditions → `if <cond>, complete.` guards; literal phrases → dispatch predicates. |
+| `negative-applicability` | Negative guards: checkable conditions → soft-skip `if <cond>, complete.`; literal phrases → negative dispatch predicates. |
+| `prohibitions` | `must not` asserts where structurally checkable. |
+| `template` | Declared result template (fenced literal + `{{ }}` interpolation). |
+| `reference` | Outline / manifest metadata only — no executable lowering. The preferred non-executable-documentation role; `meridian migrate-skill` emits `(( role: reference ))` for genuinely documentary content and never emits `inert`. |
+| `inert` | Same as `reference` (a hand-authorable synonym kept for backward compatibility) — Outline / manifest metadata only, no executable lowering. |
+
+An **unmarked** heading with no rulebook alias resolves to its built-in default
+(`SkillSectionRole.builtinRole(forHeading:)`, which also recognizes the
+`Phase N: …` prefix and common applicability/output variants). The built-in
+aliases are themselves **data** — `SkillSectionRole.builtinSectionAliases` (a
+single table, also exposed as the `Rulebook.defaultSections` rulebook) — so the
+defaults and author `=== sections ===` extensions share one representation.
+Resolution precedence is `rulebook alias ?? builtin`. A heading that
+resolves to nothing **and has content** is a hard `semanticError` — there is no
+silent `reference`/`inert` fallback. The author then adds a `=== sections ===`
+alias here, forces a role inline with `(( role: <R> ))`, or marks it
+`(( role: reference ))`. Section semantics activate **structurally** on the
+presence of a `##`/`###` heading; there is no `skill: true` flag.
+`=== sections ===` aliases are the sanctioned, data-only path for
+organizational/applicability headings — see `sample-gbrain/brain.merrules` and
+`examples/skill/skill.merrules`.
+
+#### `meridian migrate-skill`'s classification vocabulary
+
+`SkillMigrator` (the `.meri`-porting engine behind `meridian migrate-skill`)
+never emits `(( inert ))`: every non-lowerable block resolves to lower /
+`use judgment …` (if an inference cue is present) / `(( role: reference ))`
+(if documentary) / a hard reword error (otherwise). Three `=== language ===`
+sub-blocks tune this classification — `Inference-cue synonyms:`,
+`Normative-cue synonyms:`, and `Reference-heading synonyms:` — each wired
+through the same `EnglishLexicon` recipe as the categories above (Family 1's
+opening design-rule callout applies equally here). Full defaults and the
+worked `=== language ===` example live in
+[03_LANGUAGE.md](03_LANGUAGE.md#skillmigrator-classification-synonyms-p1-four-way-policy);
+the end-to-end porting policy lives in
+[09_SKILL_PORTING.md](09_SKILL_PORTING.md).
+
+#### Fuzzy conditions are a hard error
+
+An applicability / negative-applicability condition that is **neither** a literal
+dispatch phrase **nor** structurally checkable (e.g. "the request is ambiguous",
+"the entity is notable") raises a compile-time `semanticError`. The author must:
+
+1. rephrase it to a checkable predicate,
+2. move it to `triggers:` as a literal dispatch phrase, or
+3. wrap it in an explicit `use judgment to …:` marker.
+
+It is never silently turned into an LLM check or silently dropped.
+
+---
+
+### Family 3 — Conventions (`=== conventions ===`)
+
+Conventions are Inform-style, cross-cutting behaviours declared **once** and
+injected into every matching workflow by `ConventionInjector`. They use the
+`before` / `after` phase verbs with an action clause and an indented body.
+
+```
+=== conventions ===
+
+# Iron-Law back-linking: any page that mentions an entity gets a reciprocal link.
+after writing a page that mentions an entity:
+  create a back-link from the entity to the page.
+
+# Notability gate before creating entity pages.
+before writing a page about an entity:
+  make sure the entity is notable.
+
+# Brain-first: consult the local knowledge graph before any external call.
+before calling an external service:
+  check the brain first.
+```
+
+`ConventionInjector` matches a convention's action against each workflow by
+token overlap (stemmed, stopword-stripped), then prepends (`before`) or appends
+(`after`) the lowered body. This makes gbrain's Iron-Law / notability /
+brain-first guarantees a single shared rulebook entry instead of per-skill
+restatement — fewer edits, DRY, and matching gbrain's own `conventions/` design.
+
+The convention body is parsed and lowered through the same strict pipeline as
+any workflow statement, so an unresolved phrase inside a convention is a hard
+error.
+
+---
+
+### Family 4 — Trigger words (`=== triggers ===`)
+
+`triggers:` frontmatter entries describe **how** a skill is activated and are
+classified into a closed `TriggerKind` — `keyword` / `ambient` / `event` /
+`schedule` — by `TriggerClassifier`. The classification keyword sets are data:
+built-in defaults live in `Rulebook.defaultTriggers`, and a rulebook extends them
+per kind. `keyword` is the fallback (no words needed); the other three are
+keyword-driven (plus cron-shape detection for `schedule`).
+
+```
+=== triggers ===
+schedule: fortnightly, quarterly
+ambient: firehose
+event: ingested, reconciled
+```
+
+Each line is `<kind>: word1, word2, …` where `<kind>` is a `TriggerKind` raw
+value; an unknown kind is a hard `semanticError`. Author words **add to** (never
+remove from) the built-in set for a kind — `Rulebook.triggerWordSets()` unions
+`defaultTriggers` with the author rules. So with the block above, a `triggers:`
+spec of `fortnightly digest` classifies as `schedule` while the built-in
+`nightly`/`webhook received`/… still classify as before.
+
+A trigger never reaches the LLM: each compiles to a deterministic `wait` + a
+`trigger.<name>.fired` fan-out event (the host owns actual firing; routing is the
+resolver workflow's job). The typed kind + spec are recorded in the manifest
+under `meridian_skill.triggers`. See [03_LANGUAGE.md](03_LANGUAGE.md)
+for the `triggers:` frontmatter surface.
+
+---
+
+### Extending a rulebook is pure data
+
+Adding a new idiom or section alias requires **no dispatcher edit** — only a new
+rule entry:
+
+```
+=== desugar ===
+rule "memo-emit":
+  match: Memo: {message}
+  lowers to: emit skill.report with message = {message}.
+
+=== sections ===
+section "Recipe" -> procedure
+```
+
+This is exercised directly in
+[`Tests/MeridianCoreTests/SampleGbrainConformanceTests.swift`](../Tests/MeridianCoreTests/SampleGbrainConformanceTests.swift)
+("a new desugar idiom + a new section alias can be added as pure rulebook
+data"), which adds both as inline data and compiles a skill that uses them with
+zero changes to compiler code.
+
+---
+
+### Tracing
+
+Set the `rulebook` trace category to see every desugar rewrite and convention
+injection with source attribution:
+
+```bash
+MERIDIAN_TRACE=rulebook meridian compile sample-gbrain/skills/ingest.meri \
+    --merconfig sample-gbrain/brain.merconfig
+```
+
+See also [06_DEVELOPER_EXPERIENCE.md](06_DEVELOPER_EXPERIENCE.md).
+
+### Built-In Wave 4 Section Roles
+
+`## Domain` (`Vocabulary`, `Types`) is a non-executable section whose body is
+harvested as vocabulary before workflow parsing. Use it for small skill-local
+kind/property/state declarations.
+
+`## Tables` (`Data Tables`, `Dispatch Tables`) is executable. Unmarked Markdown
+pipe tables in this section default to data mode, while explicit `!!! table`
+markers still override the mode. Rulebook `=== sections ===` aliases can route
+other recurring table headings to `tables` when a corpus uses different
+terminology.
+
+---
+
+## Prose and autonomy
+
+*Was `docs/12_PROSE_AND_AUTONOMY.md`.*
+
+Meridian supports two opt-in prose modes for SKILL.md-shaped workflows.
+
+`with discretion` is plan-then-execute mode. Unmatched English lines in that
+workflow are lowered to `IRPrimitive.aiJudgment(AIJudgmentIR)`; generated Swift
+calls `runtime.executeProsePlan(...)`. The runtime asks a typed `Planner` for a
+`PlanProposal`, validates each proposed tool against the scoped tool list, and
+executes the action itself.
+
+`with autonomy` is loop mode. Unmatched English lines are lowered to
+`IRPrimitive.aiAutonomy(AIAutonomyIR)`; generated Swift calls
+`runtime.executeAutonomousLoop(...)`.
+The runtime asks an `ActPlanner` for one action per turn, records observations,
+routes every action through the same sealed executor, and can call a `Planner`
+again after repeated failures.
+
+`AIJudgmentIR` and `AIAutonomyIR` are separate IR structs (not one primitive
+distinguishing modes via a `dispatchMode` field) — codegen (`emitAIJudgment` /
+`emitAIAutonomy`), the manifest (`judgment_steps` / `autonomy_steps`, below),
+and any IR-walking code each handle the two modes as distinct cases, so a
+`switch` over `IRPrimitive` cannot forget one. The AST layer still carries
+a single `ProseStepAST` with a `ProseDispatchMode`; `ASTToIR.makeAIPrimitive`
+is the one place that dispatches AST mode → IR case.
+
+Autonomy `until` and `unless` header clauses are enforced by generated
+predicates over the runtime's current `StateSnapshot`. The runtime checks
+`unless` as an abort guard and `until` as a success stop before planning; after
+each accepted action, result bindings are merged into the loop snapshot so the
+next predicate check can stop on newly produced state.
+
+Examples:
+
+```meridian
+To plan risky cleanup for a pull request, with discretion:
+  Read the current diff and propose the smallest safe cleanup actions.
+
+To stabilize a pull request, with autonomy until the ci status is passed re-plan after 2 failures:
+  Keep inspecting CI and apply the next smallest safe repair.
+```
+
+The LLM boundary is typed:
+
+- `LLMProvider` can only produce completions.
+- `Discretion` can only answer a boolean question.
+- `Planner` can only propose a bounded plan.
+- `ActPlanner` can only propose the next action or declare done.
+- `PlanExecutor` is runtime-owned and validates tool IDs before invocation.
+- Planner actions are validated against registered `ToolSchema` argument specs
+  when a schema is present: missing required arguments, unexpected arguments,
+  and common type mismatches are rejected before invocation.
+
+Strict workflows still reject unresolved lines. Prose fallback only applies
+inside headers that explicitly opt in with `with discretion` or `with autonomy`.
+
+### Entry points
+
+There are **three** ways prose reaches the planner — all of them explicit, none
+of them a silent fallthrough:
+
+1. A workflow header opts in with `, with discretion` / `, with autonomy` (every
+   body line is prose — see the strict contract below).
+2. A local `use judgment to <goal>:` / `with discretion:` / `with autonomy …:`
+   marker wraps one block inside an otherwise-deterministic workflow.
+3. A **fuzzy Markdown table or checklist** is routed to the planner with a
+   `(( ai-discretion ))` / `(( ai-autonomy ))` marker (below).
+
+All three lower through the same `ProseStepAST`, which `ASTToIR.makeAIPrimitive`
+turns into `IRPrimitive.aiJudgment(AIJudgmentIR)` or `.aiAutonomy(AIAutonomyIR)`
+by dispatch mode; (2) and (3) carry an explicit dispatch, so they are valid in
+**any** workflow.
+
+#### Optional guidance: extra planner context distinct from the goal
+
+`ProseStepAST` (and both `AIJudgmentIR`/`AIAutonomyIR`) carry an optional
+`guidance: String?` alongside `text`. `text` stays the short dispatch goal;
+`guidance`, when present, is extra narrative context handed to the planner
+without being folded into that goal. The one producer today is the `use
+judgment to follow the <heading> guidance:` migrator idiom (below): it
+collects the section's leftover narrative verbatim into `guidance` rather than
+concatenating it onto `text`. Ordinary `use judgment to <goal>:` / `with
+discretion:` / `with autonomy …:` blocks with an indented instruction body
+still fold that body into `text` unchanged — `guidance` is specifically for
+narrative context that a section's migrator-generated judgment step inherited
+from its own (otherwise-`reference`) documentation, not a second copy of the
+instructions themselves.
+
+`guidance` threads end to end on both IR cases: `SwiftEmitter.emitAIJudgment` /
+`emitAIAutonomy` each emit it as a trailing `guidance: "…"` argument on
+`runtime.executeProsePlan`/`executeAutonomousLoop`; `PlanContext.guidance` /
+`ActContext.guidance` carry it into `Planner`/`ActPlanner` implementations;
+`ManifestEmitter` records it per workflow under `judgment_steps[].guidance` /
+`autonomy_steps[].guidance` so it is auditable from the
+`.meridian.manifest.json` without reading the generated Swift.
+
+#### Fuzzy tables and checklists → the planner
+
+A decision table whose condition cells are *intent descriptions* (not checkable
+comparisons) and an acceptance checklist whose items are *not structurally
+checkable* are workflow steps that need judgment — not documentation, when they
+genuinely carry an inference cue. Instead of marking them `(( role: reference
+))`, route them (a cue-less fuzzy table/checklist is a reword error, not a free
+pass to either judgment or reference — see `docs/09_SKILL_PORTING.md` P1):
+
+```meridian
+## Route the request
+
+!!! table (( ai-discretion ))
+| Condition                          | Action                      |
+|------------------------------------|-----------------------------|
+| user asks for a deterministic run  | submit a shell job          |
+| user asks for an iterative agent   | spawn a research subagent   |
+
+## Confirm
+
+!!! checklist (( ai-autonomy ))
+- [ ] all entity pages are cross-linked
+- [ ] no DRY violations across skills
+```
+
+- `!!! table (( ai-discretion ))` → `TableParser.aiDecisionProse` renders the
+  rows as a ruleset (`when <conds>, <action>`; a wildcard row → `otherwise, …`)
+  and emits `IRPrimitive.aiJudgment(AIJudgmentIR)`: the planner picks the
+  matching case and carries out its action. `(( ai-autonomy ))` emits
+  `.aiAutonomy(AIAutonomyIR)` (a loop) instead.
+- `!!! checklist (( ai-autonomy ))` → `checklistProse` embeds every criterion as
+  the loop goal ("Ensure every acceptance criterion below holds, taking
+  corrective action until all are satisfied: - …") and emits
+  `IRPrimitive.aiAutonomy(AIAutonomyIR)`. `(( ai-discretion ))` verifies/resolves
+  once via `.aiJudgment(AIJudgmentIR)`.
+
+The criteria/rules are embedded **verbatim** in the prose step text, so the
+planner has the full ruleset as its goal context. The enclosing section must be
+executable (a `(( role: reference ))` — or hand-authored `(( inert ))` —
+section still suppresses the whole body). See
+[03_LANGUAGE.md](03_LANGUAGE.md) for the marker
+grammar and [09_SKILL_PORTING.md](09_SKILL_PORTING.md) rule 12 for the
+"does the workflow act on this?" porting heuristic.
+
+### Failure Identity
+
+Planning/prose failures use stable `PlanningFailureCode` raw values carried by
+`MeridianRuntimeError.toolError(.implementation(code: ...))`. Generated
+`recover from ...:` blocks can match these names through `meridianMatches`.
+
+Current codes:
+
+- `planning.prose_payload_too_large`
+- `planning.tool_arguments_payload_too_large`
+- `planning.too_many_actions`
+- `planning.replan_too_many_actions`
+- `planning.max_steps_exceeded`
+- `planning.host_policy_denied`
+- `planning.tool_out_of_scope`
+- `planning.tool_not_registered`
+- `planning.missing_tool_argument`
+- `planning.unexpected_tool_argument`
+- `planning.invalid_tool_argument_type`
+- `planning.snapshot_payload_too_large`
+- `planning.history_payload_too_large`
+- `planning.proposal_payload_too_large`
+
+Telemetry uses the same values: `plan.error` includes `error_code` when one is
+available, and `plan.rejected` includes `code`.
+
+Resource limits cover prose bytes, state snapshot bytes, observation-history
+bytes, planner-proposal bytes, action count, and tool-argument bytes. Accepted
+prose/autonomy actions checkpoint the post-action loop snapshot so resume
+contexts include planner-produced bindings.
+
+### Strict contract: discretion / autonomy bodies are always prose
+
+A workflow declared `with discretion` or `with autonomy` runs every body line
+through the planner — there is no deterministic fallthrough. Even if a body
+sentence happens to share words with a deterministic vocabulary phrase
+(e.g. "Inspect the failing job…" overlapping with `to inspect the ci status of
+a pull request`), the lowering emits an `aiJudgment`/`aiAutonomy` primitive and
+the `Planner` / `ActPlanner` decides what runtime actions are taken. This is enforced in
+`ASTToIR.lowerPhraseInvocation` and is verified by the
+[`SkillExampleCorpusTests`](../Tests/MeridianCoreTests/SkillExampleCorpusTests.swift)
+suite.
+
+### Worked examples
+
+End-to-end prose / autonomy samples live under `examples/skill/`. They share
+the standalone `comprehensive_workflows.merconfig` vocabulary so each file can
+focus on a single feature:
+
+- `flaky_ci_stabilizer.meri` — autonomy with `until` / `unless` / replan / max steps.
+- `large_release_train.meridian` — deterministic gate → discretion → autonomy.
+- `policy_guarded_autonomy.meridian` — recover from `planning.host_policy_denied`
+  and `planning.tool_out_of_scope`.
+- `planner_schema_validation_demo.meri` — recover from every schema-validation
+  `PlanningFailureCode` and from `planning.max_steps_exceeded`.
+- `hotfix_commander.meridian` — autonomy abort guard via `unless` predicate
+  combined with `wait for approval` and `wait for signal`.
+- `incident_pr_response.meri` — discretion plan + autonomy mitigation with
+  recover-on-failure cleanup.
+
+Structural lowering assertions for each sample (autonomy config presence,
+discretion vs autonomous-loop dispatch mode, recover code names, and so on)
+live in [`SkillExampleCorpusTests`](../Tests/MeridianCoreTests/SkillExampleCorpusTests.swift).
+
+---
+
+## Deontic norms and obligations
+
+*Was `docs/20_DEONTIC.md` (Wave 9).*
+
+Meridian's **deontic layer** expresses prohibitions (`must not invoke …`),
+obligations (`… must hold`), and permissions (`may invoke …`) as first-class
+norms attached to skill, workflow, section, or kind scope. The compiler lowers
+them onto existing IR primitives — attempt-time guards on `invoke`, effect-time
+`assert` metadata, and recover routing — without a dedicated deontic IR
+primitive.
+
+Normative meaning lives in [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md) §7–8. Surface examples appear in
+[`docs/cookbook/MERIDIAN_SYNTAX_COOKBOOK.md`](cookbook/MERIDIAN_SYNTAX_COOKBOOK.md) Part VI. This document is the
+maintainer-facing reference for enforcement, diagnostics, and audit hooks.
+
+---
+
+### Norm kinds
+
+| Surface | Norm kind | Enforcement time | Trace disposition |
+|---|---|---|---|
+| `must not invoke <tool> [whose …]` | prohibition | **Attempt-time** — before the tool runs | `violated (prevented)` when blocked |
+| `<predicate> must hold [, blocking]` | obligation | **Effect-time** — at commit points and section exits | `violated (observed)` on failure |
+| `may invoke <tool> [only where …]` | permission | **Attempt-time** — default-deny scopes require a covering grant | denied invoke if uncovered |
+
+**Attempt-time** norms govern whether an `invoke` may proceed. A prevented
+prohibition still emits a trace event — auditors see the attempt, not only the
+outcome ([SEM-7-02](cookbook/MERIDIAN_SEMANTICS.md), decision D3).
+
+**Effect-time** obligations check state or trace-backed conditions at designated
+evaluation points. Blocking obligations route failure through `recover` and halt
+the section; non-blocking obligations record `violated (observed)` and continue
+unless the author marks the obligation `blocking`.
+
+Advisory modals (`should`, `ought to`, `probably must`) are rejected at
+compile time ([MER-DEO-003](#diagnostic-catalog)). Outcome words (`must not
+fail`) are not actions — use `must not invoke …` or `<predicate> must hold`
+instead ([MER-DEO-005](#diagnostic-catalog)).
+
+---
+
+### Scope attachment
+
+Norms bind where they are authored:
+
+- **Skill scope** — `This skill must not …` or a Contract-section sentence with
+  no narrower qualifier.
+- **Workflow scope** — workflow-prefixed forms (future tightening) or norms
+  harvested from a named workflow's executable section.
+- **Kind scope** — `A customer must not invoke …` binds the norm to instances of
+  that kind.
+- **Section scope** — `Within Phase 3, this skill must not …` (when supported
+  by rulebook sugar).
+
+Conflict analysis compares scopes using a containment lattice: skill ⊃ workflow
+⊃ section; kind scopes interact only with matching kind subjects.
+
+---
+
+### Blocking routing
+
+The `blocking` keyword on an obligation is the **only** way to make a violation
+halt the enclosing section. Non-blocking obligations record the violation and
+continue — the Contract section is the audit surface for which claims can stop
+execution.
+
+Lowering wires blocking obligations to `AssertIR.blocking` and attaches recover
+handlers when authored. Prohibitions may also carry blocking disposition on the
+guarded invoke arm.
+
+---
+
+### Conflict lattice (MER-DEO-001 / MER-DEO-002)
+
+| Situation | Code | Behavior |
+|---|---|---|
+| Same-scope prohibition and permission overlap the same invoke pattern | [MER-DEO-001](#diagnostic-catalog) | **Compile-time error on both spans** — no silent winner |
+| Inner `may` grant inside an outer `must not` prohibition | [MER-DEO-002](#diagnostic-catalog) | **Sticky deny** — inner permission cannot override outer prohibition |
+| Non-overlapping scopes or patterns | — | Both norms lower; evaluation applies the most specific applicable norm |
+
+Overlap is defined on normalized `toolID` plus argument constraints: identical
+tool with empty or compatible `whose` clauses overlaps; conditioned permissions
+narrow the pattern.
+
+---
+
+### Permissions generalize `scopedTools`
+
+A bare tool id in `## Tools Used` or `scopedTools` is the degenerate permission
+`may invoke <tool>` with no argument conditions. Wave 9 adds **argument-conditioned**
+permissions:
+
+```text
+This skill may invoke slack.send only where the channel is one of "#incidents", "#alerts".
+The briefing skill may invoke email.send only where the recipient is the user's own address.
+```
+
+`only where …` lowers to invoke guards evaluated **per attempt**. Table-conditioned
+lookups in the permission predicate (Composition Gallery line 6) compose with
+the same guard mechanism.
+
+Mixing bare allow-list entries and conditioned `may` lines in one skill is legal:
+each invoke is checked against the union of covering permissions.
+
+Tool use outside the permission envelope in a judgment block is diagnosed as
+[MER-DEO-004](#diagnostic-catalog) (reserved / partial enforcement in 9B).
+
+---
+
+### D12 witness envelopes
+
+Runtime `recordViolation` emits `EventKind.violated` with operational detail
+(`prevented` vs `observed`). Decision D12 reserves structured witness payloads
+(tool id, argument hash, scope, norm id) for auditor-grade receipts.
+Population of the full witness envelope in traces is Wave 9C work; compile-time
+norm ids already carry the stable identity needed to correlate trace events with
+norms.
+
+---
+
+### `meridian explain` and `[OBL-…]` annotations
+
+`meridian explain` prints Canonical English for lowered norms and annotates each
+with its norm id by default:
+
+```text
+[OBL-a1b2c3d4] This skill must not invoke deploy.run whose target is production.
+```
+
+Opt out with `--no-norm-ids`. The annotation links human-readable audit output
+to the stable norm identity used by runtime trace events without recompilation.
+
+---
+
+### Argument-conditioned permission example
+
+From the Composition Gallery (cookbook Part VII, line 6):
+
+```text
+This skill may invoke slack.send only where the channel is the channel
+corresponding to the severity "sev2" in the escalation table.
+```
+
+The permission guard evaluates the table lookup on each `slack.send` attempt.
+Tests: `CompositionGalleryTests.gallery6` (parse + verbalize round-trip).
+
+---
+
+### Worked prohibition + obligation (Release Sentinel)
+
+Contract norms from the north-star example:
+
+```text
+This skill must not invoke deploy.run whose target is production.
+The sentinel may invoke slack.send only where the channel is one of "#incidents", "#alerts", "#releases".
+Since the last production deploy, no critical alert has occurred. This must hold, blocking.
+```
+
+Fixture: `Tests/MeridianCoreTests/Fixtures/Trace/release-sentinel-wave9.meri`.
+
+---
+
+### Diagnostic catalog
+
+| Code | Trigger |
+|---|---|
+| MER-DEO-001 | Same-scope prohibition and permission overlap (both spans reported) |
+| MER-DEO-002 | Inner `may` cannot override outer `must not` (sticky deny) |
+| MER-DEO-003 | Non-norm modal (`should`, `ought to`, …) |
+| MER-DEO-004 | Tool invoke outside permission scope |
+| MER-DEO-005 | Outcome-as-action (`must not fail`) |
+| MER-DEO-006 | Norm id prefix collision after semantic hash |
+
+Broken Twin line 8 exercises MER-DEO-001; see
+[`docs/cookbook/MERIDIAN_NORTHSTAR_EXAMPLE.md`](cookbook/MERIDIAN_NORTHSTAR_EXAMPLE.md) Part C and
+`DeonticBrokenTwinTests` in `Tests/MeridianCoreTests/Inform7/`.
+
+---
+
+### Related documents
+
+- [`docs/01_OVERVIEW.md`](01_OVERVIEW.md) — formal prover discharge boundary
+- [`docs/04_RUNTIME.md`](04_RUNTIME.md) — trace-backed `since … must hold`
+- [`docs/cookbook/MERIDIAN_SEMANTICS.md`](cookbook/MERIDIAN_SEMANTICS.md) §7–8 — normative oracle
+- [`docs/05_CLI.md`](05_CLI.md) — `meridian explain` flags
+
+---
+
+## Modules and shared imports
+
+*Was `docs/22_MODULES_AND_IMPORTS.md`.*
+
+Status: Final Wave Phase F (SEM-MOD-01, SEM-MOD-02 companion).
+
+Meridian modules package reusable vocabulary — domain kinds, tools, constants,
+language synonyms, and `=== imports ===` chains — under a stable module id.
+Skills import modules instead of copying `.merconfig` fragments.
+
+### Package layout
+
+```
+modules/
+  shared-domain/
+    module.meridian     # optional manifest frontmatter
+    module.merconfig    # required vocabulary entry point
+```
+
+Discovery order for `import <name>`:
+
+1. `<anchor>/<name>/module.merconfig`
+2. `<anchor>/<name>.merconfig`
+3. Each `--module-path/<name>/module.merconfig`
+
+`<anchor>` is the importer's directory (the skill or merconfig being compiled).
+
+### Surface syntax
+
+**Skill frontmatter**
+
+```yaml
+---
+imports: shared-domain, billing-core as billing
+vocabulary: local.merconfig
+---
+```
+
+**Merconfig section**
+
+```merconfig
+=== imports ===
+import shared-domain
+import billing-core as billing
+```
+
+Both `import <module>` and `import module <module>` are accepted. Optional
+`as <alias>` renames the merged vocabulary bucket (defaults to the module id).
+
+Legacy `vocabulary:` frontmatter remains for direct `.merconfig` references
+alongside module imports.
+
+### Merge semantics
+
+1. Resolve the import graph (depth-first, deterministic by module name).
+2. Merge module configs in topological order.
+3. Merge the importer's local `.merconfig` and inline `## Domain` sections on
+   top — **importer wins** on name collisions.
+4. If a module export is listed in manifest `sealed:` (or `sealed:` frontmatter),
+   the importer cannot override that symbol (MER-MOD-004).
+
+Cross-module export collisions (same kind/tool name from two imports) are
+MER-MOD-003. Cycles are MER-MOD-002. Missing packages are MER-MOD-001.
+
+### Manifest (`module.meridian`)
+
+```yaml
+---
+module: shared-domain
+version: 1.0.0
+exports: public
+sealed: policy, customer
+---
+```
+
+- `exports: public|internal` — `public` modules publish symbols on the export
+  surface (cross-module collision checks). `internal` modules still merge
+  vocabulary for direct importers but do not export symbols to sibling imports.
+- `sealed:` — comma-separated symbols the importer must not redefine.
+
+### Lockfile
+
+`ModuleLockfile` records resolved `{id, path, contentHash, alias?}` entries in
+sorted order for reproducible builds. Hosts may persist the JSON beside a skill;
+the compiler computes it during bootstrap.
+
+### CLI
+
+```bash
+meridian compile skill.meridian --module-path ./modules
+meridian check skill.meridian --module-path ./modules
+meridian explain skill.meri --module-path ./modules
+```
+
+### API
+
+- `ModuleManifest` — parsed manifest metadata
+- `ModuleResolver` — graph resolution + cycle/collision checks
+- `ModuleSymbolSnapshot` — exported symbol sets per module
+- `ModuleLockfile` — deterministic lock encoding
+- `Compiler.Options.moduleSearchPaths` / `anchorDirectory`
+
+### Related
+
+- SEM-MOD-01: `docs/cookbook/MERIDIAN_SEMANTICS.md` §10.1
+- SEM-MOD-02: explicit imports + deployment allow-lists (no implicit globals)
