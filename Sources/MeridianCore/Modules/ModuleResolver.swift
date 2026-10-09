@@ -234,7 +234,7 @@ public struct ModuleResolver: Sendable {
                 "warning: could not read nested module imports from \(url.lastPathComponent) (\(error.localizedDescription)); skipping meridian frontmatter imports")
             return []
         }
-        guard let frontmatter = parseFrontmatterEntries(source) else { return [] }
+        guard let frontmatter = Frontmatter.simpleEntries(source) else { return [] }
         return Self.parseImportList(frontmatter["imports"], file: url.lastPathComponent, line: 1)
     }
 
@@ -277,27 +277,6 @@ public struct ModuleResolver: Sendable {
             guard !token.isEmpty else { return nil }
             return parseImportStatement("import \(token)", file: file, line: line)
         }
-    }
-
-    private func parseFrontmatterEntries(_ source: String) -> [String: String]? {
-        let lines = source.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return nil }
-        var entries: [String: String] = [:]
-        var i = 1
-        while i < lines.count {
-            let line = lines[i]
-            if line.trimmingCharacters(in: .whitespaces) == "---" { break }
-            if let colon = line.firstIndex(of: ":") {
-                let key = String(line[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
-                var value = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
-                if value.hasPrefix("\"") && value.hasSuffix("\"") && value.count >= 2 {
-                    value = String(value.dropFirst().dropLast())
-                }
-                entries[key] = value
-            }
-            i += 1
-        }
-        return entries.isEmpty ? nil : entries
     }
 
     private func contentHash(_ source: String) throws -> String {

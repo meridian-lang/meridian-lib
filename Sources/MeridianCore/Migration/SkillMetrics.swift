@@ -151,9 +151,49 @@ public struct SkillMetrics: Sendable, Equatable {
         let generatedLOC = lines.filter {
             !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }.count
-        var inFence = false
         var sections: [(heading: String, line: Int, body: [String])] = []
 
+        for section in MarkdownOutline.build(rawLines: lines) {
+            let body = section.bodyLines.map(\.raw)
+            // A heading whose own body (before the next heading, at any depth)
+            // is blank is a pure structural container for nested child headings
+            // — e.g. `## Phases` immediately followed by `### Phase 1: ...`.
+            // It owns no content of its own, so nothing is suppressed by
+            // marking it inert; tallying it (or worse, a spurious
+            // `operationalProcedure` `inertDetails` entry, since a
+            // `role: procedure` marker with an empty body still resolves to
+            // that category) would inflate both the inert ratio and
+            // `operationalInertSections` for content that was never dropped —
+            // the real content lives in, and is already tallied via, its child
+            // headings.
+            let ownsContent = body.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            // A migrator-generated split-sibling heading (AGENTS.md Phase 1
+            // item 3, `SkillMigrator.splitHeadingSeparator`) is a rendering
+            // detail of its parent section, not an independent section the
+            // original ever had — counting it would spuriously inflate
+            // `totalSections` relative to the original and dilute the inert
+            // ratio. Only a non-generated heading gets an `inertDetails` entry
+            // either (see the same exclusion one branch up); without that, a
+            // sibling with a synthetic heading text no rulebook/builtin role
+            // recognizes would leak into `inertDetails` as a spurious
+            // `unclassified` entry — inflating `operationalInertSections` /
+            // `unclassifiedInertSections` even though it was already excluded
+            // from `inertSections`.
+            if !section.heading.contains(SkillMigrator.splitHeadingSeparator), ownsContent {
+                total += 1
+                let clean = SkillSectionRole.parseMarker(from: section.heading).cleanHeading
+                if !sectionExecutes(section.heading, rulebook: rulebook),
+                   !bodyIsJudgmentWrapped(body, heading: clean, lexicon: lexicon) {
+                    inert += 1
+                }
+                sections.append((section.heading, section.headingLine, body))
+            }
+        }
+
+        // Judgment blocks are counted independently of section structure: any
+        // non-fence line carrying a judgment introducer/discretion/autonomy
+        // marker (heading lines included).
+        var inFence = false
         for (idx, raw) in lines.enumerated() {
             let trimmed = raw.trimmingCharacters(in: .whitespaces)
             if trimmed.hasPrefix("```") {
@@ -161,49 +201,6 @@ public struct SkillMetrics: Sendable, Equatable {
                 continue
             }
             if inFence { continue }
-
-            if let heading = headingText(trimmed) {
-                // A migrator-generated split-sibling heading (AGENTS.md Phase 1
-                // item 3, `SkillMigrator.splitHeadingSeparator`) is a rendering
-                // detail of its parent section, not an independent section the
-                // original ever had — counting it would spuriously inflate
-                // `totalSections` relative to the original and dilute the inert
-                // ratio. It is still walked (for body-boundary slicing) but not
-                // tallied.
-                let end = nextHeadingIndex(after: idx, in: lines)
-                let body = Array(lines[(idx + 1)..<end])
-                // A heading whose own body (before the next heading, at any
-                // depth) is blank is a pure structural container for nested
-                // child headings — e.g. `## Phases` immediately followed by
-                // `### Phase 1: ...`. It owns no content of its own, so
-                // nothing is suppressed by marking it inert; tallying it
-                // (or worse, a spurious `operationalProcedure` `inertDetails`
-                // entry, since a `role: procedure` marker with an empty body
-                // still resolves to that category) would inflate both the
-                // inert ratio and `operationalInertSections` for content that
-                // was never dropped — the real content lives in, and is
-                // already tallied via, its child headings.
-                let ownsContent = body.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-                if !heading.contains(SkillMigrator.splitHeadingSeparator), ownsContent {
-                    total += 1
-                    let clean = SkillSectionRole.parseMarker(from: heading).cleanHeading
-                    if !sectionExecutes(heading, rulebook: rulebook),
-                       !bodyIsJudgmentWrapped(body, heading: clean, lexicon: lexicon) {
-                        inert += 1
-                    }
-                    // Only a non-generated heading gets an `inertDetails`
-                    // entry too — a split-sibling heading (`— steps N`) is a
-                    // rendering detail of its parent, not an independent
-                    // section (same exclusion as `total`/`inert` above, one
-                    // line up). Without this, a sibling with a synthetic
-                    // heading text no rulebook/builtin role recognizes would
-                    // leak into `inertDetails` as a spurious `unclassified`
-                    // entry — inflating `operationalInertSections` /
-                    // `unclassifiedInertSections` even though it was already
-                    // excluded from `inertSections` above.
-                    sections.append((heading, idx + 1, body))
-                }
-            }
             if isJudgmentHeader(trimmed, lexicon: lexicon) {
                 blocks += 1
                 jLines += bodyLineCount(in: lines, headerIndex: idx)
@@ -221,30 +218,18 @@ public struct SkillMetrics: Sendable, Equatable {
 
     // MARK: - Section role
 
-    /// Valid section heading text, or nil for non-heading lines.
-    private static func headingText(_ trimmed: String) -> String? {
-        SkillMarkdownShape.headingText(trimmed)
-    }
-
     /// Mirrors `SkillSectionBuilder.resolve`: a trailing `(( … ))` marker is
-    /// authoritative; otherwise the built-in heading alias decides. An
-    /// unresolved heading is treated as non-executable for metrics (it is a hard
-    /// error only when it has content, which the real builder enforces).
+    /// authoritative; otherwise the rulebook/built-in heading alias decides.
+    /// An unresolved heading is treated as non-executable for metrics (it is a
+    /// hard error only when it has content, which the real builder enforces).
     private static func sectionExecutes(_ heading: String, rulebook: Rulebook) -> Bool {
-        let parsed = SkillSectionRole.parseMarker(from: heading)
-        // Shared marker-first decision; author rulebook aliases take priority
-        // over builtins, matching `SkillSectionBuilder`.
-        let derived = rulebook.role(forHeading: parsed.cleanHeading)
-            ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
-        return SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived).executes
+        SectionRoleResolver.decision(for: heading, rulebook: rulebook).executes
     }
 
     private static func inertSectionDetail(heading: String, line: Int, body: [String],
                                            rulebook: Rulebook, lexicon: EnglishLexicon) -> InertSection? {
         let parsed = SkillSectionRole.parseMarker(from: heading)
-        let derived = rulebook.role(forHeading: parsed.cleanHeading)
-            ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
-        let decision = SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived)
+        let decision = SectionRoleResolver.decision(for: heading, rulebook: rulebook)
         guard !decision.executes else { return nil }
 
         let clean = parsed.cleanHeading
@@ -311,22 +296,6 @@ public struct SkillMetrics: Sendable, Equatable {
         return lexicon.contractReferencePhrases.contains { joined.contains($0) }
     }
 
-    private static func nextHeadingIndex(after idx: Int, in lines: [String]) -> Int {
-        var j = idx + 1
-        var inFence = false
-        while j < lines.count {
-            let trimmed = lines[j].trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("```") {
-                inFence.toggle()
-                j += 1
-                continue
-            }
-            if !inFence, headingText(trimmed) != nil { return j }
-            j += 1
-        }
-        return lines.count
-    }
-
     private static func bodyHasExecutableShape(_ body: [String], lexicon: EnglishLexicon) -> Bool {
         var inFence = false
         for raw in body {
@@ -342,7 +311,7 @@ public struct SkillMetrics: Sendable, Equatable {
             if inFence { continue }
             if trimmed.hasPrefix("!!! table") || trimmed.hasPrefix("!!! checklist") { return true }
             if trimmed.hasPrefix("- [ ]") || trimmed.hasPrefix("- [x]") || trimmed.hasPrefix("* [ ]") || trimmed.hasPrefix("* [x]") { return true }
-            if wholeLineBacktickedCommand(trimmed) { return true }
+            if MarkdownOutline.wholeLineBacktickedCommand(trimmed) { return true }
             if trimmed.hasPrefix("|") && trimmed.contains("|") { return true }
             let lower = trimmed.lowercased()
             if lower.contains(TableMode.aiAutonomy.sentinelToken)
@@ -352,10 +321,6 @@ public struct SkillMetrics: Sendable, Equatable {
             }
         }
         return false
-    }
-
-    private static func wholeLineBacktickedCommand(_ trimmed: String) -> Bool {
-        SkillMarkdownShape.wholeLineBacktickedCommand(trimmed)
     }
 
     /// Word list de-hardcoded to `EnglishLexicon.referenceHeadingWords` (§5 /
@@ -384,7 +349,7 @@ public struct SkillMetrics: Sendable, Equatable {
         for raw in body {
             let trimmed = raw.trimmingCharacters(in: .whitespaces)
             if trimmed.isEmpty { continue }
-            guard trimmed.hasPrefix("`"), !wholeLineBacktickedCommand(trimmed) else { return false }
+            guard trimmed.hasPrefix("`"), !MarkdownOutline.wholeLineBacktickedCommand(trimmed) else { return false }
             sawContent = true
         }
         return sawContent
@@ -465,7 +430,7 @@ public struct SkillMetrics: Sendable, Equatable {
     /// without frontmatter are returned verbatim.
     private static func bodyLines(of source: String) -> [String] {
         let lines = source.components(separatedBy: "\n")
-        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else { return lines }
+        guard let fm = Frontmatter.locate(lines, skipLeadingBlanks: true) else { return lines }
         return Array(lines[(fm.close + 1)...])
     }
 }

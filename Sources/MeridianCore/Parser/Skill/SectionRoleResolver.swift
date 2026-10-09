@@ -33,4 +33,22 @@ enum SectionRoleResolver {
         }
         return Decision(role: nil, executes: false, recordedRole: "inert", fromMarker: false, resolved: false)
     }
+
+    /// Marker-first decision for a raw heading, deriving the role from the
+    /// clean heading text with the standard precedence (author rulebook alias,
+    /// then built-in alias) when no authoritative `(( … ))` marker is present.
+    /// Shared by `SkillSectionBuilder.resolve` and the migrator/compiler
+    /// reporting paths.
+    static func decision(for heading: String, rulebook: Rulebook) -> Decision {
+        let parsed = SkillSectionRole.parseMarker(from: heading)
+        let derived = rulebook.role(forHeading: parsed.cleanHeading)
+            ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
+        return decide(marker: parsed.marker, derivedRole: derived)
+    }
+
+    /// The role `heading` resolves to (`nil` for `(( inert ))` or an
+    /// unresolved heading).
+    static func role(for heading: String, rulebook: Rulebook) -> SkillSectionRole? {
+        decision(for: heading, rulebook: rulebook).role
+    }
 }

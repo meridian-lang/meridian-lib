@@ -314,49 +314,32 @@ struct SkillSectionBuilder {
         let hasHeadings = lines.contains { ($0.headingLevel ?? 0) > 0 }
         let baseIndent = lines.filter { $0.headingLevel == nil && $0.isContent }.map(\.indent).min() ?? 0
 
-        // Accumulate raw content lines per section, then resolve + fold.
-        struct PendingSection {
-            var heading: String?      // nil for preamble
-            var headingLine: Int
-            var lines: [SourceLine]
-        }
-        var pending: [PendingSection] = [PendingSection(heading: nil, headingLine: lines.first?.number ?? 1, lines: [])]
-        var i = 0
-        while i < lines.count {
-            let line = lines[i]
-            if let level = line.headingLevel, level > 0 {
-                pending.append(PendingSection(heading: line.text, headingLine: line.number, lines: []))
-                i += 1
-                continue
-            }
-            if line.isContent { pending[pending.count - 1].lines.append(line) }
-            i += 1
+        // Preamble: content before the first heading. Only meaningful when
+        // there are headings (otherwise the builder would not have been
+        // invoked); treat as procedure when the whole document is heading-less.
+        var out: [ResolvedSection] = []
+        let preambleEnd = lines.firstIndex { $0.headingLevel != nil } ?? lines.count
+        let preambleLines = lines[..<preambleEnd].filter(\.isContent)
+        if hasHeadings {
+            out.append(ResolvedSection(heading: "", headingLine: lines.first?.number ?? 1,
+                                       role: nil, executes: false, recordedRole: "inert",
+                                       groups: [], rawLines: preambleLines, isPreamble: true))
+        } else {
+            out.append(ResolvedSection(heading: "", headingLine: lines.first?.number ?? 1,
+                                       role: .procedure, executes: true, recordedRole: "procedure",
+                                       groups: foldGroups(preambleLines, baseIndent: baseIndent),
+                                       rawLines: preambleLines, isPreamble: false))
         }
 
-        var out: [ResolvedSection] = []
-        for ps in pending {
-            guard let heading = ps.heading else {
-                // Preamble. Only meaningful when there are headings (otherwise
-                // the builder would not have been invoked). Treat as procedure
-                // when the whole document is heading-less.
-                if hasHeadings {
-                    out.append(ResolvedSection(heading: "", headingLine: ps.headingLine,
-                                               role: nil, executes: false, recordedRole: "inert",
-                                               groups: [], rawLines: ps.lines, isPreamble: true))
-                } else {
-                    out.append(ResolvedSection(heading: "", headingLine: ps.headingLine,
-                                               role: .procedure, executes: true, recordedRole: "procedure",
-                                               groups: foldGroups(ps.lines, baseIndent: baseIndent),
-                                               rawLines: ps.lines, isPreamble: false))
-                }
-                continue
-            }
-            let resolved = try resolve(heading: heading, headingLine: ps.headingLine, hasContent: !ps.lines.isEmpty)
-            out.append(ResolvedSection(heading: resolved.clean, headingLine: ps.headingLine,
+        for section in MarkdownOutline.build(lines) {
+            let body = section.bodyLines.filter(\.isContent)
+            let resolved = try resolve(heading: section.heading, headingLine: section.headingLine,
+                                       hasContent: !body.isEmpty)
+            out.append(ResolvedSection(heading: resolved.clean, headingLine: section.headingLine,
                                        role: resolved.role, executes: resolved.executes,
                                        recordedRole: resolved.recordedRole,
-                                       groups: foldGroups(ps.lines, baseIndent: baseIndent),
-                                       rawLines: ps.lines, isPreamble: false))
+                                       groups: foldGroups(body, baseIndent: baseIndent),
+                                       rawLines: body, isPreamble: false))
         }
         return out
     }
@@ -396,8 +379,7 @@ struct SkillSectionBuilder {
         // builder-specific. `.tools` is non-executable but metadata-extracting,
         // so a derived `.tools` role is preserved (build() mines its bullets).
         let clean = parsed.cleanHeading
-        let derived = rulebook.role(forHeading: clean) ?? SkillSectionRole.builtinRole(forHeading: clean)
-        let decision = SectionRoleResolver.decide(marker: parsed.marker, derivedRole: derived)
+        let decision = SectionRoleResolver.decision(for: heading, rulebook: rulebook)
         trace.log(.skill, "resolve '\(clean)' -> \(decision.recordedRole) executes=\(decision.executes) marker=\(decision.fromMarker) @L\(headingLine)")
         if decision.resolved {
             let keptRole: SkillSectionRole?

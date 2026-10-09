@@ -320,12 +320,33 @@ struct SkillDeviationTests {
     func pairingHelpers() {
         #expect(SkillDeviation.slug("academic-verify") == "academic_verify")
         #expect(SkillDeviation.slug("Daily Task Manager") == "daily_task_manager")
+        #expect(SkillDeviation.slug("") == "skill")
 
         let skillURL = URL(fileURLWithPath: "/x/academic-verify/SKILL.md")
         #expect(SkillDeviation.meriStem(forSkillAt: skillURL) == "academic_verify")
 
         let resolverURL = URL(fileURLWithPath: "/x/RESOLVER.md")
         #expect(SkillDeviation.meriStem(forSkillAt: resolverURL) == "resolver")
+    }
+
+    @Test("preamble blockquote count skips leading blanks + frontmatter and stops at the first ## heading")
+    func preambleBlockquoteCount() {
+        let source = """
+
+        ---
+        name: demo
+        ---
+        > Context line.
+        >
+        > More context.
+        # Title
+        ## Phases
+        > not counted — the scan already stopped
+        """
+        #expect(SkillDeviation.preambleBlockquoteCount(source) == 3)
+        // No frontmatter at all: the scan starts at the first non-blank line.
+        #expect(SkillDeviation.preambleBlockquoteCount("> only\n## Next\n> ignored\n") == 1)
+        #expect(SkillDeviation.preambleBlockquoteCount("") == 0)
     }
 
     @Test("renderMarkdown produces a report with the expected sections")

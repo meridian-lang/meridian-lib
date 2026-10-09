@@ -98,12 +98,12 @@ struct ReachableCoverageBatch3Tests {
         #expect(SectionRoleResolver.decide(marker: inertMarker, derivedRole: nil).executes == false)
     }
 
-    @Test("FrontmatterScanner: leading-blank skip + missing-close-fence guard")
+    @Test("Frontmatter.locate: leading-blank skip + missing-close-fence guard")
     func frontmatterScanner() {
         let withBlanks = ["", "  ", "---", "name: x", "---", "body"]
-        #expect(FrontmatterScanner.locate(withBlanks, skipLeadingBlanks: true)?.open == 2)
-        #expect(FrontmatterScanner.locate(["---", "name: x"], skipLeadingBlanks: false) == nil)  // no close
-        #expect(FrontmatterScanner.locate(["nope"], skipLeadingBlanks: false) == nil)
+        #expect(Frontmatter.locate(withBlanks, skipLeadingBlanks: true)?.open == 2)
+        #expect(Frontmatter.locate(["---", "name: x"], skipLeadingBlanks: false) == nil)  // no close
+        #expect(Frontmatter.locate(["nope"], skipLeadingBlanks: false) == nil)
     }
 
     @Test("SkillMarkdownImporter keeps meridian fence body lines")

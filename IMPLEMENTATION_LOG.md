@@ -3308,3 +3308,35 @@ every emission by `TraceRecord(legacy:)`) collapse into `TraceRecord`.
 - Generated `matching:` closures were re-verified to ignore their parameter
   (`grep -rn "matching: { _event in" corpora sample-gbrain examples |
   grep -c "_event.payload"` → 0), so no codegen change was needed.
+
+## 2026-10-09 — Simplification Phase 5a+5b: one frontmatter parser, one markdown outline
+
+**5a:** new `Parser/Lexical/Frontmatter.swift` (165 lines) with `locate`
+(the old `FrontmatterScanner`), `simpleEntries` (the byte-identical copy that
+lived in `Compiler.harvestModuleImports`, `ModuleResolver` and
+`ModuleManifest`) and `parse` (the full tokenized parser moved verbatim out of
+`MeridianParser`, block scalars / flow sequences / block sequences intact).
+`Migration/FrontmatterScanner.swift` deleted; a fifth inline fence walk
+(`SkillDeviation.preambleBlockquoteCount`) also switched. `FrontmatterTests`
+(8 tests) pins the block-scalar/flow/block-sequence/folded forms and both
+`locate` blank-line modes — previously untested behaviour.
+
+**5b:** new `Parser/Skill/MarkdownOutline.swift` (117 lines) owning heading
+detection (`headingMatch` moved from the deleted `SkillMarkdownShape.swift`)
+plus `build(_ lines:)` and `build(rawLines:)`. Eight call sites migrated
+(`SkillSectionBuilder`, `Compiler.harvestDomainVocabulary`, `MeridianParser`'s
+outline scan, `SkillMetrics`, `SkillDeviation`, three `SkillMigrator`
+extensions). **Twelve call sites were deliberately left alone** and reported:
+they are line-class *skip filters* (`hasPrefix("#")`-style: H1/`#!`/`####`
+dropping), or narrower heading predicates (`"## "`/`"### "` only), so
+migrating them would change which lines count as body content. The shared role
+decision (`SectionRoleResolver.decision(for:rulebook:)` / `role(for:)`) now
+backs `SkillSectionBuilder.resolve` and `harvestDomainVocabulary`; one nuance
+is documented — a bare `(( inert ))` on a `## Domain` heading resolves to
+`nil` (documentation) rather than falling back to the derived role, and no
+committed input uses that form.
+
+**Validation:** build clean; fast suite 2742 tests / 350 suites, 0 failures;
+`git diff --stat corpora examples sample-gbrain` **empty** (byte-identical
+outputs); coverage gate green with **no floor re-basing** (the two files whose
+covered code moved out regained coverage via the new tests). Net: +148/−410.

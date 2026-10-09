@@ -38,12 +38,11 @@ public struct MeridianParser {
         let token = trace.push(.parse, "MeridianParser.parse(\(file))")
         defer { trace.pop(token) }
         let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
-        let outline = lines.compactMap { line -> HeadingEntry? in
-            guard let level = line.headingLevel else { return nil }
+        let outline = MarkdownOutline.build(lines).map { section -> HeadingEntry in
             // Strip any trailing `(( … ))` marker so the outline carries the
             // clean heading text; the resolved role surfaces as `kind`.
-            let clean = SkillSectionRole.parseMarker(from: line.text).cleanHeading
-            return HeadingEntry(level: level, text: clean, line: line.number)
+            let clean = SkillSectionRole.parseMarker(from: section.heading).cleanHeading
+            return HeadingEntry(level: section.level, text: clean, line: section.headingLine)
         } + lines.compactMap { line -> HeadingEntry? in
             guard line.headingLevel == nil,
                   !line.statement.lowercased().hasPrefix(lexicon.grammar.merconfig.workflowHeaderPrefix),
@@ -67,6 +66,7 @@ public struct MeridianParser {
         // Frontmatter MUST be the first entry in the file — only blank lines
         // are allowed before the opening `---`. Any non-blank content
         // (including `#` comments) before a frontmatter block is a hard error.
+        // The block itself is parsed by the shared `Frontmatter.parse`.
         var metadata: FileMetadataAST? = nil
         var i = 0
         while i < lines.count, lines[i].isEmpty { i += 1 }
@@ -90,81 +90,14 @@ public struct MeridianParser {
             }
         }
 
-        if firstNonBlank < lines.count && lines[firstNonBlank].text == "---" {
-            let fmStartLine = lines[i].number
-            i += 1
-            var entries: [(key: String, value: String)] = []
-            // Multi-valued frontmatter keys (YAML block sequences and block
-            // scalars) preserve their elements/lines as a single value joined
-            // by `frontmatterListSeparator` ("\n"). `SkillFrontmatter` splits
-            // these back into typed arrays; scalar keys never contain "\n".
-            while i < lines.count {
-                let l = lines[i]
-                if l.text == "---" { i += 1; break }
-                guard l.isContent, let colonIdx = l.text.firstIndex(of: ":") else {
-                    i += 1
-                    continue
-                }
-                let key   = String(l.text[l.text.startIndex ..< colonIdx]).trimmingCharacters(in: .whitespaces)
-                let inline = String(l.text[l.text.index(after: colonIdx)...]).trimmingCharacters(in: .whitespaces)
-                var value = inline
-                var j = i + 1
-
-                if isBlockScalarMarker(inline) {
-                    // `key: |` / `key: >` — collect deeper-indented lines verbatim.
-                    var body: [String] = []
-                    while j < lines.count {
-                        let next = lines[j]
-                        if next.isEmpty { body.append(""); j += 1; continue }
-                        if next.indent > l.indent {
-                            body.append(next.text)
-                            j += 1
-                        } else { break }
-                    }
-                    while body.last == "" { body.removeLast() }
-                    value = body.joined(separator: frontmatterListSeparator)
-                } else if inline.hasPrefix("[") && inline.hasSuffix("]") {
-                    // Inline flow sequence: `key: [a, b, c]`.
-                    let inner = String(inline.dropFirst().dropLast())
-                    value = inner.split(separator: ",")
-                        .map { $0.trimmingCharacters(in: .whitespaces).trimmingCharacters(in: .init(charactersIn: "\"'")) }
-                        .filter { !$0.isEmpty }
-                        .joined(separator: frontmatterListSeparator)
-                } else {
-                    // Peek for a YAML block sequence (`- item` lines) when the
-                    // value is empty; otherwise fold plain continuation lines.
-                    let peek = skipBlanksIndex(from: j, in: lines)
-                    if inline.isEmpty, peek < lines.count,
-                       lines[peek].listMarker != nil, lines[peek].indent >= l.indent {
-                        var items: [String] = []
-                        var k = peek
-                        while k < lines.count {
-                            let next = lines[k]
-                            if next.isEmpty || next.isComment { k += 1; continue }
-                            if next.listMarker != nil, next.indent >= l.indent {
-                                items.append(next.text.trimmingCharacters(in: .whitespaces))
-                                k += 1
-                            } else { break }
-                        }
-                        value = items.joined(separator: frontmatterListSeparator)
-                        j = k
-                    } else {
-                        while j < lines.count {
-                            let next = lines[j]
-                            if next.isEmpty || next.isComment { j += 1; continue }
-                            if next.indent > l.indent, next.listMarker == nil {
-                                value += " " + next.text.trimmingCharacters(in: .whitespaces)
-                                j += 1
-                            } else { break }
-                        }
-                    }
-                }
-
-                i = j
-                if !key.isEmpty { entries.append((key: key, value: value)) }
-            }
-            if !entries.isEmpty {
-                metadata = FileMetadataAST(entries: entries, sourceLine: fmStartLine)
+        // `Frontmatter.parse` requires the fence at the first non-blank line
+        // (the same predicate `firstNonBlank` computed above), so a non-nil
+        // block here is exactly the "frontmatter is first" case.
+        if let frontmatter = Frontmatter.parse(lines) {
+            i = frontmatter.consumed
+            if !frontmatter.entries.isEmpty {
+                metadata = FileMetadataAST(entries: frontmatter.entries,
+                                           sourceLine: lines[firstNonBlank].number)
             }
         }
 
@@ -484,27 +417,8 @@ public struct MeridianParser {
         }
     }
 
-    /// True for YAML block-scalar introducers (`|`, `|-`, `>`, `>-`, `>+`).
-    private func isBlockScalarMarker(_ s: String) -> Bool {
-        let t = s.trimmingCharacters(in: .whitespaces)
-        return t == "|" || t == "|-" || t == "|+" || t == ">" || t == ">-" || t == ">+"
-    }
-
-    /// First non-blank, non-comment line index at or after `from`.
-    private func skipBlanksIndex(from: Int, in lines: [SourceLine]) -> Int {
-        var k = from
-        while k < lines.count, lines[k].isEmpty || lines[k].isComment { k += 1 }
-        return k
-    }
-
     private func camelize(_ raw: String) -> String { IdentifierNaming.lowerCamel(raw) }
 }
-
-/// Separator used to pack multi-valued frontmatter (YAML sequences and block
-/// scalars) into a single `FileMetadataAST` value string. `SkillFrontmatter`
-/// splits on this to recover typed arrays. Newlines never appear in scalar
-/// frontmatter values, so this is an unambiguous delimiter.
-let frontmatterListSeparator = "\n"
 
 private extension String {
     var nilIfEmpty: String? { isEmpty ? nil : self }

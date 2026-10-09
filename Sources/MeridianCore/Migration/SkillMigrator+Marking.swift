@@ -18,7 +18,7 @@ extension SkillMigrator {
         var lines = markdown.components(separatedBy: "\n")
         let bodyStart = frontmatterEnd(lines)
 
-        let headingIdxs = Self.topLevelHeadingIndices(lines, from: bodyStart, headingMatch: headingMatch)
+        let headingIdxs = Self.topLevelHeadingIndices(lines, from: bodyStart, headingMatch: MarkdownOutline.headingMatch)
         guard let firstHeading = headingIdxs.first else {
             let (markdown, aliases) = try wrapHeadinglessNarrativeIfNeeded(lines, bodyStart: bodyStart, knowledge: knowledge)
             return (markdown, aliases, [])
@@ -42,7 +42,7 @@ extension SkillMigrator {
         var splitEdits: [SplitEdit] = []
 
         for (k, idx) in headingIdxs.enumerated() {
-            guard let m = headingMatch(lines[idx]) else { continue }
+            guard let m = MarkdownOutline.headingMatch(lines[idx]) else { continue }
             if m.text.hasSuffix("))") { continue }   // already marked — idempotent
             let end = (k + 1 < headingIdxs.count) ? headingIdxs[k + 1] : lines.count
             let body = lines[(idx + 1)..<end]
@@ -176,11 +176,7 @@ extension SkillMigrator {
     /// Index of the first body line (after a leading `--- … ---` frontmatter
     /// block), or 0 when there is no frontmatter.
     func frontmatterEnd(_ lines: [String]) -> Int {
-        FrontmatterScanner.locate(lines, skipLeadingBlanks: false).map { $0.close + 1 } ?? 0
-    }
-
-    func headingMatch(_ line: String) -> (hashes: String, text: String)? {
-        SkillMarkdownShape.headingMatch(line)
+        Frontmatter.locate(lines, skipLeadingBlanks: false).map { $0.close + 1 } ?? 0
     }
 
     /// Indices of real (top-level) headings from `from` onward, skipping any

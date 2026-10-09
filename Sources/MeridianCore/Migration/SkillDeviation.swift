@@ -235,13 +235,8 @@ public struct SkillDeviation {
     private static func generatedSplitFamilyHeadings(_ portedMeri: String) -> Set<String> {
         var out: Set<String> = []
         var lastRealHeading: String?
-        var inFence = false
-        for raw in bodyLines(of: portedMeri) {
-            let trimmed = raw.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("```") { inFence.toggle(); continue }
-            if inFence { continue }
-            guard let heading = SkillMarkdownShape.headingText(trimmed) else { continue }
-            let clean = SkillSectionRole.parseMarker(from: heading).cleanHeading
+        for section in MarkdownOutline.build(rawLines: bodyLines(of: portedMeri)) {
+            let clean = SkillSectionRole.parseMarker(from: section.heading).cleanHeading
             if clean.contains(SkillMigrator.splitHeadingSeparator) {
                 out.insert(normalizeHeading(clean))
                 if let parent = lastRealHeading { out.insert(normalizeHeading(parent)) }
@@ -254,16 +249,8 @@ public struct SkillDeviation {
 
     private static func originalExplicitInertHeadings(_ source: String) -> Set<String> {
         var out: Set<String> = []
-        var inFence = false
-        for raw in bodyLines(of: source) {
-            let trimmed = raw.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("```") {
-                inFence.toggle()
-                continue
-            }
-            if inFence { continue }
-            guard let heading = SkillMarkdownShape.headingText(trimmed) else { continue }
-            let parsed = SkillSectionRole.parseMarker(from: heading)
+        for section in MarkdownOutline.build(rawLines: bodyLines(of: source)) {
+            let parsed = SkillSectionRole.parseMarker(from: section.heading)
             if parsed.marker?.inert == true {
                 out.insert(normalizeHeading(parsed.cleanHeading))
             }
@@ -280,7 +267,7 @@ public struct SkillDeviation {
 
     private static func bodyLines(of source: String) -> [String] {
         let lines = source.components(separatedBy: "\n")
-        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else {
+        guard let fm = Frontmatter.locate(lines, skipLeadingBlanks: true) else {
             return lines
         }
         var out = Array(lines[..<fm.open])
@@ -297,7 +284,7 @@ public struct SkillDeviation {
     /// comments, list-item lines) but also captures values for the Changed set.
     static func frontmatter(_ source: String) -> [String: String] {
         let lines = source.components(separatedBy: "\n")
-        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: true) else { return [:] }
+        guard let fm = Frontmatter.locate(lines, skipLeadingBlanks: true) else { return [:] }
 
         var result: [String: String] = [:]
         var lastKey: String?
@@ -435,11 +422,7 @@ public struct SkillDeviation {
         var i = 0
         while i < lines.count, lines[i].trimmingCharacters(in: .whitespaces).isEmpty { i += 1 }
         // Skip a leading frontmatter block.
-        if i < lines.count, lines[i].trimmingCharacters(in: .whitespaces) == "---" {
-            var close = i + 1
-            while close < lines.count, lines[close].trimmingCharacters(in: .whitespaces) != "---" { close += 1 }
-            if close < lines.count { i = close + 1 }
-        }
+        if let fm = Frontmatter.locate(lines, skipLeadingBlanks: true) { i = fm.close + 1 }
         var count = 0
         while i < lines.count {
             let t = lines[i].trimmingCharacters(in: .whitespaces)

@@ -926,31 +926,10 @@ public struct Compiler {
                                          trace: ParserTrace,
                                          lexicon: EnglishLexicon) throws -> MerConfigFile {
         let lines = IndentTokenizer().tokenize(source, file: file, trace: trace)
-        var sections: [[SourceLine]] = []
-        var currentIsDomain = false
-        var current: [SourceLine] = []
-
-        func role(for heading: String) -> SkillSectionRole? {
-            let parsed = SkillSectionRole.parseMarker(from: heading)
-            if let markerRole = parsed.marker?.role {
-                return markerRole
-            }
-            return rulebook.role(forHeading: parsed.cleanHeading)
-                ?? SkillSectionRole.builtinRole(forHeading: parsed.cleanHeading)
-        }
-
-        for line in lines {
-            if line.headingLevel != nil {
-                if currentIsDomain, !current.isEmpty { sections.append(current) }
-                current = []
-                currentIsDomain = role(for: line.text) == .domain
-                continue
-            }
-            if currentIsDomain, line.isContent {
-                current.append(line)
-            }
-        }
-        if currentIsDomain, !current.isEmpty { sections.append(current) }
+        let sections = MarkdownOutline.build(lines)
+            .filter { SectionRoleResolver.role(for: $0.heading, rulebook: rulebook) == .domain }
+            .map { $0.bodyLines.filter(\.isContent) }
+            .filter { !$0.isEmpty }
 
         guard !sections.isEmpty else { return MerConfigFile() }
         let parser = MerConfigParser(trace: trace, lexicon: lexicon)
@@ -959,23 +938,7 @@ public struct Compiler {
     }
 
     private func harvestModuleImports(from source: String, file: String) -> [ModuleImportSpec] {
-        let lines = source.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return [] }
-        var entries: [String: String] = [:]
-        var i = 1
-        while i < lines.count {
-            let line = lines[i]
-            if line.trimmingCharacters(in: .whitespaces) == "---" { break }
-            if let colon = line.firstIndex(of: ":") {
-                let key = String(line[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
-                var value = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
-                if value.hasPrefix("\"") && value.hasSuffix("\"") && value.count >= 2 {
-                    value = String(value.dropFirst().dropLast())
-                }
-                entries[key] = value
-            }
-            i += 1
-        }
+        guard let entries = Frontmatter.simpleEntries(source) else { return [] }
         return ModuleResolver.parseImportList(entries["imports"], file: file, line: 1)
     }
 

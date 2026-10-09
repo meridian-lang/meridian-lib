@@ -227,7 +227,7 @@ extension SkillMigrator {
     }
 
     func isWholeLineBacktickedCommand(_ s: String) -> Bool {
-        SkillMarkdownShape.wholeLineBacktickedCommand(s)
+        MarkdownOutline.wholeLineBacktickedCommand(s)
     }
 
     func isChoiceGateLine(_ s: String, lexicon: EnglishLexicon) -> Bool {

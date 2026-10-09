@@ -55,13 +55,13 @@ extension SkillMigrator {
         var headingIndex: Int?
 
         for i in stride(from: target, through: 0, by: -1) {
-            if headingMatch(lines[i]) != nil {
+            if MarkdownOutline.headingMatch(lines[i]) != nil {
                 headingIndex = i
                 break
             }
         }
         guard let idx = headingIndex,
-              let heading = headingMatch(lines[idx]),
+              let heading = MarkdownOutline.headingMatch(lines[idx]),
               !heading.text.hasSuffix("))") else {
             return nil
         }
@@ -113,7 +113,7 @@ extension SkillMigrator {
     /// implicit `input` default, normalized for scope membership.
     func frontmatterParamScope(_ lines: [String]) -> Set<String> {
         var names: Set<String> = []
-        guard let fm = FrontmatterScanner.locate(lines, skipLeadingBlanks: false) else { return names }
+        guard let fm = Frontmatter.locate(lines, skipLeadingBlanks: false) else { return names }
         var inParams = false
         for raw in lines[(fm.open + 1)..<fm.close] {
             let t = raw.trimmingCharacters(in: .whitespaces)

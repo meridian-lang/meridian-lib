@@ -29,7 +29,7 @@ public struct ModuleManifest: Sendable, Equatable {
     /// Parse optional YAML frontmatter from a `module.meridian` (or any meridian
     /// wrapper) source. Returns `nil` when no `module:` key is present.
     public static func parse(fromMeridianSource source: String, file: String) -> ModuleManifest? {
-        guard let metadata = parseFrontmatter(source) else { return nil }
+        guard let metadata = Frontmatter.simpleEntries(source) else { return nil }
         guard let rawID = metadata["module"]?.trimmingCharacters(in: .whitespacesAndNewlines),
               !rawID.isEmpty else { return nil }
         let version = metadata["version"]?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -43,28 +43,6 @@ public struct ModuleManifest: Sendable, Equatable {
     /// Infer a manifest from a package directory name when no explicit manifest exists.
     public static func inferred(id: String) -> ModuleManifest {
         ModuleManifest(id: id)
-    }
-
-    private static func parseFrontmatter(_ source: String) -> [String: String]? {
-        let lines = source.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        guard lines.first?.trimmingCharacters(in: .whitespaces) == "---" else { return nil }
-        var entries: [String: String] = [:]
-        var i = 1
-        while i < lines.count {
-            let line = lines[i]
-            if line.trimmingCharacters(in: .whitespaces) == "---" { break }
-            if let colon = line.firstIndex(of: ":") {
-                let key = String(line[..<colon]).trimmingCharacters(in: .whitespaces).lowercased()
-                var value = String(line[line.index(after: colon)...])
-                    .trimmingCharacters(in: .whitespaces)
-                if value.hasPrefix("\"") && value.hasSuffix("\"") && value.count >= 2 {
-                    value = String(value.dropFirst().dropLast())
-                }
-                entries[key] = value
-            }
-            i += 1
-        }
-        return entries.isEmpty ? nil : entries
     }
 
     private static func parseSealedList(_ raw: String?) -> Set<String> {
