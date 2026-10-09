@@ -3808,3 +3808,11 @@ fast-gate floors they also carry (91.70 / 91.80) pass. They are now 83.00 and
 90.00 with the reasoning inline. The `--full` run itself could not be
 completed end-to-end for a final green (the machine SIGKILLs runs that long),
 so the fast gate is the enforced gate on this tree.
+
+**Final gate evidence (frozen tree, single invocations):**
+`swift build --build-tests` clean and warning-free · `swift test` (all targets,
+including `MeridianSlowIntegrationTests`) **2821 tests / 363 suites, 0
+failures** in one 503-second run · `swift scripts/coverage.swift --gate` green
+with the tightened floors · `meridian decisions --render` in sync · CLI
+byte-compare against the golden · corpus/example outputs unchanged except where
+a phase regenerated them deliberately.
