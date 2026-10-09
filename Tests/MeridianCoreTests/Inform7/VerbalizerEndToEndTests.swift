@@ -69,12 +69,7 @@ struct VerbalizerEndToEndTests {
         let gbrain = try VerbalizerTestSupport.sampleGbrainFixtures()
         let briefing = try #require(gbrain.first { $0.file.lastPathComponent == "briefing.meri" })
         let briefingSource = try String(contentsOf: briefing.file, encoding: .utf8)
-        let briefingModel = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: briefingSource,
-            meridianFile: briefing.file.lastPathComponent,
-            vocabularies: briefing.vocabularies,
-            rulebooks: briefing.rulebooks
-        )
+        let briefingModel = try VerbalizerTestSupport.compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: briefingSource, file: briefing.file.lastPathComponent)], vocabularies: briefing.vocabularies, rulebooks: briefing.rulebooks))[briefing.file.lastPathComponent]!.model
         #expect(!SkillFrontmatter(briefingModel.metadata).triggers.isEmpty)
         #expect(briefingModel.workflows.contains { $0.name.hasPrefix("when ") && $0.name.hasSuffix(" fires") })
         let briefingCanonical = try Verbalizer(model: briefingModel).verbalize()

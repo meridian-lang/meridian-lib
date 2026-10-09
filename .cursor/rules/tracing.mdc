@@ -37,7 +37,7 @@ lives in `docs/08_TRACING.md`; `meridian trace categories` prints it live.
 trace stream. `.timing` accumulates `trace.phase(_:)` spans (bootstrap
 sub-phases, `symbols`/`parse`/`lower`, post-lower `domainDecl` /
 `traceIdentity.*` / `obligationStamp`, `codegen`/`codegen-multi`,
-`manifestRules`/`obligationDocument`, skillpack `compileSkillpack`) and prints
+`manifestRules`/`obligationDocument`, multi-source `compile (N file(s))`) and prints
 an end-of-compile profile; it's opt-in only, so `ParserTrace.capturing()` (no
 explicit `categories:`) never includes it — pass `categories: [.timing]` explicitly to
 assert timing output.
@@ -90,7 +90,7 @@ preserves `[category] …` lines with `▶`/`◀` markers.
   `closeSpan(…, outcome:)` — enable for pre-emission IR checks.
 - **Post-lower:** `Compiler.annotateAndStampObligations` times
   `traceIdentity.hash`, `traceIdentity.annotate`, `obligationStamp` and logs
-  `.codegen` summaries; `compileWithManifest` also times `domainDecl`,
+  `.codegen` summaries; `compile(_:)` also times `domainDecl`,
   `manifestRules`, `obligationDocument`. See `docs/08_TRACING.md` phase map.
 - **Lint:** `LintCommand` uses `@OptionGroup var traceOptions: CLITraceOptions`;
   `MeridianLinter(trace:)` threads trace into `IndentTokenizer` and opens a

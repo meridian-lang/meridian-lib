@@ -26,9 +26,7 @@ extension DiagnosticCode {
 
     /// Single source of truth for catalog accountability tests and `meridian explain-diag`.
     public static let catalog: [DiagnosticCodeEntry] = [
-        // MER0xxx — legacy shims (still emitted via CompilerError projection)
-        .init(.legacySemantic, status: .deprecated),
-        .init(.legacySyntax, status: .deprecated),
+        // MER0xxx — legacy shims
         .init(.notImplemented, status: .deprecated),
         .init(.internalError, status: .active, emitters: ["ASTToIR+Expression.swift"]),
 

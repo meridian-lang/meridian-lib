@@ -538,11 +538,7 @@ struct ExplainCommandTests {
     func orderProcessingSurface() throws {
         let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
         let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        let model = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!.model
         let canonical = try Verbalizer(model: model).verbalize()
         #expect(canonical.contains("To process a order placed by a customer:"))
         #expect(canonical.contains("invoke validateOrder"))
@@ -587,11 +583,7 @@ struct DriftCommandTests {
     func noDrift() async throws {
         let fixture = auditFixture()
         let source = try String(contentsOf: fixture.meri, encoding: .utf8)
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: source,
-            meridianFile: fixture.meri.lastPathComponent,
-            vocabularies: [.init(name: "audit", file: fixture.merconfig.lastPathComponent, source: try String(contentsOf: fixture.merconfig, encoding: .utf8))]
-        )
+        let model = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: fixture.meri.lastPathComponent)], vocabularies: [.init(name: "audit", file: fixture.merconfig.lastPathComponent, source: try String(contentsOf: fixture.merconfig, encoding: .utf8))]))[fixture.meri.lastPathComponent]!.model
         try Verbalizer(model: model).verbalize().write(to: fixture.meri, atomically: true, encoding: .utf8)
         let cmd = try DriftCommand.parse([fixture.meri.path])
 
@@ -602,11 +594,7 @@ struct DriftCommandTests {
     func orderProcessingSynonymDrift() throws {
         let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
         let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        let model = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!.model
         let canonical = try Verbalizer(model: model).verbalize()
         let report = DriftEngine.diff(authored: mer, canonical: canonical)
         #expect((report.counts[.synonymCanonicalized] ?? 0) > 0)
@@ -626,11 +614,7 @@ struct DriftCommandTests {
     func jsonSchemaOrderProcessing() throws {
         let mer = try String(contentsOfFile: ex("examples/order_processing.meridian"), encoding: .utf8)
         let cfg = try String(contentsOfFile: ex("examples/ecommerce.merconfig"), encoding: .utf8)
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        let model = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!.model
         let canonical = try Verbalizer(model: model).verbalize()
         let report = DriftEngine.diff(authored: mer, canonical: canonical)
         #expect((report.counts[.synonymCanonicalized] ?? 0) > 0)
@@ -643,12 +627,7 @@ struct DriftCommandTests {
         let mer = try String(contentsOfFile: ex("corpora/erp/skills/placeorder.meri"), encoding: .utf8)
         let cfg = try String(contentsOfFile: ex("corpora/erp/erp.merconfig"), encoding: .utf8)
         let rb = try String(contentsOfFile: ex("corpora/erp/erp.merrules"), encoding: .utf8)
-        let model = try Compiler(options: .init(trace: .silent())).compileToModel(
-            meridianSource: mer,
-            meridianFile: "placeorder.meri",
-            vocabularies: [.init(name: "erp", file: "erp.merconfig", source: cfg)],
-            rulebooks: [.init(name: "erp", file: "erp.merrules", source: rb)]
-        )
+        let model = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "placeorder.meri")], vocabularies: [.init(name: "erp", file: "erp.merconfig", source: cfg)], rulebooks: [.init(name: "erp", file: "erp.merrules", source: rb)]))["placeorder.meri"]!.model
         let canonical = try Verbalizer(model: model).verbalize()
         let report = DriftEngine.diff(authored: mer, canonical: canonical)
         #expect((report.counts[.meaningBearing] ?? 0) > 0)

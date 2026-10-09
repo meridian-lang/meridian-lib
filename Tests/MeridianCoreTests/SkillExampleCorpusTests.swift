@@ -26,7 +26,7 @@ struct SkillExampleCorpusTests {
             let url = root.appendingPathComponent("examples/skill/\(name).meridian")
             let source = try String(contentsOf: url, encoding: .utf8)
             let ast = try Self.parse(source: source, file: url.path, symbols: symbols)
-            let workflows = try ASTToIR(symbols: symbols, sourceFile: url.path, trace: .silent()).lower(ast)
+            let workflows = try ASTToIR(symbols: symbols, sourceFile: url.path, trace: .silent(), engine: DiagnosticEngine()).lower(ast)
             #expect(!workflows.isEmpty, Comment(rawValue: "Expected workflows in \(name)"))
         }
     }
@@ -50,7 +50,7 @@ struct SkillExampleCorpusTests {
         let workflows = try ASTToIR(
             symbols: symbols,
             sourceFile: "examples/skill/release_orchestrator.meridian",
-            trace: .silent()
+            trace: .silent(), engine: DiagnosticEngine()
         ).lower(ast)
 
         let entry = try #require(workflows.first)
@@ -143,7 +143,7 @@ struct SkillExampleCorpusTests {
         let source = try String(contentsOf: url, encoding: .utf8)
         let file = "examples/skill/\(name).\(ext)"
         let ast = try parse(source: source, file: file, symbols: symbols)
-        return try ASTToIR(symbols: symbols, sourceFile: file, trace: .silent()).lower(ast)
+        return try ASTToIR(symbols: symbols, sourceFile: file, trace: .silent(), engine: DiagnosticEngine()).lower(ast)
     }
 
     @Test("comprehensive vocabulary parses every section")
@@ -394,14 +394,7 @@ struct SkillExampleCorpusTests {
         // `vocabulary: comprehensive_workflows.merconfig` resolves against
         // the vocabulary input.
         let opts = Compiler.Options(emitterOptions: .init(emitSourceLineComments: false))
-        let swift = try Compiler(options: opts).compile(
-            meridianSource: merSource,
-            meridianFile: "large_release_train.meridian",
-            vocabularies: [.init(name: "comprehensive_workflows",
-                                 file: "comprehensive_workflows.merconfig",
-                                 source: cfgSource)],
-            rulebooks: [try Self.exampleRulebookInput()]
-        )
+        let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: merSource, file: "large_release_train.meridian")], vocabularies: [.init(name: "comprehensive_workflows", file: "comprehensive_workflows.merconfig", source: cfgSource)], rulebooks: [try Self.exampleRulebookInput()]))["large_release_train.meridian"]!.swift
         #expect(!swift.isEmpty)
         #expect(swift.contains("public struct"),
                 Comment(rawValue: "Expected generated workflow struct"))

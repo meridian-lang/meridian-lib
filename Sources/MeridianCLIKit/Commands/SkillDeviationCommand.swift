@@ -237,12 +237,9 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
         trace: ParserTrace
     ) throws {
         guard !dependencies.vocabularies.isEmpty || !dependencies.rulebooks.isEmpty else { return }
-        let model = try Compiler(options: .init(trace: trace)).compileToModel(
-            meridianSource: portedMeri,
-            meridianFile: portedFile,
-            vocabularies: dependencies.vocabularies,
-            rulebooks: dependencies.rulebooks
-        )
+        let model = try compiledModel(
+            Compiler(options: .init(trace: trace)),
+            portedMeri, portedFile, dependencies.vocabularies, dependencies.rulebooks)
         let canonical = try trace.phase("verbalize") {
             try Verbalizer(model: model, trace: trace).verbalize()
         }

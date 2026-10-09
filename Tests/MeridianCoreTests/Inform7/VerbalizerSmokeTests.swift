@@ -34,17 +34,9 @@ struct VerbalizerSmokeTests {
         """
         let compiler = Compiler(options: .init(trace: .silent()))
         let vocab = [Compiler.VocabularyInput(name: "test", file: "test.merconfig", source: cfg)]
-        let first = try compiler.compileToModel(
-            meridianSource: source,
-            meridianFile: "test.meridian",
-            vocabularies: vocab
-        )
+        let first = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "test.meridian")], vocabularies: vocab))["test.meridian"]!.model
         let canonical = try Verbalizer(model: first).verbalize()
-        let second = try compiler.compileToModel(
-            meridianSource: canonical,
-            meridianFile: "canonical.meridian",
-            vocabularies: vocab
-        )
+        let second = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: canonical, file: "canonical.meridian")], vocabularies: vocab))["canonical.meridian"]!.model
 
         #expect(IREquality.structurallyEqual(first.workflows, second.workflows), Comment(rawValue: canonical))
         #expect(first.loweredDefinitions.count == 1)

@@ -71,14 +71,17 @@ public struct RunCommand: AsyncParsableCommand {
         // selection — no second `.silent()` re-lower that dropped rulebooks.
         let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: .init(trace: traceInstance))
-        let compiled: (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input)
+        let compiled: Compiler.CompiledFile
         do {
-            compiled = try compiler.compileWithManifest(
-                meridianSource: meridianSource,
-                meridianFile: meridianURL.lastPathComponent,
+            let outputs = try compiler.compile(Compiler.CompilationUnit(
+                sources: [Compiler.SourceInput(source: meridianSource, file: meridianURL.lastPathComponent)],
                 vocabularies: vocabularies,
                 rulebooks: rulebooks
-            )
+            ))
+            guard let file = outputs[meridianURL.lastPathComponent] else {
+                throw CompilerError.codegenError(message: "no compiled output for \(meridianURL.lastPathComponent)")
+            }
+            compiled = file
         } catch {
             throw reportCompilerError(error, sources: diagSources, format: diagnosticsFormat)
         }

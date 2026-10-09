@@ -19,12 +19,12 @@ V is a compiler-side pretty-printer over the same semantic model used for
 Swift emission:
 
 ```swift
-let model = try Compiler(options: .init()).compileToModel(
-    meridianSource: source,
-    meridianFile: "skill.meri",
+let unit = Compiler.CompilationUnit(
+    sources: [Compiler.SourceInput(source: source, file: "skill.meri")],
     vocabularies: vocabularies,
     rulebooks: rulebooks
 )
+let model = try Compiler(options: .init()).compile(unit)["skill.meri"]!.model
 let canonical = try Verbalizer(model: model).verbalize()
 ```
 
@@ -246,19 +246,16 @@ Example summary from `corpora/erp/skills/placeorder.meri`:
 
 ## Public API
 
-### `Compiler.compileToModel`
+### `CompiledFile.model`
 
-`compileToModel` runs the same bootstrap, parse, validation, trigger synthesis,
-and lowering path as `compileWithManifest`, but returns the semantic model before
+Every `Compiler.compile(_:)` result carries the semantic model produced by the
+same bootstrap, parse, validation, trigger synthesis, and lowering pass as the
+emitted Swift, returned before
 Swift emission:
 
 ```swift
-public func compileToModel(
-    meridianSource: String,
-    meridianFile: String = "workflow.meridian",
-    vocabularies: [Compiler.VocabularyInput],
-    rulebooks: [RulebookInput] = []
-) throws -> VerbalizerModel
+let compiled = try compiler.compile(unit)[file]!
+let model: VerbalizerModel = compiled.model
 ```
 
 Use it for tooling that needs compiled meaning: verbalization, drift audits,

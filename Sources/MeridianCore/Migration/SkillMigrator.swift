@@ -155,10 +155,9 @@ public struct SkillMigrator {
         while true {
             trace.log(.skill, "migrate \"\(file)\": strict compile attempt \(attempts)")
             do {
-                _ = try compiler.compile(
-                    meridianSource: candidate, meridianFile: file,
-                    vocabularies: vocabularies, rulebooks: effectiveRulebooks
-                )
+                _ = try compiler.compile(Compiler.CompilationUnit(
+                    sources: [Compiler.SourceInput(source: candidate, file: file)],
+                    vocabularies: vocabularies, rulebooks: effectiveRulebooks))
                 trace.log(.skill, "migrate \"\(file)\": compiled OK after \(attempts) repair attempt(s)")
                 return result(candidate, addedKeys: addedKeys, diagnostics: diagnostics,
                               attempts: attempts, originalLineCount: originalLineCount,
@@ -266,8 +265,9 @@ public struct SkillMigrator {
     /// sees an empty document — harmless, since gbrain-style corpora declare
     /// their domain vocabulary in `.merconfig`/`.merrules`, not inline.
     func knowledgeContext() throws -> Compiler.KnowledgeContext {
-        try compiler.knowledge(forSource: "", sourceFile: "<skill-migrator>",
-                               vocabularies: vocabularies, rulebooks: rulebookInputs)
+        try compiler.bootstrap(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: "", file: "<skill-migrator>")],
+            vocabularies: vocabularies, rulebooks: rulebookInputs))
     }
     // MARK: - Helpers
 

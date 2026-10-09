@@ -119,12 +119,7 @@ enum VerbalizerTestSupport {
     }
 
     static func compileFixture(_ fixture: Fixture, source: String) throws -> VerbalizerModel {
-        try compiler(moduleSearchPaths: fixture.moduleSearchPaths).compileToModel(
-            meridianSource: source,
-            meridianFile: fixture.file.lastPathComponent,
-            vocabularies: fixture.vocabularies,
-            rulebooks: fixture.rulebooks
-        )
+        try compiler(moduleSearchPaths: fixture.moduleSearchPaths).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: fixture.file.lastPathComponent)], vocabularies: fixture.vocabularies, rulebooks: fixture.rulebooks))[fixture.file.lastPathComponent]!.model
     }
 
     static func canonicalRoundTrip(_ fixture: Fixture, source: String) throws -> (VerbalizerModel, String, VerbalizerModel) {
@@ -192,19 +187,9 @@ enum VerbalizerTestSupport {
                                    rulebooks: [RulebookInput] = [], file: String = "test.meri",
                                    moduleSearchPaths: [URL] = []) throws -> (VerbalizerModel, String, VerbalizerModel) {
         let compiler = Self.compiler(moduleSearchPaths: moduleSearchPaths)
-        let first = try compiler.compileToModel(
-            meridianSource: source,
-            meridianFile: file,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
+        let first = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file)], vocabularies: vocabularies, rulebooks: rulebooks))[file]!.model
         let canonical = try Verbalizer(model: first).verbalize()
-        let second = try compiler.compileToModel(
-            meridianSource: canonical,
-            meridianFile: "canonical-\(file)",
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
+        let second = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: canonical, file: "canonical-\(file)")], vocabularies: vocabularies, rulebooks: rulebooks))["canonical-\(file)"]!.model
         return (first, canonical, second)
     }
 

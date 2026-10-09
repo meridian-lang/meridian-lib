@@ -234,8 +234,6 @@ public func evaluate(_ assertion: Assertion, in ctx: AssertionContext) -> String
 
     case .errorKind(let expected):
         switch ctx.compileError {
-        case .syntaxError: return expected == .syntax ? nil : "expected \(expected.rawValue) error, got syntax"
-        case .semanticError: return expected == .semantic ? nil : "expected \(expected.rawValue) error, got semantic"
         case .codegenError: return expected == .codegen ? nil : "expected \(expected.rawValue) error, got codegen"
         case .diagnostics:
             let got = diagnosticErrorKind(ctx.compileError!)
@@ -271,8 +269,6 @@ private func resolve(_ path: String, from baseDir: URL) -> URL {
 
 private func errorMessage(_ err: CompilerError) -> String {
     switch err {
-    case .syntaxError(let msg, _): return msg
-    case .semanticError(let msg, _): return msg
     case .codegenError(let msg): return msg
     case .diagnostics(let ds):
         // Include the message plus any note text so `errorContains` keeps
@@ -286,8 +282,6 @@ private func errorMessage(_ err: CompilerError) -> String {
 
 private func errorLine(_ err: CompilerError) -> Int? {
     switch err {
-    case .syntaxError(_, let r): return r.startLine > 0 ? r.startLine : nil
-    case .semanticError(_, let r): return r.startLine > 0 ? r.startLine : nil
     case .codegenError: return nil
     case .diagnostics(let ds):
         guard let r = ds.first?.primaryRange else { return nil }
@@ -295,19 +289,18 @@ private func errorLine(_ err: CompilerError) -> Int? {
     }
 }
 
-/// Map a `.diagnostics` error to the legacy `CompileErrorKind` for
-/// `expect_error_kind` assertions: codegen for `MER4xxx`, syntax for `MER1xxx`
-/// / `MER0002`, semantic otherwise.
+/// Map a `.diagnostics` error to the `.meridian.test` `CompileErrorKind` for
+/// `expect_error_kind` assertions: codegen for the codegen code, syntax for the
+/// `MER1xxx` parse/structural band, semantic otherwise.
 private func diagnosticErrorKind(_ err: CompilerError) -> CompileErrorKind {
     guard let code = err.diagnostics.first?.code else { return .semantic }
     return code.specCompileErrorKind
 }
 
 extension DiagnosticCode {
-    /// Legacy `.meridian.test` `expect_error_kind` band mapping.
+    /// `.meridian.test` `expect_error_kind` band mapping.
     fileprivate var specCompileErrorKind: CompileErrorKind {
         if self == .codegenError { return .codegen }
-        if self == .legacySyntax { return .syntax }
         if id.hasPrefix("MER1") { return .syntax }
         return .semantic
     }

@@ -254,13 +254,7 @@ struct TraceIdentityPlannerD8Tests {
         The receipt describes the processed widget.
         """
 
-        let result = try Compiler(options: .init(trace: .silent())).compileWithManifest(
-            meridianSource: source,
-            meridianFile: "section-identity.meri",
-            vocabularies: [
-                .init(name: "section", file: "section.merconfig", source: config)
-            ]
-        )
+        let result = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "section-identity.meri")], vocabularies: [ .init(name: "section", file: "section.merconfig", source: config) ]))["section-identity.meri"]!
         let emit = try #require(result.manifest.workflows
             .flatMap { IRWalker.flatPrimitives($0.body) }
             .compactMap { primitive -> EmitIR? in

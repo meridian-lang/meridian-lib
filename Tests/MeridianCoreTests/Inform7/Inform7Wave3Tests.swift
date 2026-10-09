@@ -196,8 +196,7 @@ struct RelationBackingTests {
 
     @Test("relations and verbs are recorded in the manifest")
     func manifestRecordsRelationsAndVerbs() throws {
-        let (_, _, input) = try Compiler().compileWithManifest(
-            meridianSource: """
+        let input = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: verify
             parameters: user, page
@@ -206,9 +205,7 @@ struct RelationBackingTests {
             To verify a page for a user:
               if the user owns the page,
                 complete with reason "ok".
-            """,
-            meridianFile: "w3.meridian",
-            vocabularies: [.init(name: "w3", file: "w3.merconfig", source: wave3Vocab)])
+            """, file: "w3.meridian")], vocabularies: [.init(name: "w3", file: "w3.merconfig", source: wave3Vocab)]))["w3.meridian"]!.manifest
         let json = try ManifestEmitter().emit(input)
         #expect(json.contains("meridian_relations"), Comment(rawValue: json))
         #expect(json.contains("meridian_verbs"), Comment(rawValue: json))

@@ -172,13 +172,6 @@ struct SilentFallbackAuditTests {
                     hits.append(Hit(path: relativePath, line: line, pattern: "inline invoke placeholder",
                                     allowlistKey: "inline invoke", text: trimmed))
                 }
-                if rawLine.contains("code: .legacySemantic")
-                    || rawLine.contains("DiagnosticCode.legacySemantic")
-                    || rawLine.contains("code: .legacySyntax")
-                    || rawLine.contains("DiagnosticCode.legacySyntax") {
-                    hits.append(Hit(path: relativePath, line: line, pattern: "legacy syntax/semantic projection",
-                                    allowlistKey: "legacySemantic", text: trimmed))
-                }
                 if rawLine.contains(#""a \(parameter.kind)""#) {
                     hits.append(Hit(path: relativePath, line: line, pattern: "invented invoke parameter",
                                     allowlistKey: #"a \(parameter.kind)"#, text: trimmed))

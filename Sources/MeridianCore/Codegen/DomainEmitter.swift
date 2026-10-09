@@ -4,7 +4,7 @@ import Foundation
 //
 // Phase 4 deliverable: emit typed Swift structs for each kind declared in the
 // merconfig vocabulary. The compiler threads a `DomainDecl` into
-// `SwiftEmitter.emitFile`, which delegates here.
+// `SwiftEmitter.emit`, which delegates here.
 //
 // Generation rules:
 //   * Scalar parents (`String|Number|Money|Date|DateTime|Boolean|Duration|

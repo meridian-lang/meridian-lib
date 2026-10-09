@@ -105,7 +105,7 @@ struct TraceTemporalInform7Tests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         return try lowering.lowerRegisteredDefinitions()
     }
@@ -516,7 +516,7 @@ struct BrokenTwinDiagnosticsTests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         do {
             _ = try lowering.lower(file)
             _ = try lowering.lowerRegisteredDefinitions()
@@ -535,7 +535,7 @@ struct BrokenTwinDiagnosticsTests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         let defs = try lowering.lowerRegisteredDefinitions()
         #expect(!defs.isEmpty)
@@ -764,7 +764,13 @@ struct BrokenTwinDiagnosticsTests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(merBody, file: "t.meridian")
-        return try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent()).lower(file)
+        // The lowerer's batch engine collects; this helper checkpoints so the
+        // `requireDiagnostics` contract (errors thrown as `CompilerError`) holds.
+        let engine = DiagnosticEngine(trace: .silent())
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(),
+                                    engine: engine).lower(file)
+        try engine.throwIfErrors()
+        return workflows
     }
 }
 
@@ -1070,7 +1076,12 @@ struct TraceStatisticalInform7Tests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        guard let workflow = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent()).lower(file).first else {
+        // The lowerer's batch engine collects; this helper checkpoints so
+        // direct-lower tests still observe errors as thrown `CompilerError`s.
+        let engine = DiagnosticEngine(trace: .silent())
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: engine).lower(file)
+        try engine.throwIfErrors()
+        guard let workflow = workflows.first else {
             throw CompilerError.codegenError(message: "expected lowered workflow")
         }
         return workflow
@@ -1080,7 +1091,7 @@ struct TraceStatisticalInform7Tests {
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         _ = try lowering.lower(file)
         return try lowering.lowerRegisteredDefinitions()
     }

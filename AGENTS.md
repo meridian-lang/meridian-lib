@@ -496,7 +496,7 @@ as string boundaries splits arguments at possessives. Double-quote only.
 ### 10. Vendored `StringTemplate` powers codegen
 
 `SwiftEmitter` uses the vendored `StringTemplate` builder in
-`Sources/MeridianCore/modelhike-vendored/`. `emitFile` calls
+`Sources/MeridianCore/modelhike-vendored/`. `emit` calls
 `toString(separator: "\n")`, which recursively flattens nested templates.
 
 ### 11. `StringConvertibleBuilder` must stay `public`
@@ -668,7 +668,7 @@ field first, then thread through the Verbalizer. Extensible synonym tables
 
 ### 21. `Verbalizer` / `SwiftEmitter` validate IR and throw
 
-`Verbalizer.verbalize()` and `SwiftEmitter.emitFile()` run `IRValidator` before
+`Verbalizer.verbalize()` and `SwiftEmitter.emit()` run `IRValidator` before
 printing Canonical English or Swift. Malformed hand-built IR must surface as
 structured `MER4002` diagnostics, not placeholder text, fallback comments, or
 best-effort output. Thread the throwing API through callers.

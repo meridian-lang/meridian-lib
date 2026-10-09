@@ -206,8 +206,8 @@ struct ReachableCoverageTailTests {
     @Test("DiagnosticRenderer: warning/note labels, color escapes, snippet + caret")
     func diagnosticRenderHuman() {
         let r = SourceRange(file: "f.meridian", line: 2, column: 3)
-        let warn = Diagnostic.warning(.legacySemantic, message: "careful", range: r)
-        let note = Diagnostic(code: .legacySemantic, severity: .note, message: "fyi", primaryRange: r)
+        let warn = Diagnostic.warning(.internalError, message: "careful", range: r)
+        let note = Diagnostic(code: .internalError, severity: .note, message: "fyi", primaryRange: r)
         // color:true exercises the ANSI wrap() branch; sources present → snippet.
         let renderer = DiagnosticRenderer(
             sources: ["f.meridian": "line one\nline two is longer\nline three"],
@@ -222,12 +222,12 @@ struct ReachableCoverageTailTests {
     func diagnosticRenderSnippetGuards() {
         let r = SourceRange(file: "missing.meridian", line: 1, column: 1)
         let noSource = DiagnosticRenderer().render(
-            Diagnostic.error(.legacySemantic, message: "x", range: r))
+            Diagnostic.error(.internalError, message: "x", range: r))
         #expect(!noSource.contains("|"))   // no snippet block
 
         let oob = SourceRange(file: "f.meridian", line: 999, column: 1)
         let r2 = DiagnosticRenderer(sources: ["f.meridian": "only one line"])
-            .render(Diagnostic.error(.legacySemantic, message: "y", range: oob))
+            .render(Diagnostic.error(.internalError, message: "y", range: oob))
         #expect(!r2.contains("only one line"))
     }
 
@@ -235,7 +235,7 @@ struct ReachableCoverageTailTests {
     func diagnosticRenderJSON() throws {
         let r = SourceRange(file: "f.meridian", line: 1, column: 1)
         let d = Diagnostic(
-            code: .legacySemantic, severity: .error, message: "m", primaryRange: r,
+            code: .internalError, severity: .error, message: "m", primaryRange: r,
             suggestions: [Suggestion(replacement: "fix", range: r, rationale: "try fix")],
             notes: [DiagnosticNote("a note", range: r)],
             help: "do the thing")

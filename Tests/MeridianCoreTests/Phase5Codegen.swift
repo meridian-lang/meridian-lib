@@ -39,7 +39,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "iterate_demo.meridian"
         )
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
 
         // The optional-chained accessor — no force casts, no
         // `Value.opaque(AnyHashableSendable(...))` wrapping (`Value` is already
@@ -73,7 +73,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "assert_demo.meridian"
         )
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
 
         // Must funnel through runtime.assert so the `assert.passed` / `assert.failed`
         // event still fires for observers; no raw `guard … else { throw }` form.
@@ -98,7 +98,7 @@ struct Phase5Codegen {
             mode: .strict,
             sourceFile: "assert_otherwise.meridian"
         )
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
 
         // Failure path — recovery block runs after the failed-event fires.
         #expect(out.contains("if !(state.get(\"verdictIsValid\")) {"))

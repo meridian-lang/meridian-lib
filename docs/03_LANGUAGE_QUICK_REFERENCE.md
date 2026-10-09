@@ -1401,12 +1401,13 @@ Classification keyword sets are **data**: built-in defaults live in
 
 `sample-gbrain/RESOLVER.meri` is the trigger → skill dispatcher.
 
-### Skillpack compilation
+### Multi-source compilation
 
-`Compiler.compileSkillpack([SkillpackInput], vocabularies:rulebooks:)` compiles a
-set of `.meri` files against shared vocabularies + rulebooks, pre-registering
-every file's workflows as phrase stubs first so cross-skill invocations and the
-resolver resolve across files. Single-file `compile(…)` remains the default.
+`Compiler.compile(Compiler.CompilationUnit(sources:vocabularies:rulebooks:))`
+compiles one-or-many `.meri` files against shared vocabularies + rulebooks,
+pre-registering every source's workflows as phrase stubs first so cross-file
+invocations and the resolver resolve across files. A single-source unit is the
+common case; the result is keyed by `SourceInput.file`.
 
 ### Markdown tables (executable)
 

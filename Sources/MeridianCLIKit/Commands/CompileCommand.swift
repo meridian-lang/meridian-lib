@@ -4,7 +4,7 @@ import MeridianCore
 import MeridianRuntime
 import SwiftFormat
 
-public struct CompileCommand: AsyncParsableCommand {
+public struct CompileCommand: AsyncParsableCommand, ModulePathSupporting {
     public init() {}
 
     public static let configuration = CommandConfiguration(
@@ -117,8 +117,7 @@ public struct CompileCommand: AsyncParsableCommand {
             ),
             trace: traceInstance,
             moduleSearchPaths: moduleSearchPaths,
-            anchorDirectory: meridianURL.deletingLastPathComponent(),
-            emitMultiFile: multiFile
+            anchorDirectory: meridianURL.deletingLastPathComponent()
         )
         let compiler = Compiler(options: compilerOpts)
 
@@ -135,14 +134,17 @@ public struct CompileCommand: AsyncParsableCommand {
             diagPaths[url.lastPathComponent] = url
         }
 
-        let compiled: (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input)
+        let compiled: Compiler.CompiledFile
         do {
-            compiled = try compiler.compileWithManifest(
-                meridianSource: meridianSource,
-                meridianFile:   meridianURL.lastPathComponent,
-                vocabularies:   vocabularies,
-                rulebooks:      rulebooks
-            )
+            let outputs = try compiler.compile(Compiler.CompilationUnit(
+                sources: [Compiler.SourceInput(source: meridianSource, file: meridianURL.lastPathComponent)],
+                vocabularies: vocabularies,
+                rulebooks: rulebooks
+            ))
+            guard let file = outputs[meridianURL.lastPathComponent] else {
+                throw CompilerError.codegenError(message: "no compiled output for \(meridianURL.lastPathComponent)")
+            }
+            compiled = file
         } catch {
             if fix { applyQuickFixes(error, sources: diagSources, paths: diagPaths, write: write) }
             throw reportCompilerError(error, sources: diagSources, format: diagnosticsFormat)
@@ -175,11 +177,11 @@ public struct CompileCommand: AsyncParsableCommand {
         // Write output
         try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true)
         let stem = meridianURL.deletingPathExtension().lastPathComponent
-        if multiFile, let split = compiled.multiFile {
+        if multiFile {
             let domainFile = outputURL.appendingPathComponent("Domain.swift")
             let workflowsFile = outputURL.appendingPathComponent("Workflows.swift")
-            try split.domainSource.write(to: domainFile, atomically: true, encoding: .utf8)
-            try split.workflowsSource.write(to: workflowsFile, atomically: true, encoding: .utf8)
+            try compiled.domainSwift.write(to: domainFile, atomically: true, encoding: .utf8)
+            try compiled.workflowsSwift.write(to: workflowsFile, atomically: true, encoding: .utf8)
             print("✓ \(domainFile.path)")
             print("✓ \(workflowsFile.path)")
         } else {
@@ -214,12 +216,7 @@ public struct CompileCommand: AsyncParsableCommand {
         let manifestFile = outputURL.appendingPathComponent(stem + ".meridian.manifest.json")
         try manifest.write(to: manifestFile, atomically: true, encoding: .utf8)
 
-        let model = try compiler.compileToModel(
-            meridianSource: meridianSource,
-            meridianFile: meridianURL.lastPathComponent,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
+        let model = compiled.model
         let sidecar = try IRSidecarEmitter(trace: traceInstance).emit(
             workflows: model.workflows,
             verbalizer: Verbalizer(model: model, trace: traceInstance),

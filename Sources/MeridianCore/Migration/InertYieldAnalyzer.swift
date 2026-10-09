@@ -127,9 +127,9 @@ public struct InertYieldAnalyzer {
     /// role-resolution rules as the real `SkillSectionBuilder` (via
     /// `SkillMetrics.analyze`) — and classify its trial-lowering yield.
     public func analyze(_ meriSource: String, file: String) throws -> FileYield {
-        let knowledge = try compiler.knowledge(
-            forSource: meriSource, sourceFile: file,
-            vocabularies: vocabularies, rulebooks: rulebookInputs)
+        let knowledge = try compiler.bootstrap(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: meriSource, file: file)],
+            vocabularies: vocabularies, rulebooks: rulebookInputs))
         let metrics = SkillMetrics.analyze(meriSource, rulebook: knowledge.rulebook, lexicon: knowledge.lexicon)
         let sections = metrics.inertDetails.map { analyzeSection($0, knowledge: knowledge) }
         return FileYield(file: file, sections: sections)

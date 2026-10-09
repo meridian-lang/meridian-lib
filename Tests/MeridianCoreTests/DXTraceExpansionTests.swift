@@ -20,7 +20,7 @@ struct DXTraceExpansionTests {
         try String(contentsOf: examplesURL().appendingPathComponent(name), encoding: .utf8)
     }
 
-    @Test("compileWithManifest emits post-lower timing phases when .timing is enabled")
+    @Test("compile(_:) emits post-lower timing phases when .timing is enabled")
     func postLowerTimingPhases() throws {
         let mer = try load("order_processing.meridian")
         let cfg = try load("ecommerce.merconfig")
@@ -29,11 +29,7 @@ struct DXTraceExpansionTests {
         _ = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
             trace: cap.trace
-        )).compileWithManifest(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!
 
         let joined = cap.lines().joined(separator: "\n")
         #expect(joined.contains("domainDecl:"))
@@ -42,7 +38,7 @@ struct DXTraceExpansionTests {
         #expect(joined.contains("manifestRules:"))
     }
 
-    @Test("compileWithManifest emits codegen summaries for post-lower passes")
+    @Test("compile(_:) emits codegen summaries for post-lower passes")
     func postLowerCodegenSummaries() throws {
         let mer = try load("order_processing.meridian")
         let cfg = try load("ecommerce.merconfig")
@@ -51,11 +47,7 @@ struct DXTraceExpansionTests {
         _ = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
             trace: cap.trace
-        )).compileWithManifest(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!
 
         let lines = cap.lines()
         #expect(lines.contains { $0.contains("domain decl:") })
@@ -63,7 +55,7 @@ struct DXTraceExpansionTests {
         #expect(lines.contains { $0.contains("manifest rules:") })
     }
 
-    @Test("compileSkillpack mirrors single-file timing spans")
+    @Test("multi-source compile mirrors single-file timing spans")
     func skillpackTimingSpans() throws {
         let cfg = """
         === vocabulary ===
@@ -80,40 +72,32 @@ struct DXTraceExpansionTests {
         """
         let cap = ParserTrace.capturing(categories: [.timing])
         let compiler = Compiler(options: .init(trace: cap.trace))
-        _ = try compiler.compileSkillpack(
-            [
-                .init(source: skillA, file: "audit.meri"),
-                .init(source: skillB, file: "review.meri"),
-            ],
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
+        _ = try compiler.compile(Compiler.CompilationUnit(sources: [ .init(source: skillA, file: "audit.meri"), .init(source: skillB, file: "review.meri"), ], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))
 
         let joined = cap.lines().joined(separator: "\n")
-        #expect(joined.contains("compileSkillpack (2 file(s))"))
+        #expect(joined.contains("compile (2 file(s))"))
         #expect(joined.contains("parse audit.meri:"))
         #expect(joined.contains("parse review.meri:"))
         #expect(joined.contains("lower:"))
         #expect(joined.contains("── compile profile ──"))
     }
 
-    @Test("multi-file emit logs codegen-multi phase and summary")
+    @Test("multi-file split is traced under the codegen phase and summary")
     func multiFileCodegenTrace() throws {
         let mer = try load("order_processing.meridian")
         let cfg = try load("ecommerce.merconfig")
         let cap = ParserTrace.capturing(categories: [.timing, .codegen])
-        var opts = Compiler.Options(
+        let opts = Compiler.Options(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
-            trace: cap.trace,
-            emitMultiFile: true
+            trace: cap.trace
         )
-        _ = try Compiler(options: opts).compileMultiFile(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
+        _ = try Compiler(options: opts).compile(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")],
             vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        ))
 
         let lines = cap.lines()
-        #expect(lines.contains { $0.contains("codegen-multi:") })
+        #expect(lines.contains { $0.contains("codegen:") })
         #expect(lines.contains { $0.contains("multi-file emit:") })
     }
 
@@ -127,11 +111,7 @@ struct DXTraceExpansionTests {
         let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"
         let cap = ParserTrace.capturing(categories: [.codegen, .timing])
         let compiler = Compiler(options: .init(trace: cap.trace))
-        let model = try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
+        let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["audit.meridian"]!.model
         _ = try IRSidecarEmitter(trace: cap.trace).emit(
             workflows: model.workflows,
             verbalizer: Verbalizer(model: model, trace: cap.trace),
@@ -156,11 +136,7 @@ struct DXTraceExpansionTests {
         let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"
         let cap = ParserTrace.capturing(categories: [.verbalizer])
         let compiler = Compiler(options: .init(trace: cap.trace))
-        let model = try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
+        let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["audit.meridian"]!.model
         _ = try Verbalizer(model: model, trace: cap.trace).verbalize()
 
         let lines = cap.lines()
@@ -191,11 +167,7 @@ struct DXTraceExpansionTests {
         let cap = ParserTrace.capturing(categories: [.validation, .codegen])
         cap.trace.outputFormat = .jsonl
 
-        _ = try Compiler(options: .init(trace: cap.trace)).compileWithManifest(
-            meridianSource: mer,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
+        _ = try Compiler(options: .init(trace: cap.trace)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["audit.meridian"]!
 
         var records: [[String: Any]] = []
         for line in cap.lines() {

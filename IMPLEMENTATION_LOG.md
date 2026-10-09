@@ -3155,3 +3155,78 @@ green after re-basing `IREquality.swift` (facade, observed 46.67% → floor
 93.50).
 
 **STATUS:** Phase 2 DONE — Phase 3 (one compiler pipeline) next.
+
+## 2026-10-09 09:06 UTC — Simplification Phase 3: one compiler pipeline
+
+**Scope:** Collapse the six overlapping `Compiler` entry points
+(`compile(…vocabularies:)`, `compileWithManifest`, `compileMultiFile`,
+`compileToModel`, `compileSkillpack`, `knowledge`) into one pipeline, delete
+`SwiftEmitter.emitFile`/`MultiFileOutput`/`emitMultiFile` in favour of a single
+`emit(…) -> Output{combined,domain,workflows}`, make `DiagnosticEngine`
+non-optional through `ASTToIR`/`DeonticLowering`/`Compiler`, delete the
+`legacySemantic`/`legacySyntax` codes, and derive `MeridianCommandCatalog` from
+`MeridianCLIRegistration`. `Parser/`, `Lowering/` semantics and `ParserTrace`
+threading were explicitly out of scope.
+
+**Final API:** `compile(_ unit: CompilationUnit) -> [String: CompiledFile]`
+(`CompiledFile{swift,domainSwift,workflowsSwift,manifest,model}`),
+`bootstrap(_ unit:) -> KnowledgeContext`, the unchanged one-liner
+`compile(meridianSource:meridianFile:merconfigSource:merconfigFile:) -> String`,
+plus `emit(workflows:constantsDecl:)` / `emitManifest(_:)` for the Phase 2
+forcing function. `SourceInput` replaces `SkillpackInput`; one multi-source
+`CompilationUnit` now covers the skillpack case.
+
+**Decisions / judgement calls:**
+- `ASTToIR.lower` does *not* checkpoint: the batch engine keeps collecting and
+  `Compiler`'s existing `throwIfErrors()` checkpoints throw. Direct-lower tests
+  that assert a throw now checkpoint explicitly (`engine.throwIfErrors()` after
+  `lower`), preserving every assertion. The `validateToolIDs` "no engine → skip"
+  guard was dropped (always report); direct-lower fixtures that use undeclared
+  host tools declare `allow-fallbacks: unknown-tools`-equivalent policy instead.
+- `SwiftEmitter.emit` renders the workflows-only part from an emitter copy with
+  an empty `definitionsByName` and a `nil` domain, exactly matching the old
+  `emitMultiFile` parts (byte-identical, verified against the pre-change CLI).
+- `CompileCommand` now compiles once and writes `domainSwift`/`workflowsSwift`
+  for `--multi-file`; the manifest is still re-emitted from the *formatted*
+  Swift, and the IR sidecar now comes from the same compile's `model`.
+- `MeridianTestRunner` no longer re-runs parse+lower for IR assertions — the
+  unified compile's `CompiledFile.model.workflows` is the IR.
+- `MeridianCommandCatalog.leafCommands` is derived (registration order,
+  `purpose` = abstract, nested children recursed, `isTopLevelAlias` = dash-joined
+  name matches a nested path, `supportsModulePath` = `ModulePathSupporting`
+  conformance adopted by canonicalize/check/compile/explain).
+
+**Verification:**
+- `swift build --build-tests` — zero errors.
+- `swift test --skip MeridianSlowIntegrationTests` — 2729 tests / 349 suites pass.
+- CLI forcing function: `compile examples/order_processing.meridian --merconfig
+  examples/ecommerce.merconfig` output is byte-identical to
+  `examples/golden/order_processing_expected.swift`, and the manifest / IR
+  sidecar / `--multi-file` Domain+Workflows / formatted (namespace auto) runs are
+  byte-identical to the pre-change implementation. (The bare
+  `swift run meridian compile examples/order_processing.meridian` in the plan
+  fails on `main` too: auto-discovery in `examples/` loads every `.merconfig`
+  and trips duplicate-instance MER3003; `--merconfig` is required.)
+- `--filter CLIRunAndTestCommandSlowTests`, `--filter Phase4GoldenDiff`,
+  `--filter GeneratedSwiftTypecheckSlowTests` — pass.
+- `scripts/coverage.swift --gate` — green (Compiler 92.38% vs 91.20 floor;
+  MeridianCommandCatalog 100.00% after adding the purpose-fallback test).
+- `CompositionGalleryEvalTests` is SIGKILLed by the shared machine *before and
+  after* this change (it drives a real `swift build`); re-verified on the stashed
+  baseline.
+
+**Test expectation changes (all legitimate API/pipeline moves):**
+- `DXTraceExpansionTests`: `compileSkillpack (2 file(s))` → `compile (2 file(s))`;
+  the `codegen-multi` phase assertion became `codegen:` + the emitter's
+  `multi-file emit:` log (the split is now always produced).
+- `ASTToIRDeepCoverageTests`: "…with no batch engine throws" → "…throws at the
+  pipeline checkpoint"; the `lowerNoEngine` helper became `lowerCheckpointing`.
+- `ReachableCoveragePhase4Tests` / `AssertionsCoverageTests` /
+  `ReachableCoverageTailTests`: legacy `CompilerError.syntaxError/semanticError`
+  and `.legacySemantic` replaced with `.diagnostics([...])` carriers
+  (`MER1xxx` still maps to the `.syntax` kind band).
+- `SilentFallbackAuditTests` legacy-projection scan pattern + the
+  `SILENT_FALLBACK_ALLOWLIST.md` row and the `docs/14` MER0001/MER0002 rows
+  removed with the codes.
+
+---

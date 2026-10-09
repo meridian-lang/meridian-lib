@@ -27,7 +27,7 @@ JSONL — not on `ParserTrace` logs. `--trace` does not enable semantic capture;
 see [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).
 
 The bridge from compile to run for all three layers is the generated source map:
-`compileWithManifest` records source anchors; runtime observers and trace stores
+`Compiler.compile(_:)` records source anchors; runtime observers and trace stores
 carry them forward.
 
 ---
@@ -87,7 +87,7 @@ Enable `all` to get everything.
 
 ### Timing & the compile profile
 
-`Compiler.compileWithManifest` wraps the whole pipeline in a top-level `compile`
+`Compiler.compile(_:)` wraps the whole pipeline in a top-level `compile`
 span and times each phase via `trace.phase(_:)`. At end-of-compile it emits a
 profile under `.timing`:
 
@@ -125,13 +125,13 @@ categories that carry detail lines. Group prefixes (`phrase`, `all`) still apply
 | **Codegen** | `codegen`, `codegen-multi` | `codegen`, `validation` | Swift + optional multi-file emit (`multi-file emit:` summary). |
 | **Manifest** | `manifestRules`, `obligationDocument` | `codegen`, `timing` | Rule manifest entries + versioned obligation JSON (`obligation document:` summary). |
 | **Sidecar** | `irSidecar` | `codegen`, `timing` | `IRSidecarEmitter` canonical IR sidecar (`emit IR sidecar` span). |
-| **Skillpack** | `compileSkillpack (N file(s))` + per-file `parse <file>` | `timing`, `parse`, `lower` | Batch compile shares one profile; each input file gets its own parse phase. |
+| **Multi-source** | `compile (N file(s))` + per-file `parse <file>` | `timing`, `parse`, `lower` | Batch compile shares one profile; each input file gets its own parse phase. |
 | **Verbalizer** | (no `trace.phase` — workflow/primitive spans) | `verbalizer`, `validation` | `meridian explain`, `DriftEngine`, `IRSidecarEmitter` callers. Per-workflow `▶`/`◀` + cheap per-primitive labels. |
 | **Lint** | (no `trace.phase` — `lint <file>` span) | `diagnostics`, `tokenize` | `meridian lint` threads trace through `IndentTokenizer`; lint findings mirror under `.diagnostics`. |
 | **Drift** | (hunk classification spans) | `drift`, `verbalizer` | `meridian drift`, `skill-deviation`. |
 
 Post-lower phases run inside `annotateAndStampObligations` and are shared by
-`compileWithManifest`, `compileToModel`, and `compileSkillpack`.
+`compile(_:)`, `bootstrap(_:)`, and the one-source `compile(meridianSource:…)` wrapper.
 
 ### Diagnostics mirroring
 
@@ -158,7 +158,7 @@ compile-time pipeline with `--trace` and no silent gaps:
 | Emit | `codegen` | Swift, manifest, domain, multi-file, and IR-sidecar emission decisions are visible. Trace text is redacted before it is written. |
 | Verbalize | `verbalizer` | `meridian explain` and any API caller using `Verbalizer.verbalize()` can trace per-workflow and per-primitive canonical source generation. |
 | Lint | `diagnostics`, `tokenize` | `meridian lint` opens a `lint <file>` span, threads tokenizer decisions, and mirrors lint findings. |
-| Skillpack | `timing`, `parse` | `compileSkillpack (N file(s))` top-level span and per-file `parse <file>` phases appear under `.timing`. |
+| Multi-source | `timing`, `parse` | `compile (N file(s))` top-level span and per-file `parse <file>` phases appear under `.timing`. |
 | Drift | `drift` | `meridian drift` and `skill-deviation` can trace authored-vs-canonical hunk classification. |
 
 ---
@@ -365,7 +365,7 @@ MeridianParser(symbols: st, trace: trace).parse(source, file: "order.meridian")
 StatementParser(symbols: st, trace: trace).parseBlock(lines)
 ExpressionParser(symbols: st, trace: trace).parse(text)
 try ASTToIR(symbols: st, sourceFile: "order.meridian", trace: trace).lower(file)
-try SwiftEmitter(options: emitterOpts, trace: trace).emitFile(workflows: workflows, …)
+try SwiftEmitter(options: emitterOpts, trace: trace).emit(workflows: workflows, …)
 try ManifestEmitter(trace: trace).emit(…)
 try SkillMigrator(compiler: compiler, vocabularies: vocabs, trace: trace).migrate(markdown, file: "skill.meri")
 SkillMarkdownImporter(trace: trace).preview(markdown, name: "…")
@@ -630,7 +630,7 @@ records connect as follows (see also [14_DEVELOPER_EXPERIENCE.md](14_DEVELOPER_E
 ```
 meridian compile --trace … --trace-format jsonl
   → ParserTrace.correlationID (stderr banner + JSONL "corr")
-  → compileWithManifest source map (meridian line ↔ generated Swift line)
+  → Compiler.sourceMap source map (meridian line ↔ generated Swift line)
 meridian run …
   → Runtime.runID (Event "run_id", TraceRecord "run")
   → stable step paths (TraceRecord "step", Event payload "step")

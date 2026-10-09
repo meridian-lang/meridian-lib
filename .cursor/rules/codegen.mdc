@@ -10,7 +10,8 @@ alwaysApply: false
 
 - Uses vendored `StringTemplate` (`Sources/MeridianCore/modelhike-vendored/`).
 - Each `emit*` method returns a `StringTemplate`.
-- Top-level: `emitFile(…).toString(separator: "\n")`.
+- Top-level: `emit(…)` renders `combined`/`domain`/`workflows` via
+  `toString(separator: "\n")`.
 - `Ctx` carries indent depth. `.s` is the current indent string. `.in(1)` is
   one level deeper.
 
@@ -28,7 +29,7 @@ block-scalar `triggers:` value (multi-line) is the canonical regression case.
 
 ### Namespacing (`Options.namespaceEnum`)
 
-When set, `emitFile` wraps all generated declarations (domain types,
+When set, `emit` wraps all generated declarations (domain types,
 `Constants`, `Instances`, workflow + trigger structs) in
 `public enum <name> { … }`. The file header (imports + private
 `meridianStringify`) stays at file scope; module-level `constants`/`instances`

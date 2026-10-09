@@ -4,7 +4,7 @@ import MeridianCore
 import MeridianRuntime
 import MeridianTools
 
-public struct CanonicalizeCommand: AsyncParsableCommand {
+public struct CanonicalizeCommand: AsyncParsableCommand, ModulePathSupporting {
     public init() {}
 
     public static let configuration = CommandConfiguration(
@@ -45,12 +45,7 @@ public struct CanonicalizeCommand: AsyncParsableCommand {
         let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: compilerOptions(for: loaded, trace: traceInstance))
         do {
-            let model = try compiler.compileToModel(
-                meridianSource: loaded.meridianSource,
-                meridianFile: loaded.meridianURL.lastPathComponent,
-                vocabularies: loaded.vocabularies,
-                rulebooks: loaded.rulebooks
-            )
+            let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
                 try Verbalizer(model: model, trace: traceInstance).verbalize()
             }

@@ -29,7 +29,7 @@ source/tests; see matrix row DX-DEO-002.
 | `Sources/MeridianCore/Lowering/DeonticLowering.swift` | Deontic IR application without dedicated trace spans (DX-DEO-002) |
 | `Sources/MeridianCore/Lowering/ASTToIR.swift:validateDefinitionProperties` | Strict `MER2004` among declared kind properties (DX-LOWER-002) |
 | `Sources/MeridianCore/Diagnostics/MeridianLinter.swift` | Lint-only anaphora heuristic + no trace (DX-LINT-002/003) |
-| `Sources/MeridianCore/Compiler.swift:compileWithManifest` | Post-lower `TraceIdentityPlanner` / `NormIdStamper` traced via `annotateTraceIdentity` (DX-TRACEID-002, DX-OBL-003 done) |
+| `Sources/MeridianCore/Compiler.swift:compile` | Post-lower `TraceIdentityPlanner` / `NormIdStamper` traced via `annotateTraceIdentity` (DX-TRACEID-002, DX-OBL-003 done) |
 
 ---
 
@@ -101,7 +101,7 @@ source/tests; see matrix row DX-DEO-002.
 | DX-OBL-002 | post-lower | `IR/NormIdentity.swift:NormIdStamper` | — | MER-DEO-006 | strict | n/a | n/a | DeonticInform7Tests | done |
 | DX-OBL-003 | post-lower | `NormIdStamper`, `Compiler.annotateTraceIdentity` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
 | DX-TRACEID-001 | post-lower | `TraceIdentityPlanner.swift` | — | MER-TMP-020 | strict | structural help | n/a | TraceIdentityPlannerTests | done |
-| DX-TRACEID-002 | post-lower | `TraceIdentityPlanner.annotate`, `Compiler.compileWithManifest` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
+| DX-TRACEID-002 | post-lower | `TraceIdentityPlanner.annotate`, `Compiler.compile(_:)` | `timing`, `codegen` | — | none | n/a | n/a | DXTraceExpansionTests, TraceEnabledCompileTests | done |
 | DX-VAL-001 | validation | `IRValidator.swift` | `validation` | MER4002, MER3018 | none | help + `phase: validation` | trace secrets redacted | IRValidatorTests, ObservabilityFaultInjectionTests | done |
 
 ## Codegen / manifest / sidecar
@@ -112,7 +112,7 @@ source/tests; see matrix row DX-DEO-002.
 | DX-CG-002 | codegen | `DomainEmitter.swift` | `codegen` | MER-DOM | none | n/a | trace secrets redacted | DomainEmitterTests | done |
 | DX-CG-003 | codegen | `IRSidecarEmitter.swift` | `codegen`, `timing` | — | none | n/a | trace secrets redacted | DXTraceExpansionTests, IRSidecarTests | done |
 | DX-MAN-001 | manifest | `ManifestEmitter.swift` | `codegen` | — | none | n/a | trace secrets redacted | ManifestEmitterTests | done |
-| DX-MAN-002 | manifest | `Compiler.compileWithManifest` | `codegen` | — | none | n/a | trace secrets redacted | CompileWithManifestTests | done |
+| DX-MAN-002 | manifest | `Compiler.compile(_:)` | `codegen` | — | none | n/a | trace secrets redacted | CodegenManifestCoverageTests | done |
 
 ## Verbalizer / linter
 

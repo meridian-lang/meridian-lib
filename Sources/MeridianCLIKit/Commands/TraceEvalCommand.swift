@@ -154,11 +154,10 @@ enum TraceEvalRunner {
         trace: ParserTrace
     ) throws -> ReplayPlan {
         let compiler = Compiler(options: .init(trace: trace))
-        let knowledge = try compiler.knowledge(
-            forSource: "",
-            sourceFile: "<trace-eval>",
+        let knowledge = try compiler.bootstrap(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: "", file: "<trace-eval>")],
             vocabularies: vocabularies
-        )
+        ))
         let parsed = ExpressionParser(
             symbols: knowledge.symbols,
             trace: trace,
@@ -169,7 +168,8 @@ enum TraceEvalRunner {
             sourceFile: "<trace-eval>",
             trace: trace,
             lexicon: knowledge.lexicon,
-            rulebook: knowledge.rulebook
+            rulebook: knowledge.rulebook,
+            engine: DiagnosticEngine(trace: trace)
         ).lowerExpression(parsed, line: 1)
         let canonical = Verbalizer(model: VerbalizerModel(
             workflows: [],

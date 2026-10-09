@@ -315,7 +315,7 @@ struct InterpolatedStringEmissionTests {
             mode: .strict,
             sourceFile: "test.meridian"
         )
-        let out = try emitter.emitFile(workflows: [wf])
+        let out = try emitter.emit(workflows: [wf]).combined
         #expect(out.contains("private func meridianStringify("),
                 Comment(rawValue: "meridianStringify not found in:\n\(out)"))
         #expect(out.contains("v.scalarDescription"),
@@ -505,7 +505,7 @@ struct ASTToIRInterpolationTests {
 
     private func lower(_ expr: ExpressionAST) throws -> IRExpression {
         let symbols = SymbolTable()
-        return try ASTToIR(symbols: symbols).lowerExpr(expr)
+        return try ASTToIR(symbols: symbols, engine: DiagnosticEngine()).lowerExpr(expr)
     }
 
     @Test("literal-only interpolatedString lowers to interpolatedString IR")

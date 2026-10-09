@@ -31,22 +31,18 @@ public struct Compiler {
         public var moduleSearchPaths: [URL]
         /// Directory used for relative module resolution (typically the importer's folder).
         public var anchorDirectory: URL?
-        /// When true, `compileMultiFile` emits domain and workflow Swift into separate files.
-        public var emitMultiFile: Bool
         public init(emitterOptions: SwiftEmitter.Options = .init(),
                     trace: ParserTrace = .shared,
                     lexicon: EnglishLexicon = .default,
                     fallbackPolicy: FallbackPolicy = .strict,
                     moduleSearchPaths: [URL] = [],
-                    anchorDirectory: URL? = nil,
-                    emitMultiFile: Bool = false) {
+                    anchorDirectory: URL? = nil) {
             self.emitterOptions = emitterOptions
             self.trace = trace
             self.lexicon = lexicon
             self.fallbackPolicy = fallbackPolicy
             self.moduleSearchPaths = moduleSearchPaths
             self.anchorDirectory = anchorDirectory
-            self.emitMultiFile = emitMultiFile
         }
     }
 
@@ -64,7 +60,7 @@ public struct Compiler {
         constantsDecl: SwiftEmitter.ConstantsDecl? = nil
     ) throws -> String {
         try SwiftEmitter(options: options.emitterOptions, trace: options.trace)
-            .emitFile(workflows: workflows, constantsDecl: constantsDecl)
+            .emit(workflows: workflows, constantsDecl: constantsDecl).combined
     }
 
     /// Emit the companion JSON manifest.
@@ -86,6 +82,56 @@ public struct Compiler {
         }
     }
 
+    /// One `.meridian`/`.meri` source in a compilation unit. `file` is the
+    /// logical filename the compile keys its output and source-map comments on.
+    public struct SourceInput: Sendable {
+        public let source: String
+        public let file: String
+        public init(source: String, file: String) {
+            self.source = source; self.file = file
+        }
+    }
+
+    /// Everything one compile consumes: one-or-many sources lowered against a
+    /// shared symbol table, plus the `.merconfig`(s) and `.merrules` they
+    /// resolve against. `import` statements in a source are validated against
+    /// the supplied vocabulary names.
+    public struct CompilationUnit: Sendable {
+        public let sources: [SourceInput]
+        public let vocabularies: [VocabularyInput]
+        public let rulebooks: [RulebookInput]
+        public init(sources: [SourceInput],
+                    vocabularies: [VocabularyInput] = [],
+                    rulebooks: [RulebookInput] = []) {
+            self.sources = sources
+            self.vocabularies = vocabularies
+            self.rulebooks = rulebooks
+        }
+    }
+
+    /// Everything one source produces: the emitted Swift (combined output plus
+    /// the domain/workflows split), the complete manifest input assembled
+    /// during compilation, and the verbalizer model.
+    public struct CompiledFile: Sendable {
+        /// Single-file output, byte-identical to the historical `emitFile` result.
+        public let swift: String
+        /// Domain types/constants/instances/definitions only (multi-file split).
+        public let domainSwift: String
+        /// Workflow structs only (multi-file split).
+        public let workflowsSwift: String
+        public let manifest: ManifestEmitter.Input
+        public let model: VerbalizerModel
+
+        public init(swift: String, domainSwift: String, workflowsSwift: String,
+                    manifest: ManifestEmitter.Input, model: VerbalizerModel) {
+            self.swift = swift
+            self.domainSwift = domainSwift
+            self.workflowsSwift = workflowsSwift
+            self.manifest = manifest
+            self.model = model
+        }
+    }
+
     /// Full pipeline: parse .merconfig + .meridian → lower to IR → emit Swift.
     ///
     /// - Parameters:
@@ -100,175 +146,88 @@ public struct Compiler {
         merconfigSource: String? = nil,
         merconfigFile: String = "config.merconfig"
     ) throws -> String {
-        let inputs: [VocabularyInput]
+        let vocabularies: [VocabularyInput]
         if let src = merconfigSource {
             let name = (merconfigFile as NSString).deletingPathExtension
-            inputs = [VocabularyInput(name: name, file: merconfigFile, source: src)]
+            vocabularies = [VocabularyInput(name: name, file: merconfigFile, source: src)]
         } else {
-            inputs = []
+            vocabularies = []
         }
-        return try compile(
-            meridianSource: meridianSource,
-            meridianFile:   meridianFile,
-            vocabularies:   inputs
+        let unit = CompilationUnit(
+            sources: [SourceInput(source: meridianSource, file: meridianFile)],
+            vocabularies: vocabularies
         )
+        guard let compiled = try compile(unit)[meridianFile] else {
+            throw CompilerError.codegenError(message: "no compiled output for \(meridianFile)")
+        }
+        return compiled.swift
     }
 
-    /// Multi-vocabulary entry point: parse + merge any number of `.merconfig`
-    /// files, then run the rest of the pipeline against the merged config.
-    ///
-    /// `import` statements in the `.meridian` source are validated against the
-    /// supplied vocabulary names: an `import shipping.` with no
-    /// `VocabularyInput(name: "shipping", …)` available raises a sourced
-    /// `CompilerError.semanticError`.
-    public func compile(
-        meridianSource: String,
-        meridianFile: String = "workflow.meridian",
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> String {
-        try compileWithManifest(
-            meridianSource: meridianSource, meridianFile: meridianFile,
-            vocabularies: vocabularies, rulebooks: rulebooks
-        ).swift
-    }
-
-    /// Like `compile`, but returns BOTH the Swift source and the complete
-    /// `ManifestEmitter.Input` assembled during compilation (workflows,
-    /// metadata, outline, recorded sections, …). This removes the silent-loss
-    /// point where rich data computed during compilation was discarded; hosts
-    /// (the CLI) emit the manifest from this Input rather than a thin stub.
-    public func compileWithManifest(
-        meridianSource: String,
-        meridianFile: String = "workflow.meridian",
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input) {
+    /// One pipeline for one-or-many sources sharing a symbol table, keyed by
+    /// `SourceInput.file`. Every source's workflows are registered as phrase
+    /// stubs in the shared `SymbolTable` **before** any source is lowered, so
+    /// cross-skill invocation ("delegate to enrich", "route through X") and the
+    /// resolver table resolve across files; the single-source case registers
+    /// exactly the same set the lowerer would self-register.
+    public func compile(_ unit: CompilationUnit) throws -> [String: CompiledFile] {
         let trace = options.trace
         trace.resetProfile()
-        let compileSpan = trace.push(.timing, "compile \(meridianFile)")
+        let compileSpan = trace.push(.timing, "compile (\(unit.sources.count) file(s))")
         defer { trace.pop(compileSpan); trace.profileSummary() }
 
-        let engine = DiagnosticEngine(trace: trace)
-        let bootstrap = try bootstrap(
-            meridianSources: [(meridianSource, meridianFile)],
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
-            trace: trace,
-            engine: engine,
-        )
+        let bootstrapContext = try bootstrap(
+            unit: unit, trace: trace, engine: DiagnosticEngine(trace: trace))
 
-        let ast = try trace.phase("parse") {
-            try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
-                .parse(meridianSource, file: meridianFile)
+        // Parse every source against the SHARED symbol table. Each file gets
+        // its own `DiagnosticEngine` (so batching never crosses files) used for
+        // both its parse and lower phases.
+        var parsed: [(ast: MeridianFile, source: SourceInput, engine: DiagnosticEngine)] = []
+        for source in unit.sources {
+            let engine = DiagnosticEngine(trace: trace)
+            let ast = try trace.phase("parse \(source.file)") {
+                try MeridianParser(symbols: bootstrapContext.symbols, trace: trace,
+                                   lexicon: bootstrapContext.lexicon,
+                                   rewriteEngine: bootstrapContext.rewriteEngine, diagnostics: engine)
+                    .parse(source.source, file: source.file)
+            }
+            parsed.append((ast, source, engine))
         }
-        return try lowerAndEmit(
-            ast: ast, meridianFile: meridianFile,
-            symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
-            rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
-            authoredSource: meridianSource,
-            preRegistered: false, engine: engine
-        )
+
+        // Pre-register EVERY source's workflows as phrase stubs first, so a
+        // body in one source can invoke a workflow declared in another.
+        for entry in parsed {
+            for wf in entry.ast.workflows {
+                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: bootstrapContext.lexicon)
+                bootstrapContext.symbols.registerWorkflowPhrase(
+                    pattern: wf.pattern,
+                    structName: structName,
+                    sourceLine: wf.sourceLine,
+                    sourceFile: wf.sourceFile.isEmpty ? entry.source.file : wf.sourceFile
+                )
+            }
+        }
+
+        var outputs: [String: CompiledFile] = [:]
+        for entry in parsed {
+            outputs[entry.source.file] = try lowerAndEmit(
+                ast: entry.ast, meridianFile: entry.source.file,
+                symbols: bootstrapContext.symbols, config: bootstrapContext.config,
+                lexicon: bootstrapContext.lexicon, trace: trace,
+                rulebook: bootstrapContext.rulebook, unit: unit,
+                authoredSource: entry.source.source,
+                engine: entry.engine
+            )
+        }
+        return outputs
     }
 
-    /// Like `compileWithManifest`, but returns a domain/workflows Swift split.
-    public func compileMultiFile(
-        meridianSource: String,
-        meridianFile: String = "workflow.meridian",
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> (output: SwiftEmitter.MultiFileOutput, manifest: ManifestEmitter.Input) {
-        var splitOpts = options
-        splitOpts.emitMultiFile = true
-        let splitCompiler = Compiler(options: splitOpts)
-        let result = try splitCompiler.compileWithManifest(
-            meridianSource: meridianSource,
-            meridianFile: meridianFile,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks
-        )
-        guard let multi = result.multiFile else {
-            throw CompilerError.codegenError(message: "multi-file emit was not produced")
-        }
-        return (multi, result.manifest)
-    }
-
-    public func compileToModel(
-        meridianSource: String,
-        meridianFile: String = "workflow.meridian",
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> VerbalizerModel {
-        let trace = options.trace
-        trace.resetProfile()
-        let compileSpan = trace.push(.timing, "compileToModel \(meridianFile)")
-        defer { trace.pop(compileSpan); trace.profileSummary() }
-
-        let engine = DiagnosticEngine(trace: trace)
-        let bootstrap = try bootstrap(
-            meridianSources: [(meridianSource, meridianFile)],
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
-            trace: trace,
-            engine: engine,
-        )
-
-        let ast = try trace.phase("parse") {
-            try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                               rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
-                .parse(meridianSource, file: meridianFile)
-        }
-        let lowered = try lowerParsedAST(
-            ast: ast,
-            meridianFile: meridianFile,
-            symbols: bootstrap.symbols,
-            config: bootstrap.config,
-            lexicon: bootstrap.lexicon,
-            trace: trace,
-            rulebook: bootstrap.rulebook,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
-            authoredSource: meridianSource,
-            preRegistered: false,
-            engine: engine
-        )
-
-        return VerbalizerModel(
-            workflows: lowered.workflows,
-            loweredDefinitions: definitionInfos(
-                symbols: bootstrap.symbols,
-                loweredDefinitions: lowered.loweredDefinitions,
-                inlineDefinitions: ast.definitions
-            ),
-            inlineDefinitions: ast.definitions,
-            symbols: bootstrap.symbols,
-            lexicon: bootstrap.lexicon,
-            sourceFileName: meridianFile,
-            authoredSource: meridianSource,
-            metadata: ast.metadata,
-            outline: ast.outline,
-            skillSections: ast.skillSections,
-            toolsUsed: ast.toolsUsed
-        )
-    }
-
-    public struct SkillpackInput: Sendable {
-        public let source: String
-        public let file: String
-        public init(source: String, file: String) {
-            self.source = source
-            self.file = file
-        }
-    }
-
-    /// Real vocabulary/rulebook knowledge for a `.meri` source, without
-    /// running parse/lower/emit. This is the same `bootstrap` phase
-    /// `compileWithManifest` uses, exposed for authoring-time tooling that
-    /// needs a genuine `SymbolTable`/`EnglishLexicon`/`Rulebook`/`RewriteEngine`
-    /// (the migrator's marking pass, the inert-yield analyzer) instead of
-    /// re-deriving vocabulary knowledge from shape heuristics. Domain
-    /// vocabulary declared inline via `## Domain` sections in `source` is
+    /// Real vocabulary/rulebook knowledge for a compilation unit, without
+    /// running parse/lower/emit. This is the same `bootstrap` phase `compile`
+    /// uses, exposed for authoring-time tooling that needs a genuine
+    /// `SymbolTable`/`EnglishLexicon`/`Rulebook`/`RewriteEngine` (the
+    /// migrator's marking pass, the inert-yield analyzer, trace-eval) instead
+    /// of re-deriving vocabulary knowledge from shape heuristics. Domain
+    /// vocabulary declared inline via `## Domain` sections in a source is
     /// harvested exactly as it would be for a real compile.
     public struct KnowledgeContext {
         public let symbols: SymbolTable
@@ -280,21 +239,10 @@ public struct Compiler {
     /// See `KnowledgeContext`. Throws the same diagnostics a real compile's
     /// bootstrap phase would (duplicate vocab/rulebook names, malformed
     /// `.merconfig`/`.merrules`).
-    public func knowledge(
-        forSource source: String,
-        sourceFile: String,
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> KnowledgeContext {
+    public func bootstrap(_ unit: CompilationUnit) throws -> KnowledgeContext {
         let trace = options.trace
         let engine = DiagnosticEngine(trace: trace)
-        let ctx = try bootstrap(
-            meridianSources: [(source, sourceFile)],
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
-            trace: trace,
-            engine: engine,
-        )
+        let ctx = try bootstrap(unit: unit, trace: trace, engine: engine)
         return KnowledgeContext(symbols: ctx.symbols, lexicon: ctx.lexicon,
                                 rulebook: ctx.rulebook, rewriteEngine: ctx.rewriteEngine)
     }
@@ -309,9 +257,7 @@ public struct Compiler {
     }
 
     private func bootstrap(
-        meridianSources: [(source: String, file: String)],
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput],
+        unit: CompilationUnit,
         trace: ParserTrace,
         engine: DiagnosticEngine,
     ) throws -> BootstrapContext {
@@ -322,7 +268,7 @@ public struct Compiler {
         var lexicon = options.lexicon
         var rulebook = Rulebook.empty
         var seenRulebooks: Set<String> = []
-        for input in rulebooks {
+        for input in unit.rulebooks {
             if !seenRulebooks.insert(input.name).inserted {
                 throw CompilerError.diagnostics([
                     Diagnostic.error(
@@ -340,17 +286,17 @@ public struct Compiler {
         let rewriteEngine = rulebook.isEmpty ? nil : RewriteEngine(rulebook: rulebook, trace: trace)
 
         let anchor = options.anchorDirectory
-            ?? meridianSources.first.map { URL(fileURLWithPath: ($0.file as NSString).deletingLastPathComponent) }
+            ?? unit.sources.first.map { URL(fileURLWithPath: ($0.file as NSString).deletingLastPathComponent) }
             ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         var moduleImportSpecs: [ModuleImportSpec] = []
-        for meridian in meridianSources {
-            moduleImportSpecs += harvestModuleImports(from: meridian.source, file: meridian.file)
+        for source in unit.sources {
+            moduleImportSpecs += harvestModuleImports(from: source.source, file: source.file)
         }
 
         var config = MerConfigFile()
         var seenNames: Set<String> = []
         var localVocabConfigs: [MerConfigFile] = []
-        for input in vocabularies {
+        for input in unit.vocabularies {
             if !seenNames.insert(input.name).inserted {
                 throw CompilerError.diagnostics([
                     Diagnostic.error(
@@ -386,11 +332,11 @@ public struct Compiler {
         for parsed in localVocabConfigs {
             config = try config.merging(parsed)
         }
-        for meridian in meridianSources {
+        for source in unit.sources {
             let inlineDomain = try trace.phase("bootstrap.inlineDomain") {
                 try harvestDomainVocabulary(
-                    from: meridian.source,
-                    file: meridian.file,
+                    from: source.source,
+                    file: source.file,
                     rulebook: rulebook,
                     trace: trace,
                     lexicon: lexicon
@@ -398,7 +344,7 @@ public struct Compiler {
             }
             config = try config.merging(inlineDomain)
         }
-        try requireUniqueDeclarations(in: config, engine: engine)
+        requireUniqueDeclarations(in: config, engine: engine)
         validateProductionTraceCapturePolicies(in: config, engine: engine)
         try engine.throwIfErrors()
 
@@ -406,7 +352,7 @@ public struct Compiler {
             lexicon.merging(from: config.languageSynonyms)
         }
 
-        let symbolsFile = vocabularies.first?.file ?? "config.merconfig"
+        let symbolsFile = unit.vocabularies.first?.file ?? "config.merconfig"
         let symbols = trace.phase("symbols") {
             SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace, lexicon: lexicon)
         }
@@ -420,74 +366,8 @@ public struct Compiler {
         )
     }
 
-    /// Skillpack entry point: compile a *set* of `.meri` files against shared
-    /// `.merconfig`(s) + `.merrules`. Every file's workflows are registered as
-    /// phrase stubs in one shared `SymbolTable` **before** any file is lowered,
-    /// so cross-skill invocation ("delegate to enrich", "route through X") and
-    /// the resolver table resolve across files. Single-file `compile` remains
-    /// the default; this returns a `file → Swift source` map.
-    public func compileSkillpack(
-        _ skills: [SkillpackInput],
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput] = []
-    ) throws -> [String: String] {
-        let trace = options.trace
-        trace.resetProfile()
-        let packSpan = trace.push(.timing, "compileSkillpack (\(skills.count) file(s))")
-        defer { trace.pop(packSpan); trace.profileSummary() }
-
-        let engine = DiagnosticEngine(trace: trace)
-        let bootstrap = try bootstrap(
-            meridianSources: skills.map { ($0.source, $0.file) },
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
-            trace: trace,
-            engine: engine,
-        )
-
-        // Parse every skill against the SHARED symbol table. Each file gets its
-        // own per-file `DiagnosticEngine` (so batching never crosses files) used
-        // for both its parse and lower phases.
-        var parsed: [(ast: MeridianFile, file: String, engine: DiagnosticEngine)] = []
-        for skill in skills {
-            let engine = DiagnosticEngine(trace: trace)
-            let ast = try trace.phase("parse \(skill.file)") {
-                try MeridianParser(symbols: bootstrap.symbols, trace: trace, lexicon: bootstrap.lexicon,
-                                   rewriteEngine: bootstrap.rewriteEngine, diagnostics: engine)
-                    .parse(skill.source, file: skill.file)
-            }
-            parsed.append((ast, skill.file, engine))
-        }
-
-        // Pre-register EVERY file's workflows as phrase stubs first, so a body
-        // in one skill can invoke a workflow declared in another.
-        for entry in parsed {
-            for wf in entry.ast.workflows {
-                let structName = IRWorkflow.structName(from: wf.pattern.displayText, lexicon: bootstrap.lexicon)
-                bootstrap.symbols.registerWorkflowPhrase(
-                    pattern: wf.pattern,
-                    structName: structName,
-                    sourceLine: wf.sourceLine,
-                    sourceFile: wf.sourceFile.isEmpty ? entry.file : wf.sourceFile
-                )
-            }
-        }
-
-        var outputs: [String: String] = [:]
-        for entry in parsed {
-            outputs[entry.file] = try lowerAndEmit(
-                ast: entry.ast, meridianFile: entry.file,
-                symbols: bootstrap.symbols, config: bootstrap.config, lexicon: bootstrap.lexicon, trace: trace,
-                rulebook: bootstrap.rulebook, vocabularies: vocabularies, rulebooks: rulebooks,
-                authoredSource: skills.first(where: { $0.file == entry.file })?.source ?? "",
-                preRegistered: true, engine: entry.engine
-            ).swift
-        }
-        return outputs
-    }
-
-    /// Lower a parsed `.meri` AST against a (possibly shared) symbol table and
-    /// emit Swift. Shared by single-file `compile` and `compileSkillpack`.
+    /// Lower one parsed `.meri` AST against the shared symbol table and emit
+    /// everything the source produces (Swift strings, manifest input, model).
     private func lowerAndEmit(
         ast: MeridianFile,
         meridianFile: String,
@@ -496,12 +376,10 @@ public struct Compiler {
         lexicon: EnglishLexicon,
         trace: ParserTrace,
         rulebook: Rulebook,
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput],
+        unit: CompilationUnit,
         authoredSource: String,
-        preRegistered: Bool,
         engine: DiagnosticEngine
-    ) throws -> (swift: String, multiFile: SwiftEmitter.MultiFileOutput?, manifest: ManifestEmitter.Input) {
+    ) throws -> CompiledFile {
         let lowered = try lowerParsedAST(
             ast: ast,
             meridianFile: meridianFile,
@@ -510,10 +388,8 @@ public struct Compiler {
             lexicon: lexicon,
             trace: trace,
             rulebook: rulebook,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
+            unit: unit,
             authoredSource: authoredSource,
-            preRegistered: preRegistered,
             engine: engine
         )
         let workflows = lowered.workflows
@@ -551,29 +427,14 @@ public struct Compiler {
             emitSourceLineComments: options.emitterOptions.emitSourceLineComments,
             namespaceEnum: options.emitterOptions.namespaceEnum
         )
-        let swift = try trace.phase("codegen") {
+        let output = try trace.phase("codegen") {
             try SwiftEmitter(options: emitterOpts, trace: trace)
-                .emitFile(workflows: workflows,
-                          constantsDecl: constantsDecl,
-                          instancesDecl: instancesDecl,
-                          domainDecl: domainDecl,
-                          fileMetadata: ast.metadata,
-                          definitions: loweredDefinitions)
-        }
-        let multiFile: SwiftEmitter.MultiFileOutput?
-        if options.emitMultiFile {
-            multiFile = try trace.phase("codegen-multi") {
-                try SwiftEmitter(options: emitterOpts, trace: trace)
-                    .emitMultiFile(workflows: workflows,
-                                   constantsDecl: constantsDecl,
-                                   instancesDecl: instancesDecl,
-                                   domainDecl: domainDecl,
-                                   fileMetadata: ast.metadata,
-                                   definitions: loweredDefinitions)
-            }
-            trace.log(.codegen, "multi-file emit: domain + workflows split")
-        } else {
-            multiFile = nil
+                .emit(workflows: workflows,
+                      constantsDecl: constantsDecl,
+                      instancesDecl: instancesDecl,
+                      domainDecl: domainDecl,
+                      fileMetadata: ast.metadata,
+                      definitions: loweredDefinitions)
         }
 
         // C5: Rule manifest entries. Reclassify `ast.rules` independently of
@@ -607,7 +468,7 @@ public struct Compiler {
         // longer discarded — the host emits the manifest from this Input.
         let skillVersionHash = lowered.skillVersionHash
         let manifestInput = ManifestEmitter.Input(
-            sourceFiles: [meridianFile] + vocabularies.map(\.file),
+            sourceFiles: [meridianFile] + unit.vocabularies.map(\.file),
             workflows: workflows,
             constantsDecl: constantsDecl,
             toolsUsed: ast.toolsUsed,
@@ -626,7 +487,7 @@ public struct Compiler {
                     ManifestEmitter.InstanceManifestEntry(name: e.name, kind: e.kind)
                 }
             } ?? [],
-            sourceMap: Compiler.sourceMap(fromGeneratedSwift: swift),
+            sourceMap: Compiler.sourceMap(fromGeneratedSwift: output.combined),
             metadata: ast.metadata,
             outline: ast.outline,
             rules: ruleManifestEntries,
@@ -652,7 +513,29 @@ public struct Compiler {
                 },
             skillVersionHash: skillVersionHash
         )
-        return (swift, multiFile, manifestInput)
+
+        let model = VerbalizerModel(
+            workflows: workflows,
+            loweredDefinitions: definitionInfos(
+                symbols: symbols,
+                loweredDefinitions: loweredDefinitions,
+                inlineDefinitions: ast.definitions
+            ),
+            inlineDefinitions: ast.definitions,
+            symbols: symbols,
+            lexicon: lexicon,
+            sourceFileName: meridianFile,
+            authoredSource: authoredSource,
+            metadata: ast.metadata,
+            outline: ast.outline,
+            skillSections: ast.skillSections,
+            toolsUsed: ast.toolsUsed
+        )
+        return CompiledFile(swift: output.combined,
+                            domainSwift: output.domain,
+                            workflowsSwift: output.workflows,
+                            manifest: manifestInput,
+                            model: model)
     }
 
     private func effectiveFallbackPolicy(
@@ -685,11 +568,6 @@ public struct Compiler {
         let vocabulary: String
     }
 
-    private struct LoweringContext {
-        let lowerer: ASTToIR
-        let frontmatter: SkillFrontmatter
-    }
-
     private struct LoweredCompileUnit {
         let workflows: [IRWorkflow]
         let loweredDefinitions: [LoweredDefinition]
@@ -698,8 +576,7 @@ public struct Compiler {
         let skillVersionHash: String
     }
 
-    /// Shared parse→lower→trigger→trace-identity path for `compileToModel` and
-    /// `lowerAndEmit`. Preserves `preRegistered`, trace phases, and diagnostics.
+    /// Shared parse→lower→trigger→trace-identity path for `lowerAndEmit`.
     private func lowerParsedAST(
         ast: MeridianFile,
         meridianFile: String,
@@ -708,33 +585,40 @@ public struct Compiler {
         lexicon: EnglishLexicon,
         trace: ParserTrace,
         rulebook: Rulebook,
-        vocabularies: [VocabularyInput],
-        rulebooks: [RulebookInput],
+        unit: CompilationUnit,
         authoredSource: String,
-        preRegistered: Bool,
         engine: DiagnosticEngine
     ) throws -> LoweredCompileUnit {
-        try validateImports(ast.imports, against: vocabularies, file: meridianFile)
-        try validateRulebookReferences(ast.metadata, against: rulebooks, file: meridianFile)
+        try validateImports(ast.imports, against: unit.vocabularies, file: meridianFile)
+        try validateRulebookReferences(ast.metadata, against: unit.rulebooks, file: meridianFile)
 
         let effectivePolicy = effectiveFallbackPolicy(
             metadata: ast.metadata,
             sourceFile: meridianFile,
             engine: engine
         )
-        let lowering = makeLoweringContext(
-            ast: ast,
-            sourceFile: meridianFile,
+        let frontmatter = SkillFrontmatter(ast.metadata)
+        let scopedTools = mergedScopedTools(
+            frontmatterTools: frontmatter.tools,
+            toolsUsed: ast.toolsUsed,
             symbols: symbols,
-            lexicon: lexicon,
-            rulebook: rulebook,
+            trace: trace
+        )
+        let lowerer = ASTToIR(
+            symbols: symbols,
+            sourceFile: meridianFile,
             trace: trace,
+            lexicon: lexicon,
             fallbackPolicy: effectivePolicy,
+            rulebook: rulebook,
+            scopedTools: scopedTools,
+            frontmatterTools: frontmatter.tools + ast.toolsUsed,
             engine: engine
         )
-        let frontmatter = lowering.frontmatter
-        let lowerer = lowering.lowerer
-        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: preRegistered) }
+        // Every source's workflow stubs were registered into the shared symbol
+        // table before any source lowered, so the lowerer must not re-register
+        // them (that would append a duplicate stub per workflow).
+        var workflows = try trace.phase("lower") { try lowerer.lower(ast, preRegistered: true) }
         let loweredDefinitions = try lowerer.lowerRegisteredDefinitions()
         try engine.throwIfErrors()
 
@@ -756,8 +640,8 @@ public struct Compiler {
             config: config,
             skillName: skillName,
             authoredSource: authoredSource,
-            vocabularies: vocabularies,
-            rulebooks: rulebooks,
+            vocabularies: unit.vocabularies,
+            rulebooks: unit.rulebooks,
             trace: trace
         )
         return LoweredCompileUnit(
@@ -767,37 +651,6 @@ public struct Compiler {
             skillName: skillName,
             skillVersionHash: annotated.skillVersionHash
         )
-    }
-
-    private func makeLoweringContext(
-        ast: MeridianFile,
-        sourceFile: String,
-        symbols: SymbolTable,
-        lexicon: EnglishLexicon,
-        rulebook: Rulebook,
-        trace: ParserTrace,
-        fallbackPolicy: FallbackPolicy,
-        engine: DiagnosticEngine
-    ) -> LoweringContext {
-        let frontmatter = SkillFrontmatter(ast.metadata)
-        let scopedTools = mergedScopedTools(
-            frontmatterTools: frontmatter.tools,
-            toolsUsed: ast.toolsUsed,
-            symbols: symbols,
-            trace: trace
-        )
-        let lowerer = ASTToIR(
-            symbols: symbols,
-            sourceFile: sourceFile,
-            trace: trace,
-            lexicon: lexicon,
-            fallbackPolicy: fallbackPolicy,
-            rulebook: rulebook,
-            scopedTools: scopedTools,
-            frontmatterTools: frontmatter.tools + ast.toolsUsed,
-            engine: engine
-        )
-        return LoweringContext(lowerer: lowerer, frontmatter: frontmatter)
     }
 
     private func addingSynthesizedTriggers(
@@ -863,7 +716,7 @@ public struct Compiler {
     /// by reading the `// L{n}` provenance comments codegen emits above each
     /// primitive. This is the compile→run bridge: a runtime JSONL event's Swift
     /// location maps back to a Meridian source line through this table. Built as
-    /// part of `compileWithManifest` so EVERY emitted manifest carries it (the
+    /// part of `compile(_:)` so EVERY emitted manifest carries it (the
     /// CLI previously rebuilt it by hand, dropping it from library callers).
     public static func sourceMap(fromGeneratedSwift swift: String) -> [ManifestEmitter.SourceMapEntry] {
         swift.components(separatedBy: "\n").enumerated().compactMap { idx, line in
@@ -947,7 +800,7 @@ public struct Compiler {
     /// the full set rather than risk an over-narrow scope.
     /// Resolve frontmatter + section tool tokens together, then keep both the
     /// resolved method names and the authored aliases. One path for
-    /// `compileToModel` / `compileWithManifest` so verbalizer round-trips that
+    /// `compile(_:)` so verbalizer round-trips that
     /// fold `toolsUsed` into `tools:` cannot invent a different allow-list.
     private func mergedScopedTools(
         frontmatterTools: [String],
@@ -1000,24 +853,19 @@ public struct Compiler {
     /// the merged config. Without this check, a second `kind: order` from a
     /// second .merconfig would silently shadow the first.
     private func requireUniqueDeclarations(in config: MerConfigFile,
-                                           engine: DiagnosticEngine? = nil) throws {
+                                           engine: DiagnosticEngine) {
         func ensureUnique<S: Sequence>(_ seq: S, _ kind: String,
                                        name: (S.Element) -> String,
-                                       line: (S.Element) -> Int) throws {
+                                       line: (S.Element) -> Int) {
             var seen: [String: Int] = [:]
             for el in seq {
                 let n = name(el)
                 if let prev = seen[n] {
-                    let diag = Diagnostic.error(
+                    engine.report(Diagnostic.error(
                         .duplicateDeclaration,
                         message: "duplicate \(kind) `\(n)` (first at line \(prev))",
                         range: SourceRange(file: "<merged>", line: line(el), column: 1),
-                        help: "Rename or remove the duplicate \(kind) declaration.")
-                    if let engine {
-                        engine.report(diag)
-                    } else {
-                        throw CompilerError.diagnostics([diag])
-                    }
+                        help: "Rename or remove the duplicate \(kind) declaration."))
                 }
                 seen[n] = line(el)
             }
@@ -1031,11 +879,11 @@ public struct Compiler {
             default: break
             }
         }
-        try ensureUnique(kinds,    "kind",    name: { $0.name }, line: { $0.line })
-        try ensureUnique(phrases,  "phrase",  name: { $0.name }, line: { $0.line })
-        try ensureUnique(config.tools,     "tool",     name: { $0.displayName }, line: { $0.sourceLine })
-        try ensureUnique(config.constants, "constant", name: { $0.name }, line: { $0.sourceLine })
-        try ensureUnique(config.instances, "instance", name: { $0.name }, line: { $0.sourceLine })
+        ensureUnique(kinds,    "kind",    name: { $0.name }, line: { $0.line })
+        ensureUnique(phrases,  "phrase",  name: { $0.name }, line: { $0.line })
+        ensureUnique(config.tools,     "tool",     name: { $0.displayName }, line: { $0.sourceLine })
+        ensureUnique(config.constants, "constant", name: { $0.name }, line: { $0.sourceLine })
+        ensureUnique(config.instances, "instance", name: { $0.name }, line: { $0.sourceLine })
     }
 
     /// D9 / SEM-4-08: in a production trace profile, every declared tool must
@@ -1429,25 +1277,16 @@ public struct Compiler {
 // MARK: - CompilerError
 
 public enum CompilerError: Error, Sendable {
-    case syntaxError(message: String, range: SourceRange)
-    case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)
-    /// One or more structured diagnostics (the modern path). A failed compile
-    /// reports *all* collected errors here. Legacy cases above project into this
-    /// shape via `diagnostics` so every consumer can render uniformly.
+    /// One or more structured diagnostics. A failed compile reports *all*
+    /// collected errors here so every consumer can render uniformly.
     case diagnostics([Diagnostic])
 
-    /// Project any `CompilerError` into structured diagnostics so renderers and
-    /// test shims can treat every error uniformly. Legacy cases map to generic
-    /// codes; `.diagnostics` returns its payload.
+    /// Project any `CompilerError` into structured diagnostics.
     public var diagnostics: [Diagnostic] {
         switch self {
         case .diagnostics(let ds):
             return ds
-        case .semanticError(let m, let r):
-            return [Diagnostic(code: .legacySemantic, severity: .error, message: m, primaryRange: r)]
-        case .syntaxError(let m, let r):
-            return [Diagnostic(code: .legacySyntax, severity: .error, message: m, primaryRange: r)]
         case .codegenError(let m):
             return [Diagnostic(code: .codegenError, severity: .error, message: m,
                                primaryRange: SourceRange(file: "<generated>", line: 0, column: 1))]

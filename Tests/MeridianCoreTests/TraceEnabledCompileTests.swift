@@ -207,16 +207,8 @@ struct TraceEnabledCompileTests {
           complete.
         """
         let compiler = Compiler(options: .init(trace: .silent()))
-        let lhs = try compiler.compileWithManifest(
-            meridianSource: original,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
-        ).manifest.workflows
-        let rhs = try compiler.compileWithManifest(
-            meridianSource: edited,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
-        ).manifest.workflows
+        let lhs = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: original, file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.workflows
+        let rhs = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: edited, file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.workflows
         let lhsPaths = Set(stepPaths(in: lhs))
         let rhsPaths = Set(stepPaths(in: rhs))
         #expect(lhsPaths.isSubset(of: rhsPaths))
@@ -231,10 +223,7 @@ struct TraceEnabledCompileTests {
         _ = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
             trace: cap.trace
-        )).compileWithManifest(
-            meridianSource: mer, meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!
 
         let joined = cap.lines().joined(separator: "\n")
         #expect(joined.contains("traceIdentity.annotate:"))
@@ -247,21 +236,9 @@ struct TraceEnabledCompileTests {
     func skillFingerprintStability() throws {
         let cfg = "=== vocabulary ===\nAn order is a kind of thing.\n"
         let compiler = Compiler(options: .init(trace: .silent()))
-        let base = try compiler.compileWithManifest(
-            meridianSource: "To audit an order:\n  complete.\n",
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
-        ).manifest.skillVersionHash
-        let whitespace = try compiler.compileWithManifest(
-            meridianSource: "To   audit   an order:\n\n  complete.\n",
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
-        ).manifest.skillVersionHash
-        let meaning = try compiler.compileWithManifest(
-            meridianSource: "To audit an order:\n  emit \"changed\".\n  complete.\n",
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]
-        ).manifest.skillVersionHash
+        let base = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To audit an order:\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash
+        let whitespace = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To   audit   an order:\n\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash
+        let meaning = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To audit an order:\n  emit \"changed\".\n  complete.\n", file: "audit.meridian")], vocabularies: [.init(name: "audit", file: "audit.merconfig", source: cfg)]))["audit.meridian"]!.manifest.skillVersionHash
         #expect(base == whitespace)
         #expect(base != meaning)
     }

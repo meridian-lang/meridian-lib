@@ -42,14 +42,13 @@ struct ManifestEmitterCoverageTests {
         #expect(json.contains("judgment_steps"))
     }
 
-    @Test("compileWithManifest carries metadata, sections, tools, and deterministic JSON")
-    func compileWithManifestCompleteSkillSchema() throws {
+    @Test("compile(_:) carries metadata, sections, tools, and deterministic JSON")
+    func compileCompleteSkillSchema() throws {
         let compiler = Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
             trace: .silent()
         ))
-        let result = try compiler.compileWithManifest(
-            meridianSource: """
+        let result = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: manifest probe
             description: Checks the manifest carrier.
@@ -62,11 +61,7 @@ struct ManifestEmitterCoverageTests {
 
             ## Notes (( role: reference ))
             Documentation that must stay visible.
-            """,
-            meridianFile: "manifest.meri",
-            vocabularies: [],
-            rulebooks: []
-        )
+            """, file: "manifest.meri")], vocabularies: [], rulebooks: []))["manifest.meri"]!
 
         #expect(result.manifest.toolsUsed == ["shell.run"])
         #expect(result.manifest.skillSections.map(\.heading).contains("Steps"))
@@ -86,8 +81,8 @@ struct ManifestEmitterCoverageTests {
         #expect(sections.contains { $0["heading"] as? String == "Notes" && $0["executes"] as? Bool == false })
     }
 
-    @Test("compileWithManifest populates kinds_used with genuine domain kinds, not synthetic parameter placeholders")
-    func compileWithManifestKindsUsed() throws {
+    @Test("compile(_:) populates kinds_used with genuine domain kinds, not synthetic parameter placeholders")
+    func compileKindsUsed() throws {
         let cfg = """
         === vocabulary ===
         A widget is a kind of gadget.
@@ -111,9 +106,7 @@ struct ManifestEmitterCoverageTests {
             emitterOptions: SwiftEmitter.Options(includeTimestamp: false, emitSourceLineComments: false),
             trace: .silent()
         )
-        let result = try Compiler(options: opts).compileWithManifest(
-            meridianSource: mer, meridianFile: "w.meridian",
-            vocabularies: [.init(name: "w.merconfig", file: "w.merconfig", source: cfg)])
+        let result = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "w.meridian")], vocabularies: [.init(name: "w.merconfig", file: "w.merconfig", source: cfg)]))["w.meridian"]!
 
         #expect(result.manifest.kindsUsed.contains("Widget"))
 

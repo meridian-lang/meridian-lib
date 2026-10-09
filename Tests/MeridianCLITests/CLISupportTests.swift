@@ -235,8 +235,7 @@ struct ReportCompilerErrorTests {
         let broken = "to do a thing:\n    frobnicate the wibble\n"
         let compiler = Compiler(options: .init(trace: ParserTrace.silent()))
         do {
-            _ = try compiler.compile(meridianSource: broken, meridianFile: "broken.meridian",
-                                     vocabularies: [], rulebooks: [])
+            _ = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: broken, file: "broken.meridian")], vocabularies: [], rulebooks: []))["broken.meridian"]!.swift
             Issue.record("expected a compiler error")
         } catch {
             let human = reportCompilerError(error, sources: ["broken.meridian": broken], format: .human)
@@ -300,8 +299,7 @@ struct ApplyQuickFixesTests {
         let broken = "to do a thing:\n    frobnicate the wibble\n"
         let compiler = Compiler(options: .init(trace: ParserTrace.silent()))
         do {
-            _ = try compiler.compile(meridianSource: broken, meridianFile: "b.meridian",
-                                     vocabularies: [], rulebooks: [])
+            _ = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: broken, file: "b.meridian")], vocabularies: [], rulebooks: []))["b.meridian"]!.swift
             Issue.record("expected a compiler error")
         } catch {
             // Dry run: never mutates the source; returns the applied count (>= 0).

@@ -8,8 +8,8 @@ extension SwiftEmitter {
 
     // MARK: - Constants struct
 
-    public struct ConstantsDecl {
-        public struct Entry {
+    public struct ConstantsDecl: Sendable {
+        public struct Entry: Sendable {
             public let name: String
             public let value: IRLiteral
             public init(_ name: String, _ value: IRLiteral) { self.name = name; self.value = value }
@@ -38,17 +38,17 @@ extension SwiftEmitter {
 
     // MARK: - Instances struct
 
-    public struct InstancesDecl {
-        public struct Field {
+    public struct InstancesDecl: Sendable {
+        public struct Field: Sendable {
             public let key: String
             public let value: PropertyValue
             public init(_ key: String, _ value: PropertyValue) { self.key = key; self.value = value }
         }
-        public enum PropertyValue {
+        public enum PropertyValue: Sendable {
             case literal(IRLiteral)
             case envVar(String)
         }
-        public struct Entry {
+        public struct Entry: Sendable {
             public let name: String          // "primary mailer"
             public let kind: String          // "mailer server"
             public let fields: [Field]

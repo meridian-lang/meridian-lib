@@ -1043,11 +1043,7 @@ struct MerConfigTraceTests {
     private func bootstrap(
         _ vocabularies: [Compiler.VocabularyInput]
     ) throws -> Compiler.KnowledgeContext {
-        try Compiler(options: .init(trace: .silent())).knowledge(
-            forSource: "",
-            sourceFile: "empty.meri",
-            vocabularies: vocabularies
-        )
+        try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "empty.meri")], vocabularies: vocabularies))
     }
 
     @Test("merconfig trace category emits section + summary lines")

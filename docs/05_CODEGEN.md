@@ -611,13 +611,13 @@ are byte-unchanged.
 
 ### Complete manifest input
 
-`Compiler.compileWithManifest(…) -> (swift: String, manifest: ManifestEmitter.Input)`
-assembles a COMPLETE `ManifestEmitter.Input` (workflows, constants, tools, kinds,
-instances, metadata, outline, rules, and `skillSections`) as part of every
-compile — there is no longer a silent-loss point where rich data computed during
-compilation is discarded. `Compiler.compile(…)` returns just the Swift string by
-calling `compileWithManifest` internally. The CLI writes the full Input (merging
-in the source map) on every `meridian compile`.
+`Compiler.compile(_:) -> [String: CompiledFile]` assembles a COMPLETE
+`ManifestEmitter.Input` (workflows, constants, tools, kinds, instances,
+metadata, outline, rules, and `skillSections`) as part of every compile
+(`CompiledFile.manifest`) — there is no longer a silent-loss point where rich
+data computed during compilation is discarded. The one-source
+`compile(meridianSource:…)` convenience returns just the Swift string. The CLI
+writes the full Input (merging in the source map) on every `meridian compile`.
 
 ---
 
@@ -625,34 +625,38 @@ in the source map) on every `meridian compile`.
 
 `SwiftEmitter` uses `StringTemplate` from `modelhike`. Each `emit*` method
 returns a `StringTemplate` instance. The top-level
-`emitFile(…).toString(separator: "\n")` flattens nested templates into a
-line-per-item `String`.
+`emit(…).combined` render flattens nested templates into a line-per-item
+`String`.
 
 `Ctx` (context object) carries indent depth and options, and exposes `.s`
 (the current indent string) and `.in(n)` (deeper context).
 
 ---
 
-## `emitFile` signature
+## `emit` signature
 
 ```swift
-public func emitFile(
+public func emit(
     workflows: [IRWorkflow],
     constantsDecl: ConstantsDecl? = nil,
     instancesDecl: InstancesDecl? = nil,
-    domainDecl:    DomainDecl?    = nil
-) -> String
+    domainDecl:    DomainDecl?    = nil,
+    fileMetadata:  FileMetadataAST? = nil,
+    definitions:   [LoweredDefinition] = []
+) throws -> SwiftEmitter.Output   // { combined, domain, workflows }
 ```
 
 `Compiler.compile` builds `ConstantsDecl`, `InstancesDecl`, and
-`DomainDecl` from the parsed `MerConfigFile` and passes them here.
+`DomainDecl` from the parsed `MerConfigFile` and passes them here; the
+`combined` string is the single-file output and `domain` / `workflows` are the
+`--multi-file` split.
 
 ---
 
 ## Multi-vocabulary
 
-`Compiler.compile(meridianSource:meridianFile:vocabularies:)` accepts a
-list of `Compiler.VocabularyInput` records (`name`, `file`, `source`).
+`Compiler.CompilationUnit.vocabularies` accepts a list of
+`Compiler.VocabularyInput` records (`name`, `file`, `source`).
 Every input is parsed and merged via `MerConfigFile.merging(_:)` before
 the symbol table is built.
 

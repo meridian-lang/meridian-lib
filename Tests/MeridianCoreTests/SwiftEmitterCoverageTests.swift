@@ -195,7 +195,7 @@ struct SwiftEmitterExprCoverageTests {
                 .literal(.string("open"))
             )
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("__subject"))
         #expect(out.contains("meridianDef_Page_stale"))
     }
@@ -208,7 +208,7 @@ struct SwiftEmitterExprCoverageTests {
                 subjectVar: "page",
                 body: .comparison(.identifierRef(name: "page"), op, rhs)
             )
-            return try e.emitFile(workflows: [], definitions: [def])
+            return try e.emit(workflows: [], definitions: [def]).combined
         }
         #expect(try emitted(.withinFuture, .literal(.duration(.seconds(60)))).contains("MeridianComparison.isWithinFuture"))
         #expect(try emitted(.withinDuration, .literal(.duration(.seconds(60)))).contains("MeridianComparison.isWithin("))
@@ -226,7 +226,7 @@ struct SwiftEmitterExprCoverageTests {
                 subjectVar: "page",
                 body: .logical(op, [])
             )
-            return try e.emitFile(workflows: [], definitions: [def])
+            return try e.emit(workflows: [], definitions: [def]).combined
         }
         let andOut = try emitted(.and)
         let orOut = try emitted(.or)
@@ -250,7 +250,7 @@ struct SwiftEmitterExprCoverageTests {
                 body: .comparison(.identifierRef(name: "tag"), .equal, .literal(.string("urgent")))
             ))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("meridianDef_Page_check"), Comment(rawValue: out))
         #expect(out.contains(".allSatisfy") || out.contains(".contains"), Comment(rawValue: out))
     }
@@ -266,7 +266,7 @@ struct SwiftEmitterExprCoverageTests {
                 .literal(.string("x"))
             )
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("__subject.member(\"owner\")?.member(\"name\")"), Comment(rawValue: out))
     }
 
@@ -284,7 +284,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "page",
             body: .definitionPredicate(functionName: "meridianDef_Other_thing", subject: .literal(.boolean(true)))
         )
-        let literalOut = try e.emitFile(workflows: [], definitions: [literalSubject])
+        let literalOut = try e.emit(workflows: [], definitions: [literalSubject]).combined
         #expect(literalOut.contains("meridianDef_Other_thing(true)"), Comment(rawValue: literalOut))
     }
 
@@ -303,7 +303,7 @@ struct SwiftEmitterExprCoverageTests {
                 ))),
             ])
         )
-        return try e.emitFile(workflows: [workflow], definitions: [def])
+        return try e.emit(workflows: [workflow], definitions: [def]).combined
     }
 
     @Test("emitElementValueExpr covers an unbound operand, an aggregate list, and a nested comparison RHS")
@@ -366,7 +366,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [callee, caller], domainDecl: domain)
+            .emit(workflows: [callee, caller], domainDecl: domain).combined
         #expect(out.contains("coerce(to: Order.self)"))
     }
 
@@ -394,7 +394,7 @@ struct SwiftEmitterExprCoverageTests {
             explicitStructName: "TriagePullRequest"
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [callee, caller], domainDecl: domain)
+            .emit(workflows: [callee, caller], domainDecl: domain).combined
 
         #expect(out.contains("public let pullRequest: PullRequest"), Comment(rawValue: out))
         #expect(out.contains("public init(runtime: Runtime, pullRequest: PullRequest)"), Comment(rawValue: out))
@@ -441,7 +441,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [callee, caller], domainDecl: domain)
+            .emit(workflows: [callee, caller], domainDecl: domain).combined
         #expect(out.contains("Value.from(scratch).coerce(to: Order.self)"))
     }
 
@@ -464,7 +464,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [callee, caller])
+            .emit(workflows: [callee, caller]).combined
         #expect(out.contains("order: \"manual\""), Comment(rawValue: out))
     }
 
@@ -484,7 +484,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [callee, caller])
+            .emit(workflows: [callee, caller]).combined
         #expect(out.contains("let outcome = try await Target(runtime: runtime).run()"), Comment(rawValue: out))
     }
 
@@ -505,7 +505,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [caller])
+            .emit(workflows: [caller]).combined
         #expect(out.contains("order: state.get(\"scratch.nestedOrder\") ?? .null"), Comment(rawValue: out))
         #expect(!out.contains("coerce(to:"), Comment(rawValue: out))
     }
@@ -523,7 +523,7 @@ struct SwiftEmitterExprCoverageTests {
             ])
         )
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [caller])
+            .emit(workflows: [caller]).combined
         #expect(out.contains("order: scratch"), Comment(rawValue: out))
         #expect(!out.contains("coerce(to:"), Comment(rawValue: out))
     }
@@ -601,7 +601,7 @@ struct SwiftEmitterExprCoverageTests {
         let wf = IRWorkflow(name: "check", parameters: [], body: IRBlock(statements: [
             .assert(AssertIR(condition: statistical)),
         ]))
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains("try await runtime.assert(try await runtime.evaluateTrace("), Comment(rawValue: out))
     }
 
@@ -618,7 +618,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "x",
             body: .comparison(.literal(.number(0)), .equal, .aggregate(.count, middle))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("meridianDef_X_check"), Comment(rawValue: out))
         #expect(out.contains("__subject"), Comment(rawValue: out))
     }
@@ -633,7 +633,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "x",
             body: .comparison(.literal(.number(0)), .equal, .aggregate(.count, items))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains(".member(\"items\")"), Comment(rawValue: out))
     }
 
@@ -652,7 +652,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "x",
             body: .comparison(.literal(.number(0)), .equal, .aggregate(.count, shadowed))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains(".filter { __e1 in"), Comment(rawValue: out))
     }
 
@@ -680,7 +680,7 @@ struct SwiftEmitterExprCoverageTests {
             .init("stage", .enumValue("open", kind: "DealStage")),
         ])
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: []))
-        let out = try e.emitFile(workflows: [wf], constantsDecl: decl)
+        let out = try e.emit(workflows: [wf], constantsDecl: decl).combined
         #expect(out.contains("let isActive: Bool = true"), Comment(rawValue: out))
         #expect(out.contains("let launchDate: Date = Date(timeIntervalSince1970:"), Comment(rawValue: out))
         #expect(out.contains("let lastSeen: Date = Date(timeIntervalSince1970:"), Comment(rawValue: out))
@@ -749,7 +749,7 @@ struct SwiftEmitterExprCoverageTests {
             .assert(AssertIR(condition: atMost)),
             .assert(AssertIR(condition: exactly)),
         ]))
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains(".atMost(3)"), Comment(rawValue: out))
         #expect(out.contains(".exactly(2)"), Comment(rawValue: out))
         #expect(out.contains("subjectKey: meridianStringify("), Comment(rawValue: out))
@@ -767,7 +767,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectKeyExpr: .identifierRef(name: "tenantId")
         ))
         let wf = IRWorkflow(name: "check", parameters: [], body: IRBlock(statements: [.assert(AssertIR(condition: stat))]))
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains("scope: .acrossAllRuns"), Comment(rawValue: out))
         #expect(out.contains(".named(\"checkout\")"), Comment(rawValue: out))
         #expect(out.contains("subjectKey: meridianStringify("), Comment(rawValue: out))
@@ -781,7 +781,7 @@ struct SwiftEmitterExprCoverageTests {
         let wf = IRWorkflow(name: "check", parameters: [], body: IRBlock(statements: [
             .assert(AssertIR(condition: temporal)),
         ]))
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains(".named(\"checkout\")"), Comment(rawValue: out))
     }
 
@@ -821,7 +821,7 @@ struct SwiftEmitterExprCoverageTests {
                 body: .comparison(.identifierRef(name: "page"), .equal, .literal(.string("urgent")))
             ))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains(".allSatisfy"), Comment(rawValue: out))
     }
 
@@ -857,7 +857,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "x",
             body: .comparison(.identifierRef(name: "x"), .equal, .description(listed))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("Value.list("), Comment(rawValue: out))
     }
 
@@ -870,7 +870,7 @@ struct SwiftEmitterExprCoverageTests {
             subjectVar: "x",
             body: .quantified(QuantifierIR(kind: .any, description: outerColl))
         )
-        let out = try e.emitFile(workflows: [], definitions: [def])
+        let out = try e.emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("meridianDef_X_any"), Comment(rawValue: out))
         // The doc comment on this switch warns that taking the `default:`
         // branch here for a `.description`/`.aggregate(.list, _)` collection
@@ -889,7 +889,7 @@ struct SwiftEmitterExprCoverageTests {
         let wf = IRWorkflow(name: "check", parameters: [], body: IRBlock(statements: [
             .assert(AssertIR(condition: .definitionPredicate(functionName: "meridianDef_Other_isTrue", subject: .literal(.boolean(true))))),
         ]))
-        let out = try e.emitFile(workflows: [wf], definitions: [helper])
+        let out = try e.emit(workflows: [wf], definitions: [helper]).combined
         #expect(out.contains("meridianDef_Other_isTrue(.boolean(true))"), Comment(rawValue: out))
     }
 
@@ -906,7 +906,7 @@ struct SwiftEmitterExprCoverageTests {
                 toolCapturePolicies: ["validateOrder": .full]
             )
         )
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains("\"validateOrder\": .full"), Comment(rawValue: out))
     }
 
@@ -922,7 +922,7 @@ struct SwiftEmitterExprCoverageTests {
             .assert(AssertIR(condition: .comparison(superlative, .equal, .literal(.string("x"))))),
             .assert(AssertIR(condition: .comparison(description, .equal, .literal(.string("y"))))),
         ]))
-        let out = try e.emitFile(workflows: [wf])
+        let out = try e.emit(workflows: [wf]).combined
         #expect(out.contains("MeridianComparison.eq("), Comment(rawValue: out))
     }
 
@@ -1043,7 +1043,7 @@ struct SwiftEmitterExprCoverageTests {
                 .identifierRef(name: "page")
             )
         )
-        let out = try SwiftEmitter().emitFile(workflows: [], definitions: [def])
+        let out = try SwiftEmitter().emit(workflows: [], definitions: [def]).combined
         #expect(out.contains("__subject"))
         #expect(out.contains("meridianDef_Page_open"))
     }
@@ -1102,7 +1102,7 @@ struct SwiftEmitterExprCoverageTests {
         )
 
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [workflow], definitions: [criticalDef, troubledDef])
+            .emit(workflows: [workflow], definitions: [criticalDef, troubledDef]).combined
 
         // "troubled" needs `state` for `alerts` — must NOT become a standalone
         // free function (that would reference `state` from a context where it
@@ -1193,7 +1193,7 @@ struct SwiftEmitterCtxCoverageTests {
     }
 }
 
-@Suite("SwiftEmitter — block constructs via emitFile")
+@Suite("SwiftEmitter — block constructs via emit(_:)")
 struct SwiftEmitterBlockCoverageTests {
 
     @Test("while loop and match branch with literal/enum/wildcard patterns")
@@ -1217,7 +1217,7 @@ struct SwiftEmitterBlockCoverageTests {
             thenBlock: IRBlock(statements: [])
         ))
         let wf = IRWorkflow(name: "run the loop", parameters: [], body: IRBlock(statements: [whileLoop, match]))
-        let out = try SwiftEmitter(trace: cap.trace).emitFile(workflows: [wf])
+        let out = try SwiftEmitter(trace: cap.trace).emit(workflows: [wf]).combined
         #expect(out.contains("while "))
         #expect(out.contains("switch "))
         #expect(out.contains("case \"open\""))
@@ -1231,7 +1231,7 @@ struct SwiftEmitterBlockCoverageTests {
         #expect(trace.contains("wildcard"), Comment(rawValue: trace))
     }
 
-    @Test("emitFileImpl's namespace trace line and every primitiveTraceName arm log under an active .codegen trace")
+    @Test("emit's namespace trace line and every primitiveTraceName arm log under an active .codegen trace")
     func namespaceTraceAndEveryPrimitiveTraceName() throws {
         // `trace.log`'s message is `@autoclosure`, so a silent trace never
         // evaluates `namespace.map { … }` or `primitiveTraceName(_:)` at all —
@@ -1248,7 +1248,7 @@ struct SwiftEmitterBlockCoverageTests {
         ])
         let wf = IRWorkflow(name: "cover every primitive", parameters: [], body: body)
         let out = try SwiftEmitter(options: .init(namespaceEnum: "CoverageDemo"), trace: cap.trace)
-            .emitFile(workflows: [wf])
+            .emit(workflows: [wf]).combined
         #expect(out.contains("public enum CoverageDemo {"), Comment(rawValue: out))
         let trace = cap.lines().joined(separator: "\n")
         #expect(trace.contains("namespace CoverageDemo"), Comment(rawValue: trace))
@@ -1272,7 +1272,7 @@ struct SwiftEmitterBlockCoverageTests {
             thenBlock: IRBlock(statements: [.complete(CompleteIR(reason: "fallback"))])
         ))
         let wf = IRWorkflow(name: "run the match", parameters: [], body: IRBlock(statements: [match]))
-        let out = try SwiftEmitter(trace: cap.trace).emitFile(workflows: [wf])
+        let out = try SwiftEmitter(trace: cap.trace).emit(workflows: [wf]).combined
         #expect(out.contains("default:"), Comment(rawValue: out))
         let trace = cap.lines().joined(separator: "\n")
         #expect(trace.contains("default present"), Comment(rawValue: trace))
@@ -1287,7 +1287,7 @@ struct SwiftEmitterBlockCoverageTests {
             body: IRBlock(statements: [.complete(CompleteIR(reason: nil))])
         ))
         let wf = IRWorkflow(name: "spin until done", parameters: [], body: IRBlock(statements: [loop]))
-        let out = try SwiftEmitter().emitFile(workflows: [wf])
+        let out = try SwiftEmitter().emit(workflows: [wf]).combined
         #expect(out.contains("while "))
     }
 }

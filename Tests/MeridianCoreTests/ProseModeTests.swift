@@ -12,7 +12,7 @@ struct ProseModeTests {
           inspect the diff and leave only useful comments.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR")
             return
@@ -28,8 +28,11 @@ struct ProseModeTests {
           inspect the diff and leave only useful comments.
         """)
 
+        // The lowerer's batch engine collects; the pipeline caller checkpoints.
+        let engine = DiagnosticEngine()
         #expect(throws: CompilerError.self) {
-            _ = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+            _ = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: engine).lower(ast)
+            try engine.throwIfErrors()
         }
     }
 
@@ -46,7 +49,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(out.contains("github.comment"))
     }
@@ -63,7 +66,7 @@ struct ProseModeTests {
           inspect the diff and leave only useful comments.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR"); return
         }
@@ -84,7 +87,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         #expect(out.contains("outputKind: \"text\","))
         guard let outputKindRange = out.range(of: "outputKind: \"text\","),
               let stepRange = out.range(of: "step:", range: outputKindRange.upperBound..<out.endIndex) else {
@@ -108,7 +111,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         #expect(out.contains("runtime.executeProsePlan"))
         #expect(out.contains("scopedTools: [\"shell.run\"],"))
         #expect(out.contains("guidance: \"Run \\\"gbrain doctor\\\" first.\""))
@@ -128,7 +131,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(out.contains("replanAfterFailures: 3,"))
         #expect(out.contains("guidance: \"Repair every missing back-link.\""))
@@ -148,7 +151,7 @@ struct ProseModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         guard let replanRange = out.range(of: "replanAfterFailures: 3,"),
               let outputKindRange = out.range(of: "outputKind: \"text\",", range: replanRange.upperBound..<out.endIndex),
               let stepRange = out.range(of: "step:", range: outputKindRange.upperBound..<out.endIndex) else {
@@ -170,7 +173,7 @@ struct ProseModeTests {
             Then check the fallback path.
         """)
 
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
         guard case .aiJudgment(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected AIJudgmentIR")
             return
@@ -178,7 +181,7 @@ struct ProseModeTests {
         #expect(step.text == "follow the Diagnostics guidance")
         #expect(step.guidance == "Check the golden path first\nThen check the fallback path")
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: workflows).combined
         #expect(out.contains("guidance: \"Check the golden path first\\nThen check the fallback path\""))
     }
 }

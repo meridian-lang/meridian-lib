@@ -12,7 +12,7 @@ import MeridianCore
 // `--merconfig` is repeatable; if omitted, every `.merconfig` next to the
 // .meridian file (or in the parent directory) is loaded.
 
-public struct CheckCommand: AsyncParsableCommand {
+public struct CheckCommand: AsyncParsableCommand, ModulePathSupporting {
     public init() {}
 
     public static let configuration = CommandConfiguration(

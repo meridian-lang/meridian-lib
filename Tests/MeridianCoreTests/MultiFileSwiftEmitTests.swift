@@ -4,8 +4,8 @@ import Testing
 
 @Suite("Multi-file Swift emit MVP")
 struct MultiFileSwiftEmitTests {
-    @Test("compileMultiFile splits domain and workflows")
-    func compileMultiFileSplit() throws {
+    @Test("compile(_:) splits domain and workflows")
+    func compileSplit() throws {
         let cfg = """
         === vocabulary ===
         A service is a kind of thing.
@@ -23,15 +23,14 @@ struct MultiFileSwiftEmitTests {
         To inspect a service:
           complete.
         """
-        let split = try Compiler(options: .init(trace: .silent(), emitMultiFile: true))
-            .compileMultiFile(
-                meridianSource: mer,
-                meridianFile: "inspect.meridian",
+        let split = try Compiler(options: .init(trace: .silent()))
+            .compile(Compiler.CompilationUnit(
+                sources: [Compiler.SourceInput(source: mer, file: "inspect.meridian")],
                 vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-            )
-        #expect(split.output.domainSource.contains("struct Service"), Comment(rawValue: split.output.domainSource))
-        #expect(split.output.workflowsSource.contains("struct InspectService"), Comment(rawValue: split.output.workflowsSource))
-        #expect(!split.output.domainSource.contains("func run"), Comment(rawValue: "domain file has no workflow run()"))
-        #expect(!split.output.workflowsSource.contains("struct Service"), Comment(rawValue: "workflows file has no domain struct"))
+            ))["inspect.meridian"]!
+        #expect(split.domainSwift.contains("struct Service"), Comment(rawValue: split.domainSwift))
+        #expect(split.workflowsSwift.contains("struct InspectService"), Comment(rawValue: split.workflowsSwift))
+        #expect(!split.domainSwift.contains("func run"), Comment(rawValue: "domain file has no workflow run()"))
+        #expect(!split.workflowsSwift.contains("struct Service"), Comment(rawValue: "workflows file has no domain struct"))
     }
 }

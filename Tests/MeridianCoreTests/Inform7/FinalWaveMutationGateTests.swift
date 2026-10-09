@@ -61,11 +61,7 @@ struct FinalWaveMutationGateTests {
 
         let compiler = Compiler(options: .init(trace: .silent()))
         func id(for mer: String) throws -> String {
-            let model = try compiler.compileToModel(
-                meridianSource: mer,
-                meridianFile: "mutated.meridian",
-                vocabularies: [.init(name: "test", file: "test.merconfig", source: cfg)]
-            )
+            let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "mutated.meridian")], vocabularies: [.init(name: "test", file: "test.merconfig", source: cfg)]))["mutated.meridian"]!.model
             return try #require(model.workflows.flatMap(\.norms).first?.id)
         }
         #expect(try id(for: baseline) != id(for: mutated))

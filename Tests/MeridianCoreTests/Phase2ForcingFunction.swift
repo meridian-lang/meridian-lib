@@ -54,7 +54,7 @@ struct LenientlySyncAnalyticsForcingFunction {
             indentUnit: "    ",
             emitSourceLineComments: false
         ))
-        return try emitter.emitFile(workflows: [makeIR()])
+        return try emitter.emit(workflows: [makeIR()]).combined
     }
 
     // MARK: 1. Struct signature
@@ -246,7 +246,7 @@ struct ProcessOrderForcingFunction {
             sourceFileName: "order_processing.meridian",
             indentUnit: "    ",
             emitSourceLineComments: false
-        )).emitFile(workflows: [makeIR()])
+        )).emit(workflows: [makeIR()]).combined
     }
 
     @Test("struct is named ProcessOrder") func structName() throws {

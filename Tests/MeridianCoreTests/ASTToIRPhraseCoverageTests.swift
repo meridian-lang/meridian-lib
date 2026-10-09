@@ -7,7 +7,7 @@ import MeridianRuntime
 struct ASTToIRPhraseCoverageTests {
 
     private func makeIR(symbols: SymbolTable = SymbolTable(trace: .silent())) -> ASTToIR {
-        ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
     }
 
     private func eventPattern(predicate: ExpressionAST? = .identifierRef("the user")) -> EventPatternAST {

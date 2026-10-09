@@ -50,21 +50,16 @@ struct SectionRoleRulebookBehaviorTests {
         let swift = try Compiler(options: .init(
             emitterOptions: .init(includeTimestamp: false, emitSourceLineComments: false),
             trace: .silent()
-        )).compile(
-            meridianSource: """
+        )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             rulebook: rules.merrules
             ---
             ## Repair missing back-links
             complete.
-            """,
-            meridianFile: "skill.meri",
-            vocabularies: [],
-            rulebooks: [RulebookInput(name: "rules", file: "rules.merrules", source: """
+            """, file: "skill.meri")], vocabularies: [], rulebooks: [RulebookInput(name: "rules", file: "rules.merrules", source: """
             === sections ===
             section "Repair missing back-links" -> procedure
-            """)]
-        )
+            """)]))["skill.meri"]!.swift
 
         #expect(swift.contains("complete(reason: nil, step:"), Comment(rawValue: swift))
         #expect(!swift.contains("_unresolved"), Comment(rawValue: swift))

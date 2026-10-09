@@ -42,7 +42,6 @@ audit scans `Tests/` only for `traceCapture?.trace ?? .silent()` defaults.
 | Path | Pattern | Classification | Rationale | User-visible signal | Owning test | Explicit opt-in |
 |---|---|---|---|---|---|---|
 | `Sources/MeridianCore/Lowering/ASTToIR+PhraseInvocation.swift` | `_unresolved` | `explicit-fallback` | Emits placeholder bind only behind `allow-fallbacks: unresolved-phrases` | compiler warning diagnostic | `Phase3ForcingFunction` | yes |
-| `Sources/MeridianCore/Compiler.swift` | `legacySemantic` | `internal-invariant` | Projects deprecated `CompilerError.semanticError` into structured diagnostics | rendered `[MER0001]` diagnostic | `DiagnosticTests` | no |
 
 ## Trace file sink degrade path
 

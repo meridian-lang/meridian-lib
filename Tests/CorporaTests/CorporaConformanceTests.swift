@@ -93,12 +93,7 @@ struct CorporaConformanceTests {
             for file in corpus.files {
                 do {
                     let source = try String(contentsOf: file, encoding: .utf8)
-                    let swift = try Compiler(options: Self.compilerOptions(for: corpus)).compile(
-                        meridianSource: source,
-                        meridianFile: file.lastPathComponent,
-                        vocabularies: [corpus.vocabulary],
-                        rulebooks: [corpus.rulebook]
-                    )
+                    let swift = try Compiler(options: Self.compilerOptions(for: corpus)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.swift
                     if swift.contains("_unresolved") {
                         failures.append("\(corpus.name)/\(file.lastPathComponent): emitted _unresolved")
                     }
@@ -125,12 +120,7 @@ struct CorporaConformanceTests {
         for corpus in try Self.corpora() {
             for file in corpus.files {
                 let source = try String(contentsOf: file, encoding: .utf8)
-                let (_, _, manifest) = try Compiler(options: Self.compilerOptions(for: corpus)).compileWithManifest(
-                    meridianSource: source,
-                    meridianFile: file.lastPathComponent,
-                    vocabularies: [corpus.vocabulary],
-                    rulebooks: [corpus.rulebook]
-                )
+                let manifest = try Compiler(options: Self.compilerOptions(for: corpus)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.manifest
                 definitionCount += manifest.definitions.count
                 relationCount += manifest.relations.count
                 verbCount += manifest.verbs.count
@@ -162,12 +152,7 @@ struct CorporaConformanceTests {
                 sawAnyFixture = true
                 do {
                     let source = try String(contentsOf: file, encoding: .utf8)
-                    let (_, _, manifest) = try Compiler(options: Self.compilerOptions(for: corpus)).compileWithManifest(
-                        meridianSource: source,
-                        meridianFile: file.lastPathComponent,
-                        vocabularies: [corpus.vocabulary],
-                        rulebooks: [corpus.rulebook]
-                    )
+                    let manifest = try Compiler(options: Self.compilerOptions(for: corpus)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.manifest
                     if manifest.rules.isEmpty {
                         failures.append("\(corpus.name)/\(file.lastPathComponent): manifest.rules is empty")
                     }
@@ -225,12 +210,7 @@ struct CorporaConformanceTests {
                     emitterOptions: SwiftEmitter.Options(
                         namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(file.deletingPathExtension().lastPathComponent))
                 )
-                let swift = try Compiler(options: opts).compile(
-                    meridianSource: source,
-                    meridianFile: file.lastPathComponent,
-                    vocabularies: [corpus.vocabulary],
-                    rulebooks: [corpus.rulebook]
-                )
+                let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.swift
                 return ("\(corpus.name)/\(file.lastPathComponent)", swift)
             }
         }

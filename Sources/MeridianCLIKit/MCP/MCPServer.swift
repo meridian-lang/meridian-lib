@@ -87,26 +87,22 @@ public struct MCPServer: Sendable {
         let compiler = Compiler(options: .init())
         switch tool {
         case .compile:
-            let swift = try compiler.compile(
-                meridianSource: source, meridianFile: file,
-                vocabularies: vocabularies, rulebooks: rulebooks
-            )
-            return toolResult(text: swift)
+            let swift = try compiler.compile(Compiler.CompilationUnit(
+                sources: [Compiler.SourceInput(source: source, file: file)],
+                vocabularies: vocabularies, rulebooks: rulebooks))[file]?.swift
+            return toolResult(text: swift ?? "")
         case .check:
             do {
-                _ = try compiler.compile(
-                    meridianSource: source, meridianFile: file,
-                    vocabularies: vocabularies, rulebooks: rulebooks
-                )
+                _ = try compiler.compile(Compiler.CompilationUnit(
+                    sources: [Compiler.SourceInput(source: source, file: file)],
+                    vocabularies: vocabularies, rulebooks: rulebooks))
                 return toolResult(text: "ok")
             } catch {
                 return toolResult(text: String(describing: error), isError: true)
             }
         case .explain:
-            let model = try compiler.compileToModel(
-                meridianSource: source, meridianFile: file,
-                vocabularies: vocabularies, rulebooks: rulebooks
-            )
+            let model = try compiledModel(
+                compiler, source, file, vocabularies, rulebooks)
             let text = try Verbalizer(model: model).verbalize()
             return toolResult(text: text)
         }

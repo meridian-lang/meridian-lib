@@ -50,32 +50,20 @@ struct CompilerCoverageTests {
     func duplicateRulebookNameFails() {
         let emptyRules = "=== sections ===\n"
         #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: "To run:\n  complete.\n",
-                meridianFile: "t.meridian",
-                vocabularies: [],
-                rulebooks: [
-                    RulebookInput(name: "shared", file: "a.merrules", source: emptyRules),
-                    RulebookInput(name: "shared", file: "b.merrules", source: emptyRules),
-                ]
-            )
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "To run:\n  complete.\n", file: "t.meridian")], vocabularies: [], rulebooks: [ RulebookInput(name: "shared", file: "a.merrules", source: emptyRules), RulebookInput(name: "shared", file: "b.merrules", source: emptyRules), ]))["t.meridian"]!.swift
         }
     }
 
     @Test("an unknown allow-fallbacks token is reported through the batch engine")
     func unknownAllowFallbacksTokenReports() throws {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: """
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 allow-fallbacks: unresolved-phrases, not-a-real-kind
                 ---
                 To run:
                   complete.
-                """,
-                meridianFile: "t.meridian",
-                vocabularies: []
-            )
+                """, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
         }
         let err = try #require(caught)
         #expect(err.diagnostics.contains { $0.code == .unknownFallbackKind })
@@ -117,36 +105,26 @@ struct CompilerCoverageTests {
     @Test("vocabulary frontmatter with no supplied configs is rejected")
     func unknownVocabularyWithEmptyHostFails() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: """
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 vocabulary: missing.merconfig
                 ---
                 To run:
                   complete.
-                """,
-                meridianFile: "t.meridian",
-                vocabularies: []
-            )
+                """, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
         }
     }
 
     @Test("vocabulary frontmatter must match a supplied config name")
     func unknownVocabularyNameFails() {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: """
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 vocabulary: other.merconfig
                 ---
                 To run:
                   complete.
-                """,
-                meridianFile: "t.meridian",
-                vocabularies: [
-                    .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"),
-                ]
-            )
+                """, file: "t.meridian")], vocabularies: [ .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"), ]))["t.meridian"]!.swift
         }
         let err = try? #require(caught)
         #expect(err?.diagnostics.contains { $0.code == .unknownVocabulary } == true)
@@ -155,21 +133,14 @@ struct CompilerCoverageTests {
     @Test("rulebook frontmatter must match a supplied rulebook input")
     func unknownRulebookReferenceFails() {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: """
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 vocabulary: t.merconfig
                 rulebook: missing.merrules
                 ---
                 To run:
                   complete.
-                """,
-                meridianFile: "t.meridian",
-                vocabularies: [
-                    .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"),
-                ],
-                rulebooks: []
-            )
+                """, file: "t.meridian")], vocabularies: [ .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"), ], rulebooks: []))["t.meridian"]!.swift
         }
         let err = try? #require(caught)
         #expect(err?.diagnostics.contains { $0.code == .unknownRulebook } == true)

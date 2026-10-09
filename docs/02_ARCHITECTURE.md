@@ -133,7 +133,7 @@ Sources/MeridianCore/
 ├── Verbalizer/
 │   ├── Verbalizer.swift            ← Lowered model → Canonical English
 │   ├── Verbalizer+IRExpression.swift ← IRExpression / interpolation surfaces
-│   ├── VerbalizerModel.swift       ← Public semantic model from compileToModel
+│   ├── VerbalizerModel.swift       ← Public semantic model from compile(_:)
 │   └── DriftEngine.swift           ← Authored vs canonical line audit
 │
 ├── Docs/
@@ -224,7 +224,7 @@ MeridianFile
         │
         ├──► ManifestEmitter → {stem}.meridian.manifest.json
         │
-        ▼  SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)
+        ▼  SwiftEmitter.emit(workflows:constantsDecl:instancesDecl:domainDecl:)
            (+ runtimeTraceConfiguration, trace query/monitor codegen when configured)
 Swift source String  ← toString(separator: "\n") from StringTemplate
         │

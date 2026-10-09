@@ -26,7 +26,7 @@ The pipeline runs in five stages:
    JSON manifest. The same `SwiftEmitter` also emits typed Swift
    structs (a "domain" file) from the vocabulary's `kind` declarations
    when the caller passes a ``SwiftEmitter/DomainDecl`` to
-   ``SwiftEmitter/emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)``.
+   ``SwiftEmitter/emit(workflows:constantsDecl:instancesDecl:domainDecl:fileMetadata:definitions:)``.
 5. **Format** — `swift-format` is run on the emitted Swift unless the
    caller passes `--no-format`.
 

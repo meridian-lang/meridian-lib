@@ -199,11 +199,7 @@ struct VerbalizerCoverageTests {
         #expect(surface.contains("otherwise:"), Comment(rawValue: surface))
 
         let fileText = try Verbalizer(model: model).verbalize()
-        let reparsed = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: fileText,
-            meridianFile: "match-branch.meri",
-            vocabularies: [VerbalizerTestSupport.baseVocabInput()]
-        )
+        let reparsed = try VerbalizerTestSupport.compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: fileText, file: "match-branch.meri")], vocabularies: [VerbalizerTestSupport.baseVocabInput()]))["match-branch.meri"]!.model
         #expect(IREquality.structurallyEqual(model.workflows, reparsed.workflows),
                 Comment(rawValue: VerbalizerTestSupport.firstInequalityHint(model.workflows, reparsed.workflows)
                     + "\n---\n" + fileText))
@@ -738,8 +734,8 @@ struct VerbalizerCoverageTests {
         #expect(!IREquality.structurallyEqual(IRBlock?.none, IRBlock?.some(block())))
     }
 
-    @Test("compileToModel returns verbalizer fields without emitting Swift")
-    func compileToModelFields() throws {
+    @Test("compile(_:) returns verbalizer fields without emitting Swift")
+    func compiledModelFields() throws {
         let source = """
         ---
         tools:
@@ -753,11 +749,7 @@ struct VerbalizerCoverageTests {
         ## Tools Used
         - Demo Tool (demoTool)
         """
-        let model = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: source,
-            meridianFile: "audit.meri",
-            vocabularies: [VerbalizerTestSupport.baseVocabInput()]
-        )
+        let model = try VerbalizerTestSupport.compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "audit.meri")], vocabularies: [VerbalizerTestSupport.baseVocabInput()]))["audit.meri"]!.model
 
         #expect(model.sourceFileName == "audit.meri")
         #expect(model.authoredSource == source)

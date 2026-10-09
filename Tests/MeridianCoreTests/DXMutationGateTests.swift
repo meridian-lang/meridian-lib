@@ -88,11 +88,7 @@ struct DXMutationGateTests {
             complete.
         """
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: mer,
-                meridianFile: "t.meridian",
-                vocabularies: []
-            )
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
             Issue.record("expected malformed recover header to throw")
         } catch let CompilerError.diagnostics(diags) {
             #expect(diags.contains { $0.code == .unparseableStatement })
@@ -227,7 +223,7 @@ struct DXMutationGateTests {
 
     // MARK: - Trace phase strings (remove-trace-phase sentinel)
 
-    @Test("mutation gate: compileWithManifest emits required post-lower timing phases")
+    @Test("mutation gate: compile(_:) emits required post-lower timing phases")
     func requiredTracePhasesPresent() throws {
         var url = URL(fileURLWithPath: #file)
         while !FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) {
@@ -242,11 +238,7 @@ struct DXMutationGateTests {
             contentsOf: examples.appendingPathComponent("ecommerce.merconfig"), encoding: .utf8)
 
         let cap = ParserTrace.capturing(categories: [.timing, .codegen])
-        _ = try Compiler(options: .init(trace: cap.trace)).compileWithManifest(
-            meridianSource: mer,
-            meridianFile: "order_processing.meridian",
-            vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]
-        )
+        _ = try Compiler(options: .init(trace: cap.trace)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")], vocabularies: [.init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)]))["order_processing.meridian"]!
 
         let joined = cap.lines().joined(separator: "\n")
         let required = [

@@ -139,14 +139,10 @@ struct RuntimeExecutorExtendedCoverageTests {
                 emitSourceLineComments: false
             )
         ))
-        let swift = try compiler.compile(
-            meridianSource: mer,
-            meridianFile: "t.meridian",
-            vocabularies: []
-        )
+        let swift = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
         let ast = try MeridianParser(symbols: SymbolTable.build(from: MerConfigFile()), trace: .silent())
             .parse(mer, file: "t.meridian")
-        let workflows = try ASTToIR(symbols: SymbolTable.build(from: MerConfigFile()), sourceFile: "t.meridian")
+        let workflows = try ASTToIR(symbols: SymbolTable.build(from: MerConfigFile()), sourceFile: "t.meridian", engine: DiagnosticEngine())
             .lower(ast)
         guard let wf = workflows.first else {
             throw NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "no workflow"])

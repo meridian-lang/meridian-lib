@@ -317,9 +317,7 @@ struct ObservabilityCoverageCloseoutTests {
 
     @Test("ProbeTally records probe outcomes and renders a summary line")
     func probeTallySummary() throws {
-        let knowledge = try Compiler(options: .init(trace: .silent())).knowledge(
-            forSource: "", sourceFile: "<test>",
-            vocabularies: [TrialLoweringTests.orderVocab])
+        let knowledge = try Compiler(options: .init(trace: .silent())).bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: [TrialLoweringTests.orderVocab]))
         let tally = TrialLowering.ProbeTally()
         let trial = TrialLowering(knowledge: knowledge, probeTally: tally)
         #expect(trial.lowersAsStatement("Validate the order."))

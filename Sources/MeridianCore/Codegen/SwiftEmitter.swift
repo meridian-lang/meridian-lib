@@ -8,7 +8,7 @@ import MeridianRuntime
 // the structure of the Swift code it produces — easy to read and diff.
 //
 // Calling .toString(separator: "\n") on the top-level template (done in
-// emitFile) flattens all nested StringTemplates recursively and joins every
+// `render`) flattens all nested StringTemplates recursively and joins every
 // leaf string with a newline, producing properly formatted Swift source.
 // Empty strings "" inside any template act as blank-line sentinels.
 
@@ -46,7 +46,7 @@ public struct SwiftEmitter {
     public let options: Options
     public let trace: ParserTrace
 
-    /// Populated at the top of `emitFile` so `.definitionPredicate` call sites
+    /// Populated at the top of `emit` so `.definitionPredicate` call sites
     /// throughout emission can look up a referenced definition's body/subject
     /// without threading it through every `emit*` signature — see
     /// `definitionRequiresState`.
@@ -59,23 +59,40 @@ public struct SwiftEmitter {
 
     // MARK: - Public entry point
 
-    /// Emit a complete Swift source file for the given workflows.
-    /// Uses `toString(separator: "\n")` so nested StringTemplates are
-    /// flattened and every leaf string becomes its own line. Non-mutating on
-    /// the caller's value (many call sites hold a `let SwiftEmitter`): builds
-    /// a local mutable copy with `definitionsByName` populated and delegates
-    /// to `emitFileImpl` on that copy.
-    public func emitFile(
+    /// Every Swift string one compile can produce: the combined single-file
+    /// output plus the two parts of the multi-file split. All three come from
+    /// the same traversal of the workflow/domain IR.
+    public struct Output: Sendable {
+        /// Domain types, constants, instances and definition helpers only.
+        public let domain: String
+        /// Workflow structs (and optional skill metadata) only.
+        public let workflows: String
+        /// The complete single-file output (header + domain + workflows).
+        public let combined: String
+
+        public init(domain: String, workflows: String, combined: String) {
+            self.domain = domain
+            self.workflows = workflows
+            self.combined = combined
+        }
+    }
+
+    /// Emit the combined file and both multi-file parts for the given
+    /// workflows. Uses `toString(separator: "\n")` so nested StringTemplates
+    /// are flattened and every leaf string becomes its own line. Non-mutating
+    /// on the caller's value (many call sites hold a `let SwiftEmitter`):
+    /// builds a local mutable copy with `definitionsByName` populated.
+    public func emit(
         workflows: [IRWorkflow],
         constantsDecl: ConstantsDecl? = nil,
         instancesDecl: InstancesDecl? = nil,
         domainDecl: DomainDecl? = nil,
         fileMetadata: FileMetadataAST? = nil,
         definitions: [LoweredDefinition] = []
-    ) throws -> String {
+    ) throws -> Output {
         var copy = self
         copy.definitionsByName = Dictionary(uniqueKeysWithValues: definitions.map { ($0.functionName, $0) })
-        return try copy.emitFileImpl(
+        return try copy.emitAll(
             workflows: workflows,
             constantsDecl: constantsDecl,
             instancesDecl: instancesDecl,
@@ -85,27 +102,39 @@ public struct SwiftEmitter {
         )
     }
 
-    /// Multi-file package layout: domain types/constants/instances/definitions in
-    /// one file; workflow structs (and optional skill metadata) in another.
-    public struct MultiFileOutput: Sendable {
-        public let domainSource: String
-        public let workflowsSource: String
-
-        public init(domainSource: String, workflowsSource: String) {
-            self.domainSource = domainSource
-            self.workflowsSource = workflowsSource
-        }
-    }
-
-    public func emitMultiFile(
+    private func emitAll(
         workflows: [IRWorkflow],
-        constantsDecl: ConstantsDecl? = nil,
-        instancesDecl: InstancesDecl? = nil,
-        domainDecl: DomainDecl? = nil,
-        fileMetadata: FileMetadataAST? = nil,
-        definitions: [LoweredDefinition] = []
-    ) throws -> MultiFileOutput {
-        let domainSource = try emitFile(
+        constantsDecl: ConstantsDecl?,
+        instancesDecl: InstancesDecl?,
+        domainDecl: DomainDecl?,
+        fileMetadata: FileMetadataAST?,
+        definitions: [LoweredDefinition]
+    ) throws -> Output {
+        try IRValidator.validate(workflows, sourceFile: options.sourceFileName, trace: trace)
+        trace.log(.codegen, "emit file: \(workflows.count) workflow(s), \(definitions.count) definition(s)\(options.namespaceEnum.map { ", namespace \($0)" } ?? "")")
+        if let namespace = options.namespaceEnum {
+            trace.log(.codegen, "emit namespace wrapper: public enum \(namespace)")
+        }
+        if let d = domainDecl {
+            trace.log(.codegen, "emit domain: \(d.kinds.count) kind(s), \(d.enumerations.count) enumeration(s)")
+        }
+        if let c = constantsDecl {
+            trace.log(.codegen, "emit constants: \(c.entries.count) entrie(s)")
+        }
+        if let i = instancesDecl {
+            trace.log(.codegen, "emit instances: \(i.entries.count) entrie(s)")
+        }
+        trace.log(.codegen, "multi-file emit: domain + workflows split")
+
+        let combined = try render(
+            workflows: workflows,
+            constantsDecl: constantsDecl,
+            instancesDecl: instancesDecl,
+            domainDecl: domainDecl,
+            fileMetadata: fileMetadata,
+            definitions: definitions
+        )
+        let domain = try render(
             workflows: [],
             constantsDecl: constantsDecl,
             instancesDecl: instancesDecl,
@@ -113,7 +142,13 @@ public struct SwiftEmitter {
             fileMetadata: nil,
             definitions: definitions
         )
-        let workflowsSource = try emitFile(
+        // The workflows part of the split has never resolved definition
+        // helpers (the historical `emitMultiFile` passed `definitions: []`),
+        // so render it from a copy with an empty `definitionsByName` to keep
+        // the emitted predicate calls byte-identical.
+        var workflowsOnly = self
+        workflowsOnly.definitionsByName = [:]
+        let workflowsPart = try workflowsOnly.render(
             workflows: workflows,
             constantsDecl: nil,
             instancesDecl: nil,
@@ -121,18 +156,17 @@ public struct SwiftEmitter {
             fileMetadata: fileMetadata,
             definitions: []
         )
-        return MultiFileOutput(domainSource: domainSource, workflowsSource: workflowsSource)
+        return Output(domain: domain, workflows: workflowsPart, combined: combined)
     }
 
-    private func emitFileImpl(
+    private func render(
         workflows: [IRWorkflow],
-        constantsDecl: ConstantsDecl? = nil,
-        instancesDecl: InstancesDecl? = nil,
-        domainDecl: DomainDecl? = nil,
-        fileMetadata: FileMetadataAST? = nil,
-        definitions: [LoweredDefinition] = []
+        constantsDecl: ConstantsDecl?,
+        instancesDecl: InstancesDecl?,
+        domainDecl: DomainDecl?,
+        fileMetadata: FileMetadataAST?,
+        definitions: [LoweredDefinition]
     ) throws -> String {
-        try IRValidator.validate(workflows, sourceFile: options.sourceFileName, trace: trace)
         let hasConstants = constantsDecl != nil
         let hasInstances = instancesDecl != nil
         // Set of Swift type names produced by the Domain section. The grammar
@@ -157,19 +191,6 @@ public struct SwiftEmitter {
             }
         }
         let namespace = options.namespaceEnum
-        trace.log(.codegen, "emit file: \(workflows.count) workflow(s), \(definitions.count) definition(s)\(namespace.map { ", namespace \($0)" } ?? "")")
-        if let namespace {
-            trace.log(.codegen, "emit namespace wrapper: public enum \(namespace)")
-        }
-        if let d = domainDecl {
-            trace.log(.codegen, "emit domain: \(d.kinds.count) kind(s), \(d.enumerations.count) enumeration(s)")
-        }
-        if let c = constantsDecl {
-            trace.log(.codegen, "emit constants: \(c.entries.count) entrie(s)")
-        }
-        if let i = instancesDecl {
-            trace.log(.codegen, "emit instances: \(i.entries.count) entrie(s)")
-        }
         return StringTemplate {
             fileHeader()
             ""
@@ -234,7 +255,7 @@ public struct SwiftEmitter {
 
     /// `hasConstants` controls whether `let constants = Constants()` is
     /// emitted inside `run()`. Only set when a `ConstantsDecl` was provided
-    /// to `emitFile`, otherwise the reference would be unresolved.
+    /// to `emit`, otherwise the reference would be unresolved.
     /// `skillMetadata` — when non-nil, emits a `skillMetadata: [String: String]`
     /// static property on this struct (B1, first workflow only).
     public func emitWorkflow(_ workflow: IRWorkflow,
@@ -505,7 +526,7 @@ struct Ctx {
     let options: SwiftEmitter.Options
 
     /// `structName → [(paramName, kindTypeName)]` lookup populated at the top
-    /// of `emitFile`. Empty when an emitter call doesn't have access to the
+    /// of `emit`. Empty when an emitter call doesn't have access to the
     /// full workflow set (e.g. tests that call `emitWorkflow` directly). Used
     /// by `emitWorkflowCall` to wrap `Value`-typed call-site arguments (loop
     /// vars, state-bound bindings) so they coerce into the typed kind structs

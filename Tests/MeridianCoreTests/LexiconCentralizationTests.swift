@@ -347,7 +347,7 @@ struct FenceToolMappingLexiconTests {
           x = 1 + 1
           ```
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), lexicon: lexicon).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), lexicon: lexicon, engine: DiagnosticEngine()).lower(ast)
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("expected a single invoke, got \(workflows[0].body.statements.first as Any)")
             return
@@ -362,7 +362,7 @@ struct FenceToolMappingLexiconTests {
         // Emitted Swift wraps the whole multi-line body as one escaped
         // string argument to the configured tool — a plain invoke, no
         // per-line splitting and no shell-style {…} hole interpolation.
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: workflows)
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: workflows).combined
         #expect(out.contains("tool: \"interpreter.run\""))
         #expect(out.contains("\"code\": .string(\"print(\\\"hi\\\")\\nx = 1 + 1\")"))
     }
@@ -573,11 +573,7 @@ struct LexiconPhase1RecipeTests {
         """
         let config = try MerConfigParser(trace: .silent()).parse(cfg, file: "t.merconfig")
         let fromHelper = EnglishLexicon.default.merging(from: config.languageSynonyms)
-        let fromBootstrap = try Compiler().knowledge(
-            forSource: "",
-            sourceFile: "probe.meri",
-            vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)]
-        ).lexicon
+        let fromBootstrap = try Compiler().bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "probe.meri")], vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)])).lexicon
         #expect(fromHelper.normativeCueWords == fromBootstrap.normativeCueWords)
         #expect(fromHelper.shellFenceLanguages == fromBootstrap.shellFenceLanguages)
         #expect(fromHelper.conditionVagueHedges == fromBootstrap.conditionVagueHedges)

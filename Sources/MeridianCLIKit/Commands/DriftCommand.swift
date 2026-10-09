@@ -31,12 +31,7 @@ public struct DriftCommand: AsyncParsableCommand {
         let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: .init(trace: traceInstance))
         do {
-            let model = try compiler.compileToModel(
-                meridianSource: loaded.meridianSource,
-                meridianFile: loaded.meridianURL.lastPathComponent,
-                vocabularies: loaded.vocabularies,
-                rulebooks: loaded.rulebooks
-            )
+            let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
                 try Verbalizer(model: model, trace: traceInstance).verbalize()
             }

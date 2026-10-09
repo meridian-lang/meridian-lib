@@ -30,7 +30,7 @@ struct Phase5SimultaneouslyTests {
         """
         let lines = IndentTokenizer().tokenize(source, file: "sim.meridian")
         let block = try StatementParser(symbols: nil).parseBlock(lines.filter(\.isContent))
-        let ir = try ASTToIR(symbols: SymbolTable(), sourceFile: "sim.meridian")
+        let ir = try ASTToIR(symbols: SymbolTable(), sourceFile: "sim.meridian", engine: DiagnosticEngine())
             .lowerBlock(block, mode: .strict, depth: 0)
 
         guard case .simultaneously(let sim) = ir.statements.first else {
@@ -56,7 +56,7 @@ struct Phase5SimultaneouslyTests {
         )
 
         let out = try SwiftEmitter(options: .init(emitSourceLineComments: false))
-            .emitFile(workflows: [wf])
+            .emit(workflows: [wf]).combined
 
         #expect(out.contains("withThrowingTaskGroup(of: Void.self)"))
         #expect(out.contains("group.addTask"))

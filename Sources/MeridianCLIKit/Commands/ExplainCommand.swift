@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 import MeridianCore
 
-public struct ExplainCommand: AsyncParsableCommand {
+public struct ExplainCommand: AsyncParsableCommand, ModulePathSupporting {
     public init() {}
 
     public static let configuration = CommandConfiguration(
@@ -36,12 +36,7 @@ public struct ExplainCommand: AsyncParsableCommand {
         let traceInstance = try cliTrace.makeTrace()
         let compiler = Compiler(options: compilerOptions(for: loaded, trace: traceInstance))
         do {
-            let model = try compiler.compileToModel(
-                meridianSource: loaded.meridianSource,
-                meridianFile: loaded.meridianURL.lastPathComponent,
-                vocabularies: loaded.vocabularies,
-                rulebooks: loaded.rulebooks
-            )
+            let model = try compiledModel(compiler, loaded)
             let canonical = try traceInstance.phase("verbalize") {
                 try Verbalizer(model: model, trace: traceInstance)
                     .verbalize(annotateNormIDs: !noNormIDs)

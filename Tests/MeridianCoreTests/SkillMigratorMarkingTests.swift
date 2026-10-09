@@ -1168,7 +1168,7 @@ struct SkillMigratorMarkingTests {
             toolStopwords: base.toolStopwords
         )
         let compiler = Compiler(options: .init(trace: .silent(), lexicon: noArticleLexicon))
-        let knowledge = try compiler.knowledge(forSource: "", sourceFile: "<test>", vocabularies: [])
+        let knowledge = try compiler.bootstrap(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: "", file: "<test>")], vocabularies: []))
         let trial = TrialLowering(knowledge: knowledge)
         let migrator = Self.migrator()
         let block = SkillMigrator.SplitBlock(

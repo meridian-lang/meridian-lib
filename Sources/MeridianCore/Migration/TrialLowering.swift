@@ -145,7 +145,8 @@ struct TrialLowering {
             let block = try sp.parseBlock(lines, sourceFile: "<probe>")
             guard !block.statements.isEmpty else { return .failure([]) }
             let lowerer = ASTToIR(symbols: knowledge.symbols, sourceFile: "<probe>", trace: .silent(),
-                                  lexicon: knowledge.lexicon, fallbackPolicy: .strict, rulebook: knowledge.rulebook)
+                                  lexicon: knowledge.lexicon, fallbackPolicy: .strict,
+                                  rulebook: knowledge.rulebook, engine: DiagnosticEngine(trace: .silent()))
             // `lowerBlock` alone never runs the top-level `lower(_ file:)` setup
             // that materializes merconfig-declared adjectives
             // (`symbols.pendingDefinitions`) into `symbols.definitions` — so a

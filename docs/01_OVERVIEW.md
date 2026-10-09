@@ -157,8 +157,8 @@ those traces via `meridian trace eval`, `meridian trace verify`, and
   every compile phase (tokenize → parse → lower → codegen), a compile profile,
   and diagnostics mirrored into the stream. Enable with `--trace <categories>`.
   See [08_TRACING.md](08_TRACING.md).
-- **Canonical English verbalizer** — `Compiler.compileToModel` returns a
-  `VerbalizerModel`; `Verbalizer` renders Canonical English that must compile
+- **Canonical English verbalizer** — every `Compiler.compile(_:)` result carries
+  a `VerbalizerModel` (`CompiledFile.model`); `Verbalizer` renders Canonical English that must compile
   back to structurally equal IR (`SEM-8-03`). `DriftEngine` classifies authored
   vs. canonical differences for corpus audits. See
   [18_VERBALIZER.md](18_VERBALIZER.md).

@@ -283,7 +283,7 @@ enum DeonticLowering {
     static func apply(
         norms: [NormIR],
         to workflows: [IRWorkflow],
-        engine: DiagnosticEngine? = nil
+        engine: DiagnosticEngine
     ) throws -> [IRWorkflow] {
         guard !norms.isEmpty else { return workflows }
         var registry = NormIdRegistry()
@@ -357,7 +357,7 @@ enum DeonticLowering {
         workflow: IRWorkflow,
         norms: [NormIR],
         registry: inout NormIdRegistry,
-        engine: DiagnosticEngine?
+        engine: DiagnosticEngine
     ) throws -> IRBlock {
         let statements = try block.statements.map { stmt -> IRPrimitive in
             try transformPrimitive(stmt, workflow: workflow, norms: norms, registry: &registry, engine: engine)
@@ -370,7 +370,7 @@ enum DeonticLowering {
         workflow: IRWorkflow,
         norms: [NormIR],
         registry: inout NormIdRegistry,
-        engine: DiagnosticEngine?
+        engine: DiagnosticEngine
     ) throws -> IRPrimitive {
         switch primitive {
         case .invoke(let invoke):
@@ -449,7 +449,7 @@ enum DeonticLowering {
         workflow: IRWorkflow,
         norms: [NormIR],
         registry: inout NormIdRegistry,
-        engine: DiagnosticEngine?
+        engine: DiagnosticEngine
     ) throws -> IRPrimitive {
         let prohibitions = norms.filter { $0.kind == .prohibition }
         let permissions = norms.filter { $0.kind == .permission }
@@ -477,9 +477,7 @@ enum DeonticLowering {
                 let toolPermissions = permissionsMatchingTool(invoke.toolID, in: permissions)
                 if toolPermissions.isEmpty {
                     let diag = uncoveredInvokeDiagnostic(toolID: invoke.toolID, range: invoke.sourceRange)
-                    if let engine {
-                        engine.report(diag)
-                    }
+                    engine.report(diag)
                     throw CompilerError.diagnostics([diag])
                 }
                 return try runtimePermissionGuard(

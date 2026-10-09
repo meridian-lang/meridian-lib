@@ -14,8 +14,13 @@ struct CompoundNoteTests {
         let config = try MerConfigParser(trace: .silent()).parse("=== vocabulary ===\n", file: "t.merconfig")
         let symbols = SymbolTable.build(from: config, sourceFile: "t.merconfig", trace: .silent())
         let file = try MeridianParser(symbols: symbols, trace: .silent()).parse(mer, file: "t.meridian")
-        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
-        return try lowering.lower(file)
+        // The lowerer's batch engine collects; this helper checkpoints so
+        // direct-lower tests still observe errors as thrown `CompilerError`s.
+        let engine = DiagnosticEngine(trace: .silent())
+        let lowering = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: engine)
+        let workflows = try lowering.lower(file)
+        try engine.throwIfErrors()
+        return workflows
     }
 
     private func firstNoteRebind(in workflows: [IRWorkflow]) -> BindIR? {

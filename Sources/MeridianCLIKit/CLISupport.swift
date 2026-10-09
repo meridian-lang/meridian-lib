@@ -113,6 +113,31 @@ func loadCLIModelInput(
     )
 }
 
+/// Compile one source through the unified pipeline and return its verbalizer
+/// model (the shared entry point for `explain` / `drift` / `canonicalize` /
+/// `skill-deviation` / `mcp explain`).
+func compiledModel(
+    _ compiler: Compiler,
+    _ source: String,
+    _ file: String,
+    _ vocabularies: [Compiler.VocabularyInput],
+    _ rulebooks: [RulebookInput]
+) throws -> VerbalizerModel {
+    guard let compiled = try compiler.compile(Compiler.CompilationUnit(
+        sources: [Compiler.SourceInput(source: source, file: file)],
+        vocabularies: vocabularies,
+        rulebooks: rulebooks
+    ))[file] else {
+        throw CompilerError.codegenError(message: "no compiled output for \(file)")
+    }
+    return compiled.model
+}
+
+func compiledModel(_ compiler: Compiler, _ loaded: CLIModelInput) throws -> VerbalizerModel {
+    try compiledModel(compiler, loaded.meridianSource, loaded.meridianURL.lastPathComponent,
+                      loaded.vocabularies, loaded.rulebooks)
+}
+
 func compilerOptions(
     for loaded: CLIModelInput,
     trace: ParserTrace,
@@ -474,12 +499,11 @@ func runDiagnosticsCheck(input: String, merconfig: [String], modulePath: [String
     let compiler = Compiler(options: compilerOptions(
         for: loaded, trace: try makeCLITrace(spec: trace, file: traceFile, format: traceFormat)))
     do {
-        _ = try compiler.compileWithManifest(
-            meridianSource: meridianSource,
-            meridianFile: meridianURL.lastPathComponent,
+        _ = try compiler.compile(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: meridianSource, file: meridianURL.lastPathComponent)],
             vocabularies: vocabularies,
             rulebooks: rulebooks
-        )
+        ))
         print("✓ \(meridianURL.lastPathComponent): no errors (\(vocabularies.count) vocab\(vocabularies.count == 1 ? "" : "s") loaded)")
     } catch {
         if fix { applyQuickFixes(error, sources: diagSources, paths: diagPaths, write: write) }

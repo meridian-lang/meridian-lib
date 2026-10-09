@@ -16,7 +16,12 @@ struct CommandAnnotationTests {
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent())
             .parse(source, file: "test.meridian")
-        return try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        // The lowerer's batch engine collects; this helper checkpoints so
+        // direct-lower tests still observe errors as thrown `CompilerError`s.
+        let engine = DiagnosticEngine(trace: .silent())
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: engine).lower(ast)
+        try engine.throwIfErrors()
+        return workflows
     }
 
     @Test("a backticked command with a -- note carries the note as InvokeIR.comment")
@@ -96,7 +101,7 @@ struct CommandAnnotationTests {
             To demo:
               Run `gbrain doctor --json` to check index health.
             """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("expected the rewritten command to lower to a shell.run invoke"); return
         }
@@ -132,7 +137,17 @@ struct CommandHoleTests {
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent())
             .parse(source, file: "test.meridian")
-        return try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        // The lowerer's batch engine collects; this helper checkpoints so
+        // direct-lower tests still observe errors as thrown `CompilerError`s.
+        // These fixtures use host-provided `gbrain.*` tools that no vocabulary
+        // declares, so unknown-tool reporting is downgraded the same way
+        // frontmatter `allow-fallbacks: unknown-tools` would.
+        let engine = DiagnosticEngine(trace: .silent())
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(),
+                                    fallbackPolicy: FallbackPolicy(allowed: [.unknownTools]),
+                                    engine: engine).lower(ast)
+        try engine.throwIfErrors()
+        return workflows
     }
 
     private func commandValue(_ workflows: [IRWorkflow]) -> IRExpression? {
@@ -365,9 +380,7 @@ struct MetadataSectionTests {
     }
 
     private func manifest(_ src: String) throws -> ManifestEmitter.Input {
-        try Compiler(options: .init(fallbackPolicy: .lenient)).compileWithManifest(
-            meridianSource: src, meridianFile: "test.meridian",
-            vocabularies: []).manifest
+        try Compiler(options: .init(fallbackPolicy: .lenient)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: src, file: "test.meridian")], vocabularies: []))["test.meridian"]!.manifest
     }
 
     @Test("Tools Used bullets are mined into the manifest tools_used")
@@ -525,7 +538,7 @@ struct IterationRefinementTests {
         let symbols = SymbolTable()
         let ast = try MeridianParser(symbols: symbols, trace: .silent())
             .parse(source, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
         for stmt in workflows[0].body.statements {
             if case .iterate(let ir) = stmt { return ir }
         }

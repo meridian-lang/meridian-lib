@@ -18,11 +18,7 @@ struct PhaseFLanguageTests {
   """
 
     private func compile(_ mer: String, file: String = "test.meridian") throws -> String {
-        try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: mer,
-            meridianFile: file,
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]
-        )
+        try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: file)], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))[file]!.swift
     }
 
     @Test("wait with timeout and recover lowers recover from wait.timeout")
@@ -198,11 +194,7 @@ struct PhaseFLanguageTests {
             invoke access.revoke with user = "u1", resource = "r1".
           complete.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: mer,
-            meridianFile: "grant.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: revokeCfg)]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "grant.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: revokeCfg)]))["grant.meridian"]!.swift
         #expect(out.contains("runtime.checkpoint"))
         #expect(out.contains("recordRecoverEngaged"))
         #expect(out.contains("access.revoke"))

@@ -93,11 +93,7 @@ struct ModuleSystemTests {
             moduleSearchPaths: [moduleRoot],
             anchorDirectory: moduleRoot
         ))
-        let out = try compiler.compile(
-            meridianSource: mer,
-            meridianFile: "audit.meridian",
-            vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]
-        )
+        let out = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "audit.meridian")], vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]))["audit.meridian"]!.swift
         #expect(out.contains("struct AuditReview"))
         #expect(out.contains("Policy"))
     }
@@ -142,11 +138,7 @@ struct ModuleSystemTests {
             moduleSearchPaths: [fixturesRoot],
             anchorDirectory: fixturesRoot
         ))
-        let out = try compiler.compile(
-            meridianSource: mer,
-            meridianFile: "note.meridian",
-            vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]
-        )
+        let out = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "note.meridian")], vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]))["note.meridian"]!.swift
         #expect(out.contains("struct FileInternalNote"))
     }
 }

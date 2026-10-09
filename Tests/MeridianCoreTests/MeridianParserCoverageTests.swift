@@ -5,7 +5,7 @@ import Testing
 struct MeridianParserCoverageTests {
     private func compile(_ source: String) throws {
         _ = try Compiler(options: .init(trace: .silent()))
-            .compile(meridianSource: source, meridianFile: "t.meridian", vocabularies: [])
+            .compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: "t.meridian")], vocabularies: []))["t.meridian"]!.swift
     }
 
     @Test("body-level import is rejected")

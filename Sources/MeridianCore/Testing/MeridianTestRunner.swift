@@ -339,33 +339,21 @@ public struct MeridianTestRunner: Sendable {
         var workflows:   [IRWorkflow]? = nil
         var compileError: CompilerError? = nil
 
-        // We need access to workflows (IR) for IR-level assertions. The
-        // Compiler.compile() API doesn't expose them, so we re-run the first
-        // few pipeline stages ourselves when any IR assertion is present.
-        let needsIR = spec.assertions.contains(where: isIRAssertion) || spec.runtime != nil
-
-        if needsIR {
-            let result = compileWithIR(
-                meridianSource: meridianSource,
-                vocabs: vocabularies,
-                spec: spec,
-                compiler: compiler
-            )
-            swiftOutput  = result.swift
-            workflows    = result.workflows
-            compileError = result.error
-        } else {
-            do {
-                swiftOutput = try compiler.compile(
-                    meridianSource: meridianSource,
-                    meridianFile:   sourceFileName(spec.source),
-                    vocabularies:   vocabularies
-                )
-            } catch let e as CompilerError {
-                compileError = e
-            } catch {
-                return .failure(reasons: ["unexpected error: \(error)"])
-            }
+        // One compile produces both the Swift and the IR (`CompiledFile.model`)
+        // IR-level assertions read.
+        do {
+            let compiled = try compiler.compile(Compiler.CompilationUnit(
+                sources: [Compiler.SourceInput(source: meridianSource,
+                                               file: sourceFileName(spec.source))],
+                vocabularies: vocabularies
+            ))
+            let file = sourceFileName(spec.source)
+            swiftOutput = compiled[file]?.swift
+            workflows   = compiled[file]?.model.workflows
+        } catch let e as CompilerError {
+            compileError = e
+        } catch {
+            return .failure(reasons: ["unexpected error: \(error)"])
         }
 
         let traceLines = traceCapture?.lines() ?? []
@@ -536,43 +524,6 @@ public struct MeridianTestRunner: Sendable {
         }
     }
 
-    /// Re-run enough of the pipeline to get both the compiled Swift string and
-    /// the `[IRWorkflow]`. This is needed for IR assertions.
-    private func compileWithIR(
-        meridianSource: String,
-        vocabs: [Compiler.VocabularyInput],
-        spec: Spec,
-        compiler: Compiler
-    ) -> (swift: String?, workflows: [IRWorkflow]?, error: CompilerError?) {
-        do {
-            let trace = compiler.options.trace
-
-            var config = MerConfigFile()
-            for v in vocabs {
-                let parsed = try MerConfigParser(trace: trace).parse(v.source, file: v.file)
-                config = try config.merging(parsed)
-            }
-            let symbolsFile = vocabs.first?.file ?? "config.merconfig"
-            let symbols = SymbolTable.build(from: config, sourceFile: symbolsFile, trace: trace)
-            let ast = try MeridianParser(symbols: symbols, trace: trace).parse(
-                meridianSource, file: sourceFileName(spec.source)
-            )
-            let lowerer   = ASTToIR(symbols: symbols, sourceFile: sourceFileName(spec.source), trace: trace)
-            let workflows = try lowerer.lower(ast)
-
-            let swift = try compiler.compile(
-                meridianSource: meridianSource,
-                meridianFile:   sourceFileName(spec.source),
-                vocabularies:   vocabs
-            )
-            return (swift, workflows, nil)
-        } catch let e as CompilerError {
-            return (nil, nil, e)
-        } catch {
-            return (nil, nil, .codegenError(message: "\(error)"))
-        }
-    }
-
     private func isIRAssertion(_ a: Assertion) -> Bool {
         switch a {
         case .workflowCount, .workflowNamed, .noUnresolved,
@@ -586,8 +537,6 @@ public struct MeridianTestRunner: Sendable {
 
     private func describeError(_ err: CompilerError) -> String {
         switch err {
-        case .syntaxError(let m, let r):  return "syntax error at \(r): \(m)"
-        case .semanticError(let m, let r): return "semantic error at \(r): \(m)"
         case .codegenError(let m):        return "codegen error: \(m)"
         case .diagnostics(let ds):
             return ds.map { d in

@@ -104,7 +104,7 @@ struct WaitCodegenTests {
         let ir = IRPrimitive.wait(WaitIR(condition: cond))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "t.meridian")
-        return try emitter().emitFile(workflows: [wf])
+        return try emitter().emit(workflows: [wf]).combined
     }
 
     @Test("wait duration emits runtime.wait(.duration(...))")

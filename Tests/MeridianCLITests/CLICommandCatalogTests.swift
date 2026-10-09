@@ -1,3 +1,4 @@
+import ArgumentParser
 import Foundation
 import Testing
 @testable import MeridianCLIKit
@@ -123,6 +124,18 @@ struct CLICommandCatalogTests {
         let defaulted = MeridianCommandCatalog.Entry(
             path: "probe2", purpose: "coverage", supportsModulePath: false)
         #expect(!defaulted.isTopLevelAlias)
+    }
+
+    @Test("catalog purpose falls back to the command name when the abstract is empty")
+    func purposeFallsBackToCommandName() {
+        let unnamed = CommandConfiguration(commandName: "probe", abstract: "")
+        #expect(MeridianCommandCatalog.purpose(of: unnamed) == "probe")
+
+        let described = CommandConfiguration(commandName: "probe", abstract: "Probe a thing.")
+        #expect(MeridianCommandCatalog.purpose(of: described) == "Probe a thing.")
+
+        let anonymous = CommandConfiguration(abstract: "")
+        #expect(MeridianCommandCatalog.purpose(of: anonymous) == "<unnamed>")
     }
 
     @Test("registration displayName falls back when commandName is nil")

@@ -166,11 +166,7 @@ struct VerbalizerGenerativeTests {
         To generated:
           bind generated value = \(surface).
         """
-        let model = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: source,
-            meridianFile: file,
-            vocabularies: [VerbalizerTestSupport.baseVocabInput()]
-        )
+        let model = try VerbalizerTestSupport.compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file)], vocabularies: [VerbalizerTestSupport.baseVocabInput()]))[file]!.model
         guard case .bind(let bind) = model.workflows.first?.body.statements.first else {
             throw GeneratedFailure(message: "expected a bind for \(surface)")
         }
@@ -188,11 +184,7 @@ struct VerbalizerGenerativeTests {
         To generated:
         \(indented)
         """
-        let model = try VerbalizerTestSupport.compiler().compileToModel(
-            meridianSource: source,
-            meridianFile: file,
-            vocabularies: [VerbalizerTestSupport.baseVocabInput()]
-        )
+        let model = try VerbalizerTestSupport.compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file)], vocabularies: [VerbalizerTestSupport.baseVocabInput()]))[file]!.model
         guard let statements = model.workflows.first?.body.statements, !statements.isEmpty else {
             throw GeneratedFailure(message: "expected statements for:\n\(surface)")
         }

@@ -140,8 +140,12 @@ struct AssertionsEvaluateCoverageTests {
     @Test("error-kind / error-contains / error-line over every CompilerError shape")
     func errorAssertions() {
         let r = SourceRange(file: "t.meridian", line: 7, column: 1)
-        let syntax = CompilerError.syntaxError(message: "bad token", range: r)
-        let semantic = CompilerError.semanticError(message: "unknown phrase", range: r)
+        // `.errorKind` bands a `.diagnostics` payload by code: MER1xxx is the
+        // syntax band, everything else semantic.
+        let syntax = CompilerError.diagnostics([
+            Diagnostic.error(.unparseableStatement, message: "bad token", range: r)])
+        let semantic = CompilerError.diagnostics([
+            Diagnostic.error(.unknownTool, message: "unknown phrase", range: r)])
         let codegen = CompilerError.codegenError(message: "emit failed")
 
         #expect(evaluate(.errorKind(.syntax), in: ctx(compileError: syntax)) == nil)

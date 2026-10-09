@@ -9,7 +9,7 @@ import MeridianRuntime
 @Suite("ASTToIR+Definitions walker coverage")
 struct ASTToIRDefinitionsCoverageTests {
 
-    private let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent())
+    private let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
 
     private var everFailed: IRExpression {
         .traceTemporal(TraceTemporalIR(
@@ -206,7 +206,7 @@ struct ASTToIRDefinitionsCoverageTests {
             )),
         ])
         let symbols = SymbolTable.build(from: config, trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         let body = ExpressionAST.comparison(
             .propertyAccess(.identifierRef("page"), "owner"),
             .equal,
@@ -248,7 +248,7 @@ struct ASTToIRDefinitionsCoverageTests {
             )),
         ])
         let symbols = SymbolTable.build(from: config, trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         do {
             try ir.registerDefinitions([
                 DefinitionDeclaration(
@@ -272,7 +272,7 @@ struct ASTToIRDefinitionsCoverageTests {
     @Test("detectDefinitionRecursion catches transitive adjective cycles")
     func definitionRecursionCycle() throws {
         let symbols = SymbolTable(trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         symbols.registerDefinition(.init(
             adjective: "alpha",
             kind: "page",
@@ -303,7 +303,7 @@ struct ASTToIRDefinitionsCoverageTests {
             .kind(KindDeclaration(name: "service", parent: "thing", sourceLine: 1)),
         ])
         let symbols = SymbolTable.build(from: config, trace: .silent())
-        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent())
+        let ir = ASTToIR(symbols: symbols, sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         try ir.registerDefinitions([
             DefinitionDeclaration(
                 adjective: "flaky",
@@ -325,7 +325,7 @@ struct ASTToIRDefinitionsCoverageTests {
 
     @Test("resolveAdjectiveFilter throws unknownAdjective")
     func resolveUnknownAdjective() throws {
-        let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent())
+        let ir = ASTToIR(symbols: SymbolTable(trace: .silent()), sourceFile: "t.meridian", trace: .silent(), engine: DiagnosticEngine())
         do {
             _ = try ir.resolveAdjectiveFilter(
                 adjective: "missing",

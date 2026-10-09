@@ -58,11 +58,7 @@ struct ProblemMessageTests {
         """
 
         do {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: mer,
-                meridianFile: "test.meridian",
-                vocabularies: []
-            )
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "test.meridian")], vocabularies: []))["test.meridian"]!.swift
             Issue.record("expected MER1012")
         } catch let error as CompilerError {
             let diagnostic = error.diagnostics.first { $0.code == .matchBranchSyntax }

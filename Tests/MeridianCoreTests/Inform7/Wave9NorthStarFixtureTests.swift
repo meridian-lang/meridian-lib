@@ -16,11 +16,7 @@ struct Wave9NorthStarFixtureTests {
 
     private func compileModel(mer: String, file: String = "fixture.meridian") throws -> VerbalizerModel {
         let compiler = Compiler(options: .init(trace: .silent()))
-        return try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: file,
-            vocabularies: [.init(name: "test", file: "test.merconfig", source: Self.fixtureVocabulary)]
-        )
+        return try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: file)], vocabularies: [.init(name: "test", file: "test.merconfig", source: Self.fixtureVocabulary)]))[file]!.model
     }
 
     @Test("release-sentinel-wave9 compiles with non-empty norms and explain annotations")

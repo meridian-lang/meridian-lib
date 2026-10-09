@@ -128,12 +128,7 @@ struct SkillCorpusGoldenTests {
                 emitSourceLineComments: false
             )
         )
-        return try Compiler(options: opts).compile(
-            meridianSource: merSource,
-            meridianFile:   sampleBasename,
-            vocabularies:   [.init(name: vocab.name, file: vocab.file, source: vocab.source)],
-            rulebooks:      rulebooks
-        )
+        return try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: merSource, file: sampleBasename)], vocabularies: [.init(name: vocab.name, file: vocab.file, source: vocab.source)], rulebooks: rulebooks))[sampleBasename]!.swift
     }
 
     /// Load every `.merrules` in the sample's directory (sorted for determinism).

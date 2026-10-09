@@ -31,8 +31,7 @@ struct NoSilentFallbackTests {
 
     private func codesMerOnly(_ mer: String, fallbacks: FallbackPolicy = .strict) -> Set<DiagnosticCode> {
         do {
-            _ = try Compiler(options: .init(fallbackPolicy: fallbacks)).compile(
-                meridianSource: mer, meridianFile: "t.meri", vocabularies: [])
+            _ = try Compiler(options: .init(fallbackPolicy: fallbacks)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meri")], vocabularies: []))["t.meri"]!.swift
             return []
         } catch let e as CompilerError {
             return Set(e.diagnostics.map(\.code))

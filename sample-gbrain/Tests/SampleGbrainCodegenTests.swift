@@ -44,12 +44,7 @@ struct SampleGbrainCodegenTests {
                 emitterOptions: SwiftEmitter.Options(namespaceEnum: Self.namespace(for: file)),
                 trace: .silent()
             )
-            let swift = try Compiler(options: opts).compile(
-                meridianSource: source,
-                meridianFile: file.lastPathComponent,
-                vocabularies: [vocab],
-                rulebooks: [rulebook]
-            )
+            let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [vocab], rulebooks: [rulebook]))[file.lastPathComponent]!.swift
             return (file.lastPathComponent, swift)
         }
     }
@@ -81,12 +76,7 @@ struct SampleGbrainCodegenTests {
         let fresh = try Compiler(options: .init(
             emitterOptions: .init(namespaceEnum: Self.namespace(for: skill)),
             trace: .silent()
-        )).compile(
-            meridianSource: source,
-            meridianFile: skill.lastPathComponent,
-            vocabularies: [SampleGbrainConformanceTests.vocab()],
-            rulebooks: [SampleGbrainConformanceTests.rulebook()]
-        )
+        )).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: skill.lastPathComponent)], vocabularies: [SampleGbrainConformanceTests.vocab()], rulebooks: [SampleGbrainConformanceTests.rulebook()]))[skill.lastPathComponent]!.swift
 
         #expect(committed == fresh, Comment(rawValue: "webhook_transforms.swift is stale"))
         #expect(fresh.contains("enum WebhookTransforms"), Comment(rawValue: fresh))

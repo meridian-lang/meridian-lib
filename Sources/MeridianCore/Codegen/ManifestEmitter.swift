@@ -8,7 +8,7 @@ import MeridianRuntime
 
 public struct ManifestEmitter {
 
-    public struct Input {
+    public struct Input: Sendable {
         public let sourceFiles: [String]
         public let workflows: [IRWorkflow]
         public let constantsDecl: SwiftEmitter.ConstantsDecl?
@@ -71,7 +71,7 @@ public struct ManifestEmitter {
     }
 
     /// 3A: One relation + backing recorded for the manifest.
-    public struct RelationManifestEntry: Encodable {
+    public struct RelationManifestEntry: Sendable, Encodable {
         public let name: String
         public let leftKind: String
         public let leftCardinality: String
@@ -92,7 +92,7 @@ public struct ManifestEmitter {
     }
 
     /// 3B: One verb + conjugation + bound relation recorded for the manifest.
-    public struct VerbManifestEntry: Encodable {
+    public struct VerbManifestEntry: Sendable, Encodable {
         public let base: String
         public let thirdPerson: String
         public let pastParticiple: String
@@ -106,7 +106,7 @@ public struct ManifestEmitter {
     }
 
     /// 2B: One checkable adjective definition recorded for the manifest.
-    public struct DefinitionManifestEntry: Encodable {
+    public struct DefinitionManifestEntry: Sendable, Encodable {
         public let adjective: String
         public let kind: String
         public let function: String
@@ -121,7 +121,7 @@ public struct ManifestEmitter {
     /// executable role, the explicit `role:` of a marked-inert section, or
     /// `"inert"` for a bare `(( inert ))` heading. `executes` is false for any
     /// non-executable (documentation) section.
-    public struct SkillSectionEntry: Encodable {
+    public struct SkillSectionEntry: Sendable, Encodable {
         public let heading: String
         public let role: String
         public let executes: Bool
@@ -133,7 +133,7 @@ public struct ManifestEmitter {
         }
     }
 
-    public struct InstanceManifestEntry: Encodable {
+    public struct InstanceManifestEntry: Sendable, Encodable {
         public let name: String
         public let kind: String
         public let properties: [String: PropertyManifestValue]
@@ -142,13 +142,13 @@ public struct ManifestEmitter {
         }
     }
 
-    public struct PropertyManifestValue: Encodable {
+    public struct PropertyManifestValue: Sendable, Encodable {
         public let type: String
         public let value: String
         public init(type: String, value: String) { self.type = type; self.value = value }
     }
 
-    public struct SourceMapEntry: Encodable {
+    public struct SourceMapEntry: Sendable, Encodable {
         public let meridianLine: Int
         public let swiftLine: Int
         public init(meridianLine: Int, swiftLine: Int) {
@@ -162,7 +162,7 @@ public struct ManifestEmitter {
 
     /// C5: Manifest entry for a single rule statement, recording its
     /// classification and whether it produces executable IR.
-    public struct RuleManifestEntry: Encodable {
+    public struct RuleManifestEntry: Sendable, Encodable {
         public let text: String
         /// One of: "invariant", "parameterGuard", "precondition", "trigger",
         /// "permission", "unknown".
@@ -175,7 +175,7 @@ public struct ManifestEmitter {
         public let bounded: Bool
         public let source: SourceInfo
 
-        public struct SourceInfo: Encodable {
+        public struct SourceInfo: Sendable, Encodable {
             public let file: String
             public let line: Int
         }

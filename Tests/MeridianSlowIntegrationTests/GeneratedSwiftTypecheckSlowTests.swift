@@ -130,12 +130,7 @@ struct CorporaTypecheckSlowTests {
                     trace: .silent(),
                     moduleSearchPaths: moduleSearchPaths
                 )
-                let swift = try Compiler(options: opts).compile(
-                    meridianSource: source,
-                    meridianFile: file.lastPathComponent,
-                    vocabularies: [corpus.vocabulary],
-                    rulebooks: [corpus.rulebook]
-                )
+                let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [corpus.vocabulary], rulebooks: [corpus.rulebook]))[file.lastPathComponent]!.swift
                 return ("\(corpus.name)/\(file.lastPathComponent)", swift)
             }
         }
@@ -178,12 +173,7 @@ struct SampleGbrainTypecheckSlowTests {
                 emitterOptions: SwiftEmitter.Options(namespaceEnum: namespace(for: file)),
                 trace: .silent()
             )
-            let swift = try Compiler(options: opts).compile(
-                meridianSource: source,
-                meridianFile: file.lastPathComponent,
-                vocabularies: [vocab],
-                rulebooks: [rulebook]
-            )
+            let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [vocab], rulebooks: [rulebook]))[file.lastPathComponent]!.swift
             return (file.lastPathComponent, swift)
         }
     }

@@ -114,12 +114,7 @@ struct Wave8CorpusTraceE2ETests {
                 namespaceEnum: IdentifierNaming.swiftTypeNameFromStem(file.deletingPathExtension().lastPathComponent)
             )
         )
-        return try Compiler(options: opts).compile(
-            meridianSource: source,
-            meridianFile: file.lastPathComponent,
-            vocabularies: [fixture.vocabulary],
-            rulebooks: [fixture.rulebook]
-        )
+        return try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [fixture.vocabulary], rulebooks: [fixture.rulebook]))[file.lastPathComponent]!.swift
     }
 
     private func loadFixture(corpus: String) throws -> CorpusFixture {

@@ -35,8 +35,7 @@ struct Inform7Wave4DomainTests {
 
     @Test("can-be and usually compile to enum property with author default")
     func canBeUsuallyDefault() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: page workflow
             parameters: page
@@ -49,10 +48,7 @@ struct Inform7Wave4DomainTests {
 
             ## Phases
             complete.
-            """,
-            meridianFile: "domain.meri",
-            vocabularies: []
-        )
+            """, file: "domain.meri")], vocabularies: []))["domain.meri"]!.swift
 
         #expect(out.contains("public enum PagePageState"), Comment(rawValue: out))
         #expect(out.contains("public var pageState: PagePageState"), Comment(rawValue: out))
@@ -61,8 +57,7 @@ struct Inform7Wave4DomainTests {
 
     @Test("Domain section declarations are harvested before frontmatter parameter resolution")
     func domainSectionHarvestsBeforeParameterResolution() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: summarize
             parameters: page
@@ -74,10 +69,7 @@ struct Inform7Wave4DomainTests {
 
             ## Phases
             complete.
-            """,
-            meridianFile: "domain-section.meri",
-            vocabularies: []
-        )
+            """, file: "domain-section.meri")], vocabularies: []))["domain-section.meri"]!.swift
 
         #expect(out.contains("public struct Page"), Comment(rawValue: out))
         #expect(out.contains("public var summary: String"), Comment(rawValue: out))
@@ -87,26 +79,21 @@ struct Inform7Wave4DomainTests {
     @Test("Domain-shaped sentence in a procedure is not harvested")
     func domainSentenceInProcedureErrors() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: """
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: bad
                 ---
 
                 ## Phases
                 A deal is a kind of page.
-                """,
-                meridianFile: "bad-domain-position.meri",
-                vocabularies: []
-            )
+                """, file: "bad-domain-position.meri")], vocabularies: []))["bad-domain-position.meri"]!.swift
         }
     }
 
     @Test("duplicate kind declarations reject multiple parents")
     func duplicateKindRejectsMultipleParents() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: """
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: duplicate
                 parameters: deal
@@ -120,10 +107,7 @@ struct Inform7Wave4DomainTests {
 
                 ## Phases
                 complete.
-                """,
-                meridianFile: "duplicate-domain.meri",
-                vocabularies: []
-            )
+                """, file: "duplicate-domain.meri")], vocabularies: []))["duplicate-domain.meri"]!.swift
         }
     }
 }
@@ -133,8 +117,7 @@ struct Inform7Wave4TableTests {
 
     @Test("Tables section defaults unmarked Markdown tables to data bindings")
     func tablesSectionDefaultsToData() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: route
             ---
@@ -147,10 +130,7 @@ struct Inform7Wave4TableTests {
             ## Phases
             bind chosen skill = the skill corresponding to the trigger phrase "daily briefing" in the table.
             complete.
-            """,
-            meridianFile: "tables.meri",
-            vocabularies: []
-        )
+            """, file: "tables.meri")], vocabularies: []))["tables.meri"]!.swift
 
         #expect(out.contains("state.bind(\"table\", Value.list"), Comment(rawValue: out))
         #expect(out.contains("table.lookup_miss"), Comment(rawValue: out))
@@ -160,8 +140,7 @@ struct Inform7Wave4TableTests {
 
     @Test("explicit named data table supports multi-word lookup table names")
     func namedDataTableLookup() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: route
             ---
@@ -173,10 +152,7 @@ struct Inform7Wave4TableTests {
             | daily briefing | briefing |
             bind chosen skill = the skill corresponding to the trigger phrase "daily briefing" in the dispatch table.
             complete.
-            """,
-            meridianFile: "named-table.meri",
-            vocabularies: []
-        )
+            """, file: "named-table.meri")], vocabularies: []))["named-table.meri"]!.swift
 
         #expect(out.contains("state.bind(\"dispatchTable\", Value.list"), Comment(rawValue: out))
         #expect(out.contains("state.get(\"dispatchTable\")"), Comment(rawValue: out))
@@ -185,8 +161,7 @@ struct Inform7Wave4TableTests {
     @Test("typed data table reports row and column for invalid cells")
     func typedTableCellDiagnostic() {
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: """
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: bad table
                 ---
@@ -198,10 +173,7 @@ struct Inform7Wave4TableTests {
 
                 ## Phases
                 complete.
-                """,
-                meridianFile: "bad-table.meri",
-                vocabularies: []
-            )
+                """, file: "bad-table.meri")], vocabularies: []))["bad-table.meri"]!.swift
         }
     }
 }
@@ -251,7 +223,7 @@ struct Inform7Wave4TemplateTests {
                 .bind(BindIR(name: "report", expression: expr, isRebind: false))
             ])
         )
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [wf])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [wf]).combined
 
         #expect(out.contains("private func meridianFormat"), Comment(rawValue: out))
         #expect(out.contains("for __item in"), Comment(rawValue: out))
@@ -261,8 +233,7 @@ struct Inform7Wave4TemplateTests {
 
     @Test("source-level fenced template can be bound after an empty assignment")
     func sourceLevelFencedTemplateBind() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: template source
             ---
@@ -280,10 +251,7 @@ struct Inform7Wave4TemplateTests {
               ```
             emit template.report with body = report body.
             complete.
-            """,
-            meridianFile: "template-source.meri",
-            vocabularies: []
-        )
+            """, file: "template-source.meri")], vocabularies: []))["template-source.meri"]!.swift
 
         #expect(out.contains("private func meridianFormat"), Comment(rawValue: out))
         #expect(out.contains("for __item in"), Comment(rawValue: out))
@@ -316,8 +284,7 @@ struct Inform7Wave4TemplateTests {
     @Test("an unknown formatter in a fenced template is a sourced MER2012 error naming the available formatters")
     func unknownFormatterIsHardError() throws {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: """
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: template source
                 ---
@@ -329,9 +296,7 @@ struct Inform7Wave4TemplateTests {
                   ```
                 emit template.report with body = report body.
                 complete.
-                """,
-                meridianFile: "template-source.meri",
-                vocabularies: [])
+                """, file: "template-source.meri")], vocabularies: []))["template-source.meri"]!.swift
         }
         let err = try #require(caught)
         let diag = try #require(err.diagnostics.first)
@@ -343,8 +308,7 @@ struct Inform7Wave4TemplateTests {
     @Test("a near-miss formatter typo suggests the nearest declared name")
     func formatterTypoSuggestsNearest() throws {
         let caught = #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: """
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
                 ---
                 name: template source
                 ---
@@ -356,9 +320,7 @@ struct Inform7Wave4TemplateTests {
                   ```
                 emit template.report with body = report body.
                 complete.
-                """,
-                meridianFile: "template-source.meri",
-                vocabularies: [])
+                """, file: "template-source.meri")], vocabularies: []))["template-source.meri"]!.swift
         }
         let err = try #require(caught)
         let rendered = (err.diagnostics.first?.suggestions ?? []).map(\.rationale).joined()
@@ -367,8 +329,7 @@ struct Inform7Wave4TemplateTests {
 
     @Test("short date, long date, and decimal(N) formatters all compile cleanly")
     func validFormattersCompile() throws {
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: """
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: template source
             ---
@@ -380,9 +341,7 @@ struct Inform7Wave4TemplateTests {
               ```
             emit template.report with body = report body.
             complete.
-            """,
-            meridianFile: "template-source.meri",
-            vocabularies: [])
+            """, file: "template-source.meri")], vocabularies: []))["template-source.meri"]!.swift
         #expect(out.contains("as: \"short date\""), Comment(rawValue: out))
         #expect(out.contains("as: \"long date\""), Comment(rawValue: out))
         #expect(out.contains("as: \"decimal(2)\""), Comment(rawValue: out))

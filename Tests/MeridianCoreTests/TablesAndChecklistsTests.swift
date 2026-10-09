@@ -357,16 +357,13 @@ struct TablesAndChecklistsTests {
 
     @Test("Tools Used mines both `(<id>)` and leading-backtick `` `id` — desc`` forms")
     func toolsUsedBothForms() throws {
-        let manifest = try Compiler(options: .init(fallbackPolicy: .lenient)).compileWithManifest(
-            meridianSource: """
+        let manifest = try Compiler(options: .init(fallbackPolicy: .lenient)).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ## Tools Used
 
             - read a brain page (get_page)
             - `query` — hybrid vector+keyword search
             - `search` - keyword search for variants.
-            """,
-            meridianFile: "test.meridian",
-            vocabularies: []).manifest
+            """, file: "test.meridian")], vocabularies: []))["test.meridian"]!.manifest
         #expect(manifest.toolsUsed == ["get_page", "query", "search"],
                 Comment(rawValue: "got \(manifest.toolsUsed)"))
     }

@@ -16,16 +16,9 @@ struct IRSidecarTests {
         A customer is a kind of thing.
         """
         let compiler = Compiler(options: .init(trace: .silent()))
-        let model = try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: "greet.meridian",
-            vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]
-        )
-        let swift = try compiler.compile(
-            meridianSource: mer,
-            meridianFile: "greet.meridian",
-            vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]
-        )
+        let compiled = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "greet.meridian")], vocabularies: [.init(name: "local", file: "local.merconfig", source: cfg)]))["greet.meridian"]!
+        let model = compiled.model
+        let swift = compiled.swift
         let sidecar = try IRSidecarEmitter().emit(
             workflows: model.workflows,
             verbalizer: Verbalizer(model: model, trace: .silent()),

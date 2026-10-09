@@ -57,12 +57,7 @@ struct SampleGbrainConformanceTests {
         for file in try Self.skillFiles() {
             let source = try String(contentsOf: file, encoding: .utf8)
             do {
-                let out = try Compiler(options: .init(trace: .silent())).compile(
-                    meridianSource: source,
-                    meridianFile: file.lastPathComponent,
-                    vocabularies: [vocab],
-                    rulebooks: [rulebook]
-                )
+                let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: source, file: file.lastPathComponent)], vocabularies: [vocab], rulebooks: [rulebook]))[file.lastPathComponent]!.swift
                 if out.contains("_unresolved") {
                     failures.append("\(file.lastPathComponent): emitted _unresolved")
                 }
@@ -110,12 +105,7 @@ struct SampleGbrainConformanceTests {
         publish the page at the slug.
         Memo: "filed".
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "extensible_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [extended]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "extensible_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [extended]))["extensible_demo.meri"]!.swift
         #expect(out.contains("struct ExtensibleDemo"))
         // The "Steps" alias routed the body through procedure lowering…
         #expect(out.contains("workflow:") || out.contains("runtime.invoke") || out.contains("("))

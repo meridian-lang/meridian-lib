@@ -7,9 +7,9 @@ import Foundation
 // Phase 4 deliverable (docs/status.md):
 //   "Multi-vocabulary — support `import` of multiple `.merconfig` files."
 //
-// These tests exercise the new `Compiler.compile(…, vocabularies:)` entry
-// point. We don't depend on any on-disk fixture so the test stays focused on
-// the merge + import-validation logic.
+// These tests exercise the `Compiler.compile(_:)` entry point with a
+// multi-vocabulary `CompilationUnit`. We don't depend on any on-disk fixture
+// so the test stays focused on the merge + import-validation logic.
 
 @Suite("Phase 4 Multi-vocab — merging .merconfig files")
 struct Phase4MultiVocab {
@@ -72,11 +72,7 @@ struct Phase4MultiVocab {
         let opts = Compiler.Options(
             emitterOptions: .init(emitSourceLineComments: false)
         )
-        let swift = try Compiler(options: opts).compile(
-            meridianSource: workflow,
-            meridianFile: "workflow.meridian",
-            vocabularies: vocabs
-        )
+        let swift = try Compiler(options: opts).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: workflow, file: "workflow.meridian")], vocabularies: vocabs))["workflow.meridian"]!.swift
 
         // Constants from `shipping` and the kind from `core` both made it
         // into the merged config.
@@ -100,11 +96,7 @@ struct Phase4MultiVocab {
             complete.
         """
         #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: workflow,
-                meridianFile: "workflow.meridian",
-                vocabularies: vocabs
-            )
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: workflow, file: "workflow.meridian")], vocabularies: vocabs))["workflow.meridian"]!.swift
         }
     }
 
@@ -135,11 +127,7 @@ struct Phase4MultiVocab {
             complete.
         """
         #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: workflow,
-                meridianFile: "workflow.meridian",
-                vocabularies: vocabs
-            )
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: workflow, file: "workflow.meridian")], vocabularies: vocabs))["workflow.meridian"]!.swift
         }
     }
 
@@ -170,11 +158,7 @@ struct Phase4MultiVocab {
             .init(name: "core", file: "core2.merconfig", source: coreConfig),
         ]
         #expect(throws: CompilerError.self) {
-            _ = try Compiler().compile(
-                meridianSource: workflow,
-                meridianFile: "workflow.meridian",
-                vocabularies: vocabs
-            )
+            _ = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: workflow, file: "workflow.meridian")], vocabularies: vocabs))["workflow.meridian"]!.swift
         }
     }
 }

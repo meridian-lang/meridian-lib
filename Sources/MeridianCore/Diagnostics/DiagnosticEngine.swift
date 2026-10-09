@@ -7,8 +7,8 @@ import Foundation
 /// than resynced at the token level.
 ///
 /// Lifetime: **per-compile (per-file)**. `Compiler.lowerAndEmit` creates one at
-/// the top of each file's pipeline; `compileSkillpack` gives each file its own
-/// engine. The engine is single-threaded within one file's pipeline, so no
+/// the top of each file's pipeline; a multi-source `CompilationUnit` gives each
+/// file its own engine. The engine is single-threaded within one file's pipeline, so no
 /// locking is required. `Diagnostic` values are `Sendable`; the engine itself
 /// is intentionally not shared across files.
 public final class DiagnosticEngine {

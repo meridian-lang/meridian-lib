@@ -58,7 +58,7 @@ struct AutonomyModeTests {
         To stabilize, with autonomy re-plan after 2 failures:
           keep fixing the smallest failing thing.
         """)
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
 
         guard case .aiAutonomy(let step) = workflows[0].body.statements.first else {
             Issue.record("Expected autonomous AIAutonomyIR")
@@ -86,7 +86,7 @@ struct AutonomyModeTests {
             ])
         )
 
-        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emitFile(workflows: [workflow])
+        let out = try SwiftEmitter(options: .init(emitSourceLineComments: false)).emit(workflows: [workflow]).combined
         #expect(out.contains("runtime.executeAutonomousLoop"))
         #expect(out.contains("replanAfterFailures: 2"))
         #expect(out.contains("maxSteps: 5"))

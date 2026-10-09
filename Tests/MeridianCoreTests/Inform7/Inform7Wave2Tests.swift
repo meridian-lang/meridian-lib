@@ -307,8 +307,7 @@ struct DefinitionTests {
 
     @Test("definitions are recorded under meridian_definitions in the manifest")
     func manifestRecordsDefinitions() throws {
-        let (_, _, input) = try Compiler().compileWithManifest(
-            meridianSource: """
+        let input = try Compiler().compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: """
             ---
             name: review
             parameters: page
@@ -319,9 +318,7 @@ struct DefinitionTests {
             To review a page:
               if the page is stale,
                 complete with reason "needs work".
-            """,
-            meridianFile: "t.meridian",
-            vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)])
+            """, file: "t.meridian")], vocabularies: [.init(name: "t", file: "t.merconfig", source: cfg)]))["t.meridian"]!.manifest
         let json = try ManifestEmitter().emit(input)
         #expect(json.contains("meridian_definitions"), Comment(rawValue: json))
         #expect(json.contains("\"adjective\" : \"stale\""), Comment(rawValue: json))

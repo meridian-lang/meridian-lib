@@ -40,7 +40,7 @@ public struct ExplainDiagCommand: ParsableCommand {
             hint = " Did you mean \(close)?"
         }
         FileHandle.standardError.write(Data(
-            "unknown id '\(needle)'.\(hint)\nRun `meridian decisions` to list decisions; codes are MER0001–MER6004.\n".utf8))
+            "unknown id '\(needle)'.\(hint)\nRun `meridian decisions` to list decisions; codes are MER0003–MER6004.\n".utf8))
         throw ExitCode(1)
     }
 

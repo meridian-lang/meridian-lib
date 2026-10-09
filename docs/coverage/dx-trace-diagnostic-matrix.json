@@ -650,7 +650,7 @@
       "phase": "post-lower",
       "implementationFiles": [
         "Sources/MeridianCore/IR/TraceIdentityPlanner.swift",
-        "Sources/MeridianCore/Compiler.swift:compileWithManifest"
+        "Sources/MeridianCore/Compiler.swift:compile"
       ],
       "tests": [
         "Tests/MeridianCoreTests/DXTraceExpansionTests.swift",
@@ -773,11 +773,11 @@
       "id": "DX-MAN-002",
       "phase": "manifest",
       "implementationFiles": [
-        "Sources/MeridianCore/Compiler.swift:compileWithManifest",
+        "Sources/MeridianCore/Compiler.swift:compile",
         "Sources/MeridianCore/Codegen/ManifestEmitter.swift"
       ],
       "tests": [
-        "Tests/MeridianCoreTests/CompileWithManifestTests.swift",
+        "Tests/MeridianCoreTests/CodegenManifestCoverageTests.swift",
         "Tests/MeridianCoreTests/Phase3ForcingFunction.swift"
       ],
       "traceCategories": [
@@ -1178,7 +1178,7 @@
     "Sources/MeridianCore/Lowering/DeonticLowering.swift",
     "Sources/MeridianCore/Lowering/ASTToIR.swift:validateDefinitionProperties",
     "Sources/MeridianCore/Diagnostics/MeridianLinter.swift",
-    "Sources/MeridianCore/Compiler.swift:compileWithManifest",
+    "Sources/MeridianCore/Compiler.swift:compile",
     "Sources/MeridianCore/IR/TraceIdentityPlanner.swift",
     "Sources/MeridianCore/Obligations/ObligationId.swift"
   ]

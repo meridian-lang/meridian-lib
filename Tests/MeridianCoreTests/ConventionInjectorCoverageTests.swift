@@ -125,12 +125,7 @@ struct ConventionInjectorCoverageTests {
         page is a kind of thing.
         entity is a kind of thing.
         """
-        let swift = try Compiler(options: .init()).compile(
-            meridianSource: mer,
-            meridianFile: "t.meridian",
-            vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)],
-            rulebooks: [RulebookInput(name: "brain", file: "brain.merrules", source: rules)]
-        )
+        let swift = try Compiler(options: .init()).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "t.meridian")], vocabularies: [Compiler.VocabularyInput(name: "t", file: "t.merconfig", source: cfg)], rulebooks: [RulebookInput(name: "brain", file: "brain.merrules", source: rules)]))["t.meridian"]!.swift
         #expect(swift.contains("convention"))
     }
 }

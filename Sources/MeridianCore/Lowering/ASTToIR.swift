@@ -29,11 +29,11 @@ public struct ASTToIR {
     /// validating `InvokeIR.toolID`, so a tool declared in frontmatter but not in
     /// `=== tools ===` (e.g. `get_health` → `getHealth`) still resolves.
     public let frontmatterTools: [String]
-    /// Optional batch collector. When present, the per-workflow and per-rule
-    /// loops in `lower` recover from a thrown `CompilerError` (collect + skip the
-    /// construct) so one compile reports many errors. When `nil`, the historical
-    /// first-error-throws behaviour is preserved.
-    public let engine: DiagnosticEngine?
+    /// Batch collector. The per-workflow and per-rule loops in `lower` recover
+    /// from a thrown `CompilerError` (collect + skip the construct) so one
+    /// compile reports many errors; `throwIfErrors()` checkpoints at the end of
+    /// each public entry point turn the collected errors back into a throw.
+    public let engine: DiagnosticEngine
     let maxInlineDepth = 8
 
     /// Throw a lowering error for `DiagnosticEngine.recovering` to collect — do
@@ -48,7 +48,7 @@ public struct ASTToIR {
                 rulebook: Rulebook = .empty,
                 scopedTools: [String]? = nil,
                 frontmatterTools: [String] = [],
-                engine: DiagnosticEngine? = nil) {
+                engine: DiagnosticEngine) {
         self.symbols = symbols
         self.sourceFile = sourceFile
         self.trace = trace
@@ -112,9 +112,7 @@ public struct ASTToIR {
                     range: sourceRange(line),
                     notes: [DiagnosticNote("same condition as MER-DEO-004 (deontic tool outside permissions)")],
                     help: "Add `\(tool)` to frontmatter `tools:` / permissions, or remove it from the `using` clause.")
-                if let engine {
-                    engine.report(diag)
-                }
+                engine.report(diag)
             }
         }
         return usingTools
@@ -158,17 +156,12 @@ public struct ASTToIR {
         // body fails to lower is collected and skipped so the rest of the file
         // still reports. Cascade-safe because every workflow was registered as a
         // phrase stub above, so dependent invocations still resolve.
-        var workflows: [IRWorkflow]
-        if let engine {
-            workflows = []
-            for wf in file.workflows {
-                let context = "workflow \(wf.pattern.displayText)"
-                if let lowered = try engine.recovering(context: context, { try lowerWorkflow(wf) }) {
-                    workflows.append(lowered)
-                }
+        var workflows: [IRWorkflow] = []
+        for wf in file.workflows {
+            let context = "workflow \(wf.pattern.displayText)"
+            if let lowered = try engine.recovering(context: context, { try lowerWorkflow(wf) }) {
+                workflows.append(lowered)
             }
-        } else {
-            workflows = try file.workflows.map { try lowerWorkflow($0) }
         }
 
         // C1-C4: Classify and inject rules into lowered workflows.
@@ -190,7 +183,7 @@ public struct ASTToIR {
             var parsedRules: [ParsedRule] = []
             for raw in file.rules {
                 if let rejection = analyzer.deonticRejection(for: raw, sourceFile: sourceFile) {
-                    if let engine { engine.report(rejection) } else { throw CompilerError.diagnostics([rejection]) }
+                    engine.report(rejection)
                     continue
                 }
                 if let parsed = try analyzer.classify(raw) {
@@ -208,16 +201,12 @@ public struct ASTToIR {
                             message: "unparseable rule: \"\(raw.text)\"",
                             range: sourceRange(raw.sourceLine),
                             help: "Use one of the supported rule shapes (must / must not / must be … by … before / when / may), or set frontmatter `allow-fallbacks: unparseable-rules` to drop it.")
-                        if let engine { engine.report(diag) } else { throw CompilerError.diagnostics([diag]) }
+                        engine.report(diag)
                     }
                 }
             }
 
-            if let engine {
-                workflows = (try engine.recovering(context: "rule injection", { try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile) })) ?? workflows
-            } else {
-                workflows = try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile)
-            }
+            workflows = (try engine.recovering(context: "rule injection", { try injector.inject(rules: parsedRules, into: workflows, sourceFile: sourceFile) })) ?? workflows
 
             let norms = DeonticLowering.norms(from: parsedRules).map { norm in
                 NormIR(
@@ -234,9 +223,7 @@ public struct ASTToIR {
             let finalizedNorms = try NormId.finalize(norms)
             let conflictDiagnostics = DeonticLowering.detectConflicts(finalizedNorms)
             if !conflictDiagnostics.isEmpty {
-                if let engine {
-                    for diag in conflictDiagnostics { engine.report(diag) }
-                }
+                engine.report(conflictDiagnostics)
                 throw CompilerError.diagnostics(conflictDiagnostics)
             }
             workflows = try DeonticLowering.apply(norms: finalizedNorms, to: workflows, engine: engine)
@@ -257,18 +244,14 @@ public struct ASTToIR {
                         message: "rule did not attach to any workflow: \(describeRule(u.rule))",
                         range: sourceRange(ruleLine(u.rule)),
                         help: "Make sure the rule's action verb matches a workflow's name or parameter, or set frontmatter `allow-fallbacks: unattached-rules` to drop the rule.")
-                    if let engine { engine.report(diag) } else { throw CompilerError.diagnostics([diag]) }
+                    engine.report(diag)
                 }
             }
 
             // synthesizeTriggers may throw if a trigger's action doesn't lower
             // and the policy doesn't allow `unresolved-trigger-actions`.
-            if let engine {
-                if let triggers = try engine.recovering(context: "triggers", { try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile) }) {
-                    workflows += triggers
-                }
-            } else {
-                workflows += try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile)
+            if let triggers = try engine.recovering(context: "triggers", { try injector.synthesizeTriggers(parsedRules, sourceFile: sourceFile) }) {
+                workflows += triggers
             }
         }
 
@@ -293,6 +276,10 @@ public struct ASTToIR {
         // forgotten declaration — surface it with did-you-mean.
         validateToolIDs(in: workflows)
 
+        // No checkpoint here: the batch engine keeps collecting (skipped
+        // workflows/rules, unknown tools, judgment steps outside scope) and the
+        // pipeline-level `Compiler` checkpoints turn them into a throw, so one
+        // compile can report every error it found.
         return workflows
     }
 
@@ -316,7 +303,7 @@ public struct ASTToIR {
 
     func reportFallbackWarning(_ diagnostic: Diagnostic) {
         trace.log(.lowering, "fallback warning \(diagnostic.code.id): \(diagnostic.message)")
-        engine?.report(diagnostic)
+        engine.report(diagnostic)
     }
 
     /// Methodize a raw tool token the same way the invoke path does
@@ -349,12 +336,6 @@ public struct ASTToIR {
     }
 
     private func validateToolIDs(in workflows: [IRWorkflow]) {
-        guard engine != nil else {
-            // Without a batch engine (the test-runner re-lower / RunCommand
-            // re-lower paths) the primary compile already validated tool IDs, so
-            // skip to avoid a redundant first-error throw on a non-canonical path.
-            return
-        }
         let recognized = recognizedToolForms()
         let candidates = Array(Set(BuiltinToolCatalog.ids + symbols.tools.values.map { $0.methodName })).sorted()
         var seen: Set<String> = []
@@ -375,7 +356,7 @@ public struct ASTToIR {
                     help: "Declare the tool when possible; keep `allow-fallbacks: unknown-tools` only for host-provided runtime tools.")
                 continue
             }
-            engine?.report(Diagnostic.unresolved(
+            engine.report(Diagnostic.unresolved(
                 .unknownTool,
                 target: id,
                 among: candidates,

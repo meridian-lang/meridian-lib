@@ -325,7 +325,7 @@ Prefer **constructing the data structure directly** and calling the unit under
 test over driving a full compile — it's faster and pins the exact branch:
 
 - Codegen → build an `IRWorkflow` / `IRExpression` and call `SwiftEmitter`
-  (`emitExpr`, `emitValueExpr`, `emitFile`). See `SwiftEmitterCoverageTests`.
+  (`emitExpr`, `emitValueExpr`, `emit`). See `SwiftEmitterCoverageTests`.
 - Manifest/domain → `ManifestEmitter.Input` / `DomainEmitter`. See
   `CodegenManifestCoverageTests`.
 - Spec-runner → build an `AssertionContext` and call `evaluate`; walk IR with

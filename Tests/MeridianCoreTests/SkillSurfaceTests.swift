@@ -366,7 +366,7 @@ struct SkillSurfaceImplicitBindTests {
         To demo:
           invoke get customer with id = "c-1".
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
 
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("Expected invoke")
@@ -392,7 +392,7 @@ struct SkillSurfaceImplicitBindTests {
         To demo:
           bind fetched customer = invoke get customer with id = "c-1".
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
 
         guard case .invoke(let invoke) = workflows[0].body.statements.first else {
             Issue.record("Expected invoke")
@@ -452,7 +452,7 @@ struct SkillSurfaceLateTier1Tests {
         To babysit a pull request:
           review the comment.
         """, file: "test.meridian")
-        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent()).lower(ast)
+        let workflows = try ASTToIR(symbols: symbols, sourceFile: "test.meridian", trace: .silent(), engine: DiagnosticEngine()).lower(ast)
 
         guard case .complete = workflows[0].body.statements.first else {
             Issue.record("Expected phrase to resolve via implicit parameter fill")

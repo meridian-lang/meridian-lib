@@ -115,8 +115,6 @@ long-form entry (and the linked decision). This table mirrors
 
 | Code | Title | Kind |
 |---|---|---|
-| MER0001 | semantic error | other |
-| MER0002 | syntax error | other |
 | MER0003 | not implemented | other |
 | MER0004 | internal compiler error | other |
 
@@ -331,13 +329,13 @@ longer silent.
 
 `IRValidator` guards manually constructed or transformed IR before the two public
 rendering surfaces that could otherwise hide malformed structure:
-`Verbalizer.verbalize()` and `SwiftEmitter.emitFile()` both call it and throw
+`Verbalizer.verbalize()` and `SwiftEmitter.emit()` both call it and throw
 `MER4002` diagnostics on invalid IR. This covers empty identifiers/field names,
 bad inline invocation positions, invalid match branches, empty wait/event/choice
 payloads, and record/table shape mismatches.
 
 The API consequence is intentional: `Verbalizer.verbalize()` and
-`SwiftEmitter.emitFile()` are throwing APIs. CLI commands (`explain`, `drift`,
+`SwiftEmitter.emit()` are throwing APIs. CLI commands (`explain`, `drift`,
 `compile`, `run`) render those failures through the same `DiagnosticRenderer`
 path as parser/lowering errors.
 
@@ -394,7 +392,7 @@ enables everything.
 
 ### Timing & profile
 
-`Compiler.compileWithManifest` wraps the whole pipeline in a top-level `compile`
+`Compiler.compile(_:)` wraps the whole pipeline in a top-level `compile`
 span and times each phase (`symbols`, `parse`, `lower`, `codegen`) via
 `trace.phase(_:)`. At the end it prints a profile:
 
@@ -464,7 +462,7 @@ meridian trace render /tmp/events.jsonl   # legacy event tree (not semantic JSON
 | Semantic history | `TraceStore` TraceRecord JSONL | `trace eval` / `verify` / temporal replay |
 
 `Compiler.sourceMap(fromGeneratedSwift:)` is the single source of truth for the
-`// L` parsing and is invoked in `compileWithManifest`, so **every** emitted
+`// L` parsing and is invoked in `compile(_:)`, so **every** emitted
 manifest carries the map. Do not confuse `ParserTrace` stderr/JSONL with semantic
 trace JSONL — they answer different questions. See [08_TRACING.md](08_TRACING.md)
 and [19_TRACES_AND_TIME.md](19_TRACES_AND_TIME.md).

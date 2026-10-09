@@ -30,10 +30,8 @@ struct ReachableCoveragePhase4Tests {
     func compilerErrorProjection() {
         let r = SourceRange(file: "f", line: 3, column: 1)
         let cases: [CompilerError] = [
-            .syntaxError(message: "bad syntax", range: r),
-            .semanticError(message: "bad meaning", range: r),
             .codegenError(message: "bad codegen"),
-            .diagnostics([Diagnostic(code: .legacySemantic, severity: .error, message: "d", primaryRange: r)]),
+            .diagnostics([Diagnostic.error(.internalError, message: "d", range: r)]),
         ]
         for c in cases {
             #expect(!c.diagnostics.isEmpty)

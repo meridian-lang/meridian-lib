@@ -68,12 +68,7 @@ struct SampleGbrainSmokeTests {
         capture the note.
         search the brain for the note.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "capture_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "capture_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["capture_demo.meri"]!.swift
         #expect(out.contains("struct CaptureDemo"))
         #expect(!out.contains("_unresolved"))
     }
@@ -97,12 +92,7 @@ struct SampleGbrainSmokeTests {
         ## Phases
         capture the input.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "section_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "section_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["section_demo.meri"]!.swift
         #expect(out.contains("struct SectionDemo"))
         #expect(out.contains("runtime.assert"))
         #expect(out.contains("if "))
@@ -121,11 +111,7 @@ struct SampleGbrainSmokeTests {
         The request is ambiguous.
         """
         #expect(throws: CompilerError.self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: meri,
-                meridianFile: "fuzzy_demo.meri",
-                vocabularies: [Self.vocab()]
-            )
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "fuzzy_demo.meri")], vocabularies: [Self.vocab()]))["fuzzy_demo.meri"]!.swift
         }
     }
 
@@ -143,12 +129,7 @@ struct SampleGbrainSmokeTests {
           publish the page at the slug.
         Report: "done".
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "procedure_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "procedure_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["procedure_demo.meri"]!.swift
         #expect(out.contains("struct ProcedureDemo"))
         #expect(out.contains("skill.report"))
         #expect(out.contains("for "))
@@ -171,12 +152,7 @@ struct SampleGbrainSmokeTests {
         ```
         `gbrain doctor`
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "command_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "command_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["command_demo.meri"]!.swift
         #expect(out.contains("struct CommandDemo"))
         #expect(out.contains("shell.run"))
         #expect(out.contains("gbrain search"))
@@ -199,12 +175,7 @@ struct SampleGbrainSmokeTests {
         use judgment to decide if the entity is notable:
           Weigh prominence, recency, and reliability of sources.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "judgment_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "judgment_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["judgment_demo.meri"]!.swift
         #expect(out.contains("struct JudgmentDemo"))
         #expect(out.contains("executeProsePlan"))
         #expect(out.contains("decide if the entity is notable"))
@@ -224,12 +195,7 @@ struct SampleGbrainSmokeTests {
         Ponder the deeper meaning of the request and act accordingly.
         """
         #expect(throws: (any Error).self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: meri,
-                meridianFile: "unmarked_demo.meri",
-                vocabularies: [Self.vocab()],
-                rulebooks: [Self.rulebook()]
-            )
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "unmarked_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["unmarked_demo.meri"]!.swift
         }
     }
 
@@ -254,12 +220,7 @@ struct SampleGbrainSmokeTests {
         ## Phases
         publish the page at the slug.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "publish_page.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [conventionsRulebook]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "publish_page.meri")], vocabularies: [Self.vocab()], rulebooks: [conventionsRulebook]))["publish_page.meri"]!.swift
         #expect(out.contains("struct PublishPage"))
         #expect(out.contains("ready"))
         #expect(!out.contains("_unresolved"))
@@ -281,12 +242,7 @@ struct SampleGbrainSmokeTests {
         ## Phases
         publish the page at the slug.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "trigger_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "trigger_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["trigger_demo.meri"]!.swift
         #expect(out.contains("trigger.nightly.fired"))
         #expect(out.contains("\"kind\""))
         #expect(out.contains("\"schedule\""))
@@ -319,12 +275,7 @@ struct SampleGbrainSmokeTests {
         if the choice is "proceed",
           publish the page at the slug.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "choice_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "choice_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["choice_demo.meri"]!.swift
         #expect(out.contains("ask.choice"))
         #expect(out.contains(".choice(prompt:"))
         #expect(out.contains("consumeChoiceSelection"))
@@ -344,12 +295,7 @@ struct SampleGbrainSmokeTests {
         ## Phases
         in the background, publish the page at the slug.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "background_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "background_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["background_demo.meri"]!.swift
         #expect(out.contains("Task {"))
         #expect(!out.contains("waitForAll"))
         #expect(!out.contains("_unresolved"))
@@ -357,7 +303,7 @@ struct SampleGbrainSmokeTests {
 
     @Test("skillpack compile resolves a cross-file workflow invocation")
     func skillpackCrossFileResolves() throws {
-        let enrichment = Compiler.SkillpackInput(
+        let enrichment = Compiler.SourceInput(
             source: """
             ---
             vocabulary: brain.merconfig
@@ -367,7 +313,7 @@ struct SampleGbrainSmokeTests {
             """,
             file: "run_enrichment.meri"
         )
-        let orchestrator = Compiler.SkillpackInput(
+        let orchestrator = Compiler.SourceInput(
             source: """
             ---
             vocabulary: brain.merconfig
@@ -377,24 +323,15 @@ struct SampleGbrainSmokeTests {
             """,
             file: "orchestrate_work.meri"
         )
-        let outputs = try Compiler(options: .init(trace: .silent())).compileSkillpack(
-            [enrichment, orchestrator],
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
-        let orchestratorOut = try #require(outputs["orchestrate_work.meri"])
+        let outputs = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [enrichment, orchestrator], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))
+        let orchestratorOut = try #require(outputs["orchestrate_work.meri"]).swift
         #expect(orchestratorOut.contains("RunEnrichment(runtime: runtime"))
         #expect(!orchestratorOut.contains("_unresolved"))
 
         // The cross-file call only resolves because the skillpack pre-registers
         // every file's workflows: compiling the orchestrator alone must fail.
         #expect(throws: (any Error).self) {
-            _ = try Compiler(options: .init(trace: .silent())).compile(
-                meridianSource: orchestrator.source,
-                meridianFile: orchestrator.file,
-                vocabularies: [Self.vocab()],
-                rulebooks: [Self.rulebook()]
-            )
+            _ = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: orchestrator.source, file: orchestrator.file)], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))[orchestrator.file]!.swift
         }
     }
 
@@ -409,12 +346,7 @@ struct SampleGbrainSmokeTests {
         ---
         If the note is "urgent" -> capture the note.
         """
-        let out = try Compiler(options: .init(trace: .silent())).compile(
-            meridianSource: meri,
-            meridianFile: "arrow_demo.meri",
-            vocabularies: [Self.vocab()],
-            rulebooks: [Self.rulebook()]
-        )
+        let out = try Compiler(options: .init(trace: .silent())).compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: meri, file: "arrow_demo.meri")], vocabularies: [Self.vocab()], rulebooks: [Self.rulebook()]))["arrow_demo.meri"]!.swift
         #expect(out.contains("if "))
         #expect(!out.contains("_unresolved"))
     }

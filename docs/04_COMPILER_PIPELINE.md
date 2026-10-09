@@ -7,21 +7,31 @@ every compiler stage to emitted Swift.
 
 ## Stage 0 — Entry point
 
-`Compiler.compile(meridianSource:meridianFile:vocabularies:)` in `Sources/MeridianCore/Compiler.swift`
-is the single public façade. The CLI (`CompileCommand`, `RunCommand`) and unit tests both call this.
+`Compiler` in `Sources/MeridianCore/Compiler.swift` is the single public façade,
+and **one pipeline** backs every entry point: bootstrap the vocabulary/rulebook
+knowledge once, parse every source against a shared `SymbolTable`, pre-register
+every source's workflows as phrase stubs, then lower + emit each source.
 
 ```swift
-let out = try Compiler(options: opts).compile(
-    meridianSource: mer,
-    meridianFile: "order_processing.meridian",
+let unit = Compiler.CompilationUnit(
+    sources: [Compiler.SourceInput(source: mer, file: "order_processing.meridian")],
     vocabularies: [
         .init(name: "ecommerce", file: "ecommerce.merconfig", source: cfg)
     ]
 )
+let compiled = try Compiler(options: opts).compile(unit)["order_processing.meridian"]!
+compiled.swift          // single-file Swift (the historical emitFile output)
+compiled.domainSwift    // multi-file split: domain half
+compiled.workflowsSwift // multi-file split: workflows half
+compiled.manifest       // complete ManifestEmitter.Input
+compiled.model          // VerbalizerModel (canonical English, drift, IR sidecar)
 ```
 
-A convenience overload accepting a single `merconfigSource: String` is also
-available for single-vocabulary compilations.
+`compile(meridianSource:meridianFile:merconfigSource:merconfigFile:)` is the
+one-source convenience wrapper returning just the Swift string, and
+`bootstrap(_ unit:)` runs the bootstrap phase alone for authoring-time tooling
+(the migrator's marking pass, the inert-yield analyzer, `trace eval`). The CLI
+(`CompileCommand`, `RunCommand`), MCP tools, and unit tests all call these.
 
 ---
 
@@ -328,7 +338,7 @@ resolves regardless of source order or file. Registration:
 `lowerRegisteredDefinitions()` then lowers each body once (subject = the
 definition's singular variable) into a `LoweredDefinition` carrying the
 precomputed function name, which `Compiler.lowerAndEmit` threads into
-`SwiftEmitter.emitFile`.
+`SwiftEmitter.emit`.
 
 **Adjective predicates.** In `lowerComparison`, `X is/is not <adj>` where `adj`
 is a registered definition **and** the LHS lowers to `.identifierRef` (subject
@@ -429,19 +439,14 @@ The `attachedTo` block is the protected statement(s); `handler` is the catch blo
 
 ### Wave 7 verbalization model seam
 
-`Compiler.compileToModel(...)` stops after the same bootstrap, parse,
-validation, trigger synthesis, and lowering path used by `compileWithManifest`,
-returning a `VerbalizerModel` instead of emitted Swift. The model carries the
-lowered workflows plus the vocabulary context required to print them back as
+Every `CompiledFile` carries the `VerbalizerModel` built by the same bootstrap,
+parse, validation, trigger synthesis, and lowering pass that produced its Swift
+— `compile(_:)` no longer needs a second, model-only compile. The model holds
+the lowered workflows plus the vocabulary context required to print them back as
 Canonical English:
 
 ```swift
-public func compileToModel(
-    meridianSource: String,
-    meridianFile: String = "workflow.meridian",
-    vocabularies: [Compiler.VocabularyInput],
-    rulebooks: [RulebookInput] = []
-) throws -> VerbalizerModel
+let model = try compiler.compile(unit)[file]!.model
 ```
 
 `VerbalizerModel` contains `workflows`, lowered and inline definitions,
@@ -487,11 +492,13 @@ Maps `ExpressionAST` to `IRExpression`:
 
 ## Stage 6 — Emission (`SwiftEmitter`)
 
-`SwiftEmitter.emitFile(workflows:constantsDecl:instancesDecl:domainDecl:)`
-validates the workflows with `IRValidator`, then produces a Swift source
-`String`. It throws `MER4002` diagnostics for invalid IR before emission. It
-uses `StringTemplate` from `modelhike`; each `emit*` method returns a
-`StringTemplate` that is flattened via `toString(separator: "\n")`.
+`SwiftEmitter.emit(workflows:constantsDecl:instancesDecl:domainDecl:fileMetadata:definitions:)`
+validates the workflows with `IRValidator`, then produces all three Swift
+strings from one traversal — `combined` (the single-file output), `domain` and
+`workflows` (the multi-file split). It throws `MER4002` diagnostics for invalid
+IR before emission. It uses `StringTemplate` from `modelhike`; each `emit*`
+method returns a `StringTemplate` that is flattened via
+`toString(separator: "\n")`.
 
 See [05_CODEGEN.md](05_CODEGEN.md) for the full emission spec.
 
@@ -539,10 +546,10 @@ token has spaces) is a hard error, so such sections stay `(( inert ))`.
 
 ## Stage 8 — Manifest emission (mandatory plumbing)
 
-The manifest is a first-class, always-produced output. `Compiler.compileWithManifest`
+The manifest is a first-class, always-produced output. `Compiler.compile(_:)`
 assembles a COMPLETE `ManifestEmitter.Input` — workflows, constants, tools,
 kinds, instances, metadata, heading `outline`, rules, and the recorded
-`skillSections` — during the same compile that emits Swift. `ManifestEmitter.emit(_:)`
+`skillSections` — during the same compile that emits Swift (`CompiledFile.manifest`). `ManifestEmitter.emit(_:)`
 writes a `{stem}.meridian.manifest.json` companion: workflow names, parameters,
 event IDs, tool IDs, source-map entries (from the `// L{line}` comments), and
 `meridian_skill.sections` for sectioned documents. Non-executable section content
@@ -552,11 +559,10 @@ is guaranteed to reach the manifest, never best-effort.
 
 ## `Compiler.compile` return type
 
-`compile(…)` returns a plain `String` — the Swift source — by calling
-`compileWithManifest(…) -> (swift: String, manifest: ManifestEmitter.Input)`
-internally and discarding the manifest. Callers that need the manifest (the CLI)
-use `compileWithManifest` so the rich data computed during compilation is never
-silently discarded.
+`compile(_ unit: CompilationUnit) -> [String: CompiledFile]` returns everything
+one source produces, keyed by `SourceInput.file`: the Swift strings, the
+complete `ManifestEmitter.Input`, and the `VerbalizerModel`. The one-source
+`compile(meridianSource:…)` convenience returns just `CompiledFile.swift`.
 
 ## `Compiler` also exposes
 
@@ -566,22 +572,22 @@ public func emit(workflows: [IRWorkflow], constantsDecl: SwiftEmitter.ConstantsD
 
 // Emit companion JSON manifest
 public func emitManifest(_ input: ManifestEmitter.Input) throws -> String
+
+// Bootstrap-only: real vocabulary/rulebook knowledge, no parse/lower/emit
+public func bootstrap(_ unit: CompilationUnit) throws -> KnowledgeContext
 ```
 
 ## `CompilerError`
 
 ```swift
 public enum CompilerError: Error, Sendable {
-    case syntaxError(message: String, range: SourceRange)
-    case semanticError(message: String, range: SourceRange)
     case codegenError(message: String)
-    /// The modern path: one or more structured, coded diagnostics. A failed
-    /// compile reports *all* collected errors here.
+    /// One or more structured, coded diagnostics. A failed compile reports
+    /// *all* collected errors here.
     case diagnostics([Diagnostic])
 
     /// Project ANY case into structured diagnostics so renderers, the CLI, and
-    /// tests treat every error uniformly. Legacy cases map to generic `MER0xxx`
-    /// codes; `.diagnostics` returns its payload.
+    /// tests treat every error uniformly.
     public var diagnostics: [Diagnostic] { … }
 }
 ```

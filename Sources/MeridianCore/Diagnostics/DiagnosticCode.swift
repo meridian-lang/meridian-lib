@@ -58,16 +58,6 @@ extension DiagnosticCode {
 
     // MARK: MER0xxx — legacy / generic
 
-    public static let legacySemantic = DiagnosticCode(
-        id: "MER0001", title: "semantic error",
-        explanation: "Compatibility projection for legacy CompilerError.semanticError values. Production Sources must emit a specific DiagnosticCode through CompilerError.diagnostics instead.",
-        kind: .other)
-
-    public static let legacySyntax = DiagnosticCode(
-        id: "MER0002", title: "syntax error",
-        explanation: "Compatibility projection for legacy CompilerError.syntaxError values. Production Sources must emit a specific DiagnosticCode through CompilerError.diagnostics instead.",
-        kind: .other)
-
     public static let notImplemented = DiagnosticCode(
         id: "MER0003", title: "not implemented",
         explanation: "Retired compatibility code formerly emitted by the compiler's unimplemented-feature error bridge. No production path emits MER0003.",
@@ -565,7 +555,7 @@ extension DiagnosticCode {
     /// and uniqueness checks. Keep this list complete — a guard test asserts
     /// there are no duplicate ids and every code has a non-empty explanation.
     public static let all: [DiagnosticCode] = [
-        .legacySemantic, .legacySyntax, .notImplemented, .internalError,
+        .notImplemented, .internalError,
         .malformedWorkflowHeader, .orphanedCodeBlock, .unparseableStatement,
         .unparseableRule, .malformedCondition, .frontmatterPlacement,
         .invalidTestSpecKey, .removedImportForm,

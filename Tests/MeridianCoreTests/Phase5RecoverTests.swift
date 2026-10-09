@@ -161,7 +161,7 @@ struct RecoverLoweringTests {
         let lines = IndentTokenizer().tokenize(source, file: "test.meridian")
         let parser = StatementParser(symbols: symbols)
         let block = try parser.parseBlock(lines.filter(\.isContent))
-        let lowerer = ASTToIR(symbols: symbols, sourceFile: "test.meridian")
+        let lowerer = ASTToIR(symbols: symbols, sourceFile: "test.meridian", engine: DiagnosticEngine())
         return try lowerer.lowerBlock(block, mode: .strict, depth: 0).statements
     }
 
@@ -242,7 +242,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("do {"))
         #expect(out.contains("} catch let _recoveredError {"))
     }
@@ -256,7 +256,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("meridianMatches(_recoveredError, named: \"payment.declined\")"),
                 Comment(rawValue: "Expected meridianMatches in:\n\(out)"))
         // Must not use the old non-existent isNamed call.
@@ -272,7 +272,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("catch let _recoveredError as TimeoutError"))
     }
 
@@ -285,7 +285,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("let _recoveredError where"))
         #expect(out.contains("isRetryable"))
     }
@@ -303,7 +303,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("try await runtime.recordRecoverEngaged(pattern: \"payment.declined\", step: \"/Test/root/recover\")"),
                 Comment(rawValue: out))
         // Must be inside the catch block, before the handler's own statements.
@@ -325,7 +325,7 @@ struct RecoverCodegenTests {
         ))
         let wf = IRWorkflow(name: "test", parameters: [], body: IRBlock(statements: [ir]),
                             mode: .strict, sourceFile: "test.meridian")
-        let out = try emitter().emitFile(workflows: [wf])
+        let out = try emitter().emit(workflows: [wf]).combined
         #expect(out.contains("try await runtime.recordRecoverEngaged(pattern: \"any\", step: \"recover\")"))
     }
 }

@@ -3,7 +3,7 @@ import Testing
 @testable import MeridianCore
 import MeridianRuntime
 
-@Suite("compileToModel vs compileWithManifest pipeline parity")
+@Suite("one pipeline parity — model, manifest, and Swift agree")
 struct CompilerPipelineParityTests {
     private let cfg = """
     === vocabulary ===
@@ -30,16 +30,8 @@ struct CompilerPipelineParityTests {
     @Test("workflows, norms, and verbalizer model agree across compile paths")
     func compilePathsAgreeOnLoweredArtifacts() throws {
         let compiler = Compiler(options: .init(trace: .silent()))
-        let model = try compiler.compileToModel(
-            meridianSource: mer,
-            meridianFile: "parity.meri",
-            vocabularies: [vocab]
-        )
-        let manifestResult = try compiler.compileWithManifest(
-            meridianSource: mer,
-            meridianFile: "parity.meri",
-            vocabularies: [vocab]
-        )
+        let model = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "parity.meri")], vocabularies: [vocab]))["parity.meri"]!.model
+        let manifestResult = try compiler.compile(Compiler.CompilationUnit(sources: [Compiler.SourceInput(source: mer, file: "parity.meri")], vocabularies: [vocab]))["parity.meri"]!
 
         #expect(model.workflows.map(\.structName) == manifestResult.manifest.workflows.map(\.structName))
         #expect(model.workflows.flatMap(\.norms).map(\.id)

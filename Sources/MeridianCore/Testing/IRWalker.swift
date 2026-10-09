@@ -82,7 +82,7 @@ public enum IRWalker {
     /// parameter types, `for each`/`until` iteration subjects
     /// (`IterateMode.overCollection`), and typed `recover where` patterns
     /// (`ErrorPattern.typed`). Used for the manifest's `kinds_used` (C5-adjacent
-    /// audit data) — see `Compiler.compileWithManifest`.
+    /// audit data) — see `Compiler.CompiledFile.manifest`.
     public static func allKindNames(in workflows: [IRWorkflow]) -> Set<String> {
         var names: Set<String> = []
         for wf in workflows {

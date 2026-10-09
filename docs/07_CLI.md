@@ -135,7 +135,7 @@ Two files are written to the output directory:
   the heading `outline`, and (for sectioned documents) `meridian_skill.sections`
   recording every section verbatim with its resolved role and `executes` flag.
   The CLI writes the full `ManifestEmitter.Input` assembled by
-  `Compiler.compileWithManifest`, not a thin stub.
+  `Compiler.compile(_:)` (`CompiledFile.manifest`), not a thin stub.
 
 ### Successful output
 

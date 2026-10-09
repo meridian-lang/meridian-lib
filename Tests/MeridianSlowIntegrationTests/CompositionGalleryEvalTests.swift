@@ -86,9 +86,11 @@ struct CompositionGalleryEvalTests {
         \(body)
         """
         let compiler = Compiler()
-        let swift = try compiler.compile(meridianSource: source, meridianFile: "gallery.meridian", vocabularies: [Self.vocab()])
-        let model = try compiler.compileToModel(meridianSource: source, meridianFile: "gallery.meridian", vocabularies: [Self.vocab()])
-        return (swift, model.workflows)
+        let compiled = try compiler.compile(Compiler.CompilationUnit(
+            sources: [Compiler.SourceInput(source: source, file: "gallery.meridian")],
+            vocabularies: [Self.vocab()]
+        ))["gallery.meridian"]!
+        return (compiled.swift, compiled.model.workflows)
     }
 
     // MARK: - Line 1: for-each flaky-service-owned-by-user, sorted by name
