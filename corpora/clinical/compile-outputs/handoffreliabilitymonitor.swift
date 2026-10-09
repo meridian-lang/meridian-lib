@@ -435,7 +435,7 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "HandoffReliabilityMonitor", parameters: [:])
 
-        if __meridianShouldRun("/HandoffReliabilityMonitor/contract/invariants/3da12cb7988d276b46daa531fb4167e744a545c7cf217db815c34381f647f396") {
+        if __meridianShouldRun("/HandoffReliabilityMonitor/contract/invariants/a02b1203661533aaaed9d4289ec21a9f823d3cfd778c211be773691523d94e75") {
             // L21
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
@@ -450,76 +450,76 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
                 cadence: .seconds(14400),
                 message: "Expected the handoff step succeeds in at least 90% of runs within the last 30 days, checked every 4 hours",
                 blocking: false,
-                step: "/HandoffReliabilityMonitor/contract/invariants/3da12cb7988d276b46daa531fb4167e744a545c7cf217db815c34381f647f396",
+                step: "/HandoffReliabilityMonitor/contract/invariants/a02b1203661533aaaed9d4289ec21a9f823d3cfd778c211be773691523d94e75",
                 sourceRange: nil
             )
-            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/contract/invariants/3da12cb7988d276b46daa531fb4167e744a545c7cf217db815c34381f647f396", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/contract/invariants/a02b1203661533aaaed9d4289ec21a9f823d3cfd778c211be773691523d94e75", state: state.snapshot())
         }
-        if __meridianShouldRun("/HandoffReliabilityMonitor/guarantees/invariants/ee9ed4201d2ba58ac39ef1309ba72397abf964e2c75dc4bbc0530f5371b3258e") {
+        if __meridianShouldRun("/HandoffReliabilityMonitor/guarantees/invariants/45d3c9d3282e6d5c9592da860960cb64cc5906ede75c136a016c2ccda2a4b16d") {
             // L61
             try await runtime.assert((((state.get("patients")?.asList ?? [])).count <= 50), message: "Expected at most 50 patients")
-            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/guarantees/invariants/ee9ed4201d2ba58ac39ef1309ba72397abf964e2c75dc4bbc0530f5371b3258e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/guarantees/invariants/45d3c9d3282e6d5c9592da860960cb64cc5906ede75c136a016c2ccda2a4b16d", state: state.snapshot())
         }
-        if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1") {
+        if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/001d83a6740d9d2fa1a67e2fc8c2e7c7262c016fe141a89910e3f657da866887") {
             // L36
             let patients = try await runtime.invoke(
                 tool: "patient.list",
                 args: [
                     "status": .string("active"),
                 ],
-                step: "/HandoffReliabilityMonitor/workflow-steps/procedure/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1",
+                step: "/HandoffReliabilityMonitor/workflow-steps/procedure/001d83a6740d9d2fa1a67e2fc8c2e7c7262c016fe141a89910e3f657da866887",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "patient.list")
             )
             state.bind("patients", patients)
 
-            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/001d83a6740d9d2fa1a67e2fc8c2e7c7262c016fe141a89910e3f657da866887", state: state.snapshot())
         }
         // L37
         let __meridianColl_0_3 = (state.get("patients")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"patients\")", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/d04c2143c515275f1dcf5fdbcfb0d1305c572b83e126064b8e8fde4fdc2de890")
+        try await runtime.recordIterateStart(over: "state.get(\"patients\")", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/20dfc1c25eeba038f45cab7d5929b7ad6d02d43ead739aafd2cc0db460e9a81f")
         for (__meridianLoopIndex_0_3, patient) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/HandoffReliabilityMonitor/workflow-steps/procedure/d04c2143c515275f1dcf5fdbcfb0d1305c572b83e126064b8e8fde4fdc2de890")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/HandoffReliabilityMonitor/workflow-steps/procedure/20dfc1c25eeba038f45cab7d5929b7ad6d02d43ead739aafd2cc0db460e9a81f")
             state.bind("patient", patient)
-                if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3") {
+                if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e") {
                     // L38
                     let vitalSigns = try await runtime.invoke(
                         tool: "vitals.read",
                         args: [
                             "patient": state.get("patient") ?? .null,
                         ],
-                        step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+                        step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "vitals.read")
                     )
                     state.bind("vitalSigns", vitalSigns)
 
-                    try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e", state: state.snapshot())
                 }
                 // L39
                 if meridianDef_Patient_unmonitored(state.get("patient")) {
-                    try await runtime.recordBranchTaken(condition: "meridianDef_Patient_unmonitored(state.get(\"patient\"))", into: "then", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ed69c60d558a751217ec5c5e94a338f19e0a314ad6462ab3ba2a12c499b8d")
-                    if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d") {
+                    try await runtime.recordBranchTaken(condition: "meridianDef_Patient_unmonitored(state.get(\"patient\"))", into: "then", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/98bd46ea4b7c2ffa4fda81abcf548eeffa9a0643f600dd2a0af0c271d5c48ca0")
+                    if __meridianShouldRun("/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222") {
                         // L40
                         let patient = try await runtime.invoke(
                             tool: "patient.escalate",
                             args: [
                                 "patient": state.get("patient") ?? .null,
                             ],
-                            step: "/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+                            step: "/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "patient.escalate")
                         )
                         state.bind("patient", patient)
 
-                        try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/HandoffReliabilityMonitor/workflow-steps/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/b22ed69c60d558a751217ec5c5e94a338f19e0a314ad6462ab3ba2a12c499b8d")
+                    try await runtime.recordBranchEnded(into: "then", step: "/HandoffReliabilityMonitor/workflow-steps/procedure/iterate.body/98bd46ea4b7c2ffa4fda81abcf548eeffa9a0643f600dd2a0af0c271d5c48ca0")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"patients\")", count: __meridianColl_0_3.count, step: "/HandoffReliabilityMonitor/workflow-steps/procedure/d04c2143c515275f1dcf5fdbcfb0d1305c572b83e126064b8e8fde4fdc2de890")
+        try await runtime.recordIterateEnd(over: "state.get(\"patients\")", count: __meridianColl_0_3.count, step: "/HandoffReliabilityMonitor/workflow-steps/procedure/20dfc1c25eeba038f45cab7d5929b7ad6d02d43ead739aafd2cc0db460e9a81f")
 
         // L44
         let __meridianProseResults_L44 = try await runtime.executeProsePlan(
@@ -527,7 +527,7 @@ public struct HandoffReliabilityMonitor: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["patient.list", "shell.run", "vitals.read"],
             outputKind: "record",
-            step: "/HandoffReliabilityMonitor/workflow-steps-2/procedure/e3f9747de8e533221bd6eec100421c956f6dcb27c0d3834f496d24704a5fb3ae",
+            step: "/HandoffReliabilityMonitor/workflow-steps-2/procedure/5fa8f97cb752a21920da4f1e5afbfa23bab3d33fc4d3e6e1b379f0cea63b36a6",
             guidance: "otherwise,\nuse judgment to decide whether the patient needs an extra handoff follow-up based on the latest vital trend and hold status\nEmit: \"handoff reliability monitor pass complete\""
         )
         for (__key, __value) in __meridianProseResults_L44 {
@@ -591,12 +591,12 @@ public struct WhenRunhandoffreliabilitymonitorFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunhandoffreliabilitymonitorFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be") {
+        if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/5fbe57167176edf3571a6aeae9420bbed9bfc5eec6bd3bda759214e3fb301bf6") {
             // L1
             try await runtime.wait(.event("runHandoffReliabilityMonitor", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/5fbe57167176edf3571a6aeae9420bbed9bfc5eec6bd3bda759214e3fb301bf6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2") {
+        if __meridianShouldRun("/WhenRunhandoffreliabilitymonitorFires/root/procedure/49abb102256c8aea95aba54ce4b973a6405b2570286464558bc7863a78c9c63d") {
             // L1
             try await runtime.emit(
                 event: "trigger.runHandoffReliabilityMonitor.fired",
@@ -604,9 +604,9 @@ public struct WhenRunhandoffreliabilitymonitorFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run handoff reliability monitor"),
                 ],
-                step: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2"
+                step: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/49abb102256c8aea95aba54ce4b973a6405b2570286464558bc7863a78c9c63d"
             )
-            try await runtime.checkpoint(label: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhandoffreliabilitymonitorFires/root/procedure/49abb102256c8aea95aba54ce4b973a6405b2570286464558bc7863a78c9c63d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunhandoffreliabilitymonitorFires.complete")
@@ -666,12 +666,12 @@ public struct WhenCheckhandoffreliabilityFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckhandoffreliabilityFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735") {
+        if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/f2b6c3197c73cd832f0d4c5518363d66eda82bc43ddaf936873d9b0f6527d763") {
             // L1
             try await runtime.wait(.event("checkHandoffReliability", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckhandoffreliabilityFires/root/procedure/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckhandoffreliabilityFires/root/procedure/f2b6c3197c73cd832f0d4c5518363d66eda82bc43ddaf936873d9b0f6527d763", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee") {
+        if __meridianShouldRun("/WhenCheckhandoffreliabilityFires/root/procedure/171db483c3639f1548796a91d8d595ef2daaa2a13f8d0fdbc22e737407fd45ed") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkHandoffReliability.fired",
@@ -679,9 +679,9 @@ public struct WhenCheckhandoffreliabilityFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check handoff reliability"),
                 ],
-                step: "/WhenCheckhandoffreliabilityFires/root/procedure/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee"
+                step: "/WhenCheckhandoffreliabilityFires/root/procedure/171db483c3639f1548796a91d8d595ef2daaa2a13f8d0fdbc22e737407fd45ed"
             )
-            try await runtime.checkpoint(label: "/WhenCheckhandoffreliabilityFires/root/procedure/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckhandoffreliabilityFires/root/procedure/171db483c3639f1548796a91d8d595ef2daaa2a13f8d0fdbc22e737407fd45ed", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckhandoffreliabilityFires.complete")
@@ -741,12 +741,12 @@ public struct WhenMonitorshifthandoffqualityFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenMonitorshifthandoffqualityFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230") {
+        if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/c6cbe52c160effef13e877f7710e68629386ac50020066bd8aec5c5520621278") {
             // L1
             try await runtime.wait(.event("monitorShiftHandoffQuality", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMonitorshifthandoffqualityFires/root/procedure/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorshifthandoffqualityFires/root/procedure/c6cbe52c160effef13e877f7710e68629386ac50020066bd8aec5c5520621278", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb") {
+        if __meridianShouldRun("/WhenMonitorshifthandoffqualityFires/root/procedure/6bc2df9150f0961cde7ceff35bc9796faa4a31e9b399e76c67ac3e2f27a92fc9") {
             // L1
             try await runtime.emit(
                 event: "trigger.monitorShiftHandoffQuality.fired",
@@ -754,9 +754,9 @@ public struct WhenMonitorshifthandoffqualityFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("monitor shift handoff quality"),
                 ],
-                step: "/WhenMonitorshifthandoffqualityFires/root/procedure/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb"
+                step: "/WhenMonitorshifthandoffqualityFires/root/procedure/6bc2df9150f0961cde7ceff35bc9796faa4a31e9b399e76c67ac3e2f27a92fc9"
             )
-            try await runtime.checkpoint(label: "/WhenMonitorshifthandoffqualityFires/root/procedure/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorshifthandoffqualityFires/root/procedure/6bc2df9150f0961cde7ceff35bc9796faa4a31e9b399e76c67ac3e2f27a92fc9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMonitorshifthandoffqualityFires.complete")

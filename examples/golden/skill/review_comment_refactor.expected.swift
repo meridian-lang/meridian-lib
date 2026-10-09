@@ -777,71 +777,71 @@ public struct ReviewCommentRefactorPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ReviewCommentRefactorPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e") {
+        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c") {
             let comments = try await runtime.invoke(
                 tool: "listPullRequestComments",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e",
+                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "listPullRequestComments")
             )
             state.bind("comments", comments)
 
-            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/read-context/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/ReviewCommentRefactorPullRequest/read-context/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/read-context/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/make-sure-ci-is-green-before-touching-comments/procedure/d9ce9f0e6d39147c5d4e2e0586ec47f8f4ae0e549988b64fb4802b36120fd139") {
+        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/make-sure-ci-is-green-before-touching-comments/procedure/ca3499b3fcc13f7ba0d6352a696f72c62ef0fd5f4bfd579009082593b820b0e2") {
             try await runtime.assert(MeridianComparison.eq(state.get("ciStatus"), .string("passed")), message: "Expected the ci status is passed")
-            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/make-sure-ci-is-green-before-touching-comments/procedure/d9ce9f0e6d39147c5d4e2e0586ec47f8f4ae0e549988b64fb4802b36120fd139", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/make-sure-ci-is-green-before-touching-comments/procedure/ca3499b3fcc13f7ba0d6352a696f72c62ef0fd5f4bfd579009082593b820b0e2", state: state.snapshot())
         }
         let __meridianColl_0_4 = (state.get("comments")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/468e020249965d6a78bde1900c2a5d378eb238f25969b6ec39f34f55f2d29b28")
+        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/e71a592185ca507be5ee2f890c95de5938f9e4c1e2efbdfa5bb7fb8362f3d410")
         for (__meridianLoopIndex_0_4, comment) in __meridianColl_0_4.enumerated() {
             let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
             if __meridianShouldRun(__meridianLoopLabel_0_4) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/468e020249965d6a78bde1900c2a5d378eb238f25969b6ec39f34f55f2d29b28")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/e71a592185ca507be5ee2f890c95de5938f9e4c1e2efbdfa5bb7fb8362f3d410")
             state.bind("comment", comment)
-                if __meridianShouldRun("/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/iterate.body/33f311212d78ced1b0491b85cc2fcead4175aab39a770e5af318239abfefae90") {
+                if __meridianShouldRun("/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/iterate.body/f0a6c30828d1ae3834b05acac2732cbc7eb3b7d4d5ba36b289e223c980de5cea") {
                     _ = try await ResolveComment(runtime: runtime, comment: (try Value.from(comment).coerce(to: Value.self))).run()
-                    try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/iterate.body/33f311212d78ced1b0491b85cc2fcead4175aab39a770e5af318239abfefae90", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/iterate.body/f0a6c30828d1ae3834b05acac2732cbc7eb3b7d4d5ba36b289e223c980de5cea", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_4.count, step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/468e020249965d6a78bde1900c2a5d378eb238f25969b6ec39f34f55f2d29b28")
+        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_4.count, step: "/ReviewCommentRefactorPullRequest/resolve-every-addressed-comment/procedure/e71a592185ca507be5ee2f890c95de5938f9e4c1e2efbdfa5bb7fb8362f3d410")
 
-        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/ReviewCommentRefactorPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/ReviewCommentRefactorPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/ReviewCommentRefactorPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewCommentRefactorPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ReviewCommentRefactorPullRequest.complete")
@@ -905,36 +905,36 @@ public struct ResolveComment: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "ResolveComment", parameters: [:])
 
         if try await runtime.discretion.decide(DiscretionContext(question: "the comment was already addressed", snapshot: state.snapshot())) {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment was already addressed\", snapshot: state.snapshot()))", into: "then", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
-            if __meridianShouldRun("/ResolveComment/sub-workflows/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7") {
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment was already addressed\", snapshot: state.snapshot()))", into: "then", step: "/ResolveComment/sub-workflows/procedure/d6e977fdb64d785d1d038b4ec28baa3dca30ab48ebb000bdf56c8da97ae2925d")
+            if __meridianShouldRun("/ResolveComment/sub-workflows/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b") {
                 let comment = try await runtime.invoke(
                     tool: "resolveComment",
                     args: [
                         "commentId": state.get("comment.id") ?? .null,
                     ],
-                    step: "/ResolveComment/sub-workflows/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7",
+                    step: "/ResolveComment/sub-workflows/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "resolveComment")
                 )
                 state.bind("comment", comment)
 
-                try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
+            try await runtime.recordBranchEnded(into: "then", step: "/ResolveComment/sub-workflows/procedure/d6e977fdb64d785d1d038b4ec28baa3dca30ab48ebb000bdf56c8da97ae2925d")
         } else {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment was already addressed\", snapshot: state.snapshot()))", into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment was already addressed\", snapshot: state.snapshot()))", into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/d6e977fdb64d785d1d038b4ec28baa3dca30ab48ebb000bdf56c8da97ae2925d")
 
-            if __meridianShouldRun("/ResolveComment/sub-workflows/procedure/branch.else/8e69d74e93a91518c469ddd7e9d5b4f6658aae2691e46391fe90c9c895655819") {
+            if __meridianShouldRun("/ResolveComment/sub-workflows/procedure/branch.else/6d0084c3eabf809a9c2d03e3858b7051be1e9f887c71a0c7ed647bff9006a484") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("comment kept open after refactor pass"),
                     ],
-                    step: "/ResolveComment/sub-workflows/procedure/branch.else/8e69d74e93a91518c469ddd7e9d5b4f6658aae2691e46391fe90c9c895655819"
+                    step: "/ResolveComment/sub-workflows/procedure/branch.else/6d0084c3eabf809a9c2d03e3858b7051be1e9f887c71a0c7ed647bff9006a484"
                 )
-                try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.else/8e69d74e93a91518c469ddd7e9d5b4f6658aae2691e46391fe90c9c895655819", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ResolveComment/sub-workflows/procedure/branch.else/6d0084c3eabf809a9c2d03e3858b7051be1e9f887c71a0c7ed647bff9006a484", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/2134c6e2aa4fd91fad4264ffe1f7b794c783c61b21a77f1823fde755ca96490c")
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/ResolveComment/sub-workflows/procedure/d6e977fdb64d785d1d038b4ec28baa3dca30ab48ebb000bdf56c8da97ae2925d")
         }
 
 

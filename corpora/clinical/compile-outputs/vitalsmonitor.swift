@@ -438,64 +438,64 @@ public struct VitalsMonitorPatient: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "VitalsMonitorPatient", parameters: [:])
 
-        if __meridianShouldRun("/VitalsMonitorPatient/guarantees/invariants/726fdf8c8503e31fe37ab32d0724601f9a897bf85fa419937388662120c64364") {
+        if __meridianShouldRun("/VitalsMonitorPatient/guarantees/invariants/ad96ae85e1bc2da8a06906e8a0f0751f9c626470d0e31cd342d6549bc1f98466") {
             // L44
             try await runtime.assert(MeridianComparison.isWithinPast(state.get("patient.lastObservedAt"), Duration.seconds(14400)), message: "Expected the patient's last observed at is within the last 4 hours")
-            try await runtime.checkpoint(label: "/VitalsMonitorPatient/guarantees/invariants/726fdf8c8503e31fe37ab32d0724601f9a897bf85fa419937388662120c64364", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VitalsMonitorPatient/guarantees/invariants/ad96ae85e1bc2da8a06906e8a0f0751f9c626470d0e31cd342d6549bc1f98466", state: state.snapshot())
         }
         // L37
         var __meridianLoopIndex_0_1 = 0
-        try await runtime.recordIterateStart(over: "until meridianDef_Patient_monitored(state.get(\"patient\"))", step: "/VitalsMonitorPatient/workflow/procedure/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5")
+        try await runtime.recordIterateStart(over: "until meridianDef_Patient_monitored(state.get(\"patient\"))", step: "/VitalsMonitorPatient/workflow/procedure/0561ecc9b8dee165c38609015119d26139c6060eea5551af458d26d57c784af7")
         while !(meridianDef_Patient_monitored(state.get("patient"))) {
             let __meridianLoopLabel_0_1 = "progress:0.1:iteration:\(__meridianLoopIndex_0_1)"
             __meridianLoopIndex_0_1 += 1
             if __meridianShouldRun(__meridianLoopLabel_0_1) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1 - 1, step: "/VitalsMonitorPatient/workflow/procedure/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5")
-                if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94") {
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1 - 1, step: "/VitalsMonitorPatient/workflow/procedure/0561ecc9b8dee165c38609015119d26139c6060eea5551af458d26d57c784af7")
+                if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/f55408bb2b08cc257b2281757373403be9cb16454000125437beb6f1355d2256") {
                     // L38
                     try await runtime.wait(.duration(.seconds(900)), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/iterate.body/79bd1e807272d6b7cdd4e0a15eb5eff4fa0c1d73daf3f931a67f8d151b99af94", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/iterate.body/f55408bb2b08cc257b2281757373403be9cb16454000125437beb6f1355d2256", state: state.snapshot())
                 }
-                if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3") {
+                if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e") {
                     // L39
                     let vitalSigns = try await runtime.invoke(
                         tool: "vitals.read",
                         args: [
                             "patient": state.get("patient") ?? .null,
                         ],
-                        step: "/VitalsMonitorPatient/workflow/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+                        step: "/VitalsMonitorPatient/workflow/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "vitals.read")
                     )
                     state.bind("vitalSigns", vitalSigns)
 
-                    try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/iterate.body/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/iterate.body/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_1, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "until meridianDef_Patient_monitored(state.get(\"patient\"))", count: __meridianLoopIndex_0_1, step: "/VitalsMonitorPatient/workflow/procedure/e64b2433f3af3f2fb44d3571946cd9b8d9d73a2be6259ffec186b029a9098ec5")
+        try await runtime.recordIterateEnd(over: "until meridianDef_Patient_monitored(state.get(\"patient\"))", count: __meridianLoopIndex_0_1, step: "/VitalsMonitorPatient/workflow/procedure/0561ecc9b8dee165c38609015119d26139c6060eea5551af458d26d57c784af7")
 
-        if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/af2f178d6ac045d7bdd16773ea7cf7c316dce4ee8235723b2407b946fb63f0ec") {
+        if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/427fabc8831f7aaf9c12e088cc6efe2a3b1a35a5d11a06ff36b4780f8a285448") {
             // L40
             try await runtime.emit(
                 event: "clinical.note",
                 payload: [
                     "message": .string("patient vitals confirmed current"),
                 ],
-                step: "/VitalsMonitorPatient/workflow/procedure/af2f178d6ac045d7bdd16773ea7cf7c316dce4ee8235723b2407b946fb63f0ec"
+                step: "/VitalsMonitorPatient/workflow/procedure/427fabc8831f7aaf9c12e088cc6efe2a3b1a35a5d11a06ff36b4780f8a285448"
             )
-            try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/af2f178d6ac045d7bdd16773ea7cf7c316dce4ee8235723b2407b946fb63f0ec", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/427fabc8831f7aaf9c12e088cc6efe2a3b1a35a5d11a06ff36b4780f8a285448", state: state.snapshot())
         }
-        if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/919dbffa31074245b7d3f2595470ccb9413d8b8a9a1da0a8de065664917dab00") {
+        if __meridianShouldRun("/VitalsMonitorPatient/workflow/procedure/e568fca20513824183bb4f34b375c94ba215c928e95b307b3cd974ff52bb00bf") {
             // L41
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("vitals monitor pass complete"),
                 ],
-                step: "/VitalsMonitorPatient/workflow/procedure/919dbffa31074245b7d3f2595470ccb9413d8b8a9a1da0a8de065664917dab00"
+                step: "/VitalsMonitorPatient/workflow/procedure/e568fca20513824183bb4f34b375c94ba215c928e95b307b3cd974ff52bb00bf"
             )
-            try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/919dbffa31074245b7d3f2595470ccb9413d8b8a9a1da0a8de065664917dab00", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VitalsMonitorPatient/workflow/procedure/e568fca20513824183bb4f34b375c94ba215c928e95b307b3cd974ff52bb00bf", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "VitalsMonitorPatient.complete")
@@ -555,12 +555,12 @@ public struct WhenMonitorpatientvitalsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenMonitorpatientvitalsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715") {
+        if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/a7626a3fb7b8069704329ae94f74f02bc155c717b5b64f19328dbbe3ef9da777") {
             // L1
             try await runtime.wait(.event("monitorPatientVitals", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMonitorpatientvitalsFires/root/procedure/0dbba96f030214794a15189dd0c081c556cc94172fb0e3bdb209ef04e713b715", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorpatientvitalsFires/root/procedure/a7626a3fb7b8069704329ae94f74f02bc155c717b5b64f19328dbbe3ef9da777", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe") {
+        if __meridianShouldRun("/WhenMonitorpatientvitalsFires/root/procedure/33b166e2e5efdf6e22fdea90aed2716ad551089101e4fc91090b93978d492ebb") {
             // L1
             try await runtime.emit(
                 event: "trigger.monitorPatientVitals.fired",
@@ -568,9 +568,9 @@ public struct WhenMonitorpatientvitalsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("monitor patient vitals"),
                 ],
-                step: "/WhenMonitorpatientvitalsFires/root/procedure/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe"
+                step: "/WhenMonitorpatientvitalsFires/root/procedure/33b166e2e5efdf6e22fdea90aed2716ad551089101e4fc91090b93978d492ebb"
             )
-            try await runtime.checkpoint(label: "/WhenMonitorpatientvitalsFires/root/procedure/cd949352ebdbd95151c5a0216d528a02293074d130f7351ff2ba14a0aec502fe", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorpatientvitalsFires/root/procedure/33b166e2e5efdf6e22fdea90aed2716ad551089101e4fc91090b93978d492ebb", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMonitorpatientvitalsFires.complete")
@@ -630,12 +630,12 @@ public struct WhenRunvitalswatchFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunvitalswatchFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9") {
+        if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/812cae7656fefec109fca4027e84a45f50e31c4ccbbc02ebb85e68fceef5198e") {
             // L1
             try await runtime.wait(.event("runVitalsWatch", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunvitalswatchFires/root/procedure/ebbda943625174eca70f05f81b7931bb7b0465f36f1fa6e0c741aad10934ecf9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunvitalswatchFires/root/procedure/812cae7656fefec109fca4027e84a45f50e31c4ccbbc02ebb85e68fceef5198e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7") {
+        if __meridianShouldRun("/WhenRunvitalswatchFires/root/procedure/b9d17e1dfa2d555b2935f8ca8bc97482aab8ac4b43eef1adadcee551a25ea381") {
             // L1
             try await runtime.emit(
                 event: "trigger.runVitalsWatch.fired",
@@ -643,9 +643,9 @@ public struct WhenRunvitalswatchFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("run vitals watch"),
                 ],
-                step: "/WhenRunvitalswatchFires/root/procedure/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7"
+                step: "/WhenRunvitalswatchFires/root/procedure/b9d17e1dfa2d555b2935f8ca8bc97482aab8ac4b43eef1adadcee551a25ea381"
             )
-            try await runtime.checkpoint(label: "/WhenRunvitalswatchFires/root/procedure/c6136976b8d249d932bf166becc74bff31033dfa8bc35432f6a5d6d9cda84aa7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunvitalswatchFires/root/procedure/b9d17e1dfa2d555b2935f8ca8bc97482aab8ac4b43eef1adadcee551a25ea381", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunvitalswatchFires.complete")

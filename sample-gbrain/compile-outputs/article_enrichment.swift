@@ -630,7 +630,7 @@ public struct ArticleEnrichmentInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/ArticleEnrichmentInput/when-to-invoke-steps/procedure/0b6f40d2d02020a73e09b1ae298210601165e40f71f05230436ae0beba4ecd56",
+            step: "/ArticleEnrichmentInput/when-to-invoke-steps/procedure/ac83eaf4e4d4dad260fde9ec3f8a2c601bb69713cb0d38b8ed340dc4b9425b0a",
             guidance: "An LLM-judge brain-quality eval fails on quotability or actionability for\nan article page\ncodeblock:bash:IyAxLiBGaW5kIGNhbmRpZGF0ZSBwYWdlcwpnYnJhaW4gcXVlcnkgIm5lZWRzX2VucmljaG1lbnQ6IHRydWUgdHlwZTphcnRpY2xlIiAtLWxpbWl0IDUwCgojIDIuIEZvciBlYWNoIGNhbmRpZGF0ZSwgcmVhZCB0aGUgcGFnZQpnYnJhaW4gZ2V0IG1lZGlhL2FydGljbGVzLzxzbHVnPgoKIyAzLiBFbnJpY2ggdmlhIHRoZSBhZ2VudCdzIExMTSAoU29ubmV0IGJ5IGRlZmF1bHQ7IE9wdXMgZm9yIGhpZ2gtdmFsdWUpCiMgICAgVGhlIGFnZW50IHJlYWRzIHRoZSByYXcgY29udGVudCArIGJyYWluIGNvbnRleHQgKyB3cml0ZXMgdGhlIHN0cnVjdHVyZWQgcGFnZS4KCiMgNC4gV3JpdGUgdGhlIGVucmljaGVkIHBhZ2UKIyAgICBVc2UgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbiB3aXRoIHRoZSBuZXcgc3RydWN0dXJlZCBtYXJrZG93biBib2R5LgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzCiMgICAgRm9yIGV2ZXJ5IHBlcnNvbi9jb21wYW55IG1lbnRpb25lZCwgYWRkIGEgdGltZWxpbmUgYmFjay1saW5rLg==\n✅ `## Executive Summary` (2-3 sentences)\n✅ `## Quotable Lines` with ≥3 verbatim quotes (literal quotes, not paraphrase)\n✅ `## Key Insights` with ≥3 bullets (insights, not topic labels)\ntable:decision:fCBNb2RlbCB8IFVzZSB3aGVuIHwgUXVvdGUgYWNjdXJhY3kgfAp8LS0tLS0tLXwtLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tLS18CnwgU29ubmV0IChkZWZhdWx0KSB8IEJ1bGsgZW5yaWNobWVudCwgbW9zdCBhcnRpY2xlcyB8IEdvb2Qg4oCUIG9jY2FzaW9uYWxseSBwYXJhcGhyYXNlcyB8CnwgT3B1cyB8IEhpZ2gtdmFsdWUgY29udGVudCwgb3JpZ2luYWwtdGhpbmtpbmcgcGllY2VzLCBsb25ncmVhZHMgfCBFeGNlbGxlbnQg4oCUIHJlc3BlY3RzICJ2ZXJiYXRpbSIgaW5zdHJ1Y3Rpb24gfA==\nuse judgment to follow the Model selection — steps 2 guidance:\nRule: for bulk enrichment, do a Sonnet draft pass and spot-check 5 with\nthe LLM-judge brain-quality eval. If quotes are paraphrased, switch to\nOpus for that batch\nNEVER use `[[wiki-links]]` — they don't render on GitHub\n`skills/media-ingest/SKILL.md` — creates the raw article pages this skill enriches\n`skills/idea-ingest/SKILL.md` — link/article ingestion with author people-page enforcement\n`skills/conventions/quality.md` — citation + back-link rules"
         )
         for (__key, __value) in __meridianProseResults_L57 {
@@ -693,12 +693,12 @@ public struct WhenEnrichthisarticleFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEnrichthisarticleFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/c0ae63b4f53f8b8c4e1053a1e8683699d4ec52cd37d5b1cfe9bfe963e5d097ee") {
+        if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/ad5804c5accc55f2b4cf7ab198e69954e613afe054cdd2c9a0beafdb00aa52fe") {
             // L1
             try await runtime.wait(.event("enrichThisArticle", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEnrichthisarticleFires/root/procedure/c0ae63b4f53f8b8c4e1053a1e8683699d4ec52cd37d5b1cfe9bfe963e5d097ee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichthisarticleFires/root/procedure/ad5804c5accc55f2b4cf7ab198e69954e613afe054cdd2c9a0beafdb00aa52fe", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/4fae7bf6118ef663b8bc7e805dfe577da6303df06379ac6072d8019f59821111") {
+        if __meridianShouldRun("/WhenEnrichthisarticleFires/root/procedure/62b00db08b80049c264a16faac1ce16a87f6a7466ff72c3eb1e0e1d3f5d66188") {
             // L1
             try await runtime.emit(
                 event: "trigger.enrichThisArticle.fired",
@@ -706,9 +706,9 @@ public struct WhenEnrichthisarticleFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("enrich this article"),
                 ],
-                step: "/WhenEnrichthisarticleFires/root/procedure/4fae7bf6118ef663b8bc7e805dfe577da6303df06379ac6072d8019f59821111"
+                step: "/WhenEnrichthisarticleFires/root/procedure/62b00db08b80049c264a16faac1ce16a87f6a7466ff72c3eb1e0e1d3f5d66188"
             )
-            try await runtime.checkpoint(label: "/WhenEnrichthisarticleFires/root/procedure/4fae7bf6118ef663b8bc7e805dfe577da6303df06379ac6072d8019f59821111", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichthisarticleFires/root/procedure/62b00db08b80049c264a16faac1ce16a87f6a7466ff72c3eb1e0e1d3f5d66188", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEnrichthisarticleFires.complete")
@@ -767,12 +767,12 @@ public struct WhenEnricharticleFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEnricharticleFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/2a17a4b49146b34c5e78678c8f87fe6ab0f896d2aef1a2ef48d9295b992fd906") {
+        if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/f0feae1db9f9a8d2aca6ea2feede0f741748161504f94c69ae27d8b70dc2d30a") {
             // L1
             try await runtime.wait(.event("enrichArticle", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEnricharticleFires/root/procedure/2a17a4b49146b34c5e78678c8f87fe6ab0f896d2aef1a2ef48d9295b992fd906", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnricharticleFires/root/procedure/f0feae1db9f9a8d2aca6ea2feede0f741748161504f94c69ae27d8b70dc2d30a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/83adff0c0101ed68c2f49642385e272aa225adb7b76ba25c5bc5c95839b502a7") {
+        if __meridianShouldRun("/WhenEnricharticleFires/root/procedure/983fefa744c4a8f318895d7d0f4eb1a3bc4e0e0f25dad5dc8ec4b624ceec9545") {
             // L1
             try await runtime.emit(
                 event: "trigger.enrichArticle.fired",
@@ -780,9 +780,9 @@ public struct WhenEnricharticleFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("enrich the article"),
                 ],
-                step: "/WhenEnricharticleFires/root/procedure/83adff0c0101ed68c2f49642385e272aa225adb7b76ba25c5bc5c95839b502a7"
+                step: "/WhenEnricharticleFires/root/procedure/983fefa744c4a8f318895d7d0f4eb1a3bc4e0e0f25dad5dc8ec4b624ceec9545"
             )
-            try await runtime.checkpoint(label: "/WhenEnricharticleFires/root/procedure/83adff0c0101ed68c2f49642385e272aa225adb7b76ba25c5bc5c95839b502a7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnricharticleFires/root/procedure/983fefa744c4a8f318895d7d0f4eb1a3bc4e0e0f25dad5dc8ec4b624ceec9545", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEnricharticleFires.complete")
@@ -841,12 +841,12 @@ public struct WhenEnrichingarticleFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEnrichingarticleFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/ea9ee933cd66449bc52022581fa902da0bcaf37978a7d6500afed23d686ba7e6") {
+        if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/4facdbca8abe379e0a9cbb8832ae8ecbf83be7722f1d40891c6585498a7ae556") {
             // L1
             try await runtime.wait(.event("enrichingArticle", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEnrichingarticleFires/root/procedure/ea9ee933cd66449bc52022581fa902da0bcaf37978a7d6500afed23d686ba7e6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichingarticleFires/root/procedure/4facdbca8abe379e0a9cbb8832ae8ecbf83be7722f1d40891c6585498a7ae556", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/c7154d6a560ec815a536086ed8c1250f41940152e6bfe9b2d1fe22b21a2d09f5") {
+        if __meridianShouldRun("/WhenEnrichingarticleFires/root/procedure/c7822c78c971432e0f11d57dfeab42f6e9ef708da250aa8674dc51eea332e488") {
             // L1
             try await runtime.emit(
                 event: "trigger.enrichingArticle.fired",
@@ -854,9 +854,9 @@ public struct WhenEnrichingarticleFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("enriching the article"),
                 ],
-                step: "/WhenEnrichingarticleFires/root/procedure/c7154d6a560ec815a536086ed8c1250f41940152e6bfe9b2d1fe22b21a2d09f5"
+                step: "/WhenEnrichingarticleFires/root/procedure/c7822c78c971432e0f11d57dfeab42f6e9ef708da250aa8674dc51eea332e488"
             )
-            try await runtime.checkpoint(label: "/WhenEnrichingarticleFires/root/procedure/c7154d6a560ec815a536086ed8c1250f41940152e6bfe9b2d1fe22b21a2d09f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichingarticleFires/root/procedure/c7822c78c971432e0f11d57dfeab42f6e9ef708da250aa8674dc51eea332e488", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEnrichingarticleFires.complete")
@@ -915,12 +915,12 @@ public struct WhenEnrichbrainpagesFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEnrichbrainpagesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/932b033e0c533732804f94d31b418588805b29e32f014ab4a2155e0c5fd0233a") {
+        if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/e78d88cba8599d4c0855e193a0a446c4aab24370e2fac8fc6008c2532d0133f8") {
             // L1
             try await runtime.wait(.event("enrichBrainPages", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEnrichbrainpagesFires/root/procedure/932b033e0c533732804f94d31b418588805b29e32f014ab4a2155e0c5fd0233a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichbrainpagesFires/root/procedure/e78d88cba8599d4c0855e193a0a446c4aab24370e2fac8fc6008c2532d0133f8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/c11d3c5938923fb2085efb027687e4530f55ce0e7e43482eab598483e99fc995") {
+        if __meridianShouldRun("/WhenEnrichbrainpagesFires/root/procedure/b330b8cc6a99e4b35dafb334bc36814d1fdbc7e56ae0ab1066338175d71deed7") {
             // L1
             try await runtime.emit(
                 event: "trigger.enrichBrainPages.fired",
@@ -928,9 +928,9 @@ public struct WhenEnrichbrainpagesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("enrich brain pages"),
                 ],
-                step: "/WhenEnrichbrainpagesFires/root/procedure/c11d3c5938923fb2085efb027687e4530f55ce0e7e43482eab598483e99fc995"
+                step: "/WhenEnrichbrainpagesFires/root/procedure/b330b8cc6a99e4b35dafb334bc36814d1fdbc7e56ae0ab1066338175d71deed7"
             )
-            try await runtime.checkpoint(label: "/WhenEnrichbrainpagesFires/root/procedure/c11d3c5938923fb2085efb027687e4530f55ce0e7e43482eab598483e99fc995", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichbrainpagesFires/root/procedure/b330b8cc6a99e4b35dafb334bc36814d1fdbc7e56ae0ab1066338175d71deed7", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEnrichbrainpagesFires.complete")
@@ -989,12 +989,12 @@ public struct WhenBatchenrichFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenBatchenrichFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/ab0f4af468eed458e1bd063e63d76854d22b789c3b6239d420cbffefc33a07f4") {
+        if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/7fedaccfea7b2c1e4ce4ff34608a2c23a7abae2a589fa455f07d56c2d372c192") {
             // L1
             try await runtime.wait(.event("batchEnrich", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenBatchenrichFires/root/procedure/ab0f4af468eed458e1bd063e63d76854d22b789c3b6239d420cbffefc33a07f4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBatchenrichFires/root/procedure/7fedaccfea7b2c1e4ce4ff34608a2c23a7abae2a589fa455f07d56c2d372c192", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/dc6711522adbe842ef1d411b3292f5d3d18a68c7faa3d33251c5013cd1504e9a") {
+        if __meridianShouldRun("/WhenBatchenrichFires/root/procedure/da02efd1cadbec8f6cd0d0cebab4d0c657965827aa8a907644699b9e0a0606cf") {
             // L1
             try await runtime.emit(
                 event: "trigger.batchEnrich.fired",
@@ -1002,9 +1002,9 @@ public struct WhenBatchenrichFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("batch enrich"),
                 ],
-                step: "/WhenBatchenrichFires/root/procedure/dc6711522adbe842ef1d411b3292f5d3d18a68c7faa3d33251c5013cd1504e9a"
+                step: "/WhenBatchenrichFires/root/procedure/da02efd1cadbec8f6cd0d0cebab4d0c657965827aa8a907644699b9e0a0606cf"
             )
-            try await runtime.checkpoint(label: "/WhenBatchenrichFires/root/procedure/dc6711522adbe842ef1d411b3292f5d3d18a68c7faa3d33251c5013cd1504e9a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBatchenrichFires/root/procedure/da02efd1cadbec8f6cd0d0cebab4d0c657965827aa8a907644699b9e0a0606cf", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenBatchenrichFires.complete")
@@ -1063,12 +1063,12 @@ public struct WhenEnrichpassFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEnrichpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/415887cfce42837990d3b8b4da056605156097f5f60a8a48f99f43d273930ccc") {
+        if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/09945bd5d9ac8e82d2c40dd0483760670063b314c326b3ca287b558e3741287f") {
             // L1
             try await runtime.wait(.event("enrichPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEnrichpassFires/root/procedure/415887cfce42837990d3b8b4da056605156097f5f60a8a48f99f43d273930ccc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichpassFires/root/procedure/09945bd5d9ac8e82d2c40dd0483760670063b314c326b3ca287b558e3741287f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/0cf933c7599972e74f48e3f96bdf0a45adc07915e1782463402f0497b1783f5b") {
+        if __meridianShouldRun("/WhenEnrichpassFires/root/procedure/5495fce48ad0fdc6e520b1d52fb47165f3a31b67ed27a47c38288c736a3a8eb0") {
             // L1
             try await runtime.emit(
                 event: "trigger.enrichPass.fired",
@@ -1076,9 +1076,9 @@ public struct WhenEnrichpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("enrich pass"),
                 ],
-                step: "/WhenEnrichpassFires/root/procedure/0cf933c7599972e74f48e3f96bdf0a45adc07915e1782463402f0497b1783f5b"
+                step: "/WhenEnrichpassFires/root/procedure/5495fce48ad0fdc6e520b1d52fb47165f3a31b67ed27a47c38288c736a3a8eb0"
             )
-            try await runtime.checkpoint(label: "/WhenEnrichpassFires/root/procedure/0cf933c7599972e74f48e3f96bdf0a45adc07915e1782463402f0497b1783f5b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEnrichpassFires/root/procedure/5495fce48ad0fdc6e520b1d52fb47165f3a31b67ed27a47c38288c736a3a8eb0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEnrichpassFires.complete")
@@ -1137,12 +1137,12 @@ public struct WhenMakebrainpagesusefulFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenMakebrainpagesusefulFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/ee7ffcd98bd61b7856930771b2bab58b7e90a789e8b26228c523fe7152112613") {
+        if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/8aefbb2a2c843ce45011568fed1beb92eec90144fe8181d120915f4145f0df98") {
             // L1
             try await runtime.wait(.event("makeBrainPagesUseful", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMakebrainpagesusefulFires/root/procedure/ee7ffcd98bd61b7856930771b2bab58b7e90a789e8b26228c523fe7152112613", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMakebrainpagesusefulFires/root/procedure/8aefbb2a2c843ce45011568fed1beb92eec90144fe8181d120915f4145f0df98", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/d7dd75e92f13be28a2b059f58cbfa3d046d21b5c80163c28d9f5fa7cb6a0cae0") {
+        if __meridianShouldRun("/WhenMakebrainpagesusefulFires/root/procedure/1c0850187da1918de1a0f52141e0eb14a44c450d0aa5eb5c7232c35e7c38dc2a") {
             // L1
             try await runtime.emit(
                 event: "trigger.makeBrainPagesUseful.fired",
@@ -1150,9 +1150,9 @@ public struct WhenMakebrainpagesusefulFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("make brain pages useful"),
                 ],
-                step: "/WhenMakebrainpagesusefulFires/root/procedure/d7dd75e92f13be28a2b059f58cbfa3d046d21b5c80163c28d9f5fa7cb6a0cae0"
+                step: "/WhenMakebrainpagesusefulFires/root/procedure/1c0850187da1918de1a0f52141e0eb14a44c450d0aa5eb5c7232c35e7c38dc2a"
             )
-            try await runtime.checkpoint(label: "/WhenMakebrainpagesusefulFires/root/procedure/d7dd75e92f13be28a2b059f58cbfa3d046d21b5c80163c28d9f5fa7cb6a0cae0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMakebrainpagesusefulFires/root/procedure/1c0850187da1918de1a0f52141e0eb14a44c450d0aa5eb5c7232c35e7c38dc2a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMakebrainpagesusefulFires.complete")

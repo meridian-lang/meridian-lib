@@ -575,48 +575,48 @@ public struct PaymentRetry: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PaymentRetry", parameters: [:])
 
-        if __meridianShouldRun("/PaymentRetry/workflow-steps/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b") {
+        if __meridianShouldRun("/PaymentRetry/workflow-steps/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617") {
             // L20
             let invoices = try await runtime.invoke(
                 tool: "invoice.list",
                 args: [
                     "status": .string("unpaid"),
                 ],
-                step: "/PaymentRetry/workflow-steps/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
+                step: "/PaymentRetry/workflow-steps/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "invoice.list")
             )
             state.bind("invoices", invoices)
 
-            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617", state: state.snapshot())
         }
-        if __meridianShouldRun("/PaymentRetry/workflow-steps/procedure/65885fdc8d42438bbef519ccb337fd4665401f0672ff8e050a2c839caee44393") {
+        if __meridianShouldRun("/PaymentRetry/workflow-steps/procedure/ef73d86a244de2e7518c17ecee82b2adc037abe127c8dbd2fca7e861d0a345b3") {
             // L21
             try await runtime.assert((!((state.get("invoices")?.asList ?? []).filter { __e in (meridianDef_Invoice_unpaid(__e)) }).isEmpty), message: "Expected any unpaid invoices")
-            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps/procedure/65885fdc8d42438bbef519ccb337fd4665401f0672ff8e050a2c839caee44393", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps/procedure/ef73d86a244de2e7518c17ecee82b2adc037abe127c8dbd2fca7e861d0a345b3", state: state.snapshot())
         }
         // L22
         let __meridianColl_0_2 = (state.get("invoices")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"invoices\")", step: "/PaymentRetry/workflow-steps/procedure/3ab3bfbbcdeb992eb231513530e2579d9077cacc650070210f85e0bcbd194ba8")
+        try await runtime.recordIterateStart(over: "state.get(\"invoices\")", step: "/PaymentRetry/workflow-steps/procedure/75740da791cf2a7fc16048f800aba8d2b8fa72624215d007b424ac88ded33216")
         for (__meridianLoopIndex_0_2, invoice) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/PaymentRetry/workflow-steps/procedure/3ab3bfbbcdeb992eb231513530e2579d9077cacc650070210f85e0bcbd194ba8")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/PaymentRetry/workflow-steps/procedure/75740da791cf2a7fc16048f800aba8d2b8fa72624215d007b424ac88ded33216")
             state.bind("invoice", invoice)
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"invoices\")", count: __meridianColl_0_2.count, step: "/PaymentRetry/workflow-steps/procedure/3ab3bfbbcdeb992eb231513530e2579d9077cacc650070210f85e0bcbd194ba8")
+        try await runtime.recordIterateEnd(over: "state.get(\"invoices\")", count: __meridianColl_0_2.count, step: "/PaymentRetry/workflow-steps/procedure/75740da791cf2a7fc16048f800aba8d2b8fa72624215d007b424ac88ded33216")
 
-        if __meridianShouldRun("/PaymentRetry/workflow-steps-2/procedure/d249c347e8751afc0a85eabb94bf8fe24b3d58d161190bdd77c9d60e5fd50aff") {
+        if __meridianShouldRun("/PaymentRetry/workflow-steps-2/procedure/f5c440bea21fb89f86f75732c00542ebf7318be5442981b3128d32b17d75dd2e") {
             // L29
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("payment retry pass complete"),
                 ],
-                step: "/PaymentRetry/workflow-steps-2/procedure/d249c347e8751afc0a85eabb94bf8fe24b3d58d161190bdd77c9d60e5fd50aff"
+                step: "/PaymentRetry/workflow-steps-2/procedure/f5c440bea21fb89f86f75732c00542ebf7318be5442981b3128d32b17d75dd2e"
             )
-            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps-2/procedure/d249c347e8751afc0a85eabb94bf8fe24b3d58d161190bdd77c9d60e5fd50aff", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PaymentRetry/workflow-steps-2/procedure/f5c440bea21fb89f86f75732c00542ebf7318be5442981b3128d32b17d75dd2e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PaymentRetry.complete")
@@ -676,12 +676,12 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRetrydeclinedpaymentsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/0f64521e0753c7cdf9b502c85ffd90d3a9d0fc98995d8aa73a401db01ab90758") {
+        if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/ba09c6a8206ac8a6aad93a4a8cf7a60cd45a565daaeacedfeabda7287369a3c8") {
             // L1
             try await runtime.wait(.event("retryDeclinedPayments", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRetrydeclinedpaymentsFires/root/procedure/0f64521e0753c7cdf9b502c85ffd90d3a9d0fc98995d8aa73a401db01ab90758", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetrydeclinedpaymentsFires/root/procedure/ba09c6a8206ac8a6aad93a4a8cf7a60cd45a565daaeacedfeabda7287369a3c8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/87d992e07115f8b224e8c158919cadc53da00a12af5b0fd0547b76bce42d426f") {
+        if __meridianShouldRun("/WhenRetrydeclinedpaymentsFires/root/procedure/c53310d31e28d36f2ea6dd144570a272c91318aba55b4a6dc72f9e407e9f14ea") {
             // L1
             try await runtime.emit(
                 event: "trigger.retryDeclinedPayments.fired",
@@ -689,9 +689,9 @@ public struct WhenRetrydeclinedpaymentsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("retry declined payments"),
                 ],
-                step: "/WhenRetrydeclinedpaymentsFires/root/procedure/87d992e07115f8b224e8c158919cadc53da00a12af5b0fd0547b76bce42d426f"
+                step: "/WhenRetrydeclinedpaymentsFires/root/procedure/c53310d31e28d36f2ea6dd144570a272c91318aba55b4a6dc72f9e407e9f14ea"
             )
-            try await runtime.checkpoint(label: "/WhenRetrydeclinedpaymentsFires/root/procedure/87d992e07115f8b224e8c158919cadc53da00a12af5b0fd0547b76bce42d426f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetrydeclinedpaymentsFires/root/procedure/c53310d31e28d36f2ea6dd144570a272c91318aba55b4a6dc72f9e407e9f14ea", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRetrydeclinedpaymentsFires.complete")
@@ -751,12 +751,12 @@ public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReattemptinvoicecollectionFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/2b7e9ac3722d281a740335c473481a932b4b3bcaf66f56c7dfe8b560af9e864b") {
+        if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/8c948567f72a455f4019e645be4f3157d42051c8a0a484dcfc3ff7f36bb49a3e") {
             // L1
             try await runtime.wait(.event("reattemptInvoiceCollection", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReattemptinvoicecollectionFires/root/procedure/2b7e9ac3722d281a740335c473481a932b4b3bcaf66f56c7dfe8b560af9e864b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReattemptinvoicecollectionFires/root/procedure/8c948567f72a455f4019e645be4f3157d42051c8a0a484dcfc3ff7f36bb49a3e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/3506ea73bdca38426aa297b78c057eb7a5f39219844e8881741719163ca54982") {
+        if __meridianShouldRun("/WhenReattemptinvoicecollectionFires/root/procedure/b0b8a44d22cbdf99cae40fe0434dd7d8c15c1e6a5c860ee2f7348a08b11309e5") {
             // L1
             try await runtime.emit(
                 event: "trigger.reattemptInvoiceCollection.fired",
@@ -764,9 +764,9 @@ public struct WhenReattemptinvoicecollectionFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("reattempt invoice collection"),
                 ],
-                step: "/WhenReattemptinvoicecollectionFires/root/procedure/3506ea73bdca38426aa297b78c057eb7a5f39219844e8881741719163ca54982"
+                step: "/WhenReattemptinvoicecollectionFires/root/procedure/b0b8a44d22cbdf99cae40fe0434dd7d8c15c1e6a5c860ee2f7348a08b11309e5"
             )
-            try await runtime.checkpoint(label: "/WhenReattemptinvoicecollectionFires/root/procedure/3506ea73bdca38426aa297b78c057eb7a5f39219844e8881741719163ca54982", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReattemptinvoicecollectionFires/root/procedure/b0b8a44d22cbdf99cae40fe0434dd7d8c15c1e6a5c860ee2f7348a08b11309e5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReattemptinvoicecollectionFires.complete")

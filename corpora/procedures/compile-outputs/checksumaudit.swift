@@ -453,103 +453,103 @@ public struct ChecksumAudit: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ChecksumAudit", parameters: [:])
 
-        if __meridianShouldRun("/ChecksumAudit/assertions/invariants/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142") {
+        if __meridianShouldRun("/ChecksumAudit/assertions/invariants/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5") {
             // L32
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("drifted"))) }).count <= 10), message: "Expected at most 10 records whose status is \"drifted\"")
-            try await runtime.checkpoint(label: "/ChecksumAudit/assertions/invariants/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/assertions/invariants/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5", state: state.snapshot())
         }
-        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57") {
+        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465") {
             // L19
             let records = try await runtime.invoke(
                 tool: "record.list",
                 args: [
                     "status": .string("stale"),
                 ],
-                step: "/ChecksumAudit/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
+                step: "/ChecksumAudit/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.list")
             )
             state.bind("records", records)
 
-            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465", state: state.snapshot())
         }
-        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142") {
+        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5") {
             // L20
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("drifted"))) }).count <= 10), message: "Expected at most 10 records whose status is \"drifted\"")
-            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5", state: state.snapshot())
         }
-        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/bdf2a2c6e08d4691f737d6be209dad8b1c17c897a19702a9861ed26530c34a77") {
+        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/48db0a13661ae8982936ad646ba38d916a5ee4aa1e4cb418df4aa30a1193820a") {
             // L21
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).count >= 0), message: "Expected at least 0 records whose status is \"duplicate\"")
-            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/bdf2a2c6e08d4691f737d6be209dad8b1c17c897a19702a9861ed26530c34a77", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/48db0a13661ae8982936ad646ba38d916a5ee4aa1e4cb418df4aa30a1193820a", state: state.snapshot())
         }
-        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/fe0600e2aff078b1ed51141a10bcf079e5667cfdc29ece8a82c52e550a8e5e16") {
+        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/ab82806919c432be000ad10e2b124a307375fae61053762b0e7d29a0fb6751ff") {
             // L22
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("canonical"))) }).count == 1), message: "Expected exactly 1 record whose status is \"canonical\"")
-            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/fe0600e2aff078b1ed51141a10bcf079e5667cfdc29ece8a82c52e550a8e5e16", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/ab82806919c432be000ad10e2b124a307375fae61053762b0e7d29a0fb6751ff", state: state.snapshot())
         }
         // L23
         let __meridianColl_0_5 = (state.get("records")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/ChecksumAudit/procedure-steps/procedure/22e1f67b76475f635e302f6198239447ff4700b50398c8ae733696e40415a992")
+        try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/ChecksumAudit/procedure-steps/procedure/f20733f7242c42de3c9274111d3db1d73907456f8703acdbc4142ada7f1c6670")
         for (__meridianLoopIndex_0_5, record) in __meridianColl_0_5.enumerated() {
             let __meridianLoopLabel_0_5 = "progress:0.5:iteration:\(__meridianLoopIndex_0_5)"
             if __meridianShouldRun(__meridianLoopLabel_0_5) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/ChecksumAudit/procedure-steps/procedure/22e1f67b76475f635e302f6198239447ff4700b50398c8ae733696e40415a992")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/ChecksumAudit/procedure-steps/procedure/f20733f7242c42de3c9274111d3db1d73907456f8703acdbc4142ada7f1c6670")
             state.bind("record", record)
-                if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf") {
+                if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21") {
                     // L24
                     let checksum = try await runtime.invoke(
                         tool: "record.checksum",
                         args: [
                             "record": state.get("record") ?? .null,
                         ],
-                        step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf",
+                        step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.checksum")
                     )
                     state.bind("checksum", checksum)
 
-                    try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21", state: state.snapshot())
                 }
                 // L25
                 if (meridianDef_Record_drifted(state.get("record"))) || (meridianDef_Record_duplicate(state.get("record"))) {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_drifted(state.get(\"record\"))) || (meridianDef_Record_duplicate(state.get(\"record\")))", into: "then", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
-                    if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/branch.then/2ce0ebcf1ba1500309cdd4f507bf36cd9431d9ebbb03aea80a5daf2a171fb307") {
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_drifted(state.get(\"record\"))) || (meridianDef_Record_duplicate(state.get(\"record\")))", into: "then", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/589f6915d54b979024b594d56e37d83e70fb2a29ee9bc0a79b9f4f9f1ea72b1d")
+                    if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/branch.then/535e177e07aceb6401a80939efbea32c9cdd4b9a4c578b9993f6d696fe648ab0") {
                         // L26
                         try await runtime.emit(
                             event: "procedure.note",
                             payload: [
                                 "message": .string("record flagged for review"),
                             ],
-                            step: "/ChecksumAudit/procedure-steps/procedure/branch.then/2ce0ebcf1ba1500309cdd4f507bf36cd9431d9ebbb03aea80a5daf2a171fb307"
+                            step: "/ChecksumAudit/procedure-steps/procedure/branch.then/535e177e07aceb6401a80939efbea32c9cdd4b9a4c578b9993f6d696fe648ab0"
                         )
-                        try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.then/2ce0ebcf1ba1500309cdd4f507bf36cd9431d9ebbb03aea80a5daf2a171fb307", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.then/535e177e07aceb6401a80939efbea32c9cdd4b9a4c578b9993f6d696fe648ab0", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
+                    try await runtime.recordBranchEnded(into: "then", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/589f6915d54b979024b594d56e37d83e70fb2a29ee9bc0a79b9f4f9f1ea72b1d")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_drifted(state.get(\"record\"))) || (meridianDef_Record_duplicate(state.get(\"record\")))", into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_drifted(state.get(\"record\"))) || (meridianDef_Record_duplicate(state.get(\"record\")))", into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/589f6915d54b979024b594d56e37d83e70fb2a29ee9bc0a79b9f4f9f1ea72b1d")
 
-                    if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/branch.else/96aefe2f551abd1634ef8c884215eea2ba20fdbb016eda8ef5256f6ec2f799ed") {
+                    if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/branch.else/b7c0198840399fe7fab81a6348521318b9d3e0f1b3f0ccaadcce01c8f9468d20") {
                         // L28
                         try await runtime.assert(MeridianComparison.neq(state.get("record.status"), .string("is-blocked")), message: "Expected the record's status is not \"is-blocked\"")
-                        try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.else/96aefe2f551abd1634ef8c884215eea2ba20fdbb016eda8ef5256f6ec2f799ed", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/branch.else/b7c0198840399fe7fab81a6348521318b9d3e0f1b3f0ccaadcce01c8f9468d20", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ChecksumAudit/procedure-steps/procedure/iterate.body/589f6915d54b979024b594d56e37d83e70fb2a29ee9bc0a79b9f4f9f1ea72b1d")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianColl_0_5.count, step: "/ChecksumAudit/procedure-steps/procedure/22e1f67b76475f635e302f6198239447ff4700b50398c8ae733696e40415a992")
+        try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianColl_0_5.count, step: "/ChecksumAudit/procedure-steps/procedure/f20733f7242c42de3c9274111d3db1d73907456f8703acdbc4142ada7f1c6670")
 
-        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/5fa8d6bf345a5f371348dd31d9f739d01a0b0d5fcb06a8f1a11e4848ccbe1851") {
+        if __meridianShouldRun("/ChecksumAudit/procedure-steps/procedure/5c0c7c3d1465210e79d63056de9db1c24e9bad2115f355110b9bdee65aa9d50f") {
             // L29
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("checksum audit pass complete"),
                 ],
-                step: "/ChecksumAudit/procedure-steps/procedure/5fa8d6bf345a5f371348dd31d9f739d01a0b0d5fcb06a8f1a11e4848ccbe1851"
+                step: "/ChecksumAudit/procedure-steps/procedure/5c0c7c3d1465210e79d63056de9db1c24e9bad2115f355110b9bdee65aa9d50f"
             )
-            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/5fa8d6bf345a5f371348dd31d9f739d01a0b0d5fcb06a8f1a11e4848ccbe1851", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ChecksumAudit/procedure-steps/procedure/5c0c7c3d1465210e79d63056de9db1c24e9bad2115f355110b9bdee65aa9d50f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ChecksumAudit.complete")
@@ -609,12 +609,12 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenChecksumauditFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/c98fe355a8a86a36e10d6a18bb36e26c08527518250b2f1c3a17e2e6bf1cb831") {
+        if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/6dfab24caa7dd15ca702196f68f54d8d7a12ba92a787de186b3c8f07c8a0b268") {
             // L1
             try await runtime.wait(.event("checksumAudit", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenChecksumauditFires/root/procedure/c98fe355a8a86a36e10d6a18bb36e26c08527518250b2f1c3a17e2e6bf1cb831", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChecksumauditFires/root/procedure/6dfab24caa7dd15ca702196f68f54d8d7a12ba92a787de186b3c8f07c8a0b268", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/f26d1dc1cc0e863054d6472db9419883643991e5b743eacca41cde6c8d18849e") {
+        if __meridianShouldRun("/WhenChecksumauditFires/root/procedure/875d7224abc8628742959c534876e1264b321c40ccd862b39fee52eb61bd02d5") {
             // L1
             try await runtime.emit(
                 event: "trigger.checksumAudit.fired",
@@ -622,9 +622,9 @@ public struct WhenChecksumauditFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("checksum audit"),
                 ],
-                step: "/WhenChecksumauditFires/root/procedure/f26d1dc1cc0e863054d6472db9419883643991e5b743eacca41cde6c8d18849e"
+                step: "/WhenChecksumauditFires/root/procedure/875d7224abc8628742959c534876e1264b321c40ccd862b39fee52eb61bd02d5"
             )
-            try await runtime.checkpoint(label: "/WhenChecksumauditFires/root/procedure/f26d1dc1cc0e863054d6472db9419883643991e5b743eacca41cde6c8d18849e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChecksumauditFires/root/procedure/875d7224abc8628742959c534876e1264b321c40ccd862b39fee52eb61bd02d5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenChecksumauditFires.complete")
@@ -684,12 +684,12 @@ public struct WhenAuditrecorddriftFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAuditrecorddriftFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/7ce0f7203de1f15c256a79ea42b11f7ddcba49164b007e4b2613bd3dba8f6e35") {
+        if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/5979eeda6c8a5e72439f3cdcd823ceea1bfb0564ce9a0dd3559c2b26f406017a") {
             // L1
             try await runtime.wait(.event("auditRecordDrift", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAuditrecorddriftFires/root/procedure/7ce0f7203de1f15c256a79ea42b11f7ddcba49164b007e4b2613bd3dba8f6e35", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuditrecorddriftFires/root/procedure/5979eeda6c8a5e72439f3cdcd823ceea1bfb0564ce9a0dd3559c2b26f406017a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/635c05466cda45ab797722dacea515f3c14950882513f27685cfb5fbe656f5c7") {
+        if __meridianShouldRun("/WhenAuditrecorddriftFires/root/procedure/75f740f1b756a786f30104353df6f2630d1ccc5d506556f5f05bef23c1d4cd22") {
             // L1
             try await runtime.emit(
                 event: "trigger.auditRecordDrift.fired",
@@ -697,9 +697,9 @@ public struct WhenAuditrecorddriftFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("audit record drift"),
                 ],
-                step: "/WhenAuditrecorddriftFires/root/procedure/635c05466cda45ab797722dacea515f3c14950882513f27685cfb5fbe656f5c7"
+                step: "/WhenAuditrecorddriftFires/root/procedure/75f740f1b756a786f30104353df6f2630d1ccc5d506556f5f05bef23c1d4cd22"
             )
-            try await runtime.checkpoint(label: "/WhenAuditrecorddriftFires/root/procedure/635c05466cda45ab797722dacea515f3c14950882513f27685cfb5fbe656f5c7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuditrecorddriftFires/root/procedure/75f740f1b756a786f30104353df6f2630d1ccc5d506556f5f05bef23c1d4cd22", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAuditrecorddriftFires.complete")

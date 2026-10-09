@@ -217,7 +217,7 @@ extension SwiftEmitter {
         let forced = DescriptionIR(collection: s.description.collection,
                                    elementVar: s.description.elementVar,
                                    filters: s.description.filters,
-                                   sort: (path: s.sortPath, ascending: s.ascending),
+                                   sort: IRSortSpec(path: s.sortPath, ascending: s.ascending),
                                    take: nil)
         return emitDescriptionList(forced, env: env)
     }

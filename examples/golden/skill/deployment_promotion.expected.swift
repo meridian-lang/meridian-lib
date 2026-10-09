@@ -777,157 +777,157 @@ public struct DeploymentPromotionPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DeploymentPromotionPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4") {
             let health = try await runtime.invoke(
                 tool: "getDeploymentHealth",
                 args: [
                     "deploymentId": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39",
+                step: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getDeploymentHealth")
             )
             state.bind("health", health)
 
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/open-audit-and-read-entry-state/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4", state: state.snapshot())
         }
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/83c2fa964cd047470c8e4835957d7bc6571fe3619b26c7499f4b3209e2fd6c99") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/99455f4b092f8e909198de78ed7a4f57dee29eb0a81e7d238f427fbef3772f33") {
             try await runtime.wait(.signal("release.captain.green-light"), sourceRange: nil)
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/83c2fa964cd047470c8e4835957d7bc6571fe3619b26c7499f4b3209e2fd6c99", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-release-captain-signal/procedure/99455f4b092f8e909198de78ed7a4f57dee29eb0a81e7d238f427fbef3772f33", state: state.snapshot())
         }
         try await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask {
                 var state = state
-                    if __meridianShouldRun("/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/650bdb32049eba9db6a164a521230e948bb8033799837ddb6c73a9ce1ddf0129") {
+                    if __meridianShouldRun("/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/4b1bc287abf08e6489713ff7e86d53df38b313274abf4a70e97bf85e5c9c4126") {
                         try await runtime.emit(
                             event: "audit.note",
                             payload: [
                                 "pr": state.get("pullRequest.number") ?? .null,
                                 "reason": .string("starting canary promote"),
                             ],
-                            step: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/650bdb32049eba9db6a164a521230e948bb8033799837ddb6c73a9ce1ddf0129"
+                            step: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/4b1bc287abf08e6489713ff7e86d53df38b313274abf4a70e97bf85e5c9c4126"
                         )
-                        try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/650bdb32049eba9db6a164a521230e948bb8033799837ddb6c73a9ce1ddf0129", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/4b1bc287abf08e6489713ff7e86d53df38b313274abf4a70e97bf85e5c9c4126", state: state.snapshot())
                     }
             }
             group.addTask {
                 var state = state
-                    if __meridianShouldRun("/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/362efc56c05da8b2707b5e27223bf61515e649fa84636dbae216f2cc676e5d73") {
+                    if __meridianShouldRun("/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/92dbf440a8cdfbab326f473046b2d6ffd54f17f5373e5c63e85e6c28779c4bab") {
                         let canary = try await runtime.invoke(
                             tool: "promoteDeployment",
                             args: [
                                 "deploymentId": state.get("pullRequest.number") ?? .null,
                                 "target": .string("canary"),
                             ],
-                            step: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/362efc56c05da8b2707b5e27223bf61515e649fa84636dbae216f2cc676e5d73",
+                            step: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/92dbf440a8cdfbab326f473046b2d6ffd54f17f5373e5c63e85e6c28779c4bab",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "promoteDeployment")
                         )
                         state.bind("canary", canary)
 
-                        try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/362efc56c05da8b2707b5e27223bf61515e649fa84636dbae216f2cc676e5d73", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/run-audit-canary-promote-in-parallel/procedure/simultaneously.branch/92dbf440a8cdfbab326f473046b2d6ffd54f17f5373e5c63e85e6c28779c4bab", state: state.snapshot())
                     }
             }
             try await group.waitForAll()
         }
 
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/2725f1426931a8cf5214a89f5fdad3cc5ee8c7dfa96680e7c075ba250090ea1d") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/b0ba1258f8d551418113c3d032497ec707c5fb2221804924277147c2ac027d72") {
             try await runtime.wait(.duration(.seconds(120)), sourceRange: nil)
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/2725f1426931a8cf5214a89f5fdad3cc5ee8c7dfa96680e7c075ba250090ea1d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/block-on-a-2-minute-soak/procedure/b0ba1258f8d551418113c3d032497ec707c5fb2221804924277147c2ac027d72", state: state.snapshot())
         }
         do {
             if try await runtime.discretion.decide(DiscretionContext(question: "the canary is healthy", snapshot: state.snapshot())) {
-                try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the canary is healthy\", snapshot: state.snapshot()))", into: "then", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
-                if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/8e1f9c2a5a4725376c40b8d63b03cd887beed70a3f0c8255505b6c65b5388aec") {
+                try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the canary is healthy\", snapshot: state.snapshot()))", into: "then", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/525028025a297a9719d5ac4e479d2481134f1564911b325bf28b3fa01195af61")
+                if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/b204c4d5795e07a8d7f732dd59715b3214850be93f0bea0e606259ca87fae5e1") {
                     let prod = try await runtime.invoke(
                         tool: "promoteDeployment",
                         args: [
                             "deploymentId": state.get("pullRequest.number") ?? .null,
                             "target": .string("prod"),
                         ],
-                        step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/8e1f9c2a5a4725376c40b8d63b03cd887beed70a3f0c8255505b6c65b5388aec",
+                        step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/b204c4d5795e07a8d7f732dd59715b3214850be93f0bea0e606259ca87fae5e1",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "promoteDeployment")
                     )
                     state.bind("prod", prod)
 
-                    try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/8e1f9c2a5a4725376c40b8d63b03cd887beed70a3f0c8255505b6c65b5388aec", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.then/b204c4d5795e07a8d7f732dd59715b3214850be93f0bea0e606259ca87fae5e1", state: state.snapshot())
                 }
-                try await runtime.recordBranchEnded(into: "then", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
+                try await runtime.recordBranchEnded(into: "then", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/525028025a297a9719d5ac4e479d2481134f1564911b325bf28b3fa01195af61")
             } else {
-                try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the canary is healthy\", snapshot: state.snapshot()))", into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
+                try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the canary is healthy\", snapshot: state.snapshot()))", into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/525028025a297a9719d5ac4e479d2481134f1564911b325bf28b3fa01195af61")
 
-                if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1347d0daeaba82559165b711b9a020e1d87d09aa720e45a783d3036173a9ceec") {
+                if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1fa62107c7ffa6f85be5a71ab514d28686198efd48377501b31006cce9885cbf") {
                     let rollback = try await runtime.invoke(
                         tool: "rollbackDeployment",
                         args: [
                             "deploymentId": state.get("pullRequest.number") ?? .null,
                             "reason": .string("canary unhealthy"),
                         ],
-                        step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1347d0daeaba82559165b711b9a020e1d87d09aa720e45a783d3036173a9ceec",
+                        step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1fa62107c7ffa6f85be5a71ab514d28686198efd48377501b31006cce9885cbf",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "rollbackDeployment")
                     )
                     state.bind("rollback", rollback)
 
-                    try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1347d0daeaba82559165b711b9a020e1d87d09aa720e45a783d3036173a9ceec", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/branch.else/1fa62107c7ffa6f85be5a71ab514d28686198efd48377501b31006cce9885cbf", state: state.snapshot())
                 }
-                try await runtime.recordBranchEnded(into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/5746fb8a96bae14f4310b852710450fd01fb110635baecaeeb9b0bc98460f3dc")
+                try await runtime.recordBranchEnded(into: "otherwise", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.body/525028025a297a9719d5ac4e479d2481134f1564911b325bf28b3fa01195af61")
             }
 
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/e2039f70e727545bff39c0812286bbd75d6f19b6993563f2600a273b68162337")
-            if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/61000b7ed3144f399e91994d4b76f74262d9bcb2778ed872f73c474badc2b196") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/9cacc2f74f835bb78257e72da15acc0ec5b5b5a3ddeaa686956123a680511bdc")
+            if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/9df2306eb8f580a13eccd5122d5450d47a435db6e94b78876a1d06d2f797637c") {
                 let deployment = try await runtime.invoke(
                     tool: "rollbackDeployment",
                     args: [
                         "deploymentId": state.get("pullRequest.number") ?? .null,
                         "reason": .string("deployment promotion failed"),
                     ],
-                    step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/61000b7ed3144f399e91994d4b76f74262d9bcb2778ed872f73c474badc2b196",
+                    step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/9df2306eb8f580a13eccd5122d5450d47a435db6e94b78876a1d06d2f797637c",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "rollbackDeployment")
                 )
                 state.bind("deployment", deployment)
 
-                try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/61000b7ed3144f399e91994d4b76f74262d9bcb2778ed872f73c474badc2b196", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/9df2306eb8f580a13eccd5122d5450d47a435db6e94b78876a1d06d2f797637c", state: state.snapshot())
             }
-            if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/18053fd46cd07ac35b694b2f4c3b10ea7b38f92084e6f707af2d36c94df55fbf") {
+            if __meridianShouldRun("/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/d04bf458fbe200782a7c1a4580d60ed36a4a59a0466ee05ebc6acf6d3fbd9f6a") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("deployment promotion recovered via rollback"),
                     ],
-                    step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/18053fd46cd07ac35b694b2f4c3b10ea7b38f92084e6f707af2d36c94df55fbf"
+                    step: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/d04bf458fbe200782a7c1a4580d60ed36a4a59a0466ee05ebc6acf6d3fbd9f6a"
                 )
-                try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/18053fd46cd07ac35b694b2f4c3b10ea7b38f92084e6f707af2d36c94df55fbf", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/promote-to-prod-or-roll-back/procedure/recover.handler/d04bf458fbe200782a7c1a4580d60ed36a4a59a0466ee05ebc6acf6d3fbd9f6a", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/audit-close/procedure/53f3fa662b195e96ac9122777a2271e2f0833ebc01a27ea789626623362f3d49") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/audit-close/procedure/91bde75a03433f42ac929ca0a520cde631d614fce0c3aae2d7ccbd810c02597c") {
             try await runtime.emit(
                 event: "deployment.promotion_done",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DeploymentPromotionPullRequest/audit-close/procedure/53f3fa662b195e96ac9122777a2271e2f0833ebc01a27ea789626623362f3d49"
+                step: "/DeploymentPromotionPullRequest/audit-close/procedure/91bde75a03433f42ac929ca0a520cde631d614fce0c3aae2d7ccbd810c02597c"
             )
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/audit-close/procedure/53f3fa662b195e96ac9122777a2271e2f0833ebc01a27ea789626623362f3d49", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/audit-close/procedure/91bde75a03433f42ac929ca0a520cde631d614fce0c3aae2d7ccbd810c02597c", state: state.snapshot())
         }
-        if __meridianShouldRun("/DeploymentPromotionPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/DeploymentPromotionPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DeploymentPromotionPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/DeploymentPromotionPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DeploymentPromotionPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DeploymentPromotionPullRequest.complete")

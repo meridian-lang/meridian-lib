@@ -455,19 +455,19 @@ public struct ClassifyResource: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ClassifyResource", parameters: [:])
 
-        if __meridianShouldRun("/ClassifyResource/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1") {
+        if __meridianShouldRun("/ClassifyResource/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0") {
             // L26
             let accessRequests = try await runtime.invoke(
                 tool: "request.list",
                 args: [
                     "status": .string("pending"),
                 ],
-                step: "/ClassifyResource/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+                step: "/ClassifyResource/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "request.list")
             )
             state.bind("accessRequests", accessRequests)
 
-            try await runtime.checkpoint(label: "/ClassifyResource/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ClassifyResource/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0", state: state.snapshot())
         }
         // L29
         let __meridianProseResults_L29 = try await runtime.executeProsePlan(
@@ -475,41 +475,41 @@ public struct ClassifyResource: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["access.grant", "access.revoke", "audit.log", "credential.rotate", "policy.evaluate", "request.list"],
             outputKind: "record",
-            step: "/ClassifyResource/workflow/procedure/bd0e2ee52b8e17b4ba11b38b2605b907055de74789ad06d96acd04d9033c5335"
+            step: "/ClassifyResource/workflow/procedure/4df689bf3617eb68d551914216d28546d02c769efc0c844b22054c471dfe35f0"
         )
         for (__key, __value) in __meridianProseResults_L29 {
             state.bind(__key, __value)
         }
         // L38
         let __meridianColl_0_2 = (state.get("accessrequests")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/ClassifyResource/classification-routing-steps/procedure/b2bc0292f924bfaa28487cc5f0016a3f8aa49d3de1f037f3492a08eadce578c9")
+        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/ClassifyResource/classification-routing-steps/procedure/7c3a13565fcd32b2d1c8b82f1759f2299f1a759abff9ea1ca39294272c9b2edd")
         for (__meridianLoopIndex_0_2, accessRequest) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/ClassifyResource/classification-routing-steps/procedure/b2bc0292f924bfaa28487cc5f0016a3f8aa49d3de1f037f3492a08eadce578c9")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/ClassifyResource/classification-routing-steps/procedure/7c3a13565fcd32b2d1c8b82f1759f2299f1a759abff9ea1ca39294272c9b2edd")
             state.bind("accessRequest", accessRequest)
                 // L39
                 state.bind("shouldClassify", try await runtime.discretion.decide(DiscretionContext(question: "the access request's resource looks sensitive", snapshot: state.snapshot())))
                 // L40
                 if MeridianComparison.eq(state.get("shouldClassify"), .boolean(true)) {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldClassify\"), .boolean(true))", into: "then", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
-                    if __meridianShouldRun("/ClassifyResource/classification-routing-steps/procedure/branch.then/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6") {
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldClassify\"), .boolean(true))", into: "then", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/6dba13944d5498142f2a78a0f368394a4d100d29e21eacb149949e23465e46c7")
+                    if __meridianShouldRun("/ClassifyResource/classification-routing-steps/procedure/branch.then/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d") {
                         // L41
                         let auditEntry = try await runtime.invoke(
                             tool: "audit.log",
                             args: [
                                 "request": state.get("accessRequest") ?? .null,
                             ],
-                            step: "/ClassifyResource/classification-routing-steps/procedure/branch.then/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6",
+                            step: "/ClassifyResource/classification-routing-steps/procedure/branch.then/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit.log")
                         )
                         state.bind("auditEntry", auditEntry)
 
-                        try await runtime.checkpoint(label: "/ClassifyResource/classification-routing-steps/procedure/branch.then/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/ClassifyResource/classification-routing-steps/procedure/branch.then/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
+                    try await runtime.recordBranchEnded(into: "then", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/6dba13944d5498142f2a78a0f368394a4d100d29e21eacb149949e23465e46c7")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldClassify\"), .boolean(true))", into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldClassify\"), .boolean(true))", into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/6dba13944d5498142f2a78a0f368394a4d100d29e21eacb149949e23465e46c7")
 
                     // L43
                     let __meridianProseResults_L43 = try await runtime.executeProsePlan(
@@ -517,29 +517,29 @@ public struct ClassifyResource: MeridianWorkflow {
                         snapshot: state.snapshot(),
                         scopedTools: ["access.grant", "access.revoke", "audit.log", "credential.rotate", "policy.evaluate", "request.list"],
                         outputKind: "record",
-                        step: "/ClassifyResource/classification-routing-steps/procedure/branch.else/70b51ec4674f69691dbb197588a5b53f0b794bd44ac62b815eebc6da680bf2f2"
+                        step: "/ClassifyResource/classification-routing-steps/procedure/branch.else/ea3ed7ffd9d0be3804897cd307580eeb5cebdaca781442362190905f86f277be"
                     )
                     for (__key, __value) in __meridianProseResults_L43 {
                         state.bind(__key, __value)
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/ba52be60943ef5ec471f2334f32a53e704df2f4fa66156250afc80ba7e64610a")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ClassifyResource/classification-routing-steps/procedure/iterate.body/6dba13944d5498142f2a78a0f368394a4d100d29e21eacb149949e23465e46c7")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianColl_0_2.count, step: "/ClassifyResource/classification-routing-steps/procedure/b2bc0292f924bfaa28487cc5f0016a3f8aa49d3de1f037f3492a08eadce578c9")
+        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianColl_0_2.count, step: "/ClassifyResource/classification-routing-steps/procedure/7c3a13565fcd32b2d1c8b82f1759f2299f1a759abff9ea1ca39294272c9b2edd")
 
-        if __meridianShouldRun("/ClassifyResource/completion/procedure/7f3ab3607c8d33dbacbc002970b5f9f778a089129cb7bc8619bc6c9e25a3c01c") {
+        if __meridianShouldRun("/ClassifyResource/completion/procedure/7915132ee21d33cd760d9c114416bfbe28080012d8d71386879a791df35403b4") {
             // L46
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("classify resource pass complete"),
                 ],
-                step: "/ClassifyResource/completion/procedure/7f3ab3607c8d33dbacbc002970b5f9f778a089129cb7bc8619bc6c9e25a3c01c"
+                step: "/ClassifyResource/completion/procedure/7915132ee21d33cd760d9c114416bfbe28080012d8d71386879a791df35403b4"
             )
-            try await runtime.checkpoint(label: "/ClassifyResource/completion/procedure/7f3ab3607c8d33dbacbc002970b5f9f778a089129cb7bc8619bc6c9e25a3c01c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ClassifyResource/completion/procedure/7915132ee21d33cd760d9c114416bfbe28080012d8d71386879a791df35403b4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ClassifyResource.complete")
@@ -599,12 +599,12 @@ public struct WhenClassifyresourcesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenClassifyresourcesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845") {
+        if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/4853fdd8f3c5a21acd3b15d3e9892043163c8027229772cfa490cba48308abf8") {
             // L1
             try await runtime.wait(.event("classifyResources", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenClassifyresourcesFires/root/procedure/30e100296879f39d99b6c501873efd94d4b0d85b9bb56abb0873110169db3845", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenClassifyresourcesFires/root/procedure/4853fdd8f3c5a21acd3b15d3e9892043163c8027229772cfa490cba48308abf8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517") {
+        if __meridianShouldRun("/WhenClassifyresourcesFires/root/procedure/6c4198cbdacf6398a9fec66310e257f77cab25d413d9e3e7bac63fc452a8f81a") {
             // L1
             try await runtime.emit(
                 event: "trigger.classifyResources.fired",
@@ -612,9 +612,9 @@ public struct WhenClassifyresourcesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("classify resources"),
                 ],
-                step: "/WhenClassifyresourcesFires/root/procedure/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517"
+                step: "/WhenClassifyresourcesFires/root/procedure/6c4198cbdacf6398a9fec66310e257f77cab25d413d9e3e7bac63fc452a8f81a"
             )
-            try await runtime.checkpoint(label: "/WhenClassifyresourcesFires/root/procedure/5953e0ed21931444200a93bb09fff52abe1ba6ec7ef1908ecdaae30c2b866517", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenClassifyresourcesFires/root/procedure/6c4198cbdacf6398a9fec66310e257f77cab25d413d9e3e7bac63fc452a8f81a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenClassifyresourcesFires.complete")
@@ -674,12 +674,12 @@ public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenClassifyunclassifiedresourcesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1") {
+        if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/225a80bc10b533a61f19a00fe1f36f29accf4ca9dcd61a6387419f62f8839b73") {
             // L1
             try await runtime.wait(.event("classifyUnclassifiedResources", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenClassifyunclassifiedresourcesFires/root/procedure/c8a200ba62e851ae1ae0ffa7da537630f32e7df15839d46822f49c3ede016df1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenClassifyunclassifiedresourcesFires/root/procedure/225a80bc10b533a61f19a00fe1f36f29accf4ca9dcd61a6387419f62f8839b73", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a") {
+        if __meridianShouldRun("/WhenClassifyunclassifiedresourcesFires/root/procedure/8653733cbae727fcdf186e679a6152d1e09f0383b6b4a928f61a49d83bfdd549") {
             // L1
             try await runtime.emit(
                 event: "trigger.classifyUnclassifiedResources.fired",
@@ -687,9 +687,9 @@ public struct WhenClassifyunclassifiedresourcesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("classify unclassified resources"),
                 ],
-                step: "/WhenClassifyunclassifiedresourcesFires/root/procedure/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a"
+                step: "/WhenClassifyunclassifiedresourcesFires/root/procedure/8653733cbae727fcdf186e679a6152d1e09f0383b6b4a928f61a49d83bfdd549"
             )
-            try await runtime.checkpoint(label: "/WhenClassifyunclassifiedresourcesFires/root/procedure/aa0c89bf3ebb86f869e95c01ff0f83833e39e4815d0606532cdfcd6505ebf99a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenClassifyunclassifiedresourcesFires/root/procedure/8653733cbae727fcdf186e679a6152d1e09f0383b6b4a928f61a49d83bfdd549", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenClassifyunclassifiedresourcesFires.complete")
@@ -749,12 +749,12 @@ public struct WhenRunclassificationsweepFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunclassificationsweepFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca") {
+        if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/ab25068f50f9dba801b9f10012ca185c06e2b1b0a37738cd8e96dc5ee561013e") {
             // L1
             try await runtime.wait(.event("runClassificationSweep", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunclassificationsweepFires/root/procedure/7c95fdc5b279c8e390f816892d3b4928aef1fd34d7af8f9fa0b8931bf671b0ca", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunclassificationsweepFires/root/procedure/ab25068f50f9dba801b9f10012ca185c06e2b1b0a37738cd8e96dc5ee561013e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3") {
+        if __meridianShouldRun("/WhenRunclassificationsweepFires/root/procedure/f5fa2133951a67d88ec05fb535a334ff456abedd5756b5dd5ef3effc6f081e71") {
             // L1
             try await runtime.emit(
                 event: "trigger.runClassificationSweep.fired",
@@ -762,9 +762,9 @@ public struct WhenRunclassificationsweepFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the classification sweep"),
                 ],
-                step: "/WhenRunclassificationsweepFires/root/procedure/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3"
+                step: "/WhenRunclassificationsweepFires/root/procedure/f5fa2133951a67d88ec05fb535a334ff456abedd5756b5dd5ef3effc6f081e71"
             )
-            try await runtime.checkpoint(label: "/WhenRunclassificationsweepFires/root/procedure/e6b7a89684b7b80778b74873dbcb11b60aff4361da5d51d64a5dd49e823271f3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunclassificationsweepFires/root/procedure/f5fa2133951a67d88ec05fb535a334ff456abedd5756b5dd5ef3effc6f081e71", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunclassificationsweepFires.complete")

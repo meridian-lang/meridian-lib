@@ -4,98 +4,98 @@
       "canonical" : "emit trigger.prepareShiftHandoff.fired with kind = \"keyword\", spec = \"prepare shift handoff\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenPrepareshifthandoffFires\/root\/procedure\/4d5369d180f5e3f04a85d74bcd0aea6a8e3b8774408e41df0ad5cb4833a45387",
+      "stable_step_path" : "\/WhenPrepareshifthandoffFires\/root\/procedure\/4805e1f743d1befbc9b7b9933bc0b3cdd2dc0d3d81e38f413f6a98a07d0bdb53",
       "swift_line" : 703
     },
     {
       "canonical" : "wait for event prepareShiftHandoff.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenPrepareshifthandoffFires\/root\/procedure\/b0d1cbcc3f4bab8e9e0e0c36b6ac724fba52b1a84e646475e4679d3bc06858a0",
+      "stable_step_path" : "\/WhenPrepareshifthandoffFires\/root\/procedure\/e6188824b43e3126d24f021839ece27e6afcd4ab94b14ed57e72cec3812fe6e9",
       "swift_line" : 703
     },
     {
       "canonical" : "wait for event runOncallHandoff.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunoncallhandoffFires\/root\/procedure\/aa7ac04ccbeeb168e4627f738d17823678feef3510181e217d02d276a70472b5",
+      "stable_step_path" : "\/WhenRunoncallhandoffFires\/root\/procedure\/b784a15338cc4aa3969dde1dd8a636deac16caa08b4f999fe3e39fdec1e81a98",
       "swift_line" : 703
     },
     {
       "canonical" : "emit trigger.runOncallHandoff.fired with kind = \"keyword\", spec = \"run oncall handoff\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunoncallhandoffFires\/root\/procedure\/b47c7d40fba97ab0cdf84b96e667ebe49dc0dedbb3418f36d1a76f025cf5c9e3",
-      "swift_line" : 703
-    },
-    {
-      "canonical" : "wait for event runShiftHandoffPass.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunshifthandoffpassFires\/root\/procedure\/487aa6d6101cd0319badd76f26cd1914dd969dcd8387ae284af5861b2c97efd1",
+      "stable_step_path" : "\/WhenRunoncallhandoffFires\/root\/procedure\/eda6da8bf4f4f437a1bb5657846295853436520c0c07a02cba65b3a7410a549f",
       "swift_line" : 703
     },
     {
       "canonical" : "emit trigger.runShiftHandoffPass.fired with kind = \"keyword\", spec = \"run the shift handoff pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunshifthandoffpassFires\/root\/procedure\/e5a71ee8e28b07082295a681d0f3de6509ba239d9aeac230b618e41cf58f4c76",
+      "stable_step_path" : "\/WhenRunshifthandoffpassFires\/root\/procedure\/0285f89d28c94593a5a378b7cd4ee1d0482267232c40ef804ce1230dbbba7136",
+      "swift_line" : 703
+    },
+    {
+      "canonical" : "wait for event runShiftHandoffPass.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunshifthandoffpassFires\/root\/procedure\/c793e7f45aa284d4ceec09aab5efd7f97c2f6fbe630d5c3b562f8c92ef72703a",
       "swift_line" : 703
     },
     {
       "canonical" : "bind services = invoke service.list.",
       "meridian_line" : 30,
       "primitive" : "invoke",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/ee1ee1accec16396e44d966527d9de4d19dc246d1c7fac410b4cfe6c4ee0e74a",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/15d1b4995e8b00ba822619d77de10de869c0e7003eb594d50e9bfff9257f792b",
       "swift_line" : 422
     },
     {
       "canonical" : "bind incidents = invoke incident.list with status = \"open\".",
       "meridian_line" : 31,
       "primitive" : "invoke",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a",
       "swift_line" : 429
     },
     {
       "canonical" : "assert any services.",
       "meridian_line" : 32,
       "primitive" : "assert",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/621766bdc41f0798d729633b512b751c02efa6f87a4df251430fe1041451eb3c",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/ff4e5f9d8010226eb4e7410aa60ddc12ff3a07f564e21825491a1b8638e643d6",
       "swift_line" : 443
     },
     {
       "canonical" : "bind openIncidentTotal = the number of open incidents.",
       "meridian_line" : 33,
       "primitive" : "bind",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/f8f0449c8eba61f4b2e5e46de457a7d056691cab22d5c38bd03cd90382cbcfd2",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/c29315a00615da1074bcdd328667048a38bd9357e183b7a2e94a447e67519d04",
       "swift_line" : 447
     },
     {
       "canonical" : "bind busiestService = the largest services by open incident count.",
       "meridian_line" : 34,
       "primitive" : "bind",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/b6ec7994e992360373083381c0f3d404ffd371f6a285f9321765f300f587e238",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/b34b7b3d4469faef1c3135505e2437b8090f944e268206e1d5274dc04b32bd08",
       "swift_line" : 449
     },
     {
       "canonical" : "for each service in services,\n  bind health = invoke service.healthcheck with service = service.",
       "meridian_line" : 35,
       "primitive" : "iterate",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/0f272423851ad39b6ee2555b6faebec9ecb27be32aaa3c94537a6ae8a937894c",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/a46b18b3d4021ad59533e1ff03a15f680e2568b93fd92d83eea2a1ea9bbce4f5",
       "swift_line" : 451
     },
     {
       "canonical" : "bind health = invoke service.healthcheck with service = service.",
       "meridian_line" : 36,
       "primitive" : "invoke",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/iterate.body\/1beca3f9365e26c7834feed2e9fbbb7c1c7c1093b11a268a3784be71a0945389",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/iterate.body\/76d4368c6650449fd1333d158aa77f4f5a06131addd447bb4817b65b794206ab",
       "swift_line" : 460
     },
     {
       "canonical" : "emit incident.report with message = \"oncall handoff pass complete\".",
       "meridian_line" : 37,
       "primitive" : "emit",
-      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/3d715552ce1b8c52c4b21dce1362d5111bbddeecda9d3e3dc561075622e13c0a",
+      "stable_step_path" : "\/OncallHandoff\/workflow\/procedure\/6310b7570f95f4b9b77b010b29567d243af50b35f08db4e7a33f9a77db6aff61",
       "swift_line" : 479
     }
   ],

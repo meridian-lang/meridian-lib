@@ -777,95 +777,95 @@ public struct LargeReleaseTrainPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "LargeReleaseTrainPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0") {
             let mergeStatus = try await runtime.invoke(
                 tool: "getMergeStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57",
+                step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getMergeStatus")
             )
             state.bind("mergeStatus", mergeStatus)
 
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0", state: state.snapshot())
         }
         if MeridianComparison.eq(state.get("ciStatus"), .string("failed")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"ciStatus\"), .string(\"failed\"))", into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/a04ec0ded6e2afe3cbcff3b749843c6e2d913bacf189455cbad21b9b5096150a")
-            if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/e5edc33ddabb1534a3a3109fe07935747f7dbb1d1e6c105f4a63d6616b50af27") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"ciStatus\"), .string(\"failed\"))", into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/8444f7317b43da5615d0164ece8b4158c388e0b798ce3c5f597139d2aac272d5")
+            if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/d4180572161036c1005eb6e7eea393b05202c7a1eaef3326a6b12ebf5edc9b58") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("ci failed before release"),
                     ],
-                    step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/e5edc33ddabb1534a3a3109fe07935747f7dbb1d1e6c105f4a63d6616b50af27"
+                    step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/d4180572161036c1005eb6e7eea393b05202c7a1eaef3326a6b12ebf5edc9b58"
                 )
-                try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/e5edc33ddabb1534a3a3109fe07935747f7dbb1d1e6c105f4a63d6616b50af27", state: state.snapshot())
+                try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/d4180572161036c1005eb6e7eea393b05202c7a1eaef3326a6b12ebf5edc9b58", state: state.snapshot())
             }
-            await runtime.complete(reason: "ci_blocked", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/8020d6744aaf38479797ba44ae6f355a3b8490ad460d96489e54c79009576b68")
+            await runtime.complete(reason: "ci_blocked", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/b8f236350e9faf32bd2f3e3073418a4952c56e5e194ff276b25c27454c53f6cc")
             return WorkflowResult(reason: "ci_blocked", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/a04ec0ded6e2afe3cbcff3b749843c6e2d913bacf189455cbad21b9b5096150a")
+            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/8444f7317b43da5615d0164ece8b4158c388e0b798ce3c5f597139d2aac272d5")
         }
 
         if MeridianComparison.eq(state.get("mergeStatus"), .string("conflicting")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"mergeStatus\"), .string(\"conflicting\"))", into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/b5e521c3ce7f1e224c76638e043bd7c3a7d95c4632601003c194267a82a88977")
-            if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/04aaba65ed9b5f8404d752e64552e3236bb77f635081358abaa33b44188c4e19") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"mergeStatus\"), .string(\"conflicting\"))", into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/67046df7e2adef82dec2f7fbb849e9b1dc8298775e5c21c46b1128214a8eafbc")
+            if __meridianShouldRun("/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/f60cbfe0dcc5e7c84627f360068c630654d0f3a6f60d5e9089eaa780cf6c7eeb") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("merge conflicts before release"),
                     ],
-                    step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/04aaba65ed9b5f8404d752e64552e3236bb77f635081358abaa33b44188c4e19"
+                    step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/f60cbfe0dcc5e7c84627f360068c630654d0f3a6f60d5e9089eaa780cf6c7eeb"
                 )
-                try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/04aaba65ed9b5f8404d752e64552e3236bb77f635081358abaa33b44188c4e19", state: state.snapshot())
+                try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/f60cbfe0dcc5e7c84627f360068c630654d0f3a6f60d5e9089eaa780cf6c7eeb", state: state.snapshot())
             }
-            await runtime.complete(reason: "merge_conflicts", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/33c80b832fd0948dfe34030b4aa488519440fb3401d6921eca9494939259f20d")
+            await runtime.complete(reason: "merge_conflicts", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/branch.then/9ff9919d9e2802537196ac0b0de4d5ace9517de95c6f2d624477af69ff59ba16")
             return WorkflowResult(reason: "merge_conflicts", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/b5e521c3ce7f1e224c76638e043bd7c3a7d95c4632601003c194267a82a88977")
+            try await runtime.recordBranchEnded(into: "then", step: "/LargeReleaseTrainPullRequest/outer-deterministic-gate/procedure/67046df7e2adef82dec2f7fbb849e9b1dc8298775e5c21c46b1128214a8eafbc")
         }
 
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/plan-rollout-under-discretion/procedure/cddff5effeeea349b0ff2ac92044991d210dc45152b9d8efb401074761f2135c") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/plan-rollout-under-discretion/procedure/c7929a189b38ccbab828be6fbbcb8f10a584e5112bdb1a6735f946f3976850dc") {
             _ = try await PlanReleaseRollout(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/plan-rollout-under-discretion/procedure/cddff5effeeea349b0ff2ac92044991d210dc45152b9d8efb401074761f2135c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/plan-rollout-under-discretion/procedure/c7929a189b38ccbab828be6fbbcb8f10a584e5112bdb1a6735f946f3976850dc", state: state.snapshot())
         }
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/hand-stabilisation-to-autonomy/procedure/91b2a5759dc3ff903c45084f6ac1b04246b8477e2a03cc0c2b2a06b3688354c8") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/hand-stabilisation-to-autonomy/procedure/27b5ab5939fdf6163f62dc11030cd5ac9b81d5620ed2f3259b36a027c103e193") {
             _ = try await AutonomouslyStabilizeRelease(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/hand-stabilisation-to-autonomy/procedure/91b2a5759dc3ff903c45084f6ac1b04246b8477e2a03cc0c2b2a06b3688354c8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/hand-stabilisation-to-autonomy/procedure/27b5ab5939fdf6163f62dc11030cd5ac9b81d5620ed2f3259b36a027c103e193", state: state.snapshot())
         }
-        if __meridianShouldRun("/LargeReleaseTrainPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/LargeReleaseTrainPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/LargeReleaseTrainPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/LargeReleaseTrainPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LargeReleaseTrainPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "LargeReleaseTrainPullRequest.complete")
@@ -933,7 +933,7 @@ public struct PlanReleaseRollout: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanReleaseRollout/sub-workflows/procedure/ded8a97b60a98d80b3d0d84db81cd33948e06b334a51a6fcb872be36f2ec8f11"
+            step: "/PlanReleaseRollout/sub-workflows/procedure/b7080979ce94a73f1d7a7c97a399feccdc93a7674f69ed6d689fb1379c547b26"
         )
         for (__key, __value) in __meridianProseResults_L35 {
             state.bind(__key, __value)
@@ -1006,7 +1006,7 @@ public struct AutonomouslyStabilizeRelease: MeridianWorkflow {
             maxSteps: 4,
             replanAfterFailures: 1,
             outputKind: "record",
-            step: "/AutonomouslyStabilizeRelease/sub-workflows/procedure/29c0b92812d75e1fba3e7e7d2b47dd3b4251065953d787c1354b1f9918d8e524",
+            step: "/AutonomouslyStabilizeRelease/sub-workflows/procedure/7008357cc00410571e25b1e11f8d45e8c19ecc0ef8908c2b3be157867602736d",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

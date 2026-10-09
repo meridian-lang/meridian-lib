@@ -622,33 +622,33 @@ public struct SmokeTestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SmokeTestInput", parameters: [:])
 
-        if __meridianShouldRun("/SmokeTestInput/cli/procedure/dc1436f2d63e8dac32cb7bd45c78f571290d9856f6f499ecc222dc49a8ee5ef3") {
+        if __meridianShouldRun("/SmokeTestInput/cli/procedure/faca68e8ae2f6442d2717a9864bf5e68242d1134dcc7c95f7a0a65dd622dfd79") {
             // L52
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain smoke-test"),
                 ],
-                step: "/SmokeTestInput/cli/procedure/dc1436f2d63e8dac32cb7bd45c78f571290d9856f6f499ecc222dc49a8ee5ef3",
+                step: "/SmokeTestInput/cli/procedure/faca68e8ae2f6442d2717a9864bf5e68242d1134dcc7c95f7a0a65dd622dfd79",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/cli/procedure/dc1436f2d63e8dac32cb7bd45c78f571290d9856f6f499ecc222dc49a8ee5ef3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/cli/procedure/faca68e8ae2f6442d2717a9864bf5e68242d1134dcc7c95f7a0a65dd622dfd79", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/direct/procedure/0f2b46f93b77d6866e2c20c67ab91a03e644285c15acdf3a447234d823848b43") {
+        if __meridianShouldRun("/SmokeTestInput/direct/procedure/bf1ed50f5d007b54958cebf0957ef7d54f6fbd6cfd044ed413030bb062314405") {
             // L57
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("bash scripts/smoke-test.sh"),
                 ],
-                step: "/SmokeTestInput/direct/procedure/0f2b46f93b77d6866e2c20c67ab91a03e644285c15acdf3a447234d823848b43",
+                step: "/SmokeTestInput/direct/procedure/bf1ed50f5d007b54958cebf0957ef7d54f6fbd6cfd044ed413030bb062314405",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/direct/procedure/0f2b46f93b77d6866e2c20c67ab91a03e644285c15acdf3a447234d823848b43", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/direct/procedure/bf1ed50f5d007b54958cebf0957ef7d54f6fbd6cfd044ed413030bb062314405", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/from-openclaw-bootstrap/procedure/9b293e9e883689b9bc4d048bc2402f060f23b767e2bc25e4f1b9935e4452eea8") {
+        if __meridianShouldRun("/SmokeTestInput/from-openclaw-bootstrap/procedure/78adb165c71509eabcaea6bbf85473318ee8fec620d448448d155e3292f7f7a8") {
             // L62
             // Add to your  or equivalent
             _ = try await runtime.invoke(
@@ -656,26 +656,26 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("ensure-services.sh"),
                 ],
-                step: "/SmokeTestInput/from-openclaw-bootstrap/procedure/9b293e9e883689b9bc4d048bc2402f060f23b767e2bc25e4f1b9935e4452eea8",
+                step: "/SmokeTestInput/from-openclaw-bootstrap/procedure/78adb165c71509eabcaea6bbf85473318ee8fec620d448448d155e3292f7f7a8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/from-openclaw-bootstrap/procedure/9b293e9e883689b9bc4d048bc2402f060f23b767e2bc25e4f1b9935e4452eea8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/from-openclaw-bootstrap/procedure/78adb165c71509eabcaea6bbf85473318ee8fec620d448448d155e3292f7f7a8", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/from-openclaw-bootstrap/procedure/3c9b34f38e33533bd5234d0937d5ade983a19c3292de9183f26958686a0a5a6a") {
+        if __meridianShouldRun("/SmokeTestInput/from-openclaw-bootstrap/procedure/045d9a1bec2693884d5040d972cb716a007916e5399e2aea48f22e497227539f") {
             // L63
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("bash /path/to/gbrain/scripts/smoke-test.sh >> /tmp/bootstrap.log 2>&1"),
                 ],
-                step: "/SmokeTestInput/from-openclaw-bootstrap/procedure/3c9b34f38e33533bd5234d0937d5ade983a19c3292de9183f26958686a0a5a6a",
+                step: "/SmokeTestInput/from-openclaw-bootstrap/procedure/045d9a1bec2693884d5040d972cb716a007916e5399e2aea48f22e497227539f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/from-openclaw-bootstrap/procedure/3c9b34f38e33533bd5234d0937d5ade983a19c3292de9183f26958686a0a5a6a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/from-openclaw-bootstrap/procedure/045d9a1bec2693884d5040d972cb716a007916e5399e2aea48f22e497227539f", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-custom-tests-steps/procedure/a0f796b7d38a1bbbdfaf22855ae31c56751c6d9ac490112e9c614affba168bbc") {
+        if __meridianShouldRun("/SmokeTestInput/adding-custom-tests-steps/procedure/931e9b6a76b269956dce3c83df6e2f51c50be5ecc9291d0dffbbb2ca854af6ae") {
             // L83
             // Create executable scripts in
             _ = try await runtime.invoke(
@@ -683,26 +683,26 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("~/.gbrain/smoke-tests.d/"),
                 ],
-                step: "/SmokeTestInput/adding-custom-tests-steps/procedure/a0f796b7d38a1bbbdfaf22855ae31c56751c6d9ac490112e9c614affba168bbc",
+                step: "/SmokeTestInput/adding-custom-tests-steps/procedure/931e9b6a76b269956dce3c83df6e2f51c50be5ecc9291d0dffbbb2ca854af6ae",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-custom-tests-steps/procedure/a0f796b7d38a1bbbdfaf22855ae31c56751c6d9ac490112e9c614affba168bbc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-custom-tests-steps/procedure/931e9b6a76b269956dce3c83df6e2f51c50be5ecc9291d0dffbbb2ca854af6ae", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-custom-tests-steps/procedure/ae6f269cb5e883652db2d8ba52054eceac938f121a0e9d80d016ebe548ee6522") {
+        if __meridianShouldRun("/SmokeTestInput/adding-custom-tests-steps/procedure/52531e6a07e99cd2389394121bf772f66c3e39457370c8b9d32e40703430f461") {
             // L85
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("redis-cli ping | grep -q PONG"),
                 ],
-                step: "/SmokeTestInput/adding-custom-tests-steps/procedure/ae6f269cb5e883652db2d8ba52054eceac938f121a0e9d80d016ebe548ee6522",
+                step: "/SmokeTestInput/adding-custom-tests-steps/procedure/52531e6a07e99cd2389394121bf772f66c3e39457370c8b9d32e40703430f461",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-custom-tests-steps/procedure/ae6f269cb5e883652db2d8ba52054eceac938f121a0e9d80d016ebe548ee6522", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-custom-tests-steps/procedure/52531e6a07e99cd2389394121bf772f66c3e39457370c8b9d32e40703430f461", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/e99da60de730b6657567f6181e706df2b0edf542242dfcc9764944d83b1887d7") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/fe78945bbfb24c6d5e267a357ba39d728aee59a5725a441bda88a9413ca1f624") {
             // L93
             // Edit . Follow this pattern
             _ = try await runtime.invoke(
@@ -710,156 +710,156 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("scripts/smoke-test.sh"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/e99da60de730b6657567f6181e706df2b0edf542242dfcc9764944d83b1887d7",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/fe78945bbfb24c6d5e267a357ba39d728aee59a5725a441bda88a9413ca1f624",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/e99da60de730b6657567f6181e706df2b0edf542242dfcc9764944d83b1887d7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/fe78945bbfb24c6d5e267a357ba39d728aee59a5725a441bda88a9413ca1f624", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/b24ee19ccb2a7ff567f5e891e71915ba36e754b200548da1122649867a176686") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/365f4bfa9fdec7dbccbbedda5ac6754c985e2139f6481e8a5184df93a10e99c6") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("if [test condition]; then"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/b24ee19ccb2a7ff567f5e891e71915ba36e754b200548da1122649867a176686",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/365f4bfa9fdec7dbccbbedda5ac6754c985e2139f6481e8a5184df93a10e99c6",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/b24ee19ccb2a7ff567f5e891e71915ba36e754b200548da1122649867a176686", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/365f4bfa9fdec7dbccbbedda5ac6754c985e2139f6481e8a5184df93a10e99c6", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/a1c4004bc5bd40a8d934d3c052bb71fcf058bf1fa181a6bcc81d98b6a9a68f8b") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/64a39f14fc6c7d77af15a64149d39d66cfa09a1d7b11ea43c55409c4eded63ce") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("pass \"[Service Name]\""),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/a1c4004bc5bd40a8d934d3c052bb71fcf058bf1fa181a6bcc81d98b6a9a68f8b",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/64a39f14fc6c7d77af15a64149d39d66cfa09a1d7b11ea43c55409c4eded63ce",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/a1c4004bc5bd40a8d934d3c052bb71fcf058bf1fa181a6bcc81d98b6a9a68f8b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/64a39f14fc6c7d77af15a64149d39d66cfa09a1d7b11ea43c55409c4eded63ce", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("else"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/ee03698d2cbad2a7a33d38fc28c9f5d1d294fa93c05eab9729580a4ca90009ba") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/b9e4431d6c5395dfb61a4b49738a766567c03efb552449dff1ea4914f2bb265c") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("[fix command]"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/ee03698d2cbad2a7a33d38fc28c9f5d1d294fa93c05eab9729580a4ca90009ba",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/b9e4431d6c5395dfb61a4b49738a766567c03efb552449dff1ea4914f2bb265c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/ee03698d2cbad2a7a33d38fc28c9f5d1d294fa93c05eab9729580a4ca90009ba", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/b9e4431d6c5395dfb61a4b49738a766567c03efb552449dff1ea4914f2bb265c", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/9eceb479c65e71e9b07dfc27a34dce2cfeca0c2f5a2ab7695ff5a3f89f7a5c36") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/d4d806c71e344754543957c3c8df89e86bf227a6e6608062844b6e9f763201b6") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("if [re-test condition]; then"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/9eceb479c65e71e9b07dfc27a34dce2cfeca0c2f5a2ab7695ff5a3f89f7a5c36",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/d4d806c71e344754543957c3c8df89e86bf227a6e6608062844b6e9f763201b6",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/9eceb479c65e71e9b07dfc27a34dce2cfeca0c2f5a2ab7695ff5a3f89f7a5c36", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/d4d806c71e344754543957c3c8df89e86bf227a6e6608062844b6e9f763201b6", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/74e1f2891e14d64d7d3ab9e2445d9887bd6a951dfcb50075f6cee026acd47eb2") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/7361025da96c1226a9d3c9d94181dd38275aa9d7180a1babca5681cba0949c19") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fixed \"[What was fixed]\""),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/74e1f2891e14d64d7d3ab9e2445d9887bd6a951dfcb50075f6cee026acd47eb2",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/7361025da96c1226a9d3c9d94181dd38275aa9d7180a1babca5681cba0949c19",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/74e1f2891e14d64d7d3ab9e2445d9887bd6a951dfcb50075f6cee026acd47eb2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/7361025da96c1226a9d3c9d94181dd38275aa9d7180a1babca5681cba0949c19", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/8754d9b534d2e4155eba4745c5e7d8855313c81ed6ce11f795278eacd3a7b42a") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/a67bdee7fad9846ac5faa1d27fa9ba61b67ed572d1d765f1405ea3720056895a") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("pass \"[Service Name] (after fix)\""),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/8754d9b534d2e4155eba4745c5e7d8855313c81ed6ce11f795278eacd3a7b42a",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/a67bdee7fad9846ac5faa1d27fa9ba61b67ed572d1d765f1405ea3720056895a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/8754d9b534d2e4155eba4745c5e7d8855313c81ed6ce11f795278eacd3a7b42a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/a67bdee7fad9846ac5faa1d27fa9ba61b67ed572d1d765f1405ea3720056895a", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669~2") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8~2") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("else"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669~2",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8~2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/17ccc743d838a1e592a620e3bb67530b79a0bcddfea666d7f5246a74654e6669~2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/8f48ce3cf918ad5086a24153a1d82212e55743c6a04728a77da3d65ff01c9aa8~2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/cf732deda7a336dd01b6648f4084b06736e83885388d4aa28bf9ab5d26a515c2") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/f2150cdb66cddae55df12b56c844febb98f66f9e6a75e6ead4dda02d7f6febfb") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fail \"[Service Name] — [error detail]\""),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/cf732deda7a336dd01b6648f4084b06736e83885388d4aa28bf9ab5d26a515c2",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/f2150cdb66cddae55df12b56c844febb98f66f9e6a75e6ead4dda02d7f6febfb",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/cf732deda7a336dd01b6648f4084b06736e83885388d4aa28bf9ab5d26a515c2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/f2150cdb66cddae55df12b56c844febb98f66f9e6a75e6ead4dda02d7f6febfb", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fi"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2") {
+        if __meridianShouldRun("/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2") {
             // L95
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fi"),
                 ],
-                step: "/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2",
+                step: "/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/adding-built-in-tests/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/design-rules-steps-2/procedure/390e72d50d1f38fa62fb3d805f9181230ce02f94d7a675815ba78bcb42665991") {
+        if __meridianShouldRun("/SmokeTestInput/design-rules-steps-2/procedure/88087179e63ca4e304b0f8ab1e0c0b5f218ebd0cf81921d51f380ef5c920a269") {
             // L124
             // Timeout everything —  on any command that could hang
             _ = try await runtime.invoke(
@@ -867,13 +867,13 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("timeout N"),
                 ],
-                step: "/SmokeTestInput/design-rules-steps-2/procedure/390e72d50d1f38fa62fb3d805f9181230ce02f94d7a675815ba78bcb42665991",
+                step: "/SmokeTestInput/design-rules-steps-2/procedure/88087179e63ca4e304b0f8ab1e0c0b5f218ebd0cf81921d51f380ef5c920a269",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/design-rules-steps-2/procedure/390e72d50d1f38fa62fb3d805f9181230ce02f94d7a675815ba78bcb42665991", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/design-rules-steps-2/procedure/88087179e63ca4e304b0f8ab1e0c0b5f218ebd0cf81921d51f380ef5c920a269", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/be30bb2a75d446aac5ef235ad0a463d2e7cb10fa62f2c95d993e88fc7b053b83") {
+        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/a332378dc952601f81aba090cb68798a952ec4c76a4dbe993b1d12615442cbb2") {
             // L145
             // Symptom:  → all Codex ACP sessions fail
             _ = try await runtime.invoke(
@@ -881,13 +881,13 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("Cannot find module './core.cjs'"),
                 ],
-                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/be30bb2a75d446aac5ef235ad0a463d2e7cb10fa62f2c95d993e88fc7b053b83",
+                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/a332378dc952601f81aba090cb68798a952ec4c76a4dbe993b1d12615442cbb2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/be30bb2a75d446aac5ef235ad0a463d2e7cb10fa62f2c95d993e88fc7b053b83", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/a332378dc952601f81aba090cb68798a952ec4c76a4dbe993b1d12615442cbb2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/0c8947f0396b23cbd307d9c3655ee0d9db0cfc02a92623f482dd1bf9a53205f7") {
+        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/14065654b42c2b23f583c9d3535a9d7433b482011e99020e520da8b37c7fe079") {
             // L146
             // Cause: Zod v4 npm package ships without  in some installs
             _ = try await runtime.invoke(
@@ -895,13 +895,13 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("core.cjs"),
                 ],
-                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/0c8947f0396b23cbd307d9c3655ee0d9db0cfc02a92623f482dd1bf9a53205f7",
+                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/14065654b42c2b23f583c9d3535a9d7433b482011e99020e520da8b37c7fe079",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/0c8947f0396b23cbd307d9c3655ee0d9db0cfc02a92623f482dd1bf9a53205f7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/14065654b42c2b23f583c9d3535a9d7433b482011e99020e520da8b37c7fe079", state: state.snapshot())
         }
-        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/72cf25380f4e2aae6fd367f3decae4378ca69bcbf97925d10949cd281573e7a5") {
+        if __meridianShouldRun("/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/d1ab1d2ecb7d75c2baa45f313a3c88de74e9e65aa8be3abd7d84278eb9bcd826") {
             // L147
             // Auto-fix:  in the codex extension's zod dir
             _ = try await runtime.invoke(
@@ -909,11 +909,11 @@ public struct SmokeTestInput: MeridianWorkflow {
                 args: [
                     "command": .string("npm install zod@4 --force"),
                 ],
-                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/72cf25380f4e2aae6fd367f3decae4378ca69bcbf97925d10949cd281573e7a5",
+                step: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/d1ab1d2ecb7d75c2baa45f313a3c88de74e9e65aa8be3abd7d84278eb9bcd826",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/72cf25380f4e2aae6fd367f3decae4378ca69bcbf97925d10949cd281573e7a5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SmokeTestInput/codex-zod-core-cjs-missing-discovered-2026-04-23-steps/procedure/d1ab1d2ecb7d75c2baa45f313a3c88de74e9e65aa8be3abd7d84278eb9bcd826", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SmokeTestInput.complete")
@@ -972,12 +972,12 @@ public struct WhenSmoketestFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSmoketestFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSmoketestFires/root/procedure/b27bbd8aae844a49f6eb9feaa63e2fdff11fd7acb163c093040eff600c835c3b") {
+        if __meridianShouldRun("/WhenSmoketestFires/root/procedure/82e41c66f33836c714a7abd530a2b48fb8050206be174ba8a0a8ba315a495091") {
             // L1
             try await runtime.wait(.event("smokeTest", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSmoketestFires/root/procedure/b27bbd8aae844a49f6eb9feaa63e2fdff11fd7acb163c093040eff600c835c3b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSmoketestFires/root/procedure/82e41c66f33836c714a7abd530a2b48fb8050206be174ba8a0a8ba315a495091", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSmoketestFires/root/procedure/240944c5d0098e447d8bfca55544ee75038bb7a5a2c0d89dd86e9c6ed2fc1877") {
+        if __meridianShouldRun("/WhenSmoketestFires/root/procedure/15a4671d3289305e3266953a23a6c6a9ecb3585caa6943769cab5ce5daa4a767") {
             // L1
             try await runtime.emit(
                 event: "trigger.smokeTest.fired",
@@ -985,9 +985,9 @@ public struct WhenSmoketestFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("smoke test"),
                 ],
-                step: "/WhenSmoketestFires/root/procedure/240944c5d0098e447d8bfca55544ee75038bb7a5a2c0d89dd86e9c6ed2fc1877"
+                step: "/WhenSmoketestFires/root/procedure/15a4671d3289305e3266953a23a6c6a9ecb3585caa6943769cab5ce5daa4a767"
             )
-            try await runtime.checkpoint(label: "/WhenSmoketestFires/root/procedure/240944c5d0098e447d8bfca55544ee75038bb7a5a2c0d89dd86e9c6ed2fc1877", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSmoketestFires/root/procedure/15a4671d3289305e3266953a23a6c6a9ecb3585caa6943769cab5ce5daa4a767", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSmoketestFires.complete")
@@ -1046,12 +1046,12 @@ public struct WhenRunsmoketestsFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRunsmoketestsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/1050a8b23892de85f0e95164f75ea0c4b78fc3c00338a3f91f743daeaddb4da9") {
+        if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/c4fbf32378010ab2f756b7988a07098b3b5d238daea43ee2d51ba548255cc97d") {
             // L1
             try await runtime.wait(.event("runSmokeTests", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunsmoketestsFires/root/procedure/1050a8b23892de85f0e95164f75ea0c4b78fc3c00338a3f91f743daeaddb4da9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunsmoketestsFires/root/procedure/c4fbf32378010ab2f756b7988a07098b3b5d238daea43ee2d51ba548255cc97d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/e3bdff15169e80bb53af5cca45e89f5c8adc41cb0ce5a11d2eb11fb5e6a1d4bc") {
+        if __meridianShouldRun("/WhenRunsmoketestsFires/root/procedure/501e025b654a3494a7a0389843cdda50aa0a06d73bb73cc453ea9c9c92e582cc") {
             // L1
             try await runtime.emit(
                 event: "trigger.runSmokeTests.fired",
@@ -1059,9 +1059,9 @@ public struct WhenRunsmoketestsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run smoke tests"),
                 ],
-                step: "/WhenRunsmoketestsFires/root/procedure/e3bdff15169e80bb53af5cca45e89f5c8adc41cb0ce5a11d2eb11fb5e6a1d4bc"
+                step: "/WhenRunsmoketestsFires/root/procedure/501e025b654a3494a7a0389843cdda50aa0a06d73bb73cc453ea9c9c92e582cc"
             )
-            try await runtime.checkpoint(label: "/WhenRunsmoketestsFires/root/procedure/e3bdff15169e80bb53af5cca45e89f5c8adc41cb0ce5a11d2eb11fb5e6a1d4bc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunsmoketestsFires/root/procedure/501e025b654a3494a7a0389843cdda50aa0a06d73bb73cc453ea9c9c92e582cc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunsmoketestsFires.complete")
@@ -1120,12 +1120,12 @@ public struct WhenContainerrestartcheckFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenContainerrestartcheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/ad16b7bc48e42dc150effc1f5b9b8a1d01f848af76c62f0b138a0ea7e12ff172") {
+        if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/53343546baaf8d52822554420516ff43d8099991df0a9899ebe169e593592d61") {
             // L1
             try await runtime.wait(.event("containerRestartCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenContainerrestartcheckFires/root/procedure/ad16b7bc48e42dc150effc1f5b9b8a1d01f848af76c62f0b138a0ea7e12ff172", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenContainerrestartcheckFires/root/procedure/53343546baaf8d52822554420516ff43d8099991df0a9899ebe169e593592d61", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/d1e5b9e7ede68c61816279f3c1e065745b2926656e98452c7680de33ad6dd336") {
+        if __meridianShouldRun("/WhenContainerrestartcheckFires/root/procedure/1c9d51567bba11c2bb70feee964656b1581d07590ec67b32998b9b725b13952d") {
             // L1
             try await runtime.emit(
                 event: "trigger.containerRestartCheck.fired",
@@ -1133,9 +1133,9 @@ public struct WhenContainerrestartcheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("container restart check"),
                 ],
-                step: "/WhenContainerrestartcheckFires/root/procedure/d1e5b9e7ede68c61816279f3c1e065745b2926656e98452c7680de33ad6dd336"
+                step: "/WhenContainerrestartcheckFires/root/procedure/1c9d51567bba11c2bb70feee964656b1581d07590ec67b32998b9b725b13952d"
             )
-            try await runtime.checkpoint(label: "/WhenContainerrestartcheckFires/root/procedure/d1e5b9e7ede68c61816279f3c1e065745b2926656e98452c7680de33ad6dd336", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenContainerrestartcheckFires/root/procedure/1c9d51567bba11c2bb70feee964656b1581d07590ec67b32998b9b725b13952d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenContainerrestartcheckFires.complete")
@@ -1194,12 +1194,12 @@ public struct WhenHealthcheckFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenHealthcheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/bd863341395969c4de5867d2bfbcf78e7faebc826cf9932e40b49af00c72bcd4") {
+        if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/e88386c743ef08b4521d57529817e12656216a1db31395de7b658e47a411049c") {
             // L1
             try await runtime.wait(.event("healthCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenHealthcheckFires/root/procedure/bd863341395969c4de5867d2bfbcf78e7faebc826cf9932e40b49af00c72bcd4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHealthcheckFires/root/procedure/e88386c743ef08b4521d57529817e12656216a1db31395de7b658e47a411049c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/8718025f0f37238b5812637dda9e12a55c04dff2b34d8ca53fcd92b046dbe397") {
+        if __meridianShouldRun("/WhenHealthcheckFires/root/procedure/5e17a6cf0767ef988710ba5370d833ea115985eb68c67583e54e1d230179dcd9") {
             // L1
             try await runtime.emit(
                 event: "trigger.healthCheck.fired",
@@ -1207,9 +1207,9 @@ public struct WhenHealthcheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("health check"),
                 ],
-                step: "/WhenHealthcheckFires/root/procedure/8718025f0f37238b5812637dda9e12a55c04dff2b34d8ca53fcd92b046dbe397"
+                step: "/WhenHealthcheckFires/root/procedure/5e17a6cf0767ef988710ba5370d833ea115985eb68c67583e54e1d230179dcd9"
             )
-            try await runtime.checkpoint(label: "/WhenHealthcheckFires/root/procedure/8718025f0f37238b5812637dda9e12a55c04dff2b34d8ca53fcd92b046dbe397", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHealthcheckFires/root/procedure/5e17a6cf0767ef988710ba5370d833ea115985eb68c67583e54e1d230179dcd9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenHealthcheckFires.complete")
@@ -1268,12 +1268,12 @@ public struct WhenDidrestartbreakanythingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDidrestartbreakanythingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/e6efaa0a0473c6d6e8691457eee608f711f133fba50696340a0e5b4d212db4bf") {
+        if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/8e52a16cad215385ae22a5d68b0049996e301dd6dc472f65cb8f6f8559005861") {
             // L1
             try await runtime.wait(.event("didRestartBreakAnything", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDidrestartbreakanythingFires/root/procedure/e6efaa0a0473c6d6e8691457eee608f711f133fba50696340a0e5b4d212db4bf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDidrestartbreakanythingFires/root/procedure/8e52a16cad215385ae22a5d68b0049996e301dd6dc472f65cb8f6f8559005861", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/6a35de64a6db2edbb8dd5a4cede09e6291afe549a2d9936d546099230457d467") {
+        if __meridianShouldRun("/WhenDidrestartbreakanythingFires/root/procedure/dfb745a86943bf53f8a3980bf19e986b9ead784ff2dcb7d33496530aef0fcfc7") {
             // L1
             try await runtime.emit(
                 event: "trigger.didRestartBreakAnything.fired",
@@ -1281,9 +1281,9 @@ public struct WhenDidrestartbreakanythingFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("did the restart break anything"),
                 ],
-                step: "/WhenDidrestartbreakanythingFires/root/procedure/6a35de64a6db2edbb8dd5a4cede09e6291afe549a2d9936d546099230457d467"
+                step: "/WhenDidrestartbreakanythingFires/root/procedure/dfb745a86943bf53f8a3980bf19e986b9ead784ff2dcb7d33496530aef0fcfc7"
             )
-            try await runtime.checkpoint(label: "/WhenDidrestartbreakanythingFires/root/procedure/6a35de64a6db2edbb8dd5a4cede09e6291afe549a2d9936d546099230457d467", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDidrestartbreakanythingFires/root/procedure/dfb745a86943bf53f8a3980bf19e986b9ead784ff2dcb7d33496530aef0fcfc7", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDidrestartbreakanythingFires.complete")
@@ -1342,12 +1342,12 @@ public struct WhenDidcontainerrestartbreakanythingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDidcontainerrestartbreakanythingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/c11f6b4e234fba9c9d04e5ffb235f104559066d09d9bd157dce4fd7ec79c8807") {
+        if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/04150616383a9d1f52125e5d83553ae0ba171be07ab3a60fe7109f6aae28d53d") {
             // L1
             try await runtime.wait(.event("didContainerRestartBreakAnything", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/c11f6b4e234fba9c9d04e5ffb235f104559066d09d9bd157dce4fd7ec79c8807", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/04150616383a9d1f52125e5d83553ae0ba171be07ab3a60fe7109f6aae28d53d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/cebbb27064c132a3ef7d862ee034442eb039f064a16fba6e9bab746527d41712") {
+        if __meridianShouldRun("/WhenDidcontainerrestartbreakanythingFires/root/procedure/e6de9f0592e6ba182b2913c9c911c750f8eca70b42b209d4b482a941f00f16b4") {
             // L1
             try await runtime.emit(
                 event: "trigger.didContainerRestartBreakAnything.fired",
@@ -1355,9 +1355,9 @@ public struct WhenDidcontainerrestartbreakanythingFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("did the container restart break anything"),
                 ],
-                step: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/cebbb27064c132a3ef7d862ee034442eb039f064a16fba6e9bab746527d41712"
+                step: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/e6de9f0592e6ba182b2913c9c911c750f8eca70b42b209d4b482a941f00f16b4"
             )
-            try await runtime.checkpoint(label: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/cebbb27064c132a3ef7d862ee034442eb039f064a16fba6e9bab746527d41712", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDidcontainerrestartbreakanythingFires/root/procedure/e6de9f0592e6ba182b2913c9c911c750f8eca70b42b209d4b482a941f00f16b4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDidcontainerrestartbreakanythingFires.complete")

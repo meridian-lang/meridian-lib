@@ -4,98 +4,98 @@
       "canonical" : "emit trigger.checkHandoffReliability.fired with kind = \"keyword\", spec = \"check handoff reliability\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/1f743ef30090a15790e635e3c7ea4a55c712f9003839f870506fb99a51b428ee",
+      "stable_step_path" : "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/171db483c3639f1548796a91d8d595ef2daaa2a13f8d0fdbc22e737407fd45ed",
       "swift_line" : 750
     },
     {
       "canonical" : "wait for event checkHandoffReliability.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/a4e72ff574dabf266a27e47011985f5553e3990e63a9af25fe18e0e727772735",
-      "swift_line" : 750
-    },
-    {
-      "canonical" : "wait for event monitorShiftHandoffQuality.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/45a579e47841db07e686ae86a89b6f095005f5fdf2915ea56cf63d8216487230",
+      "stable_step_path" : "\/WhenCheckhandoffreliabilityFires\/root\/procedure\/f2b6c3197c73cd832f0d4c5518363d66eda82bc43ddaf936873d9b0f6527d763",
       "swift_line" : 750
     },
     {
       "canonical" : "emit trigger.monitorShiftHandoffQuality.fired with kind = \"keyword\", spec = \"monitor shift handoff quality\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/c9b21655af33f6b7d2378664427dcb8ed1ee96a6e7286e307f9aa2e7e56f13fb",
+      "stable_step_path" : "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/6bc2df9150f0961cde7ceff35bc9796faa4a31e9b399e76c67ac3e2f27a92fc9",
       "swift_line" : 750
     },
     {
-      "canonical" : "wait for event runHandoffReliabilityMonitor.",
+      "canonical" : "wait for event monitorShiftHandoffQuality.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/1fc8a4bbc9242dedc931d3b08c4c220f241269f2ba0240291a8cd21ee2ced7be",
+      "stable_step_path" : "\/WhenMonitorshifthandoffqualityFires\/root\/procedure\/c6cbe52c160effef13e877f7710e68629386ac50020066bd8aec5c5520621278",
       "swift_line" : 750
     },
     {
       "canonical" : "emit trigger.runHandoffReliabilityMonitor.fired with kind = \"keyword\", spec = \"run handoff reliability monitor\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/c79f0248c400b5834299c6fc075e91e4046098869f3c1a8b54254be7d02779f2",
+      "stable_step_path" : "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/49abb102256c8aea95aba54ce4b973a6405b2570286464558bc7863a78c9c63d",
+      "swift_line" : 750
+    },
+    {
+      "canonical" : "wait for event runHandoffReliabilityMonitor.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunhandoffreliabilitymonitorFires\/root\/procedure\/5fbe57167176edf3571a6aeae9420bbed9bfc5eec6bd3bda759214e3fb301bf6",
       "swift_line" : 750
     },
     {
       "canonical" : "assert the handoff step succeeds in at least 90% of runs within the last 2592000 seconds, checked every 14400 seconds.",
       "meridian_line" : 21,
       "primitive" : "assert",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/contract\/invariants\/3da12cb7988d276b46daa531fb4167e744a545c7cf217db815c34381f647f396",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/contract\/invariants\/a02b1203661533aaaed9d4289ec21a9f823d3cfd778c211be773691523d94e75",
       "swift_line" : 439
     },
     {
       "canonical" : "bind patients = invoke patient.list with status = \"active\".",
       "meridian_line" : 36,
       "primitive" : "invoke",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/52f49b51e1146ff1cdf64ceff15cfceaf0535c46ca0ff99e8ebf17d7d2bdd2c1",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/001d83a6740d9d2fa1a67e2fc8c2e7c7262c016fe141a89910e3f657da866887",
       "swift_line" : 464
     },
     {
       "canonical" : "for each patient in patients,\n  bind vitalSigns = invoke vitals.read with patient = patient.\n  if patient is unmonitored,\n    bind patient = invoke patient.escalate with patient = patient.",
       "meridian_line" : 37,
       "primitive" : "iterate",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/d04c2143c515275f1dcf5fdbcfb0d1305c572b83e126064b8e8fde4fdc2de890",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/20dfc1c25eeba038f45cab7d5929b7ad6d02d43ead739aafd2cc0db460e9a81f",
       "swift_line" : 477
     },
     {
       "canonical" : "bind vitalSigns = invoke vitals.read with patient = patient.",
       "meridian_line" : 38,
       "primitive" : "invoke",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e",
       "swift_line" : 486
     },
     {
       "canonical" : "if patient is unmonitored,\n  bind patient = invoke patient.escalate with patient = patient.",
       "meridian_line" : 39,
       "primitive" : "branch",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/b22ed69c60d558a751217ec5c5e94a338f19e0a314ad6462ab3ba2a12c499b8d",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/iterate.body\/98bd46ea4b7c2ffa4fda81abcf548eeffa9a0643f600dd2a0af0c271d5c48ca0",
       "swift_line" : 499
     },
     {
       "canonical" : "bind patient = invoke patient.escalate with patient = patient.",
       "meridian_line" : 40,
       "primitive" : "invoke",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/branch.then\/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps\/procedure\/branch.then\/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222",
       "swift_line" : 503
     },
     {
       "canonical" : "use judgment to follow the Workflow — steps 2 guidance:\n  otherwise,\n  use judgment to decide whether the patient needs an extra handoff follow-up based on the latest vital trend and hold status\n  Emit: \"handoff reliability monitor pass complete\"",
       "meridian_line" : 44,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps-2\/procedure\/e3f9747de8e533221bd6eec100421c956f6dcb27c0d3834f496d24704a5fb3ae",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/workflow-steps-2\/procedure\/5fa8f97cb752a21920da4f1e5afbfa23bab3d33fc4d3e6e1b379f0cea63b36a6",
       "swift_line" : 524
     },
     {
       "canonical" : "assert at most 50 patients.",
       "meridian_line" : 61,
       "primitive" : "assert",
-      "stable_step_path" : "\/HandoffReliabilityMonitor\/guarantees\/invariants\/ee9ed4201d2ba58ac39ef1309ba72397abf964e2c75dc4bbc0530f5371b3258e",
+      "stable_step_path" : "\/HandoffReliabilityMonitor\/guarantees\/invariants\/45d3c9d3282e6d5c9592da860960cb64cc5906ede75c136a016c2ccda2a4b16d",
       "swift_line" : 459
     }
   ],

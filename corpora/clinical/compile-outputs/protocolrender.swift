@@ -438,31 +438,31 @@ public struct ProtocolRenderMedication: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ProtocolRenderMedication", parameters: [:])
 
-        if __meridianShouldRun("/ProtocolRenderMedication/anti-patterns-steps/prohibitions/34a07d91646e5973f55e66423a288c176df51e4595a87645cb7464a9dd09a2f7") {
+        if __meridianShouldRun("/ProtocolRenderMedication/anti-patterns-steps/prohibitions/07dd5f8c887cb02b7057dc341e91ab9fa7c2d4412f20991d57afb720fbc18f1a") {
             // L64
             try await runtime.assert(!(MeridianComparison.eq(state.get("(don'tQuoteADosingTierFromMemoryInsteadOfRunningThisLookup—TheWholePointOfTheRender"), state.get("thatTheTable,NotAClinician.recollection,IsTheCurrentSource)"))), message: "Expected not (Don't quote a dosing tier from memory instead of running this lookup — the whole point of the render is that the table, not a clinician's recollection, is the current source)")
-            try await runtime.checkpoint(label: "/ProtocolRenderMedication/anti-patterns-steps/prohibitions/34a07d91646e5973f55e66423a288c176df51e4595a87645cb7464a9dd09a2f7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ProtocolRenderMedication/anti-patterns-steps/prohibitions/07dd5f8c887cb02b7057dc341e91ab9fa7c2d4412f20991d57afb720fbc18f1a", state: state.snapshot())
         }
-        if __meridianShouldRun("/ProtocolRenderMedication/guarantees/invariants/30366d03a91f0b944ef0aea3783b38a522eb435f7bf0b3e68c561c7013bdeb0a") {
+        if __meridianShouldRun("/ProtocolRenderMedication/guarantees/invariants/1b0e03fec11eea61e2d6c0523d4faeeeaf04f10502ad4ccaa02143259baf4589") {
             // L74
             try await runtime.assert((((state.get("protocolSummary"))?.description ?? "")).contains(("protocol-summary")), message: "Expected the protocol summary contains \"protocol-summary\"")
-            try await runtime.checkpoint(label: "/ProtocolRenderMedication/guarantees/invariants/30366d03a91f0b944ef0aea3783b38a522eb435f7bf0b3e68c561c7013bdeb0a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ProtocolRenderMedication/guarantees/invariants/1b0e03fec11eea61e2d6c0523d4faeeeaf04f10502ad4ccaa02143259baf4589", state: state.snapshot())
         }
         // L31
         state.bind("table", Value.list([.record(["riskLevel": .string("high"), "maxDosesPerDay": .number(Decimal(1))]), .record(["riskLevel": .string("low"), "maxDosesPerDay": .number(Decimal(4))])]))
-        if __meridianShouldRun("/ProtocolRenderMedication/workflow-steps/procedure/d46def68952ead8db9994f3183ed1ed37ba74b73f6b58788159ad2fedd599091") {
+        if __meridianShouldRun("/ProtocolRenderMedication/workflow-steps/procedure/816c8603494443e20980a5dcd17ff164d3167f51212d7683e1bc1090b340c4fd") {
             // L49
             let `protocol` = try await runtime.invoke(
                 tool: "protocol.lookup",
                 args: [
                     "medication": state.get("medication") ?? .null,
                 ],
-                step: "/ProtocolRenderMedication/workflow-steps/procedure/d46def68952ead8db9994f3183ed1ed37ba74b73f6b58788159ad2fedd599091",
+                step: "/ProtocolRenderMedication/workflow-steps/procedure/816c8603494443e20980a5dcd17ff164d3167f51212d7683e1bc1090b340c4fd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "protocol.lookup")
             )
             state.bind("protocol", `protocol`)
 
-            try await runtime.checkpoint(label: "/ProtocolRenderMedication/workflow-steps/procedure/d46def68952ead8db9994f3183ed1ed37ba74b73f6b58788159ad2fedd599091", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ProtocolRenderMedication/workflow-steps/procedure/816c8603494443e20980a5dcd17ff164d3167f51212d7683e1bc1090b340c4fd", state: state.snapshot())
         }
         // L50
         state.bind("protocolName", state.get("protocol.name"))
@@ -470,16 +470,16 @@ public struct ProtocolRenderMedication: MeridianWorkflow {
         state.bind("protocolVersion", state.get("protocol.version"))
         // L52
         state.bind("maxDoses", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("riskLevel"), .string("high")) { return __row.member("maxDosesPerDay") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where riskLevel matches", cause: nil) })())
-        if __meridianShouldRun("/ProtocolRenderMedication/workflow-steps-2/procedure/9f3b288747b7851a567d74410a4b4fcb60efc301f4ef37dc00a370b4f6d32d99") {
+        if __meridianShouldRun("/ProtocolRenderMedication/workflow-steps-2/procedure/25c2692edb1bb03bdd56f018f0a08b587cb74c19a12a95bfa1a9660ef19feea0") {
             // L56
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": state.get("protocolSummary") ?? .null,
                 ],
-                step: "/ProtocolRenderMedication/workflow-steps-2/procedure/9f3b288747b7851a567d74410a4b4fcb60efc301f4ef37dc00a370b4f6d32d99"
+                step: "/ProtocolRenderMedication/workflow-steps-2/procedure/25c2692edb1bb03bdd56f018f0a08b587cb74c19a12a95bfa1a9660ef19feea0"
             )
-            try await runtime.checkpoint(label: "/ProtocolRenderMedication/workflow-steps-2/procedure/9f3b288747b7851a567d74410a4b4fcb60efc301f4ef37dc00a370b4f6d32d99", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ProtocolRenderMedication/workflow-steps-2/procedure/25c2692edb1bb03bdd56f018f0a08b587cb74c19a12a95bfa1a9660ef19feea0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ProtocolRenderMedication.complete")
@@ -539,12 +539,12 @@ public struct WhenRenderprotocolFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRenderprotocolFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/1281de4a1190ea9a254f7521abbbff257c3cfcdbe854e97907ca7f3027aec81f") {
+        if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/6ab4bebe26fa9fb53b24084c4301389b3ea51e917a314d3ae663fdf414bdafc8") {
             // L1
             try await runtime.wait(.event("renderProtocol", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRenderprotocolFires/root/procedure/1281de4a1190ea9a254f7521abbbff257c3cfcdbe854e97907ca7f3027aec81f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderprotocolFires/root/procedure/6ab4bebe26fa9fb53b24084c4301389b3ea51e917a314d3ae663fdf414bdafc8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/46ce0727b0fc2d5810ac16b8c3f70cfe58d54941eedef79f63f427d6daa69e1d") {
+        if __meridianShouldRun("/WhenRenderprotocolFires/root/procedure/ae9dd4330406eb9a58925d76a4dad246770a67ddfdf52a75589fd8282b40c16c") {
             // L1
             try await runtime.emit(
                 event: "trigger.renderProtocol.fired",
@@ -552,9 +552,9 @@ public struct WhenRenderprotocolFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("render protocol"),
                 ],
-                step: "/WhenRenderprotocolFires/root/procedure/46ce0727b0fc2d5810ac16b8c3f70cfe58d54941eedef79f63f427d6daa69e1d"
+                step: "/WhenRenderprotocolFires/root/procedure/ae9dd4330406eb9a58925d76a4dad246770a67ddfdf52a75589fd8282b40c16c"
             )
-            try await runtime.checkpoint(label: "/WhenRenderprotocolFires/root/procedure/46ce0727b0fc2d5810ac16b8c3f70cfe58d54941eedef79f63f427d6daa69e1d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderprotocolFires/root/procedure/ae9dd4330406eb9a58925d76a4dad246770a67ddfdf52a75589fd8282b40c16c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRenderprotocolFires.complete")
@@ -614,12 +614,12 @@ public struct WhenLookupdosingprotocolFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenLookupdosingprotocolFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/36f16d8518bdc8e9b9d9099cc58d27f9ebbae5e9ea409d683516f55880f7210a") {
+        if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/5ebb3b8a7dcffd467dbba8f6ee0546fea6dc5bfb6c43dd21fc6d461f45829703") {
             // L1
             try await runtime.wait(.event("lookUpDosingProtocol", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenLookupdosingprotocolFires/root/procedure/36f16d8518bdc8e9b9d9099cc58d27f9ebbae5e9ea409d683516f55880f7210a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenLookupdosingprotocolFires/root/procedure/5ebb3b8a7dcffd467dbba8f6ee0546fea6dc5bfb6c43dd21fc6d461f45829703", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/20b34e21f06fce5531b9afd235538425a5698190f7e1bae5aaf9dbe1fa96e014") {
+        if __meridianShouldRun("/WhenLookupdosingprotocolFires/root/procedure/246374926d10fb1db5b332c472524483e21acf8808e5c304a5af3cf20cff6bcb") {
             // L1
             try await runtime.emit(
                 event: "trigger.lookUpDosingProtocol.fired",
@@ -627,9 +627,9 @@ public struct WhenLookupdosingprotocolFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("look up dosing protocol"),
                 ],
-                step: "/WhenLookupdosingprotocolFires/root/procedure/20b34e21f06fce5531b9afd235538425a5698190f7e1bae5aaf9dbe1fa96e014"
+                step: "/WhenLookupdosingprotocolFires/root/procedure/246374926d10fb1db5b332c472524483e21acf8808e5c304a5af3cf20cff6bcb"
             )
-            try await runtime.checkpoint(label: "/WhenLookupdosingprotocolFires/root/procedure/20b34e21f06fce5531b9afd235538425a5698190f7e1bae5aaf9dbe1fa96e014", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenLookupdosingprotocolFires/root/procedure/246374926d10fb1db5b332c472524483e21acf8808e5c304a5af3cf20cff6bcb", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenLookupdosingprotocolFires.complete")

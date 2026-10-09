@@ -4,91 +4,91 @@
       "canonical" : "wait for event archiveCrawler.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenArchivecrawlerFires\/root\/procedure\/07868597b0b96d577a917108e6bf07624a771f3ca20aa16e22a1b6782b9aef24",
+      "stable_step_path" : "\/WhenArchivecrawlerFires\/root\/procedure\/1d36f323029b48b03b9d596025bba1ef0ab6d0cc3fc74ae83d5090d47b1d3c2b",
       "swift_line" : 1017
     },
     {
       "canonical" : "emit trigger.archiveCrawler.fired with kind = \"keyword\", spec = \"archive crawler\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenArchivecrawlerFires\/root\/procedure\/dbaa5b380387b63222d997863fce64056bbda53352de07b883c4536dcd971d15",
+      "stable_step_path" : "\/WhenArchivecrawlerFires\/root\/procedure\/b747abe732eeb7a654c7e44d393fcd888cb0676b639413ed4da61f1d14d00283",
       "swift_line" : 1017
     },
     {
       "canonical" : "emit trigger.crawlMyArchive.fired with kind = \"keyword\", spec = \"crawl my archive\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCrawlmyarchiveFires\/root\/procedure\/5dfb7530f295005afab7a85f94be693b527044364312ceb06c4d9bef72ef1aee",
+      "stable_step_path" : "\/WhenCrawlmyarchiveFires\/root\/procedure\/3389f293136261b16e3250707f4f9373d1e39d940b2d3e139fe24207ca0dfb9e",
       "swift_line" : 1017
     },
     {
       "canonical" : "wait for event crawlMyArchive.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCrawlmyarchiveFires\/root\/procedure\/76ff20733fe0dbc864d0119e3437c4b62059645b5d2878146f3fd9db055366ff",
+      "stable_step_path" : "\/WhenCrawlmyarchiveFires\/root\/procedure\/e4e8308706af11f909c8aea5f5c7d71a30ae01539f734a4cbd4b40724c1bbfba",
       "swift_line" : 1017
     },
     {
       "canonical" : "wait for event findGoldInMyArchive.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenFindgoldinmyarchiveFires\/root\/procedure\/79cc1b74a92da57e447432a167ed72748cbf87f118c4ced7131ec0585ac2ff19",
+      "stable_step_path" : "\/WhenFindgoldinmyarchiveFires\/root\/procedure\/8e596b50df27afd549e048a3baf6cf3bcf0abdf5e4280edbab5f6c7394584041",
       "swift_line" : 1017
     },
     {
       "canonical" : "emit trigger.findGoldInMyArchive.fired with kind = \"keyword\", spec = \"find gold in my archive\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenFindgoldinmyarchiveFires\/root\/procedure\/91b4a558ed01b69d1247a1c30dd2b44b785f2cb0694072f0a4e95329955df004",
+      "stable_step_path" : "\/WhenFindgoldinmyarchiveFires\/root\/procedure\/de6e2d6a6373c498bfcf534f070a69d09dc5b230e72965db14d5dd6b17cdd748",
       "swift_line" : 1017
     },
     {
       "canonical" : "wait for event mineMyOldFiles.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenMinemyoldfilesFires\/root\/procedure\/6bc49f13c0acf3dccb52f31485babf6f68991d9701bec0a7bedef0d44f6968ad",
+      "stable_step_path" : "\/WhenMinemyoldfilesFires\/root\/procedure\/6f0044461017145f4349cd95b08df7db2e37f4a6e4f9d0d00f910dd5b034316e",
       "swift_line" : 1017
     },
     {
       "canonical" : "emit trigger.mineMyOldFiles.fired with kind = \"keyword\", spec = \"mine my old files for\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenMinemyoldfilesFires\/root\/procedure\/9923550151fcdcd2da6ea9bc112ed6235d3e96b176854b16ae8f58246f76fa59",
+      "stable_step_path" : "\/WhenMinemyoldfilesFires\/root\/procedure\/e5a1bb499717727a75d478d41eaf5d7efb79c23d83aeea0b10d9bec0913e7e44",
       "swift_line" : 1017
     },
     {
       "canonical" : "emit trigger.scanMyDropbox.fired with kind = \"keyword\", spec = \"scan my dropbox for\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenScanmydropboxFires\/root\/procedure\/00b40c101caea2a32ec553ab492ad2a2be29e5831922493d7b4a14d482fd9af2",
+      "stable_step_path" : "\/WhenScanmydropboxFires\/root\/procedure\/23bee6f4c72de67554496ae6229ef0fe78fa7d9fbe3eef82ef7b822eab5555cb",
       "swift_line" : 1017
     },
     {
       "canonical" : "wait for event scanMyDropbox.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenScanmydropboxFires\/root\/procedure\/dfd2d6870cca56877c68a361f70e8f813bde5e2d4d77617ea57c2bcb103ec036",
+      "stable_step_path" : "\/WhenScanmydropboxFires\/root\/procedure\/98dddb36b400119ac809ba2c300541e32d2876e12a209c0ee33ff66bfb673324",
       "swift_line" : 1017
     },
     {
       "canonical" : "bind captured = invoke capture with note = the exact reaction— track the user's response in the manifest using their exact words (per conventions\/quality.md).",
       "meridian_line" : 146,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ArchiveCrawlerInput\/phase-2-crawl-steps\/procedure\/2257c15eb10c604e3c64979d5dd484b123375be40631cdf6e002eff41db98521",
+      "stable_step_path" : "\/ArchiveCrawlerInput\/phase-2-crawl-steps\/procedure\/f2337d317413b584f39af6e9228fa0d39758b967961e29778bb28d3f911f0701",
       "swift_line" : 633
     },
     {
       "canonical" : "use judgment to follow the Phase 3: Ingest — steps 2 guidance:\n  **The skill is schema-generic.** It does NOT bake in any specific\n  era-folder structure (e.g., `originals\/archive\/` for pre-2003,\n  `originals\/yc-era\/` for post-2019, etc.). The user's filing rules from\n  `_brain-filing-rules.json` are read at runtime; the agent decides per-page\n  where content lands within those sanctioned directories\n  codeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\n  codeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\n  `skills\/voice-note-ingest\/SKILL.md` — same exact-phrasing pattern for\n  audio capture\n  `skills\/conventions\/quality.md` — citations, back-links, voice",
       "meridian_line" : 198,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/ArchiveCrawlerInput\/phase-3-ingest-steps-2\/procedure\/e095842abbf78e9ebf8c20471a0a7c705fedba52d21d4a851d4e9381894db68b",
+      "stable_step_path" : "\/ArchiveCrawlerInput\/phase-3-ingest-steps-2\/procedure\/fec2c9ad9df806229855f4c2430e55c5f8b29477017df795939938dfb0ac0af4",
       "swift_line" : 646
     },
     {
       "canonical" : "assert not the (❌ re showing items already marked in the manifest. the user's time equals scarcest resource).",
       "meridian_line" : 327,
       "primitive" : "assert",
-      "stable_step_path" : "\/ArchiveCrawlerInput\/anti-patterns-steps-2\/prohibitions\/643790a0eed0bbf5c68f1e85b04834819abe5f5e2768ef1e9a5ec7d314c69039",
+      "stable_step_path" : "\/ArchiveCrawlerInput\/anti-patterns-steps-2\/prohibitions\/52260b3f997c515139da2673c4fec45428e20a1583dfbc4bb17de5399cfdd8aa",
       "swift_line" : 628
     }
   ],

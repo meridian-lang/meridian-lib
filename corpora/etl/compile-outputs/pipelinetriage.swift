@@ -382,19 +382,19 @@ public struct PipelineTriage: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PipelineTriage", parameters: [:])
 
-        if __meridianShouldRun("/PipelineTriage/workflow/procedure/a5ab5ab6658aee036e0c8aa888c0c77cad06740fb36bd3d38463aeaf69f048ac") {
+        if __meridianShouldRun("/PipelineTriage/workflow/procedure/00baa80a437ab19bc1a1d84aa324a6f0e8686d1d42b34518878aa9bb6ab1faac") {
             // L27
             let pipelineRuns = try await runtime.invoke(
                 tool: "pipeline.list",
                 args: [
                     "status": .string("failed"),
                 ],
-                step: "/PipelineTriage/workflow/procedure/a5ab5ab6658aee036e0c8aa888c0c77cad06740fb36bd3d38463aeaf69f048ac",
+                step: "/PipelineTriage/workflow/procedure/00baa80a437ab19bc1a1d84aa324a6f0e8686d1d42b34518878aa9bb6ab1faac",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "pipeline.list")
             )
             state.bind("pipelineRuns", pipelineRuns)
 
-            try await runtime.checkpoint(label: "/PipelineTriage/workflow/procedure/a5ab5ab6658aee036e0c8aa888c0c77cad06740fb36bd3d38463aeaf69f048ac", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PipelineTriage/workflow/procedure/00baa80a437ab19bc1a1d84aa324a6f0e8686d1d42b34518878aa9bb6ab1faac", state: state.snapshot())
         }
         // L30
         let __meridianProseResults_L30 = try await runtime.executeProsePlan(
@@ -402,41 +402,41 @@ public struct PipelineTriage: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["dataset.list", "extract", "load", "partition.backfill", "partition.list", "pipeline.list", "pipeline.replay", "quality.run", "record.dedupe", "schema.validate", "transform", "watermark.read"],
             outputKind: "record",
-            step: "/PipelineTriage/workflow/procedure/204ad577945f0570e01de99293080bf51e3cd97fb33c56d87107173425481c63"
+            step: "/PipelineTriage/workflow/procedure/cece3a8f211a6cb8f1d9133a11249f39798e82f71116ed99fb7c79348b85a972"
         )
         for (__key, __value) in __meridianProseResults_L30 {
             state.bind(__key, __value)
         }
         // L39
         let __meridianColl_0_2 = (state.get("pipelineruns")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"pipelineruns\")", step: "/PipelineTriage/replay-routing-steps/procedure/70caa4cacc84bc90e77752e30a00cc5415d9663d98f2a2816d4842e8c896e732")
+        try await runtime.recordIterateStart(over: "state.get(\"pipelineruns\")", step: "/PipelineTriage/replay-routing-steps/procedure/60580e56552218cec0519c6ef1f315269f1209d24b1c5b5980a3759d984fb710")
         for (__meridianLoopIndex_0_2, pipelineRun) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/PipelineTriage/replay-routing-steps/procedure/70caa4cacc84bc90e77752e30a00cc5415d9663d98f2a2816d4842e8c896e732")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/PipelineTriage/replay-routing-steps/procedure/60580e56552218cec0519c6ef1f315269f1209d24b1c5b5980a3759d984fb710")
             state.bind("pipelineRun", pipelineRun)
                 // L40
                 state.bind("shouldReplay", try await runtime.discretion.decide(DiscretionContext(question: "the pipeline run's failure looks transient", snapshot: state.snapshot())))
                 // L41
                 if MeridianComparison.eq(state.get("shouldReplay"), .boolean(true)) {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldReplay\"), .boolean(true))", into: "then", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
-                    if __meridianShouldRun("/PipelineTriage/replay-routing-steps/procedure/branch.then/9489f758eb0b0168e4d82853b92659b3d9aa110a10adfc79f28c1de3159b279a") {
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldReplay\"), .boolean(true))", into: "then", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/8ad8a164b341ca20c91bfc809a565ec6e2c8789d0bb3bcd2d2d86bed6903ea19")
+                    if __meridianShouldRun("/PipelineTriage/replay-routing-steps/procedure/branch.then/8a8f775b7970af4778b2e08d27941279f4b4295b74ae1bdf020503170df26588") {
                         // L42
                         let pipelineRun = try await runtime.invoke(
                             tool: "pipeline.replay",
                             args: [
                                 "run": state.get("pipelineRun") ?? .null,
                             ],
-                            step: "/PipelineTriage/replay-routing-steps/procedure/branch.then/9489f758eb0b0168e4d82853b92659b3d9aa110a10adfc79f28c1de3159b279a",
+                            step: "/PipelineTriage/replay-routing-steps/procedure/branch.then/8a8f775b7970af4778b2e08d27941279f4b4295b74ae1bdf020503170df26588",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "pipeline.replay")
                         )
                         state.bind("pipelineRun", pipelineRun)
 
-                        try await runtime.checkpoint(label: "/PipelineTriage/replay-routing-steps/procedure/branch.then/9489f758eb0b0168e4d82853b92659b3d9aa110a10adfc79f28c1de3159b279a", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PipelineTriage/replay-routing-steps/procedure/branch.then/8a8f775b7970af4778b2e08d27941279f4b4295b74ae1bdf020503170df26588", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
+                    try await runtime.recordBranchEnded(into: "then", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/8ad8a164b341ca20c91bfc809a565ec6e2c8789d0bb3bcd2d2d86bed6903ea19")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldReplay\"), .boolean(true))", into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"shouldReplay\"), .boolean(true))", into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/8ad8a164b341ca20c91bfc809a565ec6e2c8789d0bb3bcd2d2d86bed6903ea19")
 
                     // L44
                     let __meridianProseResults_L44 = try await runtime.executeProsePlan(
@@ -444,29 +444,29 @@ public struct PipelineTriage: MeridianWorkflow {
                         snapshot: state.snapshot(),
                         scopedTools: ["dataset.list", "extract", "load", "partition.backfill", "partition.list", "pipeline.list", "pipeline.replay", "quality.run", "record.dedupe", "schema.validate", "transform", "watermark.read"],
                         outputKind: "record",
-                        step: "/PipelineTriage/replay-routing-steps/procedure/branch.else/dc3a0abb8bb00c853b1cd2bc013ba14c7b168e832ca6671beb8fb98f44ec331b"
+                        step: "/PipelineTriage/replay-routing-steps/procedure/branch.else/2b041db1f82717f2713d971c4035acfd98cd260d6a948c5cddead5ca2cd77e33"
                     )
                     for (__key, __value) in __meridianProseResults_L44 {
                         state.bind(__key, __value)
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/23dfe1e13de02c33cec7666dd2762d453eea57cb84fafb41931cc41450dd2ffc")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PipelineTriage/replay-routing-steps/procedure/iterate.body/8ad8a164b341ca20c91bfc809a565ec6e2c8789d0bb3bcd2d2d86bed6903ea19")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"pipelineruns\")", count: __meridianColl_0_2.count, step: "/PipelineTriage/replay-routing-steps/procedure/70caa4cacc84bc90e77752e30a00cc5415d9663d98f2a2816d4842e8c896e732")
+        try await runtime.recordIterateEnd(over: "state.get(\"pipelineruns\")", count: __meridianColl_0_2.count, step: "/PipelineTriage/replay-routing-steps/procedure/60580e56552218cec0519c6ef1f315269f1209d24b1c5b5980a3759d984fb710")
 
-        if __meridianShouldRun("/PipelineTriage/completion/procedure/8dcf698b747220de40aa9a70f5e003aa9a40ce6dbc45c35ca680cb46a3dbd553") {
+        if __meridianShouldRun("/PipelineTriage/completion/procedure/c2f212debfb50b96e1fe46e5944e91436abc857a95c10c72f625101e2f23f54f") {
             // L47
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("pipeline triage pass complete"),
                 ],
-                step: "/PipelineTriage/completion/procedure/8dcf698b747220de40aa9a70f5e003aa9a40ce6dbc45c35ca680cb46a3dbd553"
+                step: "/PipelineTriage/completion/procedure/c2f212debfb50b96e1fe46e5944e91436abc857a95c10c72f625101e2f23f54f"
             )
-            try await runtime.checkpoint(label: "/PipelineTriage/completion/procedure/8dcf698b747220de40aa9a70f5e003aa9a40ce6dbc45c35ca680cb46a3dbd553", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PipelineTriage/completion/procedure/c2f212debfb50b96e1fe46e5944e91436abc857a95c10c72f625101e2f23f54f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PipelineTriage.complete")
@@ -526,12 +526,12 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenTriagefailedpipelinesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/434dfb9bc7f996b37850d70b3f1e78d8568dfe1b42e1bf68d52a77a451dcda11") {
+        if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/69c499cd62976f0d83a57605f059c7c6a4ad6978e4a6aa37f379bf60604a0827") {
             // L1
             try await runtime.wait(.event("triageFailedPipelines", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTriagefailedpipelinesFires/root/procedure/434dfb9bc7f996b37850d70b3f1e78d8568dfe1b42e1bf68d52a77a451dcda11", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagefailedpipelinesFires/root/procedure/69c499cd62976f0d83a57605f059c7c6a4ad6978e4a6aa37f379bf60604a0827", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/d2121c0745108ad55ae909d3a64017f4ec004b10f4cf42df47613bd9a6de3a72") {
+        if __meridianShouldRun("/WhenTriagefailedpipelinesFires/root/procedure/4c21183d51f43c4738447d98b12c79398e1408e0301e44bd9b84f700ca33b509") {
             // L1
             try await runtime.emit(
                 event: "trigger.triageFailedPipelines.fired",
@@ -539,9 +539,9 @@ public struct WhenTriagefailedpipelinesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("triage failed pipelines"),
                 ],
-                step: "/WhenTriagefailedpipelinesFires/root/procedure/d2121c0745108ad55ae909d3a64017f4ec004b10f4cf42df47613bd9a6de3a72"
+                step: "/WhenTriagefailedpipelinesFires/root/procedure/4c21183d51f43c4738447d98b12c79398e1408e0301e44bd9b84f700ca33b509"
             )
-            try await runtime.checkpoint(label: "/WhenTriagefailedpipelinesFires/root/procedure/d2121c0745108ad55ae909d3a64017f4ec004b10f4cf42df47613bd9a6de3a72", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagefailedpipelinesFires/root/procedure/4c21183d51f43c4738447d98b12c79398e1408e0301e44bd9b84f700ca33b509", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTriagefailedpipelinesFires.complete")
@@ -601,12 +601,12 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenTriagepipelinefailuresFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/7e78ef437b98323403b5b5f4622183fe44072a486d68bd67dc71922124160046") {
+        if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/a41ff9e5382fce401564af33ccc730d37d63891e409034bdf9eda2f50ae86fc9") {
             // L1
             try await runtime.wait(.event("triagePipelineFailures", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTriagepipelinefailuresFires/root/procedure/7e78ef437b98323403b5b5f4622183fe44072a486d68bd67dc71922124160046", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagepipelinefailuresFires/root/procedure/a41ff9e5382fce401564af33ccc730d37d63891e409034bdf9eda2f50ae86fc9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/f53e1f18a582d0d9c586a07e99a81c778130ab19bae541d55620e14b60f4698f") {
+        if __meridianShouldRun("/WhenTriagepipelinefailuresFires/root/procedure/c1c8e70731ac71e1d721ac27391ebd6c296af6151660775887c52a8b0c53cd69") {
             // L1
             try await runtime.emit(
                 event: "trigger.triagePipelineFailures.fired",
@@ -614,9 +614,9 @@ public struct WhenTriagepipelinefailuresFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("triage pipeline failures"),
                 ],
-                step: "/WhenTriagepipelinefailuresFires/root/procedure/f53e1f18a582d0d9c586a07e99a81c778130ab19bae541d55620e14b60f4698f"
+                step: "/WhenTriagepipelinefailuresFires/root/procedure/c1c8e70731ac71e1d721ac27391ebd6c296af6151660775887c52a8b0c53cd69"
             )
-            try await runtime.checkpoint(label: "/WhenTriagepipelinefailuresFires/root/procedure/f53e1f18a582d0d9c586a07e99a81c778130ab19bae541d55620e14b60f4698f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagepipelinefailuresFires/root/procedure/c1c8e70731ac71e1d721ac27391ebd6c296af6151660775887c52a8b0c53cd69", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTriagepipelinefailuresFires.complete")
@@ -676,12 +676,12 @@ public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunpipelinetriagepassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/ed0996b82ca6811fb665d78a279930fb773ff7d1d50dc0cb1ee76ea3b899f123") {
+        if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/04504d779da3f4ae801eb011aa9c458dbca11d28d039c653f99402dc072a405e") {
             // L1
             try await runtime.wait(.event("runPipelineTriagePass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunpipelinetriagepassFires/root/procedure/ed0996b82ca6811fb665d78a279930fb773ff7d1d50dc0cb1ee76ea3b899f123", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpipelinetriagepassFires/root/procedure/04504d779da3f4ae801eb011aa9c458dbca11d28d039c653f99402dc072a405e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/a963a269db76436c2136c3ac4ac9733dd1accc529ac4c8d7768a77bc8994fb72") {
+        if __meridianShouldRun("/WhenRunpipelinetriagepassFires/root/procedure/a98c2f36463ea820ad0e2da044def0405fb4585113678587e5b9159a12ca798c") {
             // L1
             try await runtime.emit(
                 event: "trigger.runPipelineTriagePass.fired",
@@ -689,9 +689,9 @@ public struct WhenRunpipelinetriagepassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the pipeline triage pass"),
                 ],
-                step: "/WhenRunpipelinetriagepassFires/root/procedure/a963a269db76436c2136c3ac4ac9733dd1accc529ac4c8d7768a77bc8994fb72"
+                step: "/WhenRunpipelinetriagepassFires/root/procedure/a98c2f36463ea820ad0e2da044def0405fb4585113678587e5b9159a12ca798c"
             )
-            try await runtime.checkpoint(label: "/WhenRunpipelinetriagepassFires/root/procedure/a963a269db76436c2136c3ac4ac9733dd1accc529ac4c8d7768a77bc8994fb72", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpipelinetriagepassFires/root/procedure/a98c2f36463ea820ad0e2da044def0405fb4585113678587e5b9159a12ca798c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunpipelinetriagepassFires.complete")

@@ -625,7 +625,7 @@ public struct BrainOpsInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BrainOpsInput", parameters: [:])
 
-        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d") {
+        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/0823c8927fdfd88997277ea69cc01139443d14f1a3ae650461f0f5759925d7c2") {
             // L68
             // — keyword search for existing pages
             _ = try await runtime.invoke(
@@ -633,13 +633,13 @@ public struct BrainOpsInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain search \"name\""),
                 ],
-                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d",
+                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/0823c8927fdfd88997277ea69cc01139443d14f1a3ae650461f0f5759925d7c2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/0823c8927fdfd88997277ea69cc01139443d14f1a3ae650461f0f5759925d7c2", state: state.snapshot())
         }
-        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/85d9ccf69820c88eee373564f74f089c17d87ac2028ab03df5aadd902cf03217") {
+        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/9eb85cbdc53bca801820c2b59108d4fc74050be3907c3e364e9a527a025ea1d8") {
             // L69
             // — hybrid search for context
             _ = try await runtime.invoke(
@@ -647,13 +647,13 @@ public struct BrainOpsInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain query \"natural question about name\""),
                 ],
-                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/85d9ccf69820c88eee373564f74f089c17d87ac2028ab03df5aadd902cf03217",
+                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/9eb85cbdc53bca801820c2b59108d4fc74050be3907c3e364e9a527a025ea1d8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/85d9ccf69820c88eee373564f74f089c17d87ac2028ab03df5aadd902cf03217", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/9eb85cbdc53bca801820c2b59108d4fc74050be3907c3e364e9a527a025ea1d8", state: state.snapshot())
         }
-        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8") {
+        if __meridianShouldRun("/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/15aa03640703c2409cd155ecf19505c7eb6b85b14d2e1ec483ee4ec46edbdd05") {
             // L70
             // — if you know the slug, read the full page
             _ = try await runtime.invoke(
@@ -661,18 +661,18 @@ public struct BrainOpsInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain get <slug>"),
                 ],
-                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8",
+                step: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/15aa03640703c2409cd155ecf19505c7eb6b85b14d2e1ec483ee4ec46edbdd05",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BrainOpsInput/phase-1-brain-first-lookup-mandatory-steps/procedure/15aa03640703c2409cd155ecf19505c7eb6b85b14d2e1ec483ee4ec46edbdd05", state: state.snapshot())
         }
-        if __meridianShouldRun("/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0") {
+        if __meridianShouldRun("/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/712fe4aaba5b72d87963c7853862b35d21797a0d24198209f71baf3ede5486b3") {
             // L120
-            let health = try await runtime.invoke(tool: "health.get", args: [:], step: "/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "health.get"))
+            let health = try await runtime.invoke(tool: "health.get", args: [:], step: "/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/712fe4aaba5b72d87963c7853862b35d21797a0d24198209f71baf3ede5486b3", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "health.get"))
             state.bind("health", health)
 
-            try await runtime.checkpoint(label: "/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BrainOpsInput/phase-3-on-every-outbound-response-read-pull-respond-steps/procedure/712fe4aaba5b72d87963c7853862b35d21797a0d24198209f71baf3ede5486b3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "BrainOpsInput.complete")
@@ -731,12 +731,12 @@ public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAnybrainreadwritelookupFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/adb44fcde8900800b8df962d9e569ce8e839001e3e0adadc537cab792a9e4a53") {
+        if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/e1f691bb3f03bf7aaaf4083e3f149e29121621930b4402e6e75313de86c0b0d3") {
             // L1
             try await runtime.wait(.event("anyBrainReadWriteLookup", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAnybrainreadwritelookupFires/root/procedure/adb44fcde8900800b8df962d9e569ce8e839001e3e0adadc537cab792a9e4a53", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAnybrainreadwritelookupFires/root/procedure/e1f691bb3f03bf7aaaf4083e3f149e29121621930b4402e6e75313de86c0b0d3", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/e39b2b58e30e8a41077508ace38575981adbb2a2fdba31a46f06a07bbacb0db0") {
+        if __meridianShouldRun("/WhenAnybrainreadwritelookupFires/root/procedure/732faa4630db192d78fe6ea812dc65c56503dbed1752dde98a49c3d710ab55c4") {
             // L1
             try await runtime.emit(
                 event: "trigger.anyBrainReadWriteLookup.fired",
@@ -744,9 +744,9 @@ public struct WhenAnybrainreadwritelookupFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("any brain read/write/lookup/citation"),
                 ],
-                step: "/WhenAnybrainreadwritelookupFires/root/procedure/e39b2b58e30e8a41077508ace38575981adbb2a2fdba31a46f06a07bbacb0db0"
+                step: "/WhenAnybrainreadwritelookupFires/root/procedure/732faa4630db192d78fe6ea812dc65c56503dbed1752dde98a49c3d710ab55c4"
             )
-            try await runtime.checkpoint(label: "/WhenAnybrainreadwritelookupFires/root/procedure/e39b2b58e30e8a41077508ace38575981adbb2a2fdba31a46f06a07bbacb0db0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAnybrainreadwritelookupFires/root/procedure/732faa4630db192d78fe6ea812dc65c56503dbed1752dde98a49c3d710ab55c4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAnybrainreadwritelookupFires.complete")

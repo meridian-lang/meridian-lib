@@ -444,105 +444,105 @@ public struct MedicationAdministerMedicationOrderPatientNurse: MeridianWorkflow 
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "MedicationAdministerMedicationOrderPatientNurse", parameters: [:])
 
-        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881") {
+        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/0cca998add3b6fc86bafbfa7e008665e4e24695af63bd4475b6a03f7a1259e9e") {
             // L36
             try await runtime.wait(.approval(of: state.get("medicationOrder") ?? .null, by: RoleRef(identifier: "attending")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/5390e4a450c6e2506d1980859e2826229c558ab5af215ef92366cd588031a881", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/0cca998add3b6fc86bafbfa7e008665e4e24695af63bd4475b6a03f7a1259e9e", state: state.snapshot())
         }
-        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/4e5644abb84636bc6bf76718b590ecf3596b9ffd184c9880e931cf2968caaea3") {
+        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/34135485b1f67665d49c36922128b3e53ca8f345bdaff119f36c84c4efbc2894") {
             // L35
             try await runtime.assert(!(MeridianComparison.eq(state.get("medicationOrder.allergyCheck"), .string("conflict"))), message: "A medication order with allergy check \"conflict\" must not be administered")
-            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/4e5644abb84636bc6bf76718b590ecf3596b9ffd184c9880e931cf2968caaea3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/rules-steps/procedure/34135485b1f67665d49c36922128b3e53ca8f345bdaff119f36c84c4efbc2894", state: state.snapshot())
         }
-        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/4b859995613c22d948b2f7e2e7daf74c74433b4e93ae3de2a4a14525ca4d9b09") {
+        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/455b8ac5c7cd0fbe3b3f21eb5079b69153740685c5599ce542760ec8ea7d9e87") {
             // L42
             let allergyCheck = try await runtime.invoke(
                 tool: "allergy.check",
                 args: [
                     "order": state.get("medicationOrder") ?? .null,
                 ],
-                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/4b859995613c22d948b2f7e2e7daf74c74433b4e93ae3de2a4a14525ca4d9b09",
+                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/455b8ac5c7cd0fbe3b3f21eb5079b69153740685c5599ce542760ec8ea7d9e87",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "allergy.check")
             )
             state.bind("allergyCheck", allergyCheck)
 
-            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/4b859995613c22d948b2f7e2e7daf74c74433b4e93ae3de2a4a14525ca4d9b09", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/455b8ac5c7cd0fbe3b3f21eb5079b69153740685c5599ce542760ec8ea7d9e87", state: state.snapshot())
         }
         // L43
         if meridianDef_MedicationOrder_cleared(state.get("medicationOrder")) {
-            try await runtime.recordBranchTaken(condition: "meridianDef_MedicationOrder_cleared(state.get(\"medicationOrder\"))", into: "then", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
+            try await runtime.recordBranchTaken(condition: "meridianDef_MedicationOrder_cleared(state.get(\"medicationOrder\"))", into: "then", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/cfd44a0e24b40627e2712afb1651e1748ad944c5f890a53648771e69c2187733")
             // L45
             do {
-                if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5") {
+                if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad") {
                     // L44
                     let medicationOrder = try await runtime.invoke(
                         tool: "medication.administer",
                         args: [
                             "order": state.get("medicationOrder") ?? .null,
                         ],
-                        step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
+                        step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "medication.administer")
                     )
                     state.bind("medicationOrder", medicationOrder)
 
-                    try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.body/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad", state: state.snapshot())
                 }
             } catch let _recoveredError where meridianMatches(_recoveredError, named: "medication.administer.failed") {
-                try await runtime.recordRecoverEngaged(pattern: "medication.administer.failed", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.then/19923e8858e5fcf8495e0d7819da0daa81bbd354bcd755fee1850d88a355a663")
-                if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd") {
+                try await runtime.recordRecoverEngaged(pattern: "medication.administer.failed", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.then/0f5341704a89d828b7879ce021a21959f462f09c7519401679c1029d83cd794b")
+                if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/a70101a6745b3a6758adb39fe44f4b020327dfc14b93b3a5f24cdef35e732e93") {
                     // L46
                     try await runtime.emit(
                         event: "clinical.note",
                         payload: [
                             "message": .string("administration failed at the device, hold the dose and notify the attending"),
                         ],
-                        step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd"
+                        step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/a70101a6745b3a6758adb39fe44f4b020327dfc14b93b3a5f24cdef35e732e93"
                     )
-                    try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/3b300e086cd7ce0dc4ab7b83e64eb56025379badba6ff8834599bcad2c2d34dd", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/recover.handler/a70101a6745b3a6758adb39fe44f4b020327dfc14b93b3a5f24cdef35e732e93", state: state.snapshot())
                 }
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
+            try await runtime.recordBranchEnded(into: "then", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/cfd44a0e24b40627e2712afb1651e1748ad944c5f890a53648771e69c2187733")
         } else {
-            try await runtime.recordBranchTaken(condition: "meridianDef_MedicationOrder_cleared(state.get(\"medicationOrder\"))", into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
+            try await runtime.recordBranchTaken(condition: "meridianDef_MedicationOrder_cleared(state.get(\"medicationOrder\"))", into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/cfd44a0e24b40627e2712afb1651e1748ad944c5f890a53648771e69c2187733")
 
-            if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b") {
+            if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/a8bddea22c4ef16dab25c4824330805d3bb214a1e00ae060a6ce6052819a9a02") {
                 // L48
                 try await runtime.emit(
                     event: "clinical.note",
                     payload: [
                         "message": .string("allergy conflict found, dose withheld"),
                     ],
-                    step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b"
+                    step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/a8bddea22c4ef16dab25c4824330805d3bb214a1e00ae060a6ce6052819a9a02"
                 )
-                try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/8b4c269d04258fa1d2f3d38d3afb2cfeac5a9799cda3650778473e3b710f119b", state: state.snapshot())
+                try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/branch.else/a8bddea22c4ef16dab25c4824330805d3bb214a1e00ae060a6ce6052819a9a02", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/28aeba503255c85c52d38d2a56d846f271e60093843710da0da336e8549dc083")
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/cfd44a0e24b40627e2712afb1651e1748ad944c5f890a53648771e69c2187733")
         }
 
-        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd") {
+        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/868df61bbc84e5571318c912161dca584819bc69e1097f5383c382972f0bf40f") {
             // L49
             let auditEntry = try await runtime.invoke(
                 tool: "audit.log",
                 args: [
                     "order": state.get("medicationOrder") ?? .null,
                 ],
-                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd",
+                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/868df61bbc84e5571318c912161dca584819bc69e1097f5383c382972f0bf40f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit.log")
             )
             state.bind("auditEntry", auditEntry)
 
-            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/7ab472005f4648bdca7a07d618deaafb31060244c0169af082ee0ccce2984bfd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/868df61bbc84e5571318c912161dca584819bc69e1097f5383c382972f0bf40f", state: state.snapshot())
         }
-        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/5d5d2411193980b7fe43f6f5f444e98709dd921fa592968bbd2bf237e96b4e14") {
+        if __meridianShouldRun("/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/67c42d72ca9e8870985a384fea64603a0965a0726a59c9cc5220110d161ef38b") {
             // L50
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("medication administer pass complete"),
                 ],
-                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/5d5d2411193980b7fe43f6f5f444e98709dd921fa592968bbd2bf237e96b4e14"
+                step: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/67c42d72ca9e8870985a384fea64603a0965a0726a59c9cc5220110d161ef38b"
             )
-            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/5d5d2411193980b7fe43f6f5f444e98709dd921fa592968bbd2bf237e96b4e14", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MedicationAdministerMedicationOrderPatientNurse/workflow-steps/procedure/67c42d72ca9e8870985a384fea64603a0965a0726a59c9cc5220110d161ef38b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "MedicationAdministerMedicationOrderPatientNurse.complete")
@@ -602,12 +602,12 @@ public struct WhenAdministermedicationFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAdministermedicationFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5") {
+        if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/8703100d173f8192dad70c207589f8e64fd23501ace150876feb85f8cdcab7d0") {
             // L1
             try await runtime.wait(.event("administerMedication", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAdministermedicationFires/root/procedure/9fafa82f8751e61175bdb30371a7747485c8382212264ad9e1624a56a4fcb5f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAdministermedicationFires/root/procedure/8703100d173f8192dad70c207589f8e64fd23501ace150876feb85f8cdcab7d0", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163") {
+        if __meridianShouldRun("/WhenAdministermedicationFires/root/procedure/e257c7116d686170474e8ec2797fa40791a864b7ca09da19879df8f7ad17e5a1") {
             // L1
             try await runtime.emit(
                 event: "trigger.administerMedication.fired",
@@ -615,9 +615,9 @@ public struct WhenAdministermedicationFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("administer medication"),
                 ],
-                step: "/WhenAdministermedicationFires/root/procedure/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163"
+                step: "/WhenAdministermedicationFires/root/procedure/e257c7116d686170474e8ec2797fa40791a864b7ca09da19879df8f7ad17e5a1"
             )
-            try await runtime.checkpoint(label: "/WhenAdministermedicationFires/root/procedure/db73e4e7438ff675c3984043bcfc7bf5c6d71d3f37ac24a9a170032085da4163", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAdministermedicationFires/root/procedure/e257c7116d686170474e8ec2797fa40791a864b7ca09da19879df8f7ad17e5a1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAdministermedicationFires.complete")
@@ -677,12 +677,12 @@ public struct WhenGivemedicationorderFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenGivemedicationorderFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38") {
+        if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/2899bc609ad6dcfbe618db0966b62ba8280f7181b6dc806af0a1da180b832e0d") {
             // L1
             try await runtime.wait(.event("giveMedicationOrder", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGivemedicationorderFires/root/procedure/1bdb0edf07222a8f8faee1e5f9fe3a8c4731e5ffa2de427cc430d547ddf15d38", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGivemedicationorderFires/root/procedure/2899bc609ad6dcfbe618db0966b62ba8280f7181b6dc806af0a1da180b832e0d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c") {
+        if __meridianShouldRun("/WhenGivemedicationorderFires/root/procedure/4edc94f8c3c75ebbc1970a2953fd74b657e3a56480d162010cc31f6ab6218b44") {
             // L1
             try await runtime.emit(
                 event: "trigger.giveMedicationOrder.fired",
@@ -690,9 +690,9 @@ public struct WhenGivemedicationorderFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("give medication order"),
                 ],
-                step: "/WhenGivemedicationorderFires/root/procedure/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c"
+                step: "/WhenGivemedicationorderFires/root/procedure/4edc94f8c3c75ebbc1970a2953fd74b657e3a56480d162010cc31f6ab6218b44"
             )
-            try await runtime.checkpoint(label: "/WhenGivemedicationorderFires/root/procedure/c20a5db577f9fc064b443d9973985482fbf1f8206a300a9c2115c2be6e42975c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGivemedicationorderFires/root/procedure/4edc94f8c3c75ebbc1970a2953fd74b657e3a56480d162010cc31f6ab6218b44", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGivemedicationorderFires.complete")

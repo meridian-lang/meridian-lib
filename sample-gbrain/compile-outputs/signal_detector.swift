@@ -625,20 +625,20 @@ public struct SignalDetectorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SignalDetectorInput", parameters: [:])
 
-        if __meridianShouldRun("/SignalDetectorInput/contract-steps-2/invariants/26009cb681507f0580e611d4ad287b6f2a5dd9584751be6317fe72e48fdce999") {
+        if __meridianShouldRun("/SignalDetectorInput/contract-steps-2/invariants/90edbd3c1a984847b69f2756d1e3bcebc046a8d68e3f2e3c8c490e409d7dd207") {
             // L60
             try await runtime.assert(MeridianComparison.isNotEmpty(state.get("checkIfThatPerson/company.brainPage")), message: "Expected Check if that person/company has a brain page")
-            try await runtime.checkpoint(label: "/SignalDetectorInput/contract-steps-2/invariants/26009cb681507f0580e611d4ad287b6f2a5dd9584751be6317fe72e48fdce999", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SignalDetectorInput/contract-steps-2/invariants/90edbd3c1a984847b69f2756d1e3bcebc046a8d68e3f2e3c8c490e409d7dd207", state: state.snapshot())
         }
         // L95
         let __meridianColl_0_1 = (state.get("entities")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"entities\")", step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/c9daf8d4ced40b8ec2f6a2781a9b3801006c04cb65c44a11f5e143fda0a669e2")
+        try await runtime.recordIterateStart(over: "state.get(\"entities\")", step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/ef490c81c021aef52410feecb95ef3e521a27ba6019d5f234067587422cd5b68")
         for (__meridianLoopIndex_0_1, entity) in __meridianColl_0_1.enumerated() {
             let __meridianLoopLabel_0_1 = "progress:0.1:iteration:\(__meridianLoopIndex_0_1)"
             if __meridianShouldRun(__meridianLoopLabel_0_1) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/c9daf8d4ced40b8ec2f6a2781a9b3801006c04cb65c44a11f5e143fda0a669e2")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/ef490c81c021aef52410feecb95ef3e521a27ba6019d5f234067587422cd5b68")
             state.bind("entity", entity)
-                if __meridianShouldRun("/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d") {
+                if __meridianShouldRun("/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/a1e5556cb140f33ce23282fb00cda182ec331a4f679885c102de0ecc85f8434d") {
                     // L96
                     // — does a page exist?
                     _ = try await runtime.invoke(
@@ -646,18 +646,18 @@ public struct SignalDetectorInput: MeridianWorkflow {
                         args: [
                             "command": .string("gbrain search \"name\""),
                         ],
-                        step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d",
+                        step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/a1e5556cb140f33ce23282fb00cda182ec331a4f679885c102de0ecc85f8434d",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
                     )
 
-                    try await runtime.checkpoint(label: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/iterate.body/a1e5556cb140f33ce23282fb00cda182ec331a4f679885c102de0ecc85f8434d", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_1, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"entities\")", count: __meridianColl_0_1.count, step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/c9daf8d4ced40b8ec2f6a2781a9b3801006c04cb65c44a11f5e143fda0a669e2")
+        try await runtime.recordIterateEnd(over: "state.get(\"entities\")", count: __meridianColl_0_1.count, step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps/procedure/ef490c81c021aef52410feecb95ef3e521a27ba6019d5f234067587422cd5b68")
 
-        if __meridianShouldRun("/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/2927959b03fb6d1e861b8fb9f86d559bd565de707b2ea6023c66a51c5501d3f5") {
+        if __meridianShouldRun("/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/8e5b4f9bfb4e07679277ea41b3b062738b3de62e1b8bf9d8ef5231fe9fc8c8f8") {
             // L100
             // For new FACTS with specific dates → call
             _ = try await runtime.invoke(
@@ -665,11 +665,11 @@ public struct SignalDetectorInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain timeline-add <slug> <date> \"<summary>\""),
                 ],
-                step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/2927959b03fb6d1e861b8fb9f86d559bd565de707b2ea6023c66a51c5501d3f5",
+                step: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/8e5b4f9bfb4e07679277ea41b3b062738b3de62e1b8bf9d8ef5231fe9fc8c8f8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/2927959b03fb6d1e861b8fb9f86d559bd565de707b2ea6023c66a51c5501d3f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SignalDetectorInput/phase-2-entity-detection-secondary-steps-2/procedure/8e5b4f9bfb4e07679277ea41b3b062738b3de62e1b8bf9d8ef5231fe9fc8c8f8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SignalDetectorInput.complete")
@@ -728,12 +728,12 @@ public struct WhenEveryinboundmessagealwaysFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenEveryinboundmessagealwaysFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/d5fcf05dec6c41df35243b277fdd32c7aa01ce86ce0824d5fb552f95ad8304ab") {
+        if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/cc0ed077f323088516d58a363f98e86d7d92fb5e6f074d882880b168f3fd5001") {
             // L1
             try await runtime.wait(.event("everyInboundMessageAlways", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEveryinboundmessagealwaysFires/root/procedure/d5fcf05dec6c41df35243b277fdd32c7aa01ce86ce0824d5fb552f95ad8304ab", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEveryinboundmessagealwaysFires/root/procedure/cc0ed077f323088516d58a363f98e86d7d92fb5e6f074d882880b168f3fd5001", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/b41c1a149acde013b7b86d5edd88c78fc6a62383e43a741e0db0f5699c7cdc9f") {
+        if __meridianShouldRun("/WhenEveryinboundmessagealwaysFires/root/procedure/f8e04b190aa6b93551ddd549aadd0cb3cf283db30243178fd43bbd8824fa02de") {
             // L1
             try await runtime.emit(
                 event: "trigger.everyInboundMessageAlways.fired",
@@ -741,9 +741,9 @@ public struct WhenEveryinboundmessagealwaysFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("every inbound message (always-on)"),
                 ],
-                step: "/WhenEveryinboundmessagealwaysFires/root/procedure/b41c1a149acde013b7b86d5edd88c78fc6a62383e43a741e0db0f5699c7cdc9f"
+                step: "/WhenEveryinboundmessagealwaysFires/root/procedure/f8e04b190aa6b93551ddd549aadd0cb3cf283db30243178fd43bbd8824fa02de"
             )
-            try await runtime.checkpoint(label: "/WhenEveryinboundmessagealwaysFires/root/procedure/b41c1a149acde013b7b86d5edd88c78fc6a62383e43a741e0db0f5699c7cdc9f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEveryinboundmessagealwaysFires/root/procedure/f8e04b190aa6b93551ddd549aadd0cb3cf283db30243178fd43bbd8824fa02de", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEveryinboundmessagealwaysFires.complete")

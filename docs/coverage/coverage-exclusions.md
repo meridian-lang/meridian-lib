@@ -219,7 +219,14 @@ MeridianCore/AST/ExpressionTraceDescription.swift            = 94.50
 # temporal/statistical compile, verbalizer, and runtime tests; residual is
 # structural enum/debug-description equality surface not hit in every case.
 MeridianCore/AST/MeridianAST.swift                           = 88.00
-MeridianCore/IR/IREquality.swift                             = 94.40
+# 2026-10-07 phase 2: IREquality is now a thin facade over IRNormalizer (the
+# comparison rules moved there), so most of its overloads are only reachable
+# from the verbalizer tests that call them. Observed 46.67%.
+MeridianCore/IR/IREquality.swift                             = 45.50
+# 2026-10-07 phase 2: new file. Normalization is exercised through the
+# verbalizer round-trip suites; residual is overloads for IR shapes no test
+# constructs. Observed 94.77%.
+MeridianCore/IR/IRNormalizer.swift                            = 93.50
 MeridianCore/IR/IRValidator.swift                            = 97.00
 MeridianCore/IR/TraceIdentityPlanner.swift                   = 87.80
 MeridianCore/Codegen/DomainEmitter.swift                     = 92.02
@@ -545,9 +552,6 @@ MeridianCore/Parser/Lexical/Productions/TraceTemporalGrammar.swift = 82.70
 # via the public API (see AGENTS.md pitfall #17 for the mask-correctness
 # invariant this depends on).
 MeridianCore/Grammar/NonterminalScreen.swift                 = 95.29
-# IREquality reached 100% in the Wave 7 closeout, then Wave 8 trace identity
-# equality branches dropped it slightly; the temporary floor above keeps the
-# gate honest until those branch-only cases get direct tests.
 # HeaderFolder.swift now at 100% — floor removed (coverage-closeout, 2026-07-06).
 # IndentTokenizer.swift was at 100% after the 2026-07-05 coverage-closeout
 # (bang-marker bare/dangling-EOF arms, multi-blank-line checklist continuation,

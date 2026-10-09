@@ -623,7 +623,7 @@ public struct SkillCreatorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillCreatorInput", parameters: [:])
 
-        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/6f9a0cc10c26267d08ed2ebacf70a1b5494b22663db5f29ab672545dab3cd121") {
+        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/cc7e5d089f7df7bc6f0d5e05f6cd90cd90a7ae2df712e6bc97390adad95e169d") {
             // L77
             // Add to manifest. Update  with name, path, description
             _ = try await runtime.invoke(
@@ -631,13 +631,13 @@ public struct SkillCreatorInput: MeridianWorkflow {
                 args: [
                     "command": .string("skills/manifest.json"),
                 ],
-                step: "/SkillCreatorInput/phases-steps-2/procedure/6f9a0cc10c26267d08ed2ebacf70a1b5494b22663db5f29ab672545dab3cd121",
+                step: "/SkillCreatorInput/phases-steps-2/procedure/cc7e5d089f7df7bc6f0d5e05f6cd90cd90a7ae2df712e6bc97390adad95e169d",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/6f9a0cc10c26267d08ed2ebacf70a1b5494b22663db5f29ab672545dab3cd121", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/cc7e5d089f7df7bc6f0d5e05f6cd90cd90a7ae2df712e6bc97390adad95e169d", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/e39e8c3ca1484b153f332c59459bc2a751ee0b93679d098b18e9c3f614917218") {
+        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/5bdfe245d986580e4309cc29c4359189d682db39959636d19f7c34d811b2431e") {
             // L78
             // Add to resolver. Update  with routing entry in the appropriate category
             _ = try await runtime.invoke(
@@ -645,13 +645,13 @@ public struct SkillCreatorInput: MeridianWorkflow {
                 args: [
                     "command": .string("skills/RESOLVER.md"),
                 ],
-                step: "/SkillCreatorInput/phases-steps-2/procedure/e39e8c3ca1484b153f332c59459bc2a751ee0b93679d098b18e9c3f614917218",
+                step: "/SkillCreatorInput/phases-steps-2/procedure/5bdfe245d986580e4309cc29c4359189d682db39959636d19f7c34d811b2431e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/e39e8c3ca1484b153f332c59459bc2a751ee0b93679d098b18e9c3f614917218", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/5bdfe245d986580e4309cc29c4359189d682db39959636d19f7c34d811b2431e", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/f9757fd87b7ade8b8af9aa58e1f887f9788a08c0d127243f62db785d3813cf36") {
+        if __meridianShouldRun("/SkillCreatorInput/phases-steps-2/procedure/a0108f20331049f383cddfc5a22ea90749c70cb027c1c17678c13c4045b75307") {
             // L79
             // Verify. Run  to confirm the new skill passes
             _ = try await runtime.invoke(
@@ -659,11 +659,11 @@ public struct SkillCreatorInput: MeridianWorkflow {
                 args: [
                     "command": .string("bun test test/skills-conformance.test.ts"),
                 ],
-                step: "/SkillCreatorInput/phases-steps-2/procedure/f9757fd87b7ade8b8af9aa58e1f887f9788a08c0d127243f62db785d3813cf36",
+                step: "/SkillCreatorInput/phases-steps-2/procedure/a0108f20331049f383cddfc5a22ea90749c70cb027c1c17678c13c4045b75307",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/f9757fd87b7ade8b8af9aa58e1f887f9788a08c0d127243f62db785d3813cf36", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillCreatorInput/phases-steps-2/procedure/a0108f20331049f383cddfc5a22ea90749c70cb027c1c17678c13c4045b75307", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SkillCreatorInput.complete")
@@ -722,12 +722,12 @@ public struct WhenCreateskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCreateskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCreateskillFires/root/procedure/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc") {
+        if __meridianShouldRun("/WhenCreateskillFires/root/procedure/8ce8894a6c882565da960ef6bc6eae1c9c93ed50b61b0879436e47421560e608") {
             // L1
             try await runtime.wait(.event("createSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCreateskillFires/root/procedure/a6bf8c2c16a1031da22212c75041857268af75a9de033126b28ae3bfef9776cc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCreateskillFires/root/procedure/8ce8894a6c882565da960ef6bc6eae1c9c93ed50b61b0879436e47421560e608", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCreateskillFires/root/procedure/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069") {
+        if __meridianShouldRun("/WhenCreateskillFires/root/procedure/3761b4d3f6869f000e9308dbae28a881cdd4fbd190db29dfaf53a42cb706310f") {
             // L1
             try await runtime.emit(
                 event: "trigger.createSkill.fired",
@@ -735,9 +735,9 @@ public struct WhenCreateskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("create a skill"),
                 ],
-                step: "/WhenCreateskillFires/root/procedure/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069"
+                step: "/WhenCreateskillFires/root/procedure/3761b4d3f6869f000e9308dbae28a881cdd4fbd190db29dfaf53a42cb706310f"
             )
-            try await runtime.checkpoint(label: "/WhenCreateskillFires/root/procedure/61db1e2cdbdbafffc37015f7d0930b49fb88f1de46bbd547aa2e7d78fa606069", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCreateskillFires/root/procedure/3761b4d3f6869f000e9308dbae28a881cdd4fbd190db29dfaf53a42cb706310f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCreateskillFires.complete")
@@ -796,12 +796,12 @@ public struct WhenNewskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenNewskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenNewskillFires/root/procedure/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb") {
+        if __meridianShouldRun("/WhenNewskillFires/root/procedure/cf278c104cd928855d88bd90d17c5ec5860b1ea1090f8fb1422667e3639f0466") {
             // L1
             try await runtime.wait(.event("newSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenNewskillFires/root/procedure/95201127d9d4a41164593c7e79bb387d34729a0d026bd5f2a90d74f25c763adb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenNewskillFires/root/procedure/cf278c104cd928855d88bd90d17c5ec5860b1ea1090f8fb1422667e3639f0466", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenNewskillFires/root/procedure/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc") {
+        if __meridianShouldRun("/WhenNewskillFires/root/procedure/7bf4e8058a5256d7198d569df47be4da56b5aa1a4fdbb08fecf6a819e364ac97") {
             // L1
             try await runtime.emit(
                 event: "trigger.newSkill.fired",
@@ -809,9 +809,9 @@ public struct WhenNewskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("new skill"),
                 ],
-                step: "/WhenNewskillFires/root/procedure/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc"
+                step: "/WhenNewskillFires/root/procedure/7bf4e8058a5256d7198d569df47be4da56b5aa1a4fdbb08fecf6a819e364ac97"
             )
-            try await runtime.checkpoint(label: "/WhenNewskillFires/root/procedure/ff59e08d89c10f2067ccbd3890a94db9ab28c2b03c32b4aec6cfd34531ca62bc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenNewskillFires/root/procedure/7bf4e8058a5256d7198d569df47be4da56b5aa1a4fdbb08fecf6a819e364ac97", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenNewskillFires.complete")
@@ -870,12 +870,12 @@ public struct WhenImprovethisskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenImprovethisskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403") {
+        if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/7f6aa42fc203269fc893c67c736326340ce4c51bfc34e4cc728c9f608ce593a6") {
             // L1
             try await runtime.wait(.event("improveThisSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenImprovethisskillFires/root/procedure/80d1585c3cac04aad59776929e93c78738c2a7c2531caf34d5fbf567c89f6403", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenImprovethisskillFires/root/procedure/7f6aa42fc203269fc893c67c736326340ce4c51bfc34e4cc728c9f608ce593a6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001") {
+        if __meridianShouldRun("/WhenImprovethisskillFires/root/procedure/0a28a530e49d66f537fa94de8f5450177345e6dd9c363add59c1189a53870ce2") {
             // L1
             try await runtime.emit(
                 event: "trigger.improveThisSkill.fired",
@@ -883,9 +883,9 @@ public struct WhenImprovethisskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("improve this skill"),
                 ],
-                step: "/WhenImprovethisskillFires/root/procedure/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001"
+                step: "/WhenImprovethisskillFires/root/procedure/0a28a530e49d66f537fa94de8f5450177345e6dd9c363add59c1189a53870ce2"
             )
-            try await runtime.checkpoint(label: "/WhenImprovethisskillFires/root/procedure/cb3fce9d48509ec2254e437ac6d8324240cb3ab2afb41d3c1fd4e79dbe598001", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenImprovethisskillFires/root/procedure/0a28a530e49d66f537fa94de8f5450177345e6dd9c363add59c1189a53870ce2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenImprovethisskillFires.complete")

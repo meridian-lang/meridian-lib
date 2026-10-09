@@ -7,26 +7,26 @@ public let MERIDIAN_IR_VERSION = "1.1"
 
 // MARK: - Execution mode
 
-public enum ExecutionMode: Sendable, Hashable {
+public enum ExecutionMode: Sendable, Hashable, Codable {
     case strict
     case lenient
 }
 
 // MARK: - Symbol references
 
-public struct KindRef: Sendable, Hashable {
+public struct KindRef: Sendable, Hashable, Codable {
     public let name: String
     public init(_ name: String) { self.name = name }
 }
 
-public struct ToolRef: Sendable, Hashable {
+public struct ToolRef: Sendable, Hashable, Codable {
     public let id: String
     public init(_ id: String) { self.id = id }
 }
 
 // MARK: - Core IR block and workflow
 
-public struct IRBlock: Sendable {
+public struct IRBlock: Sendable, Equatable, Codable {
     public let statements: [IRPrimitive]
     public let sourceRange: SourceRange
 
@@ -36,7 +36,7 @@ public struct IRBlock: Sendable {
     }
 }
 
-public struct IRWorkflow: Sendable {
+public struct IRWorkflow: Sendable, Equatable, Codable {
     public let name: String
     public let structName: String
     public let explicitStructName: String?
@@ -88,7 +88,7 @@ public struct IRWorkflow: Sendable {
     }
 }
 
-public struct IRParameter: Sendable, Hashable {
+public struct IRParameter: Sendable, Hashable, Codable {
     public let name: String
     public let kind: KindRef
 
@@ -100,7 +100,7 @@ public struct IRParameter: Sendable, Hashable {
 
 // MARK: - The 12 IR primitives
 
-public indirect enum IRPrimitive: Sendable {
+public indirect enum IRPrimitive: Sendable, Equatable, Codable {
     case invoke(InvokeIR)
     case bind(BindIR)
     case branch(BranchIR)
@@ -118,7 +118,7 @@ public indirect enum IRPrimitive: Sendable {
 
 // MARK: - 1. invoke
 
-public struct InvokeIR: Sendable {
+public struct InvokeIR: Sendable, Equatable, Codable {
     public let toolID: String
     public let arguments: [InvokeArg]
     public let resultBinding: String?
@@ -145,7 +145,7 @@ public struct InvokeIR: Sendable {
     }
 }
 
-public struct InvokeArg: Sendable {
+public struct InvokeArg: Sendable, Equatable, Codable {
     public let key: String
     public let value: IRExpression
 
@@ -157,7 +157,7 @@ public struct InvokeArg: Sendable {
 
 // MARK: - 2. bind
 
-public struct BindIR: Sendable {
+public struct BindIR: Sendable, Equatable, Codable {
     public let name: String
     public let expression: IRExpression
     public let isRebind: Bool
@@ -173,7 +173,7 @@ public struct BindIR: Sendable {
     }
 }
 
-public enum UnknownHandlingPolicyIR: Sendable, Equatable {
+public enum UnknownHandlingPolicyIR: Sendable, Equatable, Codable {
   case explicit
   case asTrue
   case asFalse
@@ -190,7 +190,7 @@ public enum BranchAuthoredForm: String, Sendable, Equatable, Codable {
     case unlessSuffix
 }
 
-public struct BranchIR: Sendable {
+public struct BranchIR: Sendable, Equatable, Codable {
     public let condition: BranchCondition
     public let thenBlock: IRBlock
     public let unknownBlock: IRBlock?
@@ -224,12 +224,12 @@ public struct BranchIR: Sendable {
     }
 }
 
-public indirect enum BranchCondition: Sendable {
+public indirect enum BranchCondition: Sendable, Equatable, Codable {
     case predicate(IRExpression)
     case match(IRExpression, [BranchCase])
 }
 
-public struct BranchCase: Sendable {
+public struct BranchCase: Sendable, Equatable, Codable {
     public let pattern: IRPattern
     public let block: IRBlock
 
@@ -239,7 +239,7 @@ public struct BranchCase: Sendable {
     }
 }
 
-public enum IRPattern: Sendable {
+public enum IRPattern: Sendable, Equatable, Codable {
     case literal(IRLiteral)
     case enumValue(String, kind: String)
     case wildcard
@@ -247,7 +247,7 @@ public enum IRPattern: Sendable {
 
 // MARK: - 4. iterate
 
-public struct IterateIR: Sendable {
+public struct IterateIR: Sendable, Equatable, Codable {
     public let mode: IterateMode
     public let body: IRBlock
     /// Optional single-clause refinement applied to an `overCollection` source
@@ -269,17 +269,30 @@ public struct IterateIR: Sendable {
     }
 }
 
+/// A post-filter total order: the property path to order by, and its direction.
+/// A named type (rather than a tuple) so `IRIterationRefinement` and
+/// `DescriptionIR` can synthesize `Equatable`/`Codable`.
+public struct IRSortSpec: Sendable, Hashable, Codable {
+    public let path: String
+    public let ascending: Bool
+
+    public init(path: String, ascending: Bool) {
+        self.path = path
+        self.ascending = ascending
+    }
+}
+
 /// A refinement over an `overCollection` iteration source. Filters are applied
 /// (conjunctively) first, then sorting, then the `take` prefix — so `first N`
 /// counts post-filter. All fields are expressed relative to the loop variable.
-public struct IRIterationRefinement: Sendable {
+public struct IRIterationRefinement: Sendable, Equatable, Codable {
     public let filters: [IRExpression]
-    public let sort: (path: String, ascending: Bool)?
+    public let sort: IRSortSpec?
     public let take: Int?
     public let takeFromEnd: Int?
 
     public init(filters: [IRExpression] = [],
-                sort: (path: String, ascending: Bool)? = nil,
+                sort: IRSortSpec? = nil,
                 take: Int? = nil,
                 takeFromEnd: Int? = nil) {
         self.filters = filters
@@ -291,7 +304,7 @@ public struct IRIterationRefinement: Sendable {
 
 // MARK: - 4b. simultaneously
 
-public struct SimultaneouslyIR: Sendable {
+public struct SimultaneouslyIR: Sendable, Equatable, Codable {
     public let branches: [IRBlock]
     /// When true, the branches are spawned fire-and-forget (a detached `Task`)
     /// and the workflow does NOT wait for them (no `group.waitForAll()`). Set by
@@ -308,7 +321,7 @@ public struct SimultaneouslyIR: Sendable {
     }
 }
 
-public indirect enum IterateMode: Sendable {
+public indirect enum IterateMode: Sendable, Equatable, Codable {
     case overCollection(parameter: String, kind: KindRef, collection: IRExpression)
     case whileCondition(IRExpression)
     case untilCondition(IRExpression)
@@ -316,7 +329,7 @@ public indirect enum IterateMode: Sendable {
 
 // MARK: - 5. assert
 
-public struct AssertIR: Sendable {
+public struct AssertIR: Sendable, Equatable, Codable {
     public let condition: IRExpression
     public let message: String?
     public let otherwiseAction: IRBlock?
@@ -355,7 +368,7 @@ public struct AssertIR: Sendable {
 
 // MARK: - 6. emit
 
-public struct EmitIR: Sendable {
+public struct EmitIR: Sendable, Equatable, Codable {
     public let eventID: String
     public let payload: [EmitField]
     public let strict: Bool
@@ -371,7 +384,7 @@ public struct EmitIR: Sendable {
     }
 }
 
-public struct EmitField: Sendable {
+public struct EmitField: Sendable, Equatable, Codable {
     public let key: String
     public let value: IRExpression
 
@@ -383,7 +396,7 @@ public struct EmitField: Sendable {
 
 // MARK: - 7. wait
 
-public struct WaitIR: Sendable {
+public struct WaitIR: Sendable, Equatable, Codable {
     public let condition: WaitConditionIR
     public let timeout: Duration?
     public let sourceRange: SourceRange
@@ -397,7 +410,7 @@ public struct WaitIR: Sendable {
     }
 }
 
-public enum WaitConditionIR: Sendable {
+public enum WaitConditionIR: Sendable, Equatable, Codable {
     case duration(Duration)
     case signal(String)
     case approval(of: IRExpression, by: String)
@@ -410,7 +423,7 @@ public enum WaitConditionIR: Sendable {
 
 // MARK: - 8. commit
 
-public struct CommitIR: Sendable {
+public struct CommitIR: Sendable, Equatable, Codable {
     public let label: String?
     public let sourceRange: SourceRange
     public let stableStepPath: String?
@@ -424,7 +437,7 @@ public struct CommitIR: Sendable {
 
 // MARK: - 9. recover
 
-public struct RecoverIR: Sendable {
+public struct RecoverIR: Sendable, Equatable, Codable {
     public let pattern: ErrorPattern
     public let handler: IRBlock
     public let attachedTo: IRBlock
@@ -440,7 +453,7 @@ public struct RecoverIR: Sendable {
     }
 }
 
-public enum ErrorPattern: Sendable {
+public enum ErrorPattern: Sendable, Equatable, Codable {
     case anyError
     case named(String)
     case typed(KindRef)
@@ -449,7 +462,7 @@ public enum ErrorPattern: Sendable {
 
 // MARK: - 10. complete
 
-public struct CompleteIR: Sendable {
+public struct CompleteIR: Sendable, Equatable, Codable {
     public let reason: String?
     public let sourceRange: SourceRange
     public let stableStepPath: String?
@@ -468,7 +481,7 @@ public struct CompleteIR: Sendable {
 /// `with autonomy`, or a local marker sets it explicitly). Once lowered, the
 /// distinction is structural — `IRPrimitive.aiJudgment` vs `.aiAutonomy` —
 /// not carried as a field on a single generic primitive.
-public enum ProseDispatchMode: Sendable, Equatable {
+public enum ProseDispatchMode: Sendable, Equatable, Codable {
     case planThenExecute
     case autonomousLoop
 }
@@ -477,7 +490,7 @@ public enum ProseDispatchMode: Sendable, Equatable {
 /// discretion`, `ai-discretion` table/checklist routing). Codegen calls
 /// `runtime.executeProsePlan(...)` — a single plan-then-execute pass with no
 /// autonomous retry loop, so this primitive carries no `AutonomyConfigIR`.
-public struct AIJudgmentIR: Sendable {
+public struct AIJudgmentIR: Sendable, Equatable, Codable {
     public let text: String
     public let scopedTools: [String]
     public let snapshotKeys: [String]
@@ -519,7 +532,7 @@ public struct AIJudgmentIR: Sendable {
 /// prose, `ai-autonomy` table/checklist routing). Codegen calls
 /// `runtime.executeAutonomousLoop(...)`, re-planning within
 /// `AutonomyConfigIR`'s bounds until `until`/`unless` resolves.
-public struct AIAutonomyIR: Sendable {
+public struct AIAutonomyIR: Sendable, Equatable, Codable {
     public let text: String
     public let scopedTools: [String]
     public let snapshotKeys: [String]
@@ -554,7 +567,7 @@ public struct AIAutonomyIR: Sendable {
     }
 }
 
-public struct AutonomyConfigIR: Sendable {
+public struct AutonomyConfigIR: Sendable, Equatable, Codable {
     public let until: IRExpression?
     public let unless: IRExpression?
     public let replanAfterFailures: Int
@@ -576,7 +589,7 @@ public struct AutonomyConfigIR: Sendable {
 // MARK: - Expressions
 
 /// B6/B7: One segment of a lowered interpolated string.
-public enum IRInterpolationSegment: Sendable {
+public enum IRInterpolationSegment: Sendable, Equatable, Codable {
     case literal(String)
     case expression(IRExpression)
     case conditional(condition: IRExpression, then: [IRInterpolationSegment], otherwise: [IRInterpolationSegment])
@@ -588,7 +601,7 @@ public enum IRInterpolationSegment: Sendable {
     case shellEscapedExpression(IRExpression)
 }
 
-public indirect enum IRExpression: Sendable {
+public indirect enum IRExpression: Sendable, Equatable, Codable {
     case literal(IRLiteral)
     case constantRef(name: String)
     case identifierRef(name: String)
@@ -632,13 +645,13 @@ public indirect enum IRExpression: Sendable {
     case traceStatistical(TraceStatisticalIR)
 }
 
-public struct EventPatternIR: Sendable {
-    public enum Subject: Sendable {
+public struct EventPatternIR: Sendable, Equatable, Codable {
+    public enum Subject: Sendable, Equatable, Codable {
         case step(String)
         case named(String)
     }
 
-    public enum OutcomeVerb: String, Sendable {
+    public enum OutcomeVerb: String, Sendable, Equatable, Codable {
         case failed
         case succeeded
         case invoked
@@ -662,19 +675,19 @@ public struct EventPatternIR: Sendable {
     }
 }
 
-public enum TraceScope: Sendable, Equatable {
+public enum TraceScope: Sendable, Equatable, Codable {
     case currentRun
     case acrossAllRuns
     case acrossSkills([String])
 }
 
-public enum TraceCountComparatorIR: Sendable {
+public enum TraceCountComparatorIR: Sendable, Equatable, Codable {
     case atLeast(Int)
     case atMost(Int)
     case exactly(Int)
 }
 
-public indirect enum TraceTemporalKind: Sendable {
+public indirect enum TraceTemporalKind: Sendable, Equatable, Codable {
     case ever(EventPatternIR)
     case withinWindow(EventPatternIR, duration: Duration)
     case countInWindow(EventPatternIR, comparator: TraceCountComparatorIR, duration: Duration)
@@ -691,12 +704,12 @@ public indirect enum TraceTemporalKind: Sendable {
     case boundedFutureMonitor(condition: IRExpression, horizon: Duration, mode: FutureMonitorModeIR)
 }
 
-public enum FutureMonitorModeIR: Sendable, Equatable {
+public enum FutureMonitorModeIR: Sendable, Equatable, Codable {
     case eventuallyWithin
     case alwaysFor
 }
 
-public struct TraceTemporalIR: Sendable {
+public struct TraceTemporalIR: Sendable, Equatable, Codable {
     public let scope: TraceScope
     public let kind: TraceTemporalKind
     public let subjectKeyExpr: IRExpression?
@@ -708,7 +721,7 @@ public struct TraceTemporalIR: Sendable {
     }
 }
 
-public struct TraceStatisticalPatternIR: Sendable {
+public struct TraceStatisticalPatternIR: Sendable, Equatable, Codable {
     public let subject: EventPatternIR.Subject
     public let payloadPredicate: IRExpression?
 
@@ -718,22 +731,22 @@ public struct TraceStatisticalPatternIR: Sendable {
     }
 }
 
-public enum TraceStatisticalOutcomeIR: Sendable, Equatable {
+public enum TraceStatisticalOutcomeIR: Sendable, Equatable, Codable {
     case succeeds
     case fails
 }
 
-public enum TraceStatisticalBoundIR: Sendable, Equatable {
+public enum TraceStatisticalBoundIR: Sendable, Equatable, Codable {
     case atLeast(Double)
     case atMost(Double)
 }
 
-public enum TraceStatisticalDenominatorIR: Sendable, Equatable {
+public enum TraceStatisticalDenominatorIR: Sendable, Equatable, Codable {
     case runs
     case occurrences
 }
 
-public struct TraceStatisticalIR: Sendable {
+public struct TraceStatisticalIR: Sendable, Equatable, Codable {
     public let scope: TraceScope
     public let pattern: TraceStatisticalPatternIR
     public let outcome: TraceStatisticalOutcomeIR
@@ -770,10 +783,10 @@ public struct TraceStatisticalIR: Sendable {
     }
 }
 
-public enum AggregateKind: Sendable, Equatable { case count, list }
+public enum AggregateKind: Sendable, Equatable, Codable { case count, list }
 
 /// 3C: a lowered superlative (description + sort key + direction → first).
-public struct SuperlativeIR: Sendable {
+public struct SuperlativeIR: Sendable, Equatable, Codable {
     public let description: DescriptionIR
     public let sortPath: String
     public let ascending: Bool
@@ -784,7 +797,7 @@ public struct SuperlativeIR: Sendable {
 
 // MARK: - 2C. Quantifiers (IR)
 
-public enum QuantifierKind: Sendable, Equatable {
+public enum QuantifierKind: Sendable, Equatable, Codable {
     case all
     case any
     case none
@@ -796,25 +809,25 @@ public enum QuantifierKind: Sendable, Equatable {
 /// A lowered description: a fetched-once `collection` source, an `elementVar`
 /// binding, and a conjunction of element-context `filters` (adjectives →
 /// `.definitionPredicate`, `whose` → qualified comparison/logical).
-public struct DescriptionIR: Sendable {
+public struct DescriptionIR: Sendable, Equatable, Codable {
     public let collection: IRExpression
     public let elementVar: String
     public let filters: [IRExpression]
     /// 3C: a post-filter total order (`sorted by <path>`).
-    public let sort: (path: String, ascending: Bool)?
+    public let sort: IRSortSpec?
     /// 3C: a post-sort `first N` take-prefix.
     public let take: Int?
     /// 3C: a post-sort `the last N` take-suffix.
     public let takeFromEnd: Int?
     public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = [],
-                sort: (path: String, ascending: Bool)? = nil, take: Int? = nil,
+                sort: IRSortSpec? = nil, take: Int? = nil,
                 takeFromEnd: Int? = nil) {
         self.collection = collection; self.elementVar = elementVar; self.filters = filters
         self.sort = sort; self.take = take; self.takeFromEnd = takeFromEnd
     }
 }
 
-public struct QuantifierIR: Sendable {
+public struct QuantifierIR: Sendable, Equatable, Codable {
     public let kind: QuantifierKind
     public let description: DescriptionIR
     /// Per-element body predicate (element context). Optional for `any`/`none`.
@@ -827,7 +840,7 @@ public struct QuantifierIR: Sendable {
 /// 2B: A lowered checkable-adjective definition, ready for codegen. The emitter
 /// produces `private func <functionName>(_ __subject: Value?) -> Bool { return
 /// <body in element context over subjectVar> }`.
-public struct LoweredDefinition: Sendable {
+public struct LoweredDefinition: Sendable, Equatable, Codable {
     public let functionName: String
     public let subjectVar: String
     public let body: IRExpression
@@ -838,7 +851,7 @@ public struct LoweredDefinition: Sendable {
 
 // MARK: - Deontic norms (Wave 9A)
 
-public struct ActionArgumentConstraint: Sendable {
+public struct ActionArgumentConstraint: Sendable, Equatable, Codable {
     public let path: String
     public let op: ComparisonOp
     public let value: IRExpression
@@ -850,7 +863,7 @@ public struct ActionArgumentConstraint: Sendable {
     }
 }
 
-public struct ActionPatternIR: Sendable {
+public struct ActionPatternIR: Sendable, Equatable, Codable {
     public let toolID: String
     public let argumentConstraints: [ActionArgumentConstraint]
 
@@ -860,20 +873,20 @@ public struct ActionPatternIR: Sendable {
     }
 }
 
-public enum NormKind: String, Sendable, Hashable {
+public enum NormKind: String, Sendable, Hashable, Codable {
     case prohibition
     case obligation
     case permission
 }
 
-public enum NormScope: Sendable, Hashable {
+public enum NormScope: Sendable, Hashable, Codable {
     case skill
     case workflow(String)
     case section(stablePath: String)
     case kind(String)
 }
 
-public struct NormIR: Sendable {
+public struct NormIR: Sendable, Equatable, Codable {
     public let id: String
     public let kind: NormKind
     public let scope: NormScope
@@ -904,12 +917,12 @@ public struct NormIR: Sendable {
     }
 }
 
-public enum ViolationDisposition: String, Sendable, Hashable {
+public enum ViolationDisposition: String, Sendable, Hashable, Codable {
     case prevented
     case observed
 }
 
-public struct DeonticGuardIR: Sendable {
+public struct DeonticGuardIR: Sendable, Equatable, Codable {
     public let normID: String
     public let disposition: ViolationDisposition
     public let blocking: Bool
@@ -928,7 +941,7 @@ public struct DeonticGuardIR: Sendable {
     }
 }
 
-public enum ComparisonOp: Sendable {
+public enum ComparisonOp: Sendable, Equatable, Codable {
     case equal, notEqual
     case lessThan, lessOrEqual
     case greaterThan, greaterOrEqual
@@ -948,12 +961,12 @@ public enum ComparisonOp: Sendable {
     case identifies
 }
 
-public enum LogicalOp: Sendable {
+public enum LogicalOp: Sendable, Equatable, Codable {
     case and, or, not
 }
 
-public struct CalendarAmountIR: Sendable, Equatable {
-    public enum Unit: String, Sendable, Equatable {
+public struct CalendarAmountIR: Sendable, Equatable, Codable {
+    public enum Unit: String, Sendable, Equatable, Codable {
         case businessDays
         case calendarDays
         case months
@@ -968,7 +981,7 @@ public struct CalendarAmountIR: Sendable, Equatable {
     }
 }
 
-public enum IRLiteral: Sendable {
+public enum IRLiteral: Sendable, Equatable, Codable {
     case string(String)
     case number(Decimal)
     case boolean(Bool)

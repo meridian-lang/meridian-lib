@@ -680,12 +680,12 @@ public struct WhenMorningprepFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenMorningprepFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMorningprepFires/root/procedure/904379e3eaeb5f79e70b305be58f5f93650c41d1617710bb8dca5eb932436003") {
+        if __meridianShouldRun("/WhenMorningprepFires/root/procedure/93f9aead0283cd4737eed366386b7cf09a6c247c90fa3d356f923bdf6c73bfec") {
             // L1
             try await runtime.wait(.event("morningPrep", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMorningprepFires/root/procedure/904379e3eaeb5f79e70b305be58f5f93650c41d1617710bb8dca5eb932436003", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMorningprepFires/root/procedure/93f9aead0283cd4737eed366386b7cf09a6c247c90fa3d356f923bdf6c73bfec", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMorningprepFires/root/procedure/96559b0bad72d476618a0a1900b0b4727f29f98a8e2e0e281837f8b927b001cd") {
+        if __meridianShouldRun("/WhenMorningprepFires/root/procedure/bf26f264c5acb1cb5686a5fcf1673fd931024d66b4f901a4a276f5ca65f03c49") {
             // L1
             try await runtime.emit(
                 event: "trigger.morningPrep.fired",
@@ -693,9 +693,9 @@ public struct WhenMorningprepFires: MeridianWorkflow {
                     "kind": .string("schedule"),
                     "spec": .string("morning prep"),
                 ],
-                step: "/WhenMorningprepFires/root/procedure/96559b0bad72d476618a0a1900b0b4727f29f98a8e2e0e281837f8b927b001cd"
+                step: "/WhenMorningprepFires/root/procedure/bf26f264c5acb1cb5686a5fcf1673fd931024d66b4f901a4a276f5ca65f03c49"
             )
-            try await runtime.checkpoint(label: "/WhenMorningprepFires/root/procedure/96559b0bad72d476618a0a1900b0b4727f29f98a8e2e0e281837f8b927b001cd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMorningprepFires/root/procedure/bf26f264c5acb1cb5686a5fcf1673fd931024d66b4f901a4a276f5ca65f03c49", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMorningprepFires.complete")
@@ -754,12 +754,12 @@ public struct WhenPreparetodayFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPreparetodayFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/c964efb2f32c62fb1bc874a8d4e306963fbffba8378b6ba6952d733de0471bfa") {
+        if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/05f66f73867826b8c1f0a48dbac4c0c8ebcd6e7be4d7ede4baeea4aad8290c77") {
             // L1
             try await runtime.wait(.event("prepareToday", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPreparetodayFires/root/procedure/c964efb2f32c62fb1bc874a8d4e306963fbffba8378b6ba6952d733de0471bfa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPreparetodayFires/root/procedure/05f66f73867826b8c1f0a48dbac4c0c8ebcd6e7be4d7ede4baeea4aad8290c77", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/01bcaf23fa9092efc343dce05f39e0631f681cb15f45f37a9cf20cea2fa43c92") {
+        if __meridianShouldRun("/WhenPreparetodayFires/root/procedure/e7f6fbce74cc9462fbe87cf861aee79b86d817ebbcb984a4d4548153b1ff1fd1") {
             // L1
             try await runtime.emit(
                 event: "trigger.prepareToday.fired",
@@ -767,9 +767,9 @@ public struct WhenPreparetodayFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("prepare for today"),
                 ],
-                step: "/WhenPreparetodayFires/root/procedure/01bcaf23fa9092efc343dce05f39e0631f681cb15f45f37a9cf20cea2fa43c92"
+                step: "/WhenPreparetodayFires/root/procedure/e7f6fbce74cc9462fbe87cf861aee79b86d817ebbcb984a4d4548153b1ff1fd1"
             )
-            try await runtime.checkpoint(label: "/WhenPreparetodayFires/root/procedure/01bcaf23fa9092efc343dce05f39e0631f681cb15f45f37a9cf20cea2fa43c92", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPreparetodayFires/root/procedure/e7f6fbce74cc9462fbe87cf861aee79b86d817ebbcb984a4d4548153b1ff1fd1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPreparetodayFires.complete")
@@ -828,12 +828,12 @@ public struct WhenWhatsmyplateFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhatsmyplateFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/82d0d328a9590e7b262f32f99448a322999449f261787da4aad16e87a749b22f") {
+        if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/79397c8b7c31343d0090e4135b162b63a815acb175395bfe383b872111f71051") {
             // L1
             try await runtime.wait(.event("whatSMyPlate", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhatsmyplateFires/root/procedure/82d0d328a9590e7b262f32f99448a322999449f261787da4aad16e87a749b22f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatsmyplateFires/root/procedure/79397c8b7c31343d0090e4135b162b63a815acb175395bfe383b872111f71051", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/5babb21adbbfd8a38815ad86d5cca2a93cbcd3d50b442109b30828a9a3f62997") {
+        if __meridianShouldRun("/WhenWhatsmyplateFires/root/procedure/2729a95641d38dfa4d22c2743c74ed579bfc4f4e48d7b067fe9ba73b60b1bca2") {
             // L1
             try await runtime.emit(
                 event: "trigger.whatSMyPlate.fired",
@@ -841,9 +841,9 @@ public struct WhenWhatsmyplateFires: MeridianWorkflow {
                     "kind": .string("event"),
                     "spec": .string("what's on my plate"),
                 ],
-                step: "/WhenWhatsmyplateFires/root/procedure/5babb21adbbfd8a38815ad86d5cca2a93cbcd3d50b442109b30828a9a3f62997"
+                step: "/WhenWhatsmyplateFires/root/procedure/2729a95641d38dfa4d22c2743c74ed579bfc4f4e48d7b067fe9ba73b60b1bca2"
             )
-            try await runtime.checkpoint(label: "/WhenWhatsmyplateFires/root/procedure/5babb21adbbfd8a38815ad86d5cca2a93cbcd3d50b442109b30828a9a3f62997", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatsmyplateFires/root/procedure/2729a95641d38dfa4d22c2743c74ed579bfc4f4e48d7b067fe9ba73b60b1bca2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhatsmyplateFires.complete")
@@ -902,12 +902,12 @@ public struct WhenDayprepFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDayprepFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDayprepFires/root/procedure/d083a64679ffc350427fd00a77fb7346f646b2087b6d535585a7bc79b0b1eb8b") {
+        if __meridianShouldRun("/WhenDayprepFires/root/procedure/5de64c66f29225893c637e4a04a8d1afcf2c2b6c673ea009aa675cd31ee6337f") {
             // L1
             try await runtime.wait(.event("dayPrep", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDayprepFires/root/procedure/d083a64679ffc350427fd00a77fb7346f646b2087b6d535585a7bc79b0b1eb8b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDayprepFires/root/procedure/5de64c66f29225893c637e4a04a8d1afcf2c2b6c673ea009aa675cd31ee6337f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDayprepFires/root/procedure/430d264deefc6a29af404fbac2f1eee312cd55b28b2654ea9bd63a226c3ca6af") {
+        if __meridianShouldRun("/WhenDayprepFires/root/procedure/a64d44aabe60420b32dfb7461e348a7324074f5917dc6f28ee96f3ee853f3b51") {
             // L1
             try await runtime.emit(
                 event: "trigger.dayPrep.fired",
@@ -915,9 +915,9 @@ public struct WhenDayprepFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("day prep"),
                 ],
-                step: "/WhenDayprepFires/root/procedure/430d264deefc6a29af404fbac2f1eee312cd55b28b2654ea9bd63a226c3ca6af"
+                step: "/WhenDayprepFires/root/procedure/a64d44aabe60420b32dfb7461e348a7324074f5917dc6f28ee96f3ee853f3b51"
             )
-            try await runtime.checkpoint(label: "/WhenDayprepFires/root/procedure/430d264deefc6a29af404fbac2f1eee312cd55b28b2654ea9bd63a226c3ca6af", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDayprepFires/root/procedure/a64d44aabe60420b32dfb7461e348a7324074f5917dc6f28ee96f3ee853f3b51", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDayprepFires.complete")

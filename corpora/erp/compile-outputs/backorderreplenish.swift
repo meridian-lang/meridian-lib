@@ -575,24 +575,24 @@ public struct BackorderReplenish: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "BackorderReplenish", parameters: [:])
 
-        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043") {
+        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c") {
             // L16
             let products = try await runtime.invoke(
                 tool: "product.list",
                 args: [
                     "status": .string("short"),
                 ],
-                step: "/BackorderReplenish/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043",
+                step: "/BackorderReplenish/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "product.list")
             )
             state.bind("products", products)
 
-            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c", state: state.snapshot())
         }
-        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/16f9f56d57ce71c0d619488b3562d22b24f54e8a5af0ca1aa7b63cc1743b52cf") {
+        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/1457385c48eda2442115af6ff26b682f2c053b239da60c3427bc1199a6735f7a") {
             // L17
             try await runtime.assert((!((state.get("products")?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }).isEmpty), message: "Expected any short products")
-            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/16f9f56d57ce71c0d619488b3562d22b24f54e8a5af0ca1aa7b63cc1743b52cf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/1457385c48eda2442115af6ff26b682f2c053b239da60c3427bc1199a6735f7a", state: state.snapshot())
         }
         // L18
         state.bind("restockCount", Decimal(((state.get("products"))?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }.count))
@@ -600,41 +600,41 @@ public struct BackorderReplenish: MeridianWorkflow {
         state.bind("neediestProduct", (((state.get("products"))?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("reorderPoint"), __b.member("reorderPoint"), ascending: false) }.first))
         // L20
         let __meridianColl_0_4 = (state.get("products")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"products\")", step: "/BackorderReplenish/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+        try await runtime.recordIterateStart(over: "state.get(\"products\")", step: "/BackorderReplenish/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
         for (__meridianLoopIndex_0_4, product) in __meridianColl_0_4.enumerated() {
             let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
             if __meridianShouldRun(__meridianLoopLabel_0_4) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/BackorderReplenish/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/BackorderReplenish/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
             state.bind("product", product)
-                if __meridianShouldRun("/BackorderReplenish/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d") {
+                if __meridianShouldRun("/BackorderReplenish/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084") {
                     // L21
                     let purchaseOrder = try await runtime.invoke(
                         tool: "purchase_order.create",
                         args: [
                             "product": state.get("product") ?? .null,
                         ],
-                        step: "/BackorderReplenish/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d",
+                        step: "/BackorderReplenish/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "purchase_order.create")
                     )
                     state.bind("purchaseOrder", purchaseOrder)
 
-                    try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"products\")", count: __meridianColl_0_4.count, step: "/BackorderReplenish/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+        try await runtime.recordIterateEnd(over: "state.get(\"products\")", count: __meridianColl_0_4.count, step: "/BackorderReplenish/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
 
-        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/ae23fd6e7fc3756e2183cea8abb6ee1c01de398ba3e304a05f46566c5ecdd05e") {
+        if __meridianShouldRun("/BackorderReplenish/workflow/procedure/ae1fbc72be5a6dd1d38d7f3884ecf629c123e541ab4f875f077d3d3e062d09e1") {
             // L22
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("backorder replenishment queued"),
                 ],
-                step: "/BackorderReplenish/workflow/procedure/ae23fd6e7fc3756e2183cea8abb6ee1c01de398ba3e304a05f46566c5ecdd05e"
+                step: "/BackorderReplenish/workflow/procedure/ae1fbc72be5a6dd1d38d7f3884ecf629c123e541ab4f875f077d3d3e062d09e1"
             )
-            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/ae23fd6e7fc3756e2183cea8abb6ee1c01de398ba3e304a05f46566c5ecdd05e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BackorderReplenish/workflow/procedure/ae1fbc72be5a6dd1d38d7f3884ecf629c123e541ab4f875f077d3d3e062d09e1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "BackorderReplenish.complete")
@@ -694,12 +694,12 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReplenishbackordersFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/06d5f1045144d6f7e3b8eb4148aa0c662ddc12ca105ba06becc803f70456eafc") {
+        if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/d2a0128d49f8521aacd4c46fe923c7d499fd67b501be164907e015602a73254e") {
             // L1
             try await runtime.wait(.event("replenishBackorders", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReplenishbackordersFires/root/procedure/06d5f1045144d6f7e3b8eb4148aa0c662ddc12ca105ba06becc803f70456eafc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReplenishbackordersFires/root/procedure/d2a0128d49f8521aacd4c46fe923c7d499fd67b501be164907e015602a73254e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/f40ee7df4b194375b40d25f472940c9fa391343af8321ebba4cd359232fc1bc7") {
+        if __meridianShouldRun("/WhenReplenishbackordersFires/root/procedure/9d49bfdb07eadc12946d13a433098f787367e38dc506bfe72affc90f66fe0e2c") {
             // L1
             try await runtime.emit(
                 event: "trigger.replenishBackorders.fired",
@@ -707,9 +707,9 @@ public struct WhenReplenishbackordersFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("replenish backorders"),
                 ],
-                step: "/WhenReplenishbackordersFires/root/procedure/f40ee7df4b194375b40d25f472940c9fa391343af8321ebba4cd359232fc1bc7"
+                step: "/WhenReplenishbackordersFires/root/procedure/9d49bfdb07eadc12946d13a433098f787367e38dc506bfe72affc90f66fe0e2c"
             )
-            try await runtime.checkpoint(label: "/WhenReplenishbackordersFires/root/procedure/f40ee7df4b194375b40d25f472940c9fa391343af8321ebba4cd359232fc1bc7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReplenishbackordersFires/root/procedure/9d49bfdb07eadc12946d13a433098f787367e38dc506bfe72affc90f66fe0e2c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReplenishbackordersFires.complete")
@@ -769,12 +769,12 @@ public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenPrioritizeshortinventoryFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/08a674e40b99ea091b841956d6ef66bea8d1f1241ce6f05035ebb28e53a7e4a2") {
+        if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/13fb69a5b595fde643a8daf4fdd2c0a4c065af8ac02d054e52970deba7465388") {
             // L1
             try await runtime.wait(.event("prioritizeShortInventory", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPrioritizeshortinventoryFires/root/procedure/08a674e40b99ea091b841956d6ef66bea8d1f1241ce6f05035ebb28e53a7e4a2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPrioritizeshortinventoryFires/root/procedure/13fb69a5b595fde643a8daf4fdd2c0a4c065af8ac02d054e52970deba7465388", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/17fc1ed879bf01532a400b66488f3c30970f0d6de8b9878818d3b05c90a972b8") {
+        if __meridianShouldRun("/WhenPrioritizeshortinventoryFires/root/procedure/664d48e9a9885918f5432f8f7700cbcad0bf960a03ba5fbee35b63cad7b76eae") {
             // L1
             try await runtime.emit(
                 event: "trigger.prioritizeShortInventory.fired",
@@ -782,9 +782,9 @@ public struct WhenPrioritizeshortinventoryFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("prioritize short inventory"),
                 ],
-                step: "/WhenPrioritizeshortinventoryFires/root/procedure/17fc1ed879bf01532a400b66488f3c30970f0d6de8b9878818d3b05c90a972b8"
+                step: "/WhenPrioritizeshortinventoryFires/root/procedure/664d48e9a9885918f5432f8f7700cbcad0bf960a03ba5fbee35b63cad7b76eae"
             )
-            try await runtime.checkpoint(label: "/WhenPrioritizeshortinventoryFires/root/procedure/17fc1ed879bf01532a400b66488f3c30970f0d6de8b9878818d3b05c90a972b8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPrioritizeshortinventoryFires/root/procedure/664d48e9a9885918f5432f8f7700cbcad0bf960a03ba5fbee35b63cad7b76eae", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPrioritizeshortinventoryFires.complete")

@@ -575,59 +575,59 @@ public struct CancelOrder: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "CancelOrder", parameters: [:])
 
-        if __meridianShouldRun("/CancelOrder/workflow/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28") {
+        if __meridianShouldRun("/CancelOrder/workflow/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71") {
             // L16
             let orders = try await runtime.invoke(
                 tool: "order.list",
                 args: [
                     "status": .string("open"),
                 ],
-                step: "/CancelOrder/workflow/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+                step: "/CancelOrder/workflow/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "order.list")
             )
             state.bind("orders", orders)
 
-            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71", state: state.snapshot())
         }
-        if __meridianShouldRun("/CancelOrder/workflow/procedure/1457777b2eb2e5aa855444a0a6397b8b79c577bc3937a766b70ef5e47c6a90cf") {
+        if __meridianShouldRun("/CancelOrder/workflow/procedure/d9f3c237c56c8949d876a743240109676ebd712681ee77d1d65cc5c430304886") {
             // L17
             try await runtime.assert((!((state.get("orders")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }).isEmpty), message: "Expected any orders whose status is \"blocked\"")
-            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/1457777b2eb2e5aa855444a0a6397b8b79c577bc3937a766b70ef5e47c6a90cf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/d9f3c237c56c8949d876a743240109676ebd712681ee77d1d65cc5c430304886", state: state.snapshot())
         }
         // L18
         let __meridianSrc_0_2 = ((state.get("orders"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }
-        try await runtime.recordIterateStart(over: "state.get(\"orders\")", step: "/CancelOrder/workflow/procedure/855b7dcf6fe0d3332a40f552f72875baf4a9e5242ecec82f6c9941e668accfee")
+        try await runtime.recordIterateStart(over: "state.get(\"orders\")", step: "/CancelOrder/workflow/procedure/a31f09b7c846d01c187edc4b26836a49c1c6d67dae419e4f9937c01aca162eea")
         for (__meridianLoopIndex_0_2, order) in __meridianSrc_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/CancelOrder/workflow/procedure/855b7dcf6fe0d3332a40f552f72875baf4a9e5242ecec82f6c9941e668accfee")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/CancelOrder/workflow/procedure/a31f09b7c846d01c187edc4b26836a49c1c6d67dae419e4f9937c01aca162eea")
             state.bind("order", order)
                 // L19
                 if !(meridianDef_Order_fulfilled(state.get("order"))) {
-                    try await runtime.recordBranchTaken(condition: "!(meridianDef_Order_fulfilled(state.get(\"order\")))", into: "then", step: "/CancelOrder/workflow/procedure/iterate.body/a96c6b385a5f5d99daee95aeba636d2e9c4d3e883db949194fc6bbad29b777c6")
-                    if __meridianShouldRun("/CancelOrder/workflow/procedure/branch.then/1027eb6ca41ff4e59032a179e1a66bac52cefbf73f91884908bc9084b6d467c5") {
+                    try await runtime.recordBranchTaken(condition: "!(meridianDef_Order_fulfilled(state.get(\"order\")))", into: "then", step: "/CancelOrder/workflow/procedure/iterate.body/e24a94f07c338e386dd12f17241637534aab368e1d730e166325f4dcc7c39412")
+                    if __meridianShouldRun("/CancelOrder/workflow/procedure/branch.then/fdfe1737c3f72e38acb185231a27fb0608cbf40a7965f43b7c7bc0b4a96c59fe") {
                         // L19
                         _ = try await CancelOrder(runtime: runtime).run()
-                        try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/branch.then/1027eb6ca41ff4e59032a179e1a66bac52cefbf73f91884908bc9084b6d467c5", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/branch.then/fdfe1737c3f72e38acb185231a27fb0608cbf40a7965f43b7c7bc0b4a96c59fe", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/CancelOrder/workflow/procedure/iterate.body/a96c6b385a5f5d99daee95aeba636d2e9c4d3e883db949194fc6bbad29b777c6")
+                    try await runtime.recordBranchEnded(into: "then", step: "/CancelOrder/workflow/procedure/iterate.body/e24a94f07c338e386dd12f17241637534aab368e1d730e166325f4dcc7c39412")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"orders\")", count: __meridianSrc_0_2.count, step: "/CancelOrder/workflow/procedure/855b7dcf6fe0d3332a40f552f72875baf4a9e5242ecec82f6c9941e668accfee")
+        try await runtime.recordIterateEnd(over: "state.get(\"orders\")", count: __meridianSrc_0_2.count, step: "/CancelOrder/workflow/procedure/a31f09b7c846d01c187edc4b26836a49c1c6d67dae419e4f9937c01aca162eea")
 
-        if __meridianShouldRun("/CancelOrder/workflow/procedure/3f2374f851aedafb79249e16714950880d27179d82679e26d9dcd9863eef1982") {
+        if __meridianShouldRun("/CancelOrder/workflow/procedure/93b934311bed71dbb49e296b6f6d2fab87bcc0420fa52ed7b46c4d1c67fd8081") {
             // L20
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("blocked orders cancelled"),
                 ],
-                step: "/CancelOrder/workflow/procedure/3f2374f851aedafb79249e16714950880d27179d82679e26d9dcd9863eef1982"
+                step: "/CancelOrder/workflow/procedure/93b934311bed71dbb49e296b6f6d2fab87bcc0420fa52ed7b46c4d1c67fd8081"
             )
-            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/3f2374f851aedafb79249e16714950880d27179d82679e26d9dcd9863eef1982", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CancelOrder/workflow/procedure/93b934311bed71dbb49e296b6f6d2fab87bcc0420fa52ed7b46c4d1c67fd8081", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "CancelOrder.complete")
@@ -687,12 +687,12 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCancelblockedordersFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6") {
+        if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/eb1f640f97390e833843349c0b3da32a7a578d8ee2176becac1c08b4db818552") {
             // L1
             try await runtime.wait(.event("cancelBlockedOrders", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCancelblockedordersFires/root/procedure/4126aec9230c55523bb7a3f70ca7a8f31869a1c5a2a208e45aa604266f0e0ba6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCancelblockedordersFires/root/procedure/eb1f640f97390e833843349c0b3da32a7a578d8ee2176becac1c08b4db818552", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce") {
+        if __meridianShouldRun("/WhenCancelblockedordersFires/root/procedure/dc70a6fcdd8d291bf28801848077172c7d4813e9e983eb1a5309787eea3bd991") {
             // L1
             try await runtime.emit(
                 event: "trigger.cancelBlockedOrders.fired",
@@ -700,9 +700,9 @@ public struct WhenCancelblockedordersFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("cancel blocked orders"),
                 ],
-                step: "/WhenCancelblockedordersFires/root/procedure/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce"
+                step: "/WhenCancelblockedordersFires/root/procedure/dc70a6fcdd8d291bf28801848077172c7d4813e9e983eb1a5309787eea3bd991"
             )
-            try await runtime.checkpoint(label: "/WhenCancelblockedordersFires/root/procedure/1708751e6a25a6784851aeb5afd24d32a4bd8eaf39efced4d79ea83a5beb54ce", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCancelblockedordersFires/root/procedure/dc70a6fcdd8d291bf28801848077172c7d4813e9e983eb1a5309787eea3bd991", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCancelblockedordersFires.complete")
@@ -762,12 +762,12 @@ public struct WhenVoiderpordersFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenVoiderpordersFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a") {
+        if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/5ebf09c05dde191ffe55ebbd54bae5afb1a917fc5d9781ea6078df11d5e55d64") {
             // L1
             try await runtime.wait(.event("voidErpOrders", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenVoiderpordersFires/root/procedure/08c910881c91ce6e666daa7dcfefe995e4c71421911defd911c35e5787a2a53a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoiderpordersFires/root/procedure/5ebf09c05dde191ffe55ebbd54bae5afb1a917fc5d9781ea6078df11d5e55d64", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9") {
+        if __meridianShouldRun("/WhenVoiderpordersFires/root/procedure/6e54cb30dd6f98bc5ba15c819d8a68a310982baf161736ad1cd17e65b9353582") {
             // L1
             try await runtime.emit(
                 event: "trigger.voidErpOrders.fired",
@@ -775,9 +775,9 @@ public struct WhenVoiderpordersFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("void ERP orders"),
                 ],
-                step: "/WhenVoiderpordersFires/root/procedure/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9"
+                step: "/WhenVoiderpordersFires/root/procedure/6e54cb30dd6f98bc5ba15c819d8a68a310982baf161736ad1cd17e65b9353582"
             )
-            try await runtime.checkpoint(label: "/WhenVoiderpordersFires/root/procedure/e86f94d4bea7e31f3b986a6f7cdde577c1a48773b17a9bc9b453cc4e9b8c63e9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoiderpordersFires/root/procedure/6e54cb30dd6f98bc5ba15c819d8a68a310982baf161736ad1cd17e65b9353582", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenVoiderpordersFires.complete")

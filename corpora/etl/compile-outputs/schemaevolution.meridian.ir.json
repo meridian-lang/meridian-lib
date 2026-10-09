@@ -1,101 +1,101 @@
 {
   "entries" : [
     {
-      "canonical" : "wait for event checkSchemaEvolution.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3",
-      "swift_line" : 685
-    },
-    {
       "canonical" : "emit trigger.checkSchemaEvolution.fired with kind = \"keyword\", spec = \"check schema evolution\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e",
+      "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/b9939e721f3db8492b8241fee390cbad63a08342ae9e3455d2da717140419ba4",
       "swift_line" : 685
     },
     {
-      "canonical" : "emit trigger.runSchemaCompatibilityCheck.fired with kind = \"keyword\", spec = \"run schema compatibility check\".",
+      "canonical" : "wait for event checkSchemaEvolution.",
       "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb",
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenCheckschemaevolutionFires\/root\/procedure\/eaec76988d186cda70b8260483fbaad63a7b49e2c16f01ed29ce9cf5acae3d09",
       "swift_line" : 685
     },
     {
       "canonical" : "wait for event runSchemaCompatibilityCheck.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a",
+      "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/348b0c79e333054802308984bd719b128658eb9d108c26e21e894490ba349e3d",
       "swift_line" : 685
     },
     {
-      "canonical" : "wait for event validateSchemaCompatibility.",
+      "canonical" : "emit trigger.runSchemaCompatibilityCheck.fired with kind = \"keyword\", spec = \"run schema compatibility check\".",
       "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6",
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunschemacompatibilitycheckFires\/root\/procedure\/bb1b476b6d7d96011c92361ab81de2e9b31068ddeb6679de3502e08c43a655be",
       "swift_line" : 685
     },
     {
       "canonical" : "emit trigger.validateSchemaCompatibility.fired with kind = \"keyword\", spec = \"validate schema compatibility\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca",
+      "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/01a37b892cf05718728791eab49bd81354ad7c4d75cfcf5cf7c55b515ffe9474",
+      "swift_line" : 685
+    },
+    {
+      "canonical" : "wait for event validateSchemaCompatibility.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenValidateschemacompatibilityFires\/root\/procedure\/b32661a5c93b328ae8343682ad921f7a0ba260e34a7af6ebeb769e47052efd1a",
       "swift_line" : 685
     },
     {
       "canonical" : "bind datasets = invoke dataset.list.",
       "meridian_line" : 29,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620",
       "swift_line" : 391
     },
     {
       "canonical" : "for each dataset in datasets,\n  bind schema = invoke schema.validate with dataset = dataset.\n  if schema is compatible,\n    bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.\n  otherwise,\n    emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 30,
       "primitive" : "iterate",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/d439b7f889716d5ea5fe7038475ffb10ffa97ab3ac90b5beec5ea9f65ee449df",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/5a0d360af3314c255fc5ea811f75967128d82048d10388670f5c658342ce832f",
       "swift_line" : 397
     },
     {
       "canonical" : "bind schema = invoke schema.validate with dataset = dataset.",
       "meridian_line" : 31,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e",
       "swift_line" : 406
     },
     {
       "canonical" : "if schema is compatible,\n  bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.\notherwise,\n  emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 32,
       "primitive" : "branch",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/iterate.body\/68ba4b5da4b9df4c52bbe6e2446dcd76c4de3c4bb32e59a3a8cfdbb8f9e82751",
       "swift_line" : 419
     },
     {
       "canonical" : "bind dataset = invoke load with dataset = dataset, warehouse sink = warehouse warehouse sink.",
       "meridian_line" : 33,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.then\/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.then\/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f",
       "swift_line" : 423
     },
     {
       "canonical" : "emit etl.note with message = \"schema incompatible, dataset held for manual review\".",
       "meridian_line" : 35,
       "primitive" : "emit",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.else\/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/branch.else\/396c20d84fd536e2f5d12b29e705b4a5787b40af7f8aab2ebec46a8265b5acf9",
       "swift_line" : 442
     },
     {
       "canonical" : "emit etl.report with message = \"schema evolution pass complete\".",
       "meridian_line" : 36,
       "primitive" : "emit",
-      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/1a74c3f6ebcb34ebe99f96919e7727a9916d9439bf748409709565c01c0cc4d6",
+      "stable_step_path" : "\/SchemaEvolution\/workflow-steps\/procedure\/aa5cd98f27035d589ef46dea3ce7dbe9fa5cf8e9f80658fa7531eb7728ec207a",
       "swift_line" : 461
     },
     {
       "canonical" : "assert no datasets whose status equals \"stale\".",
       "meridian_line" : 47,
       "primitive" : "assert",
-      "stable_step_path" : "\/SchemaEvolution\/guarantees\/invariants\/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf",
+      "stable_step_path" : "\/SchemaEvolution\/guarantees\/invariants\/7a7889ebd7c54f30489364ae6b7a66a33350f0e77501a58510e1515c00ff25c6",
       "swift_line" : 386
     }
   ],

@@ -629,7 +629,7 @@ public struct BrainTaxonomistInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/BrainTaxonomistInput/purpose-steps/procedure/45ffc00b4ccc9b19d93f512a314e1b218299363e8c9a9a18b513c5d26c8b292f",
+            step: "/BrainTaxonomistInput/purpose-steps/procedure/2390240803612ad80c8f3dbec9a3cb021982578c1121a5e0e35d1c437e6e1f07",
             guidance: "**Gate function:** Before creating ANY new brain page, consult this skill to determine the correct filing path. This prevents misfiling at write time rather than cleaning up drift after the fact\nA user who runs `gbrain schema use gbrain-recommended` gets the full\nrecommended directory set (deal, meeting, concept, project, source,\ndaily, personal, civic, original, place, trip, conversation, writing,\nplus all gbrain-base types)\nA user who authored a custom pack via `gbrain schema init` + edit gets\nfiling recommendations based on THEIR taxonomy, not gbrain's defaults\nPer-source overrides (tier 3 in the 7-tier resolution chain) are honored\nwhen `--source <id>` is passed to brain-taxonomist\nIs the primary subject a NAMED PERSON? → person-typed directory\nIs the primary subject a NAMED ORGANIZATION? → company-typed directory\nIs it about a TIME-BOUNDED EVENT (meeting, deal, trip)? → temporal-typed directory\nIs it a REUSABLE MENTAL MODEL? → concept-typed directory\nIs it RAW MEDIA (article, video, book, PDF)? → media-typed directory\nIs it BULK SOURCE DATA? → source-typed directory\ncodeblock:bash:Z2JyYWluIHNjaGVtYSBzaG93IC0tanNvbiB8IGpxICcucGFnZV90eXBlc1tdIHwgc2VsZWN0KC5wcmltaXRpdmUgPT0gImVudGl0eSIpJw==\nkebab-case, descriptive\nno author name unless disambiguation is needed\nmatch the canonical path prefix exactly (no leading slash)\nPath follows the active pack's `page_types[].path_prefixes`\nSlug is kebab-case, descriptive\nFrontmatter includes `type:` matching one of the pack's `page_types[].name`\nCross-links to related pages are included\n`eiirp` — calls this skill as Phase 2 TAXONOMY for every output in its inventory\n`ingest` — article/media ingestion consults brain-taxonomist for filing\n`repo-architecture` — delegates the filing decision to this skill\n`book-mirror` — after generating a mirror, files it via brain-taxonomist\ncodeblock:bash:IyBXaGF0IHBhZ2VzIGhhdmUgbm8gdHlwZSBtYXRjaGluZyB0aGUgYWN0aXZlIHBhY2s/CmdicmFpbiBzY2hlbWEgcmV2aWV3LW9ycGhhbnMgLS1qc29uCgojIFdoYXQncyB0aGUgb3ZlcmFsbCBoZWFsdGg/CmdicmFpbiBkb2N0b3IgLS1qc29uIHwganEgJy5jaGVja3NbXSB8IHNlbGVjdCgubmFtZSA9PSAic2NoZW1hX3BhY2tfY29uc2lzdGVuY3kiKSc=\nHardcoded directory table REMOVED. Every decision now reads the active\nschema pack via `gbrain schema show --json`. Single source of truth\n`--source <id>` propagation documented for multi-brain users (Persona B)"
         )
         for (__key, __value) in __meridianProseResults_L31 {
@@ -692,12 +692,12 @@ public struct WhenWheredoesthisbrainpageFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWheredoesthisbrainpageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076") {
+        if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/83a2201130851892fc0112d40b95e4f62d54fcd8d6605ac58c27cf42e8e1a4f2") {
             // L1
             try await runtime.wait(.event("whereDoesThisBrainPage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWheredoesthisbrainpageFires/root/procedure/c227bba716bad1b4f6fba9a3948ff2e6c050315a9ca6b00a0fae0000ee87a076", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWheredoesthisbrainpageFires/root/procedure/83a2201130851892fc0112d40b95e4f62d54fcd8d6605ac58c27cf42e8e1a4f2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5") {
+        if __meridianShouldRun("/WhenWheredoesthisbrainpageFires/root/procedure/dbb549a24ec5ae07e22b133d76991bb29846f74c68014be3737dbc504f1ece06") {
             // L1
             try await runtime.emit(
                 event: "trigger.whereDoesThisBrainPage.fired",
@@ -705,9 +705,9 @@ public struct WhenWheredoesthisbrainpageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("where does this brain page go"),
                 ],
-                step: "/WhenWheredoesthisbrainpageFires/root/procedure/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5"
+                step: "/WhenWheredoesthisbrainpageFires/root/procedure/dbb549a24ec5ae07e22b133d76991bb29846f74c68014be3737dbc504f1ece06"
             )
-            try await runtime.checkpoint(label: "/WhenWheredoesthisbrainpageFires/root/procedure/efa20302bdab705be063b0bca63bae48f817e7910077fd514882018f4ee899b5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWheredoesthisbrainpageFires/root/procedure/dbb549a24ec5ae07e22b133d76991bb29846f74c68014be3737dbc504f1ece06", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWheredoesthisbrainpageFires.complete")
@@ -766,12 +766,12 @@ public struct WhenFilethisinbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenFilethisinbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c") {
+        if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/d6ea510ed56785c97e5bee069a59c6d0fdc43b1c11611e6c97e1981add86031a") {
             // L1
             try await runtime.wait(.event("fileThisInBrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenFilethisinbrainFires/root/procedure/badbffd7d21f468898410aa73a6351ad216b6dddc4ecd4ecec1018c8f860567c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFilethisinbrainFires/root/procedure/d6ea510ed56785c97e5bee069a59c6d0fdc43b1c11611e6c97e1981add86031a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40") {
+        if __meridianShouldRun("/WhenFilethisinbrainFires/root/procedure/dbb469fccbc1a20b732e0e6bee874c7e4fe244cb49c5f7f193763d000320139d") {
             // L1
             try await runtime.emit(
                 event: "trigger.fileThisInBrain.fired",
@@ -779,9 +779,9 @@ public struct WhenFilethisinbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("file this in the brain"),
                 ],
-                step: "/WhenFilethisinbrainFires/root/procedure/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40"
+                step: "/WhenFilethisinbrainFires/root/procedure/dbb469fccbc1a20b732e0e6bee874c7e4fe244cb49c5f7f193763d000320139d"
             )
-            try await runtime.checkpoint(label: "/WhenFilethisinbrainFires/root/procedure/0825d5db9685e5fe0bed72978c64230e380f7bb6a6bc24f881633e9a2e210e40", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFilethisinbrainFires/root/procedure/dbb469fccbc1a20b732e0e6bee874c7e4fe244cb49c5f7f193763d000320139d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenFilethisinbrainFires.complete")
@@ -840,12 +840,12 @@ public struct WhenBraintaxonomistFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenBraintaxonomistFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183") {
+        if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/b874fbf002982798b1f2018205e48a5d6e0b93d929051912fe695dbeebd4251e") {
             // L1
             try await runtime.wait(.event("brainTaxonomist", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenBraintaxonomistFires/root/procedure/ebbabcc12d2aee9b20bb1b0e00c11070ff774304fe03f9f027404cdd916db183", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBraintaxonomistFires/root/procedure/b874fbf002982798b1f2018205e48a5d6e0b93d929051912fe695dbeebd4251e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2") {
+        if __meridianShouldRun("/WhenBraintaxonomistFires/root/procedure/c44fb677025114605a68d9be44c432f054c9747be3a8b83ac00657ff47c0037a") {
             // L1
             try await runtime.emit(
                 event: "trigger.brainTaxonomist.fired",
@@ -853,9 +853,9 @@ public struct WhenBraintaxonomistFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("brain taxonomist"),
                 ],
-                step: "/WhenBraintaxonomistFires/root/procedure/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2"
+                step: "/WhenBraintaxonomistFires/root/procedure/c44fb677025114605a68d9be44c432f054c9747be3a8b83ac00657ff47c0037a"
             )
-            try await runtime.checkpoint(label: "/WhenBraintaxonomistFires/root/procedure/b66439ba007418252cf80626114463b2db12d1882078eb78772e96ef7bfe1aa2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBraintaxonomistFires/root/procedure/c44fb677025114605a68d9be44c432f054c9747be3a8b83ac00657ff47c0037a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenBraintaxonomistFires.complete")
@@ -914,12 +914,12 @@ public struct WhenTaxonomycheckFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenTaxonomycheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6") {
+        if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/30283f1ca2422a2b788eab3d84413c3bd8dece21da5763df455e8935dd6f4b50") {
             // L1
             try await runtime.wait(.event("taxonomyCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTaxonomycheckFires/root/procedure/6355adca9ac7f6235fcb966aa63eed2d7ffdf02afd732a7b699c91d24d3cb8e6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTaxonomycheckFires/root/procedure/30283f1ca2422a2b788eab3d84413c3bd8dece21da5763df455e8935dd6f4b50", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3") {
+        if __meridianShouldRun("/WhenTaxonomycheckFires/root/procedure/a13f8e58c04677860da113d62fb7db7b085c19c68cf8fc7172fa0d9f02e8a620") {
             // L1
             try await runtime.emit(
                 event: "trigger.taxonomyCheck.fired",
@@ -927,9 +927,9 @@ public struct WhenTaxonomycheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("taxonomy check"),
                 ],
-                step: "/WhenTaxonomycheckFires/root/procedure/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3"
+                step: "/WhenTaxonomycheckFires/root/procedure/a13f8e58c04677860da113d62fb7db7b085c19c68cf8fc7172fa0d9f02e8a620"
             )
-            try await runtime.checkpoint(label: "/WhenTaxonomycheckFires/root/procedure/1e28fcfef96931d96864a8fdae7997fd3d04a1cabe98b1dae38ebe90020ef3c3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTaxonomycheckFires/root/procedure/a13f8e58c04677860da113d62fb7db7b085c19c68cf8fc7172fa0d9f02e8a620", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTaxonomycheckFires.complete")
@@ -988,12 +988,12 @@ public struct WhenRefilebrainpageFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRefilebrainpageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0") {
+        if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/a669a3095bfe0b2a5d84ab23748243cba6d50dbc6313dc151efa513358ac95f2") {
             // L1
             try await runtime.wait(.event("refileBrainPage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRefilebrainpageFires/root/procedure/64c8744a91327848083f2c673aa0b96d68f05967597b183d2ea2e8c393e3d1b0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRefilebrainpageFires/root/procedure/a669a3095bfe0b2a5d84ab23748243cba6d50dbc6313dc151efa513358ac95f2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e") {
+        if __meridianShouldRun("/WhenRefilebrainpageFires/root/procedure/a6ffbc87b036a221ddc4536231dea0a89b5c3036a997938098e4602d9769f95a") {
             // L1
             try await runtime.emit(
                 event: "trigger.refileBrainPage.fired",
@@ -1001,9 +1001,9 @@ public struct WhenRefilebrainpageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("refile brain page"),
                 ],
-                step: "/WhenRefilebrainpageFires/root/procedure/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e"
+                step: "/WhenRefilebrainpageFires/root/procedure/a6ffbc87b036a221ddc4536231dea0a89b5c3036a997938098e4602d9769f95a"
             )
-            try await runtime.checkpoint(label: "/WhenRefilebrainpageFires/root/procedure/fcdc36781abaf03d31ea1839baaca291b1487de55ca81d6630d8c3ece993864e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRefilebrainpageFires/root/procedure/a6ffbc87b036a221ddc4536231dea0a89b5c3036a997938098e4602d9769f95a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRefilebrainpageFires.complete")
@@ -1062,12 +1062,12 @@ public struct WhenCreatebrainpageFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCreatebrainpageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013") {
+        if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/b5cb369048efde52b15b9587d31c9d9437bbbd3156cb511b3377c88e094020fc") {
             // L1
             try await runtime.wait(.event("createBrainPage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCreatebrainpageFires/root/procedure/7c233242e724076e0f994d07ea6bbb133402cf951885980d6338dea899ced013", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCreatebrainpageFires/root/procedure/b5cb369048efde52b15b9587d31c9d9437bbbd3156cb511b3377c88e094020fc", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad") {
+        if __meridianShouldRun("/WhenCreatebrainpageFires/root/procedure/86280ae415a79aadbf67f7e6c9306f7c4fff1ca0e2d6cb710b33f34ac62c50de") {
             // L1
             try await runtime.emit(
                 event: "trigger.createBrainPage.fired",
@@ -1075,9 +1075,9 @@ public struct WhenCreatebrainpageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("create brain page"),
                 ],
-                step: "/WhenCreatebrainpageFires/root/procedure/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad"
+                step: "/WhenCreatebrainpageFires/root/procedure/86280ae415a79aadbf67f7e6c9306f7c4fff1ca0e2d6cb710b33f34ac62c50de"
             )
-            try await runtime.checkpoint(label: "/WhenCreatebrainpageFires/root/procedure/806ddf45fd861570844cf815f5b727ff9b4526ab8b4ddf46e7c071fa07af85ad", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCreatebrainpageFires/root/procedure/86280ae415a79aadbf67f7e6c9306f7c4fff1ca0e2d6cb710b33f34ac62c50de", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCreatebrainpageFires.complete")
@@ -1136,12 +1136,12 @@ public struct WhenWhichdirectorydoesthisgoFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhichdirectorydoesthisgoFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf") {
+        if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/edde38dc02c2141f7c1d35f82e228fc971cd6b9e44efe47f726c2b13a3a63a42") {
             // L1
             try await runtime.wait(.event("whichDirectoryDoesThisGo", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthisgoFires/root/procedure/de558aa14e1c30f5e38ba9ed8256412249553a250fa2a2b09ef82d479ada7dbf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthisgoFires/root/procedure/edde38dc02c2141f7c1d35f82e228fc971cd6b9e44efe47f726c2b13a3a63a42", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a") {
+        if __meridianShouldRun("/WhenWhichdirectorydoesthisgoFires/root/procedure/5261c35123cb890ad33c9176aa716cd4f097a5ddb39acf01ad46a5347ed90a0d") {
             // L1
             try await runtime.emit(
                 event: "trigger.whichDirectoryDoesThisGo.fired",
@@ -1149,9 +1149,9 @@ public struct WhenWhichdirectorydoesthisgoFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("which directory does this go"),
                 ],
-                step: "/WhenWhichdirectorydoesthisgoFires/root/procedure/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a"
+                step: "/WhenWhichdirectorydoesthisgoFires/root/procedure/5261c35123cb890ad33c9176aa716cd4f097a5ddb39acf01ad46a5347ed90a0d"
             )
-            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthisgoFires/root/procedure/007be87d6a0f814fa20da91126421f9fda726a1ee3a38abd227633e6383b780a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthisgoFires/root/procedure/5261c35123cb890ad33c9176aa716cd4f097a5ddb39acf01ad46a5347ed90a0d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhichdirectorydoesthisgoFires.complete")
@@ -1210,12 +1210,12 @@ public struct WhenWhichdirectorydoesthispageFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhichdirectorydoesthispageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329") {
+        if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/272e7a87c0b1f67a28f9469a239e338eb566c576cf29bf3c1020fb0e312b0418") {
             // L1
             try await runtime.wait(.event("whichDirectoryDoesThisPage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthispageFires/root/procedure/d87462e39c834ba1ef62c0ac2d6ec54f9e03bc4272616c23ca6234385fa68329", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthispageFires/root/procedure/272e7a87c0b1f67a28f9469a239e338eb566c576cf29bf3c1020fb0e312b0418", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19") {
+        if __meridianShouldRun("/WhenWhichdirectorydoesthispageFires/root/procedure/ee67a84b63b9f91be4077f08a1990a16afb454c4e3e68058830ffe0e423d0e78") {
             // L1
             try await runtime.emit(
                 event: "trigger.whichDirectoryDoesThisPage.fired",
@@ -1223,9 +1223,9 @@ public struct WhenWhichdirectorydoesthispageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("which directory does this page go"),
                 ],
-                step: "/WhenWhichdirectorydoesthispageFires/root/procedure/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19"
+                step: "/WhenWhichdirectorydoesthispageFires/root/procedure/ee67a84b63b9f91be4077f08a1990a16afb454c4e3e68058830ffe0e423d0e78"
             )
-            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthispageFires/root/procedure/98c755a2d9a135aa1bf063e236f8b534280a28aa0b78affbc4b5b524b2aaee19", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhichdirectorydoesthispageFires/root/procedure/ee67a84b63b9f91be4077f08a1990a16afb454c4e3e68058830ffe0e423d0e78", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhichdirectorydoesthispageFires.complete")

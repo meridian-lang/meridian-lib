@@ -630,7 +630,7 @@ public struct AcademicVerifyInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/AcademicVerifyInput/standards-the-rigor-bar-steps/procedure/e0224f47e2a4b5854a49a32adc78ff5270deca1d26ee7ad80e5a74305c4b50bf",
+            step: "/AcademicVerifyInput/standards-the-rigor-bar-steps/procedure/3ecaa843f8262f53fcc88bb1d6cc33d4d80c4e67313d6059aa22436969b99eeb",
             guidance: "**Retracted / disputed** — paper has been retracted, has a major\nexpression-of-concern, or has well-documented critique that\ncontradicts the headline finding\nNever claim a problem without evidence. The verification document\nitself is the artifact — if the claim holds up, say so plainly. If it\ndoesn't, the trace speaks for itself\n`skills/perplexity-research/SKILL.md` — the actual web-search engine\nthis skill routes through (D7/α: pure routing, no new infrastructure)\n`skills/citation-fixer/SKILL.md` — fixes citation FORMATTING; this\nskill checks whether the cited claim is true\n`skills/conventions/quality.md` — citation + back-link rules"
         )
         for (__key, __value) in __meridianProseResults_L192 {
@@ -693,12 +693,12 @@ public struct WhenVerifythisacademicclaimFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenVerifythisacademicclaimFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/3a2c27693ea5ed50b289749f99090352faac007de60dc860892550bcffade442") {
+        if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/2684b37a387df644ebb9305653e02cb06625e2628dedae0837f144e98dd34ea7") {
             // L1
             try await runtime.wait(.event("verifyThisAcademicClaim", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenVerifythisacademicclaimFires/root/procedure/3a2c27693ea5ed50b289749f99090352faac007de60dc860892550bcffade442", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVerifythisacademicclaimFires/root/procedure/2684b37a387df644ebb9305653e02cb06625e2628dedae0837f144e98dd34ea7", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/3afbf8da7e2992e3c8e962fe414f06b09e6f4768a5b80c1a03c1a489b4ce85e5") {
+        if __meridianShouldRun("/WhenVerifythisacademicclaimFires/root/procedure/95a23afb3a1183a246748bd4005138e1815199862d213395c74d99bceb15ce66") {
             // L1
             try await runtime.emit(
                 event: "trigger.verifyThisAcademicClaim.fired",
@@ -706,9 +706,9 @@ public struct WhenVerifythisacademicclaimFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("verify this academic claim"),
                 ],
-                step: "/WhenVerifythisacademicclaimFires/root/procedure/3afbf8da7e2992e3c8e962fe414f06b09e6f4768a5b80c1a03c1a489b4ce85e5"
+                step: "/WhenVerifythisacademicclaimFires/root/procedure/95a23afb3a1183a246748bd4005138e1815199862d213395c74d99bceb15ce66"
             )
-            try await runtime.checkpoint(label: "/WhenVerifythisacademicclaimFires/root/procedure/3afbf8da7e2992e3c8e962fe414f06b09e6f4768a5b80c1a03c1a489b4ce85e5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVerifythisacademicclaimFires/root/procedure/95a23afb3a1183a246748bd4005138e1815199862d213395c74d99bceb15ce66", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenVerifythisacademicclaimFires.complete")
@@ -767,12 +767,12 @@ public struct WhenCheckthisstudyFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCheckthisstudyFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/cdf914fe45aabc75bf6ff01bdcef1772171448db875ffa007aad27853b05c1dc") {
+        if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/79a83a66823d311ea5a402822cb26f4e4b231293b7e8cdff21fa970abb91b4b9") {
             // L1
             try await runtime.wait(.event("checkThisStudy", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckthisstudyFires/root/procedure/cdf914fe45aabc75bf6ff01bdcef1772171448db875ffa007aad27853b05c1dc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckthisstudyFires/root/procedure/79a83a66823d311ea5a402822cb26f4e4b231293b7e8cdff21fa970abb91b4b9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/d352b3ae267bfd3d7019764e9cc28755edc32484fa36bb2535b4c1878735bbd3") {
+        if __meridianShouldRun("/WhenCheckthisstudyFires/root/procedure/3e9ddf75550d4236399e67d99b4b5dd9dc0a0acfa5b9bc15508eb25f8dc7d185") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkThisStudy.fired",
@@ -780,9 +780,9 @@ public struct WhenCheckthisstudyFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check this study"),
                 ],
-                step: "/WhenCheckthisstudyFires/root/procedure/d352b3ae267bfd3d7019764e9cc28755edc32484fa36bb2535b4c1878735bbd3"
+                step: "/WhenCheckthisstudyFires/root/procedure/3e9ddf75550d4236399e67d99b4b5dd9dc0a0acfa5b9bc15508eb25f8dc7d185"
             )
-            try await runtime.checkpoint(label: "/WhenCheckthisstudyFires/root/procedure/d352b3ae267bfd3d7019764e9cc28755edc32484fa36bb2535b4c1878735bbd3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckthisstudyFires/root/procedure/3e9ddf75550d4236399e67d99b4b5dd9dc0a0acfa5b9bc15508eb25f8dc7d185", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckthisstudyFires.complete")
@@ -841,12 +841,12 @@ public struct WhenAcademicverifyFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAcademicverifyFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/06dfb4d1987c781139548783a59d703b9ef82a87138f4d22dcde80ad4de94e1a") {
+        if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/b282592bf14bea743cd3bba3f0d23c3c3ca455af822f4bc5f498434a256bdf84") {
             // L1
             try await runtime.wait(.event("academicVerify", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAcademicverifyFires/root/procedure/06dfb4d1987c781139548783a59d703b9ef82a87138f4d22dcde80ad4de94e1a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAcademicverifyFires/root/procedure/b282592bf14bea743cd3bba3f0d23c3c3ca455af822f4bc5f498434a256bdf84", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/49df541b0ce1a9518295d68c23394018e7ab88f41c436c70b1b215f74c5119af") {
+        if __meridianShouldRun("/WhenAcademicverifyFires/root/procedure/e0e8f6b0ba7f4942341f9043919d6830059dbe22d44d6502033706197903d071") {
             // L1
             try await runtime.emit(
                 event: "trigger.academicVerify.fired",
@@ -854,9 +854,9 @@ public struct WhenAcademicverifyFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("academic verify"),
                 ],
-                step: "/WhenAcademicverifyFires/root/procedure/49df541b0ce1a9518295d68c23394018e7ab88f41c436c70b1b215f74c5119af"
+                step: "/WhenAcademicverifyFires/root/procedure/e0e8f6b0ba7f4942341f9043919d6830059dbe22d44d6502033706197903d071"
             )
-            try await runtime.checkpoint(label: "/WhenAcademicverifyFires/root/procedure/49df541b0ce1a9518295d68c23394018e7ab88f41c436c70b1b215f74c5119af", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAcademicverifyFires/root/procedure/e0e8f6b0ba7f4942341f9043919d6830059dbe22d44d6502033706197903d071", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAcademicverifyFires.complete")
@@ -915,12 +915,12 @@ public struct WhenValidatecitationFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenValidatecitationFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/356413618b7fda70b00316d281f5a116dce897c3a60d7cf9993746e5262f00d5") {
+        if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/3189d9b343406258141bbac900e1d79e9159db4f607f04dd5e67fbba3a62263e") {
             // L1
             try await runtime.wait(.event("validateCitation", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenValidatecitationFires/root/procedure/356413618b7fda70b00316d281f5a116dce897c3a60d7cf9993746e5262f00d5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidatecitationFires/root/procedure/3189d9b343406258141bbac900e1d79e9159db4f607f04dd5e67fbba3a62263e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/f9c1787ecd1b0cfafc28ac61b143642893c4090b5fe9db67c4c6b4fa2fac9fe4") {
+        if __meridianShouldRun("/WhenValidatecitationFires/root/procedure/d0ebabe2a4d0e7385182ce969321b6449594928cc393fd4828b8616a3b26c217") {
             // L1
             try await runtime.emit(
                 event: "trigger.validateCitation.fired",
@@ -928,9 +928,9 @@ public struct WhenValidatecitationFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("validate citation"),
                 ],
-                step: "/WhenValidatecitationFires/root/procedure/f9c1787ecd1b0cfafc28ac61b143642893c4090b5fe9db67c4c6b4fa2fac9fe4"
+                step: "/WhenValidatecitationFires/root/procedure/d0ebabe2a4d0e7385182ce969321b6449594928cc393fd4828b8616a3b26c217"
             )
-            try await runtime.checkpoint(label: "/WhenValidatecitationFires/root/procedure/f9c1787ecd1b0cfafc28ac61b143642893c4090b5fe9db67c4c6b4fa2fac9fe4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidatecitationFires/root/procedure/d0ebabe2a4d0e7385182ce969321b6449594928cc393fd4828b8616a3b26c217", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenValidatecitationFires.complete")
@@ -989,12 +989,12 @@ public struct WhenIsthisstudyrealFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIsthisstudyrealFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/04dd15078bf3189eeb44d6dd11ff001b67c05bbf4839ef10c68b5f6916951e55") {
+        if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/9d2ef0e0e672fb7ced1dffe638a8d415b6a6e3dcfd3fcc7f39a7d6c3ddb004f2") {
             // L1
             try await runtime.wait(.event("isThisStudyReal", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIsthisstudyrealFires/root/procedure/04dd15078bf3189eeb44d6dd11ff001b67c05bbf4839ef10c68b5f6916951e55", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsthisstudyrealFires/root/procedure/9d2ef0e0e672fb7ced1dffe638a8d415b6a6e3dcfd3fcc7f39a7d6c3ddb004f2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/4668c1bdddcde98b781be608c3abca0e5dc124d036521991550f16638f65be55") {
+        if __meridianShouldRun("/WhenIsthisstudyrealFires/root/procedure/3e0a858b46c56c7207a68519be4e9cdd4c8701a6febcf05b28de8569fcd12033") {
             // L1
             try await runtime.emit(
                 event: "trigger.isThisStudyReal.fired",
@@ -1002,9 +1002,9 @@ public struct WhenIsthisstudyrealFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("is this study real"),
                 ],
-                step: "/WhenIsthisstudyrealFires/root/procedure/4668c1bdddcde98b781be608c3abca0e5dc124d036521991550f16638f65be55"
+                step: "/WhenIsthisstudyrealFires/root/procedure/3e0a858b46c56c7207a68519be4e9cdd4c8701a6febcf05b28de8569fcd12033"
             )
-            try await runtime.checkpoint(label: "/WhenIsthisstudyrealFires/root/procedure/4668c1bdddcde98b781be608c3abca0e5dc124d036521991550f16638f65be55", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsthisstudyrealFires/root/procedure/3e0a858b46c56c7207a68519be4e9cdd4c8701a6febcf05b28de8569fcd12033", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIsthisstudyrealFires.complete")
@@ -1063,12 +1063,12 @@ public struct WhenRetractionwatchFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRetractionwatchFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/ced5a07a41b7e7b0d003ae633b178d2a015c152d2992fd5503eeda6f3103538f") {
+        if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/b5deb817099bfb954b199bb799cc3da7da0ffd497a7605ee7a3b08c6f77f7550") {
             // L1
             try await runtime.wait(.event("retractionWatch", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRetractionwatchFires/root/procedure/ced5a07a41b7e7b0d003ae633b178d2a015c152d2992fd5503eeda6f3103538f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetractionwatchFires/root/procedure/b5deb817099bfb954b199bb799cc3da7da0ffd497a7605ee7a3b08c6f77f7550", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/7a1e9b829006f14543096ef7cf12b6bfc846aae440a94f4dd49cfd7c33bbdbc4") {
+        if __meridianShouldRun("/WhenRetractionwatchFires/root/procedure/a1f45e20efc008cf6ad763d47eec905dc7d9bb5260ccfb97c0867f08186a835c") {
             // L1
             try await runtime.emit(
                 event: "trigger.retractionWatch.fired",
@@ -1076,9 +1076,9 @@ public struct WhenRetractionwatchFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("Retraction Watch"),
                 ],
-                step: "/WhenRetractionwatchFires/root/procedure/7a1e9b829006f14543096ef7cf12b6bfc846aae440a94f4dd49cfd7c33bbdbc4"
+                step: "/WhenRetractionwatchFires/root/procedure/a1f45e20efc008cf6ad763d47eec905dc7d9bb5260ccfb97c0867f08186a835c"
             )
-            try await runtime.checkpoint(label: "/WhenRetractionwatchFires/root/procedure/7a1e9b829006f14543096ef7cf12b6bfc846aae440a94f4dd49cfd7c33bbdbc4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetractionwatchFires/root/procedure/a1f45e20efc008cf6ad763d47eec905dc7d9bb5260ccfb97c0867f08186a835c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRetractionwatchFires.complete")

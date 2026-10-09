@@ -1384,7 +1384,7 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "cold-start a input",
       "step_paths" : [
-        "\/ColdStartInput\/phase-0-clawvisor-setup-required-for-api-access-steps-5\/procedure\/53279ecf0ba92fe1c35cb83ba4cd16056cc9a79c481e7a09e9a72a53c4a1dc89"
+        "\/ColdStartInput\/phase-0-clawvisor-setup-required-for-api-access-steps-5\/procedure\/93b4bf8cae6fc4fd1389f34d280a9aa9a2d92fb59572a37b12f25edca64b703f"
       ],
       "swift_struct" : "ColdStartInput"
     },
@@ -1397,8 +1397,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when coldStart fires",
       "step_paths" : [
-        "\/WhenColdstartFires\/root\/procedure\/a25d9bb063dfa2232602038a8a53152bcb7d5a1e24a1b4fda440a6a22811b542",
-        "\/WhenColdstartFires\/root\/procedure\/c65ecc8c6661bbb51cc4f8213c02162d4c5e496995cb3f2dd38c152a3f4a69a1"
+        "\/WhenColdstartFires\/root\/procedure\/56ffa7e0fe21cf9db768a17c205e9e38c1197c923dc94fed3594fdf8b5303a27",
+        "\/WhenColdstartFires\/root\/procedure\/d9090a2b82c61d237922523902d0c8cd1faf565b2191c23d98cdc86e87fc5a4d"
       ],
       "swift_struct" : "WhenColdstartFires"
     },
@@ -1411,8 +1411,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when fillMyBrain fires",
       "step_paths" : [
-        "\/WhenFillmybrainFires\/root\/procedure\/9524d8bfa25f5378d749889f6af33106ee7139e0388783837634f10d66832632",
-        "\/WhenFillmybrainFires\/root\/procedure\/f8de529f6e36a5832c9ef7d31e3d2244b96e8d702c41e0c388ef327d875451f2"
+        "\/WhenFillmybrainFires\/root\/procedure\/21a55607b48b1b599cf5e401364cef9ed6bfca96bce8c68650b324fc3448bfa1",
+        "\/WhenFillmybrainFires\/root\/procedure\/685acce72f25c3d312e94b7555f89d76c777e7476f70675c6c0221365afb2a1d"
       ],
       "swift_struct" : "WhenFillmybrainFires"
     },
@@ -1425,8 +1425,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when bootstrapBrain fires",
       "step_paths" : [
-        "\/WhenBootstrapbrainFires\/root\/procedure\/743aa91791a7a43a7c31268774ddfdd0c8089cfac05cd778f72ac89bde8ec3e6",
-        "\/WhenBootstrapbrainFires\/root\/procedure\/baab8a9218376f40cb35cb66f4f96a9f7f05bfc4613a0895e13e7b5c22d33c99"
+        "\/WhenBootstrapbrainFires\/root\/procedure\/002b09f983f7dbe1726671f9dc8f6b0264b987afaa6532a91141856be0ee9a02",
+        "\/WhenBootstrapbrainFires\/root\/procedure\/38fb5243db188b250227560e20d139d5037f96fc4e8b5c391d81f6648df1193e"
       ],
       "swift_struct" : "WhenBootstrapbrainFires"
     },
@@ -1439,8 +1439,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when importMyData fires",
       "step_paths" : [
-        "\/WhenImportmydataFires\/root\/procedure\/087dda6124e14e59bcea2f377ff43a18e9457a3219a902286fa8853edc79dca0",
-        "\/WhenImportmydataFires\/root\/procedure\/4a371bdbcf4c803af5d9c38549492aeddfb04aff9b8e5dc98024016bacbd9225"
+        "\/WhenImportmydataFires\/root\/procedure\/3ca6244af38a332b8619ee92df36748ce58dbcb67cb080d45062f804783c165f",
+        "\/WhenImportmydataFires\/root\/procedure\/8543f3e472440b007a4400cda63e347e73d209466d71bc63cf0202689fd8922d"
       ],
       "swift_struct" : "WhenImportmydataFires"
     },
@@ -1453,8 +1453,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when dayOne fires",
       "step_paths" : [
-        "\/WhenDayoneFires\/root\/procedure\/50d972170701f338676c01a3a82261cb40bbf9855a546864e1e2227f7f992b41",
-        "\/WhenDayoneFires\/root\/procedure\/ca32ed6661059d47282bf8d0e6d1983080aecc6df87dce5f6e6685ad3039453c"
+        "\/WhenDayoneFires\/root\/procedure\/bf359ced21bf66eecb904ffe3ba5543038793ca3e7ea66eefa27a52eea713248",
+        "\/WhenDayoneFires\/root\/procedure\/e8946f98aab331afc3b0efa5ec54e9937bdedd517a9ee7dc416db8276bbbc99a"
       ],
       "swift_struct" : "WhenDayoneFires"
     },
@@ -1467,8 +1467,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when getStarted fires",
       "step_paths" : [
-        "\/WhenGetstartedFires\/root\/procedure\/b379a9b61dd1a5e215084593794ecfa168f641799a34339a05f6ff1ab170a561",
-        "\/WhenGetstartedFires\/root\/procedure\/bd28b8c6eabd11f30995ba212d8ea38a3b01a632b6b99292f0124aa4f0bac7f2"
+        "\/WhenGetstartedFires\/root\/procedure\/11cd0451bf14ec1a4263f0d56709cda469921ae4b2cc1ed13508f3adee26bb17",
+        "\/WhenGetstartedFires\/root\/procedure\/cdbeac169a9bc6fad1bbbdbb15c65c7ac0cb1d88a3e1bd32a00da07281599c67"
       ],
       "swift_struct" : "WhenGetstartedFires"
     },
@@ -1481,8 +1481,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when whatShouldIImportFirst fires",
       "step_paths" : [
-        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/617be1ca2aac2db5f448510bc7920344bc4488b040b25b92cd13ad3a5eee411a",
-        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/ddd77ae311666737d5bd2679bf6fbb71f8820b93e80dc4d67dcb696d347f9a90"
+        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/71c6224f48ea8e47a61e0f3dabee556550be73c60eef9db629d9730d0e2052e8",
+        "\/WhenWhatshouldiimportfirstFires\/root\/procedure\/853b0b8b7062352248c5cc61a8c566cb1d24e9d5b13e09511889b605a81e5c50"
       ],
       "swift_struct" : "WhenWhatshouldiimportfirstFires"
     },
@@ -1495,8 +1495,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when populateBrain fires",
       "step_paths" : [
-        "\/WhenPopulatebrainFires\/root\/procedure\/9fb0a0368a9021dd5da92c903cc9e6ffde2aae401fb08a0b20287694c5776aa1",
-        "\/WhenPopulatebrainFires\/root\/procedure\/b5d7e5240c2c730c313253b0b36e171de9b659fb083f1ca7d3de475bbf48bc4f"
+        "\/WhenPopulatebrainFires\/root\/procedure\/add3f4ac586ed69fcb922933e1e7c5c88f666c91c82c38c8a5421809eb611932",
+        "\/WhenPopulatebrainFires\/root\/procedure\/ec89e70938f5bfe51d77df35e2d54de8854c2831d6b43a8cb388aae621cf012f"
       ],
       "swift_struct" : "WhenPopulatebrainFires"
     },
@@ -1509,8 +1509,8 @@
       "skill_version_hash" : "391ef5ebbf693579e7768b2a30b7c756d37c7c070b77eca3e55b775fc436576d",
       "source_name" : "when nowWhat fires",
       "step_paths" : [
-        "\/WhenNowwhatFires\/root\/procedure\/321fd8b22a5282e6c387b7c48f3de341e43a5343d00cab7fd2f2beb9e7e615e9",
-        "\/WhenNowwhatFires\/root\/procedure\/b28e38b5e2627a33e66ba6cc4233a6468707720b89b486a9f6fb9c917d7fb836"
+        "\/WhenNowwhatFires\/root\/procedure\/92aa6e29bb76dde3c504ce4534f41e48619eff1000592b48f41d43cc8c887a14",
+        "\/WhenNowwhatFires\/root\/procedure\/c8fca8ae5b7b30f726a9e3f66300e55fca8462b10eddb700771cc6bd3466c553"
       ],
       "swift_struct" : "WhenNowwhatFires"
     }

@@ -218,7 +218,7 @@ public struct ChooseNextAction: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["approvePR", "commitFix", "getCIStatus", "getConflicts", "listPRComments", "mergePR", "pushBranch", "requestChanges", "resolveComment", "syncBranch"],
             outputKind: "record",
-            step: "/ChooseNextAction/root/procedure/0415c3228ea09be079e4526abf6a916bc4bd016e9b01aeb865524888d149bd23"
+            step: "/ChooseNextAction/root/procedure/07f7b09e08e29d4f76bc2b58c722bddb82bf8866011cd5f18678dc97da45e4c3"
         )
         for (__key, __value) in __meridianProseResults_L9 {
             state.bind(__key, __value)
@@ -289,7 +289,7 @@ public struct ContinueAcrossHosts: MeridianWorkflow {
             maxSteps: 32,
             replanAfterFailures: 3,
             outputKind: "record",
-            step: "/ContinueAcrossHosts/root/procedure/e4dec469b31b791aab13ea18d8e8f8fea0bca66b4f0ad103329ed9ef287d10c1"
+            step: "/ContinueAcrossHosts/root/procedure/7726fa9a71f5150eed103c9561186fb38d82bfaadb9f6107915d3225cf2732f2"
         )
         for (__key, __value) in __meridianProseResults_L12 {
             state.bind(__key, __value)

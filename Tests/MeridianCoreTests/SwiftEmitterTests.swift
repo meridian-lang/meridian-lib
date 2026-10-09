@@ -143,7 +143,7 @@ struct Wave3QueryPlanGoldenTests {
                 .comparison(.propertyAccess(.identifierRef(name: "page"), propertyName: "owner"),
                             .identifies, .identifierRef(name: "user"))
             ],
-            sort: (path: "updatedAt", ascending: false),
+            sort: IRSortSpec(path: "updatedAt", ascending: false),
             take: 3
         )
         let expected = #"""

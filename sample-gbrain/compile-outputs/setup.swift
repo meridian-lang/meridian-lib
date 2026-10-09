@@ -622,20 +622,20 @@ public struct SetupInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SetupInput", parameters: [:])
 
-        if __meridianShouldRun("/SetupInput/install-if-not-already-installed/procedure/c9d0de353c9fdefffdd48b19f1c15fa29b7585c3f8b10a37f8336dbfafb82195") {
+        if __meridianShouldRun("/SetupInput/install-if-not-already-installed/procedure/28384cee5c90089ddd997ee06b6217455da736821e6e1d9b433a8cdcc7bc3aaa") {
             // L30
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("bun add github:garrytan/gbrain"),
                 ],
-                step: "/SetupInput/install-if-not-already-installed/procedure/c9d0de353c9fdefffdd48b19f1c15fa29b7585c3f8b10a37f8336dbfafb82195",
+                step: "/SetupInput/install-if-not-already-installed/procedure/28384cee5c90089ddd997ee06b6217455da736821e6e1d9b433a8cdcc7bc3aaa",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/install-if-not-already-installed/procedure/c9d0de353c9fdefffdd48b19f1c15fa29b7585c3f8b10a37f8336dbfafb82195", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/install-if-not-already-installed/procedure/28384cee5c90089ddd997ee06b6217455da736821e6e1d9b433a8cdcc7bc3aaa", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393") {
+        if __meridianShouldRun("/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2") {
             // L211
             // Verify
             _ = try await runtime.invoke(
@@ -643,13 +643,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain doctor --json"),
                 ],
-                step: "/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+                step: "/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-a-supabase-setup-recommended-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/44f739675166fe4fd5201854635c45cc78ea1100042382f6fedccd341901ed10") {
+        if __meridianShouldRun("/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/2608e27fab95282e04a64a455bddf02ec9e36b75adc86633acad7ef6e4795426") {
             // L225
             // Run
             _ = try await runtime.invoke(
@@ -657,13 +657,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain init --non-interactive --url \"<connection_string>\""),
                 ],
-                step: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/44f739675166fe4fd5201854635c45cc78ea1100042382f6fedccd341901ed10",
+                step: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/2608e27fab95282e04a64a455bddf02ec9e36b75adc86633acad7ef6e4795426",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/44f739675166fe4fd5201854635c45cc78ea1100042382f6fedccd341901ed10", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/2608e27fab95282e04a64a455bddf02ec9e36b75adc86633acad7ef6e4795426", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393") {
+        if __meridianShouldRun("/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2") {
             // L226
             // Verify
             _ = try await runtime.invoke(
@@ -671,169 +671,169 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain doctor --json"),
                 ],
-                step: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+                step: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-b-byo-postgres-alternative-steps/procedure/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/9c7ddb0c5820bcc4e267d528a888e767bfddb3e7ca0241ce03e4a67751c35338") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/392d25791152ccbc7da15bb51f31f0e09ec1d00bf433ae9a6aa384b1a54bd836") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"=== GBrain Environment Discovery ===\""),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/9c7ddb0c5820bcc4e267d528a888e767bfddb3e7ca0241ce03e4a67751c35338",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/392d25791152ccbc7da15bb51f31f0e09ec1d00bf433ae9a6aa384b1a54bd836",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/9c7ddb0c5820bcc4e267d528a888e767bfddb3e7ca0241ce03e4a67751c35338", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/392d25791152ccbc7da15bb51f31f0e09ec1d00bf433ae9a6aa384b1a54bd836", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/01a114ece9994b18315da1f264651b9254079e1bed81f0d9fa0c68e0a69233c0") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/b0a134b1b6b0d3aeabc14ae3bac6fd764f3f488180462cfe1995fb3112e98a15") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("for dir in /data/* ~/git/* ~/Documents/* 2>/dev/null; do"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/01a114ece9994b18315da1f264651b9254079e1bed81f0d9fa0c68e0a69233c0",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/b0a134b1b6b0d3aeabc14ae3bac6fd764f3f488180462cfe1995fb3112e98a15",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/01a114ece9994b18315da1f264651b9254079e1bed81f0d9fa0c68e0a69233c0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/b0a134b1b6b0d3aeabc14ae3bac6fd764f3f488180462cfe1995fb3112e98a15", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/ff1bd1f3be2b4aa1fdd031b70d19c34024e7205f3d0043613234e11462834ec5") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/28b251166e4a24d072afadc8dd22b5d37b509cfe19c083931c4c65285f34c97a") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("if [ -d \"$dir/.git\" ]; then"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/ff1bd1f3be2b4aa1fdd031b70d19c34024e7205f3d0043613234e11462834ec5",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/28b251166e4a24d072afadc8dd22b5d37b509cfe19c083931c4c65285f34c97a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/ff1bd1f3be2b4aa1fdd031b70d19c34024e7205f3d0043613234e11462834ec5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/28b251166e4a24d072afadc8dd22b5d37b509cfe19c083931c4c65285f34c97a", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/d57a7d258d0a98ce512d3b160b5918f5131da316aa08206ad9d02d33626bdce9") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/e53b5910b9512c50035cdf180fe47b240611e1ef067d9a2d55daa12560163667") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*/node_modules/*\" -not -path \"*/.git/*\" 2>/dev/null | wc -l | tr -d ' ')"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/d57a7d258d0a98ce512d3b160b5918f5131da316aa08206ad9d02d33626bdce9",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/e53b5910b9512c50035cdf180fe47b240611e1ef067d9a2d55daa12560163667",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/d57a7d258d0a98ce512d3b160b5918f5131da316aa08206ad9d02d33626bdce9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/e53b5910b9512c50035cdf180fe47b240611e1ef067d9a2d55daa12560163667", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/b0d7d39ec192d953bd6fd68ac302ccbc5b9f2ede1e4410b102a3fc268761dd91") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/781000b69e9fa2ceef79da96180dc20e7d3681ca836435425d4b00189957952f") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("if [ \"$md_count\" -gt 10 ]; then"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/b0d7d39ec192d953bd6fd68ac302ccbc5b9f2ede1e4410b102a3fc268761dd91",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/781000b69e9fa2ceef79da96180dc20e7d3681ca836435425d4b00189957952f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/b0d7d39ec192d953bd6fd68ac302ccbc5b9f2ede1e4410b102a3fc268761dd91", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/781000b69e9fa2ceef79da96180dc20e7d3681ca836435425d4b00189957952f", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/2fa52f125888cbae630fcd1dc74f513e1ce1a111e61abe5b7a01da2a43d56781") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/680449542d34dff5d37d26197605476c1ec876e7d9343c61a6d9fe17c6acc9e4") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("total_size=$(du -sh \"$dir\" 2>/dev/null | cut -f1)"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/2fa52f125888cbae630fcd1dc74f513e1ce1a111e61abe5b7a01da2a43d56781",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/680449542d34dff5d37d26197605476c1ec876e7d9343c61a6d9fe17c6acc9e4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/2fa52f125888cbae630fcd1dc74f513e1ce1a111e61abe5b7a01da2a43d56781", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/680449542d34dff5d37d26197605476c1ec876e7d9343c61a6d9fe17c6acc9e4", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/2b43417af25b94545056b196b64fb702f66571c52592efcfa57d86919f34c277") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/91451549fc8dffc205811f478378ed615babb12342190c9c5e338277001d174e") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"  $dir ($total_size, $md_count .md files)\""),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/2b43417af25b94545056b196b64fb702f66571c52592efcfa57d86919f34c277",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/91451549fc8dffc205811f478378ed615babb12342190c9c5e338277001d174e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/2b43417af25b94545056b196b64fb702f66571c52592efcfa57d86919f34c277", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/91451549fc8dffc205811f478378ed615babb12342190c9c5e338277001d174e", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fi"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fi"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("done"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/20cb1fcd223571f9acba80ea738dcbb60bd05e60eeb5a029c9bd9d4a9c6dd022") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/495f541f4ad8adabda3ed798ded7ca1c6c7fd80e8da6080f77031380f8a3fe07") {
             // L254
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"=== Discovery Complete ===\""),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/20cb1fcd223571f9acba80ea738dcbb60bd05e60eeb5a029c9bd9d4a9c6dd022",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/495f541f4ad8adabda3ed798ded7ca1c6c7fd80e8da6080f77031380f8a3fe07",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/20cb1fcd223571f9acba80ea738dcbb60bd05e60eeb5a029c9bd9d4a9c6dd022", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/495f541f4ad8adabda3ed798ded7ca1c6c7fd80e8da6080f77031380f8a3fe07", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/552f522a8dcb7fb28320cdf1cec6d3772fae3652daab27146afd31ed930306a1") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/9555530e48f8f1a20de5345a040a06abb9dc7849a688749eed74b080713239b7") {
             // L270
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("nohup gbrain import <dir> --no-embed --workers 4 > /tmp/gbrain-import.log 2>&1 &"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/552f522a8dcb7fb28320cdf1cec6d3772fae3652daab27146afd31ed930306a1",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/9555530e48f8f1a20de5345a040a06abb9dc7849a688749eed74b080713239b7",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/552f522a8dcb7fb28320cdf1cec6d3772fae3652daab27146afd31ed930306a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/9555530e48f8f1a20de5345a040a06abb9dc7849a688749eed74b080713239b7", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/f33233743181a1cd8288d98229fbb83674eecb3b807336f59a829dfa94475025") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/1b8acc8ec7dcff3651e6ffe9ed9e2e7acecb67daa85e556db2bdf0a22f739634") {
             // L273
             // Then check progress
             _ = try await runtime.invoke(
@@ -841,65 +841,65 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("tail -1 /tmp/gbrain-import.log"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/f33233743181a1cd8288d98229fbb83674eecb3b807336f59a829dfa94475025",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/1b8acc8ec7dcff3651e6ffe9ed9e2e7acecb67daa85e556db2bdf0a22f739634",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/f33233743181a1cd8288d98229fbb83674eecb3b807336f59a829dfa94475025", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/1b8acc8ec7dcff3651e6ffe9ed9e2e7acecb67daa85e556db2bdf0a22f739634", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/fd4b81c4fc69c61c2003afd9dd5a9af453b53f73ae5d319c5baf109db7015963") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/3006702646182694af8770efc8137dbf0ad6b802ed9ad0419e18e2f36133b3db") {
             // L276
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain import <dir> --no-embed"),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/fd4b81c4fc69c61c2003afd9dd5a9af453b53f73ae5d319c5baf109db7015963",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/3006702646182694af8770efc8137dbf0ad6b802ed9ad0419e18e2f36133b3db",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/fd4b81c4fc69c61c2003afd9dd5a9af453b53f73ae5d319c5baf109db7015963", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/3006702646182694af8770efc8137dbf0ad6b802ed9ad0419e18e2f36133b3db", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/79524e4a7312853d17a8e7ac3d02f6e6767f27db47bd9b7d4c491002a5686176") {
+        if __meridianShouldRun("/SetupInput/phase-c-first-import-steps/procedure/883f1345df5b12c02faa187fc215d8d908151420283dbca8608a2d43b004ccaf") {
             // L281
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain search \"<topic from the imported data>\""),
                 ],
-                step: "/SetupInput/phase-c-first-import-steps/procedure/79524e4a7312853d17a8e7ac3d02f6e6767f27db47bd9b7d4c491002a5686176",
+                step: "/SetupInput/phase-c-first-import-steps/procedure/883f1345df5b12c02faa187fc215d8d908151420283dbca8608a2d43b004ccaf",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/79524e4a7312853d17a8e7ac3d02f6e6767f27db47bd9b7d4c491002a5686176", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-first-import-steps/procedure/883f1345df5b12c02faa187fc215d8d908151420283dbca8608a2d43b004ccaf", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/b32fb9d8467b863a1d028708d51dff6c3098b4ba7dec84e9d17c866370bb2507") {
+        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/20ff3312ffa67d22127b404d70fbc1436647986e2215bb7a2224a52aa96f3769") {
             // L341
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain apply-migrations --yes       # applies any pending migrations; idempotent on healthy installs"),
                 ],
-                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/b32fb9d8467b863a1d028708d51dff6c3098b4ba7dec84e9d17c866370bb2507",
+                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/20ff3312ffa67d22127b404d70fbc1436647986e2215bb7a2224a52aa96f3769",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/b32fb9d8467b863a1d028708d51dff6c3098b4ba7dec84e9d17c866370bb2507", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/20ff3312ffa67d22127b404d70fbc1436647986e2215bb7a2224a52aa96f3769", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/f4bb6e90ca29ac8513f974277e658d30c349568d59e5f3b768594210098a33f3") {
+        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/3367e3f4b20a83800b780c3cb6670ea3d2c6dd90475e30595a0c8a016476014c") {
             // L341
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain autopilot --install          # supervises itself + forks the Minions worker; env-aware"),
                 ],
-                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/f4bb6e90ca29ac8513f974277e658d30c349568d59e5f3b768594210098a33f3",
+                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/3367e3f4b20a83800b780c3cb6670ea3d2c6dd90475e30595a0c8a016476014c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/f4bb6e90ca29ac8513f974277e658d30c349568d59e5f3b768594210098a33f3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/3367e3f4b20a83800b780c3cb6670ea3d2c6dd90475e30595a0c8a016476014c", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/5b9dd78367b6c698e762d830d98924d4ee3331fe4167515d94a1e6856b1731a7") {
+        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/81475be66f6958bf6a7702b6865c75f3da394493641e020ad073410d7709763f") {
             // L346
             // What  does
             _ = try await runtime.invoke(
@@ -907,13 +907,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain autopilot --install"),
                 ],
-                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/5b9dd78367b6c698e762d830d98924d4ee3331fe4167515d94a1e6856b1731a7",
+                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/81475be66f6958bf6a7702b6865c75f3da394493641e020ad073410d7709763f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/5b9dd78367b6c698e762d830d98924d4ee3331fe4167515d94a1e6856b1731a7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/81475be66f6958bf6a7702b6865c75f3da394493641e020ad073410d7709763f", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/63da4e7c7ffb0fa1fad5c61753969253524b3baa2b9d6c91fd4fde8fd8e94ac2") {
+        if __meridianShouldRun("/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/1bdd815f812e5793a44e93971266e338a72b0f264721a0f613573d179ddb7fe8") {
             // L348
             // On macOS: writes a launchd plist at
             _ = try await runtime.invoke(
@@ -921,11 +921,11 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("~/Library/LaunchAgents/com.gbrain.autopilot.plist"),
                 ],
-                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/63da4e7c7ffb0fa1fad5c61753969253524b3baa2b9d6c91fd4fde8fd8e94ac2",
+                step: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/1bdd815f812e5793a44e93971266e338a72b0f264721a0f613573d179ddb7fe8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/63da4e7c7ffb0fa1fad5c61753969253524b3baa2b9d6c91fd4fde8fd8e94ac2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps/procedure/1bdd815f812e5793a44e93971266e338a72b0f264721a0f613573d179ddb7fe8", state: state.snapshot())
         }
         // L373
         let __meridianProseResults_L373 = try await runtime.executeProsePlan(
@@ -933,12 +933,12 @@ public struct SetupInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_stats", "health.get", "page.get", "page.search", "publish", "put_page", "shell.run", "sync_brain"],
             outputKind: "record",
-            step: "/SetupInput/before-grep-vs-after-gbrain-steps/procedure/d5b7e8ff1cddcab94eed068681b48978943b565805f9bc1b56c0af8c233f35bd"
+            step: "/SetupInput/before-grep-vs-after-gbrain-steps/procedure/f1b23454ce22788c73ed7677472851a9becceac9fa336357c5e1a29baa38c4f4"
         )
         for (__key, __value) in __meridianProseResults_L373 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d") {
+        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/c4d65edc4ccf35c833acd03a908b4905891e4316797a028071965d8d8d12379a") {
             // L389
             // keyword match, fast, works without embeddings
             _ = try await runtime.invoke(
@@ -946,13 +946,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain search \"name\""),
                 ],
-                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d",
+                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/c4d65edc4ccf35c833acd03a908b4905891e4316797a028071965d8d8d12379a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/c4d65edc4ccf35c833acd03a908b4905891e4316797a028071965d8d8d12379a", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/b1e39976ff9c9385adbd19e9cf9a46052cf0c7750b1260e6b8e973703651d629") {
+        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/206044923b2fef6e497842ae2314de78198343ca448a4385b6c1fa5fdee1d04f") {
             // L390
             // hybrid search, needs embeddings
             _ = try await runtime.invoke(
@@ -960,13 +960,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain query \"what do we know about name\""),
                 ],
-                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/b1e39976ff9c9385adbd19e9cf9a46052cf0c7750b1260e6b8e973703651d629",
+                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/206044923b2fef6e497842ae2314de78198343ca448a4385b6c1fa5fdee1d04f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/b1e39976ff9c9385adbd19e9cf9a46052cf0c7750b1260e6b8e973703651d629", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/206044923b2fef6e497842ae2314de78198343ca448a4385b6c1fa5fdee1d04f", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8") {
+        if __meridianShouldRun("/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/d97696cc98ef3c25009619afff76bc12d40f544bf66109b6ceb9516e1ca60c49") {
             // L391
             // direct page read when you know the slug from steps 1-2
             _ = try await runtime.invoke(
@@ -974,26 +974,26 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain get <slug>"),
                 ],
-                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8",
+                step: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/d97696cc98ef3c25009619afff76bc12d40f544bf66109b6ceb9516e1ca60c49",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/lookup-sequence-mandatory-for-every-entity-question-steps/procedure/d97696cc98ef3c25009619afff76bc12d40f544bf66109b6ceb9516e1ca60c49", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/sync-after-write-rule-steps/procedure/14e55c8caf8b584a3bb9ffb0cdf7aa84d85c0e886c05d900f8f653899d1ee559") {
+        if __meridianShouldRun("/SetupInput/sync-after-write-rule-steps/procedure/2a6db48b7ebfa14e40900e74d1839b6e631a41f30d3e6cf9be1b67f58e399430") {
             // L401
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain sync --no-pull --no-embed"),
                 ],
-                step: "/SetupInput/sync-after-write-rule-steps/procedure/14e55c8caf8b584a3bb9ffb0cdf7aa84d85c0e886c05d900f8f653899d1ee559",
+                step: "/SetupInput/sync-after-write-rule-steps/procedure/2a6db48b7ebfa14e40900e74d1839b6e631a41f30d3e6cf9be1b67f58e399430",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/sync-after-write-rule-steps/procedure/14e55c8caf8b584a3bb9ffb0cdf7aa84d85c0e886c05d900f8f653899d1ee559", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/sync-after-write-rule-steps/procedure/2a6db48b7ebfa14e40900e74d1839b6e631a41f30d3e6cf9be1b67f58e399430", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/sync-after-write-rule-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b") {
+        if __meridianShouldRun("/SetupInput/sync-after-write-rule-steps-2/procedure/5b2bd8f5f24805b17541fd5e3d085339de06a1d7e5a67315b97b47a399fa54ec") {
             // L408
             // Embeddings can be refreshed later in batch ()
             _ = try await runtime.invoke(
@@ -1001,11 +1001,11 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain embed --stale"),
                 ],
-                step: "/SetupInput/sync-after-write-rule-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b",
+                step: "/SetupInput/sync-after-write-rule-steps-2/procedure/5b2bd8f5f24805b17541fd5e3d085339de06a1d7e5a67315b97b47a399fa54ec",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/sync-after-write-rule-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/sync-after-write-rule-steps-2/procedure/5b2bd8f5f24805b17541fd5e3d085339de06a1d7e5a67315b97b47a399fa54ec", state: state.snapshot())
         }
         // L419
         let __meridianProseResults_L419 = try await runtime.executeProsePlan(
@@ -1013,12 +1013,12 @@ public struct SetupInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_stats", "health.get", "page.get", "page.search", "publish", "put_page", "shell.run", "sync_brain"],
             outputKind: "record",
-            step: "/SetupInput/gbrain-vs-memory-search-steps/procedure/cc15b63d92e0a9d97b8b203188b6861d11c711f3a69a19f2e277187280dea5f3"
+            step: "/SetupInput/gbrain-vs-memory-search-steps/procedure/92f331f431700edeeb840e60dda74a65cfff166f76bcc5239738b0d7ed02a63a"
         )
         for (__key, __value) in __meridianProseResults_L419 {
             state.bind(__key, __value)
         }
-        if __meridianShouldRun("/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf") {
+        if __meridianShouldRun("/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/34f06ef71392e3c9bdb6ab5dc899d7afe137423e56ea09c809fafda4b9c15b52") {
             // L473
             // Source attribution (Section 7): every fact needs
             _ = try await runtime.invoke(
@@ -1026,13 +1026,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("[Source: ...]"),
                 ],
-                step: "/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+                step: "/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/34f06ef71392e3c9bdb6ab5dc899d7afe137423e56ea09c809fafda4b9c15b52",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-e-load-the-production-agent-guide-steps-2/procedure/34f06ef71392e3c9bdb6ab5dc899d7afe137423e56ea09c809fafda4b9c15b52", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-f-health-check-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393") {
+        if __meridianShouldRun("/SetupInput/phase-f-health-check-steps/procedure/4f8261c295b4726fce85bbfe631db44a1598f153e6e35e6364f13c7348d4522e") {
             // L483
             // Run  and report the results. Every check should be OK
             _ = try await runtime.invoke(
@@ -1040,13 +1040,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain doctor --json"),
                 ],
-                step: "/SetupInput/phase-f-health-check-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+                step: "/SetupInput/phase-f-health-check-steps/procedure/4f8261c295b4726fce85bbfe631db44a1598f153e6e35e6364f13c7348d4522e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-f-health-check-steps/procedure/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-f-health-check-steps/procedure/4f8261c295b4726fce85bbfe631db44a1598f153e6e35e6364f13c7348d4522e", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/543ca489dbbd95b173bcaaca4bd241e6467f1b26371d8cf60ddfa6d7c44e0769") {
+        if __meridianShouldRun("/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/51dbba5cd91867fcb8584d80d7fad6992a18b1cc4c16edc64a76927cfa66dae4") {
             // L546
             // Read  Section 18 for the full reference. Key points
             _ = try await runtime.invoke(
@@ -1054,13 +1054,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("docs/GBRAIN_SKILLPACK.md"),
                 ],
-                step: "/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/543ca489dbbd95b173bcaaca4bd241e6467f1b26371d8cf60ddfa6d7c44e0769",
+                step: "/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/51dbba5cd91867fcb8584d80d7fad6992a18b1cc4c16edc64a76927cfa66dae4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/543ca489dbbd95b173bcaaca4bd241e6467f1b26371d8cf60ddfa6d7c44e0769", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-h-live-sync-setup-must-add-steps/procedure/51dbba5cd91867fcb8584d80d7fad6992a18b1cc4c16edc64a76927cfa66dae4", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/phase-i-full-verification-steps/procedure/728286170200bdef80f82c9a071db30de024706860bb9a6b743c894ac552c957") {
+        if __meridianShouldRun("/SetupInput/phase-i-full-verification-steps/procedure/f303e40483302352ad296175560f6cbf87aec869bbd8bacb7b8f074ec70650ff") {
             // L588
             // Read
             _ = try await runtime.invoke(
@@ -1068,13 +1068,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("docs/GBRAIN_VERIFY.md"),
                 ],
-                step: "/SetupInput/phase-i-full-verification-steps/procedure/728286170200bdef80f82c9a071db30de024706860bb9a6b743c894ac552c957",
+                step: "/SetupInput/phase-i-full-verification-steps/procedure/f303e40483302352ad296175560f6cbf87aec869bbd8bacb7b8f074ec70650ff",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/phase-i-full-verification-steps/procedure/728286170200bdef80f82c9a071db30de024706860bb9a6b743c894ac552c957", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/phase-i-full-verification-steps/procedure/f303e40483302352ad296175560f6cbf87aec869bbd8bacb7b8f074ec70650ff", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/668ade1e96bd1e787ec4b54f514a335c13ff452a0746f5c7595028a3621d4294") {
+        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/90d03748b52abbc530f01ad04dd8e488515f682d90f30a517ce075216c074a53") {
             // L642
             // : directories the user created
             _ = try await runtime.invoke(
@@ -1082,13 +1082,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("schema_choices.adopted"),
                 ],
-                step: "/SetupInput/schema-state-tracking-steps-2/procedure/668ade1e96bd1e787ec4b54f514a335c13ff452a0746f5c7595028a3621d4294",
+                step: "/SetupInput/schema-state-tracking-steps-2/procedure/90d03748b52abbc530f01ad04dd8e488515f682d90f30a517ce075216c074a53",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/668ade1e96bd1e787ec4b54f514a335c13ff452a0746f5c7595028a3621d4294", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/90d03748b52abbc530f01ad04dd8e488515f682d90f30a517ce075216c074a53", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/e00c0f07f8211ffde3f2d7b7cf4680b996793a9a3c67767d868ea5ad39527084") {
+        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/141afa849d982652d8333ddccc78cd0e31faac7084643af2a58b28262f1cb1e5") {
             // L643
             // : directories the user explicitly skipped
             _ = try await runtime.invoke(
@@ -1096,13 +1096,13 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("schema_choices.declined"),
                 ],
-                step: "/SetupInput/schema-state-tracking-steps-2/procedure/e00c0f07f8211ffde3f2d7b7cf4680b996793a9a3c67767d868ea5ad39527084",
+                step: "/SetupInput/schema-state-tracking-steps-2/procedure/141afa849d982652d8333ddccc78cd0e31faac7084643af2a58b28262f1cb1e5",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/e00c0f07f8211ffde3f2d7b7cf4680b996793a9a3c67767d868ea5ad39527084", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/141afa849d982652d8333ddccc78cd0e31faac7084643af2a58b28262f1cb1e5", state: state.snapshot())
         }
-        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/ad2863807f1ae35445d42d678f567cee79fe1112019a192aed5421713bc6bdbc") {
+        if __meridianShouldRun("/SetupInput/schema-state-tracking-steps-2/procedure/1272145cdb8f3557bc8533e9a8e7ae8c674d0d88586420a8650c2f7542504b1e") {
             // L644
             // : directories the user added that aren't in the recommended schema
             _ = try await runtime.invoke(
@@ -1110,11 +1110,11 @@ public struct SetupInput: MeridianWorkflow {
                 args: [
                     "command": .string("schema_choices.custom"),
                 ],
-                step: "/SetupInput/schema-state-tracking-steps-2/procedure/ad2863807f1ae35445d42d678f567cee79fe1112019a192aed5421713bc6bdbc",
+                step: "/SetupInput/schema-state-tracking-steps-2/procedure/1272145cdb8f3557bc8533e9a8e7ae8c674d0d88586420a8650c2f7542504b1e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/ad2863807f1ae35445d42d678f567cee79fe1112019a192aed5421713bc6bdbc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SetupInput/schema-state-tracking-steps-2/procedure/1272145cdb8f3557bc8533e9a8e7ae8c674d0d88586420a8650c2f7542504b1e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SetupInput.complete")
@@ -1173,12 +1173,12 @@ public struct WhenSetupgbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSetupgbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/9e40fe808595a3e59fec1c6091aa876ec04be63344b7c0cb5a31fd2680dc395f") {
+        if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/db732abd6bbaac1ac2a9ef1288f740912d33d7ed367c754c444b43fc1c1e0521") {
             // L1
             try await runtime.wait(.event("setUpGbrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSetupgbrainFires/root/procedure/9e40fe808595a3e59fec1c6091aa876ec04be63344b7c0cb5a31fd2680dc395f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSetupgbrainFires/root/procedure/db732abd6bbaac1ac2a9ef1288f740912d33d7ed367c754c444b43fc1c1e0521", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/f963a3eab79e9a46ccf9d79e7832e9b39e4f03cf1ed9d41751da74cecc71de24") {
+        if __meridianShouldRun("/WhenSetupgbrainFires/root/procedure/230243214e42460a5e3153ebb2273203967de12e16a0f33b1103eaba5d23f0fc") {
             // L1
             try await runtime.emit(
                 event: "trigger.setUpGbrain.fired",
@@ -1186,9 +1186,9 @@ public struct WhenSetupgbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("set up gbrain"),
                 ],
-                step: "/WhenSetupgbrainFires/root/procedure/f963a3eab79e9a46ccf9d79e7832e9b39e4f03cf1ed9d41751da74cecc71de24"
+                step: "/WhenSetupgbrainFires/root/procedure/230243214e42460a5e3153ebb2273203967de12e16a0f33b1103eaba5d23f0fc"
             )
-            try await runtime.checkpoint(label: "/WhenSetupgbrainFires/root/procedure/f963a3eab79e9a46ccf9d79e7832e9b39e4f03cf1ed9d41751da74cecc71de24", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSetupgbrainFires/root/procedure/230243214e42460a5e3153ebb2273203967de12e16a0f33b1103eaba5d23f0fc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSetupgbrainFires.complete")
@@ -1247,12 +1247,12 @@ public struct WhenInitializebrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenInitializebrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/12bd8370a085c77033d9b52d312b8365421a740604f8a42d909c7c37e7d6547b") {
+        if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/5a496d946a119eb2922cf9e78c1a368132573657ef9d50ce6e6fc909a9fc3777") {
             // L1
             try await runtime.wait(.event("initializeBrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenInitializebrainFires/root/procedure/12bd8370a085c77033d9b52d312b8365421a740604f8a42d909c7c37e7d6547b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenInitializebrainFires/root/procedure/5a496d946a119eb2922cf9e78c1a368132573657ef9d50ce6e6fc909a9fc3777", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/34e892ccaae53963fc59921541b672c4fdcdb509210f085631beb8dba15567ee") {
+        if __meridianShouldRun("/WhenInitializebrainFires/root/procedure/d640f5f152b61f71976f1954902b6ae416f4e9c555dfec5b8e4b309e0627a103") {
             // L1
             try await runtime.emit(
                 event: "trigger.initializeBrain.fired",
@@ -1260,9 +1260,9 @@ public struct WhenInitializebrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("initialize brain"),
                 ],
-                step: "/WhenInitializebrainFires/root/procedure/34e892ccaae53963fc59921541b672c4fdcdb509210f085631beb8dba15567ee"
+                step: "/WhenInitializebrainFires/root/procedure/d640f5f152b61f71976f1954902b6ae416f4e9c555dfec5b8e4b309e0627a103"
             )
-            try await runtime.checkpoint(label: "/WhenInitializebrainFires/root/procedure/34e892ccaae53963fc59921541b672c4fdcdb509210f085631beb8dba15567ee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenInitializebrainFires/root/procedure/d640f5f152b61f71976f1954902b6ae416f4e9c555dfec5b8e4b309e0627a103", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenInitializebrainFires.complete")
@@ -1321,12 +1321,12 @@ public struct WhenGbrainsetupFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainsetupFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/8982abfc5b0ff44b45efe1c53e2a47d1c9bfafcfd9d57361d359cca277210c51") {
+        if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/de4392ed92d218aab28fb4659e5a16c58ff839079a064c0cf474c8c68cbc44c0") {
             // L1
             try await runtime.wait(.event("gbrainSetup", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainsetupFires/root/procedure/8982abfc5b0ff44b45efe1c53e2a47d1c9bfafcfd9d57361d359cca277210c51", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainsetupFires/root/procedure/de4392ed92d218aab28fb4659e5a16c58ff839079a064c0cf474c8c68cbc44c0", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/947c9bae5c6ef47066256149d6edba465068bfefc9ff851bbf6626cf2e54a729") {
+        if __meridianShouldRun("/WhenGbrainsetupFires/root/procedure/9b6c671f92959a49d7631692552d1069cca54e3b81ea143abfc4a5421c298ddc") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainSetup.fired",
@@ -1334,9 +1334,9 @@ public struct WhenGbrainsetupFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain setup"),
                 ],
-                step: "/WhenGbrainsetupFires/root/procedure/947c9bae5c6ef47066256149d6edba465068bfefc9ff851bbf6626cf2e54a729"
+                step: "/WhenGbrainsetupFires/root/procedure/9b6c671f92959a49d7631692552d1069cca54e3b81ea143abfc4a5421c298ddc"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainsetupFires/root/procedure/947c9bae5c6ef47066256149d6edba465068bfefc9ff851bbf6626cf2e54a729", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainsetupFires/root/procedure/9b6c671f92959a49d7631692552d1069cca54e3b81ea143abfc4a5421c298ddc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainsetupFires.complete")

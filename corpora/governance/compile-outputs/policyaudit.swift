@@ -455,64 +455,64 @@ public struct PolicyAudit: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PolicyAudit", parameters: [:])
 
-        if __meridianShouldRun("/PolicyAudit/guarantees/invariants/9e85c76bbbe232dcdb704838b0f2e9530cf19a96d1a39bf343649328a5148e5f") {
+        if __meridianShouldRun("/PolicyAudit/guarantees/invariants/af7b9f63a717df7b0ccdaa4bb99a8e6161ed1f5c9343a88775603bf967fc4baa") {
             // L60
             try await runtime.assert((((state.get("auditReport"))?.description ?? "")).contains(("policy-audit")), message: "Expected the audit report contains \"policy-audit\"")
-            try await runtime.checkpoint(label: "/PolicyAudit/guarantees/invariants/9e85c76bbbe232dcdb704838b0f2e9530cf19a96d1a39bf343649328a5148e5f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyAudit/guarantees/invariants/af7b9f63a717df7b0ccdaa4bb99a8e6161ed1f5c9343a88775603bf967fc4baa", state: state.snapshot())
         }
         // L27
         state.bind("coverageThresholds", Value.list([.record(["environment": .string("production"), "minimumPolicies": .number(Decimal(3))]), .record(["environment": .string("staging"), "minimumPolicies": .number(Decimal(1))])]))
-        if __meridianShouldRun("/PolicyAudit/workflow-steps/procedure/9d45de9e5e1931383b39193fe3a8c646012fb51e5c91b5dee53c5dfe8c0b25de") {
+        if __meridianShouldRun("/PolicyAudit/workflow-steps/procedure/400e3e7d9696321fb470b9941d7bfbf690dfa7c72ebfef52b674e509885e3217") {
             // L42
             let verdict = try await runtime.invoke(
                 tool: "policy.evaluate",
                 args: [
                     "environment": Value.from(instances.identityProvider),
                 ],
-                step: "/PolicyAudit/workflow-steps/procedure/9d45de9e5e1931383b39193fe3a8c646012fb51e5c91b5dee53c5dfe8c0b25de",
+                step: "/PolicyAudit/workflow-steps/procedure/400e3e7d9696321fb470b9941d7bfbf690dfa7c72ebfef52b674e509885e3217",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "policy.evaluate")
             )
             state.bind("verdict", verdict)
 
-            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps/procedure/9d45de9e5e1931383b39193fe3a8c646012fb51e5c91b5dee53c5dfe8c0b25de", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps/procedure/400e3e7d9696321fb470b9941d7bfbf690dfa7c72ebfef52b674e509885e3217", state: state.snapshot())
         }
-        if __meridianShouldRun("/PolicyAudit/workflow-steps/procedure/d61e2c86a111a229adf70313ab908bf2353a49f7b3a0c433fdca1d94a564a960") {
+        if __meridianShouldRun("/PolicyAudit/workflow-steps/procedure/bfdd06e7d12d78c3f09d7df7c9b45351e32655f409223b6f122e3a86f2bfa4ee") {
             // L43
             let verdict = try await runtime.invoke(
                 tool: "policy.evaluate",
                 args: [
                     "environment": Value.from(instances.auditSink),
                 ],
-                step: "/PolicyAudit/workflow-steps/procedure/d61e2c86a111a229adf70313ab908bf2353a49f7b3a0c433fdca1d94a564a960",
+                step: "/PolicyAudit/workflow-steps/procedure/bfdd06e7d12d78c3f09d7df7c9b45351e32655f409223b6f122e3a86f2bfa4ee",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "policy.evaluate")
             )
             state.bind("verdict", verdict)
 
-            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps/procedure/d61e2c86a111a229adf70313ab908bf2353a49f7b3a0c433fdca1d94a564a960", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps/procedure/bfdd06e7d12d78c3f09d7df7c9b45351e32655f409223b6f122e3a86f2bfa4ee", state: state.snapshot())
         }
         // L44
         state.bind("evaluatedCount", Decimal(((state.get("environments"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("active"))) }.count))
-        if __meridianShouldRun("/PolicyAudit/workflow-steps-2/procedure/65b4ec046ebc12c2b1303ebae19297f9ce19d6e40ff8b5267bb45b4bead0f815") {
+        if __meridianShouldRun("/PolicyAudit/workflow-steps-2/procedure/72ae8ab0bdeb08a96937946fec3ffd5c58be83ec45010b97951464aa82faa894") {
             // L48
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "body": state.get("auditReport") ?? .null,
                 ],
-                step: "/PolicyAudit/workflow-steps-2/procedure/65b4ec046ebc12c2b1303ebae19297f9ce19d6e40ff8b5267bb45b4bead0f815"
+                step: "/PolicyAudit/workflow-steps-2/procedure/72ae8ab0bdeb08a96937946fec3ffd5c58be83ec45010b97951464aa82faa894"
             )
-            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps-2/procedure/65b4ec046ebc12c2b1303ebae19297f9ce19d6e40ff8b5267bb45b4bead0f815", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps-2/procedure/72ae8ab0bdeb08a96937946fec3ffd5c58be83ec45010b97951464aa82faa894", state: state.snapshot())
         }
-        if __meridianShouldRun("/PolicyAudit/workflow-steps-2/procedure/b2b5061cbdd82ba38cefba5e3f20536466f4e7a36b9548cf3d34ec6f2ef78ccd") {
+        if __meridianShouldRun("/PolicyAudit/workflow-steps-2/procedure/3a36e0fb1ab6dd65cbb042138c101d02d82f313cd37e161b0249ede3a06dd7ae") {
             // L49
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("policy audit pass complete"),
                 ],
-                step: "/PolicyAudit/workflow-steps-2/procedure/b2b5061cbdd82ba38cefba5e3f20536466f4e7a36b9548cf3d34ec6f2ef78ccd"
+                step: "/PolicyAudit/workflow-steps-2/procedure/3a36e0fb1ab6dd65cbb042138c101d02d82f313cd37e161b0249ede3a06dd7ae"
             )
-            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps-2/procedure/b2b5061cbdd82ba38cefba5e3f20536466f4e7a36b9548cf3d34ec6f2ef78ccd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyAudit/workflow-steps-2/procedure/3a36e0fb1ab6dd65cbb042138c101d02d82f313cd37e161b0249ede3a06dd7ae", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PolicyAudit.complete")
@@ -572,12 +572,12 @@ public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAuditpolicycoverageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031") {
+        if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/d7d051363ff5a919890111877257e2a8a8a1493c8207b3f9ed39f2c48c1658b8") {
             // L1
             try await runtime.wait(.event("auditPolicyCoverage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAuditpolicycoverageFires/root/procedure/4784e24b507bb23c0af149489110dac0172e2a1a1f1b97fbcf86c2f4362e5031", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuditpolicycoverageFires/root/procedure/d7d051363ff5a919890111877257e2a8a8a1493c8207b3f9ed39f2c48c1658b8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a") {
+        if __meridianShouldRun("/WhenAuditpolicycoverageFires/root/procedure/e80df67eb0c636295ce3e4f52fca2fa0eb00b8319f0b9c8d65c42c44ed54931c") {
             // L1
             try await runtime.emit(
                 event: "trigger.auditPolicyCoverage.fired",
@@ -585,9 +585,9 @@ public struct WhenAuditpolicycoverageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("audit policy coverage"),
                 ],
-                step: "/WhenAuditpolicycoverageFires/root/procedure/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a"
+                step: "/WhenAuditpolicycoverageFires/root/procedure/e80df67eb0c636295ce3e4f52fca2fa0eb00b8319f0b9c8d65c42c44ed54931c"
             )
-            try await runtime.checkpoint(label: "/WhenAuditpolicycoverageFires/root/procedure/4c428e630c91869be02ce1a18a350c89bc60d6f6853e40ef7ca416201f0f3d1a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuditpolicycoverageFires/root/procedure/e80df67eb0c636295ce3e4f52fca2fa0eb00b8319f0b9c8d65c42c44ed54931c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAuditpolicycoverageFires.complete")
@@ -647,12 +647,12 @@ public struct WhenRunpolicyauditFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunpolicyauditFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067") {
+        if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/0bef665614fbd178e7bd0574bad3142c47d698740e0b03c199c44cb7bd15a030") {
             // L1
             try await runtime.wait(.event("runPolicyAudit", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunpolicyauditFires/root/procedure/0be6de8b618d922e252875d3469dd9f0c49338da8a9d1f16235bd1da7c2e2067", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpolicyauditFires/root/procedure/0bef665614fbd178e7bd0574bad3142c47d698740e0b03c199c44cb7bd15a030", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1") {
+        if __meridianShouldRun("/WhenRunpolicyauditFires/root/procedure/02cb4aa894c13e59600d2f2e41d7c57f05950c9c5ca64378a347fa234fb9f7ec") {
             // L1
             try await runtime.emit(
                 event: "trigger.runPolicyAudit.fired",
@@ -660,9 +660,9 @@ public struct WhenRunpolicyauditFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run policy audit"),
                 ],
-                step: "/WhenRunpolicyauditFires/root/procedure/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1"
+                step: "/WhenRunpolicyauditFires/root/procedure/02cb4aa894c13e59600d2f2e41d7c57f05950c9c5ca64378a347fa234fb9f7ec"
             )
-            try await runtime.checkpoint(label: "/WhenRunpolicyauditFires/root/procedure/c6fa88cdc8bbbbb47b0b87fc7526bc03ba52bd922c1691f1b200b1c083df78b1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpolicyauditFires/root/procedure/02cb4aa894c13e59600d2f2e41d7c57f05950c9c5ca64378a347fa234fb9f7ec", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunpolicyauditFires.complete")
@@ -722,12 +722,12 @@ public struct WhenCheckpolicycoverageFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckpolicycoverageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa") {
+        if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/29cc4025dd36a193e06f8b8b607ae77a2e2c98cd64fc6a31c2d594e995d57ff9") {
             // L1
             try await runtime.wait(.event("checkPolicyCoverage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckpolicycoverageFires/root/procedure/89776851d882484eeb5adee9ee6afa6584a92b2ceb7ceca8ec78170916fc78fa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckpolicycoverageFires/root/procedure/29cc4025dd36a193e06f8b8b607ae77a2e2c98cd64fc6a31c2d594e995d57ff9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665") {
+        if __meridianShouldRun("/WhenCheckpolicycoverageFires/root/procedure/470d7d5811e58218cda8e5ea55ceb2adbad7a70178c7b11b1335c9d6e7b70ff8") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkPolicyCoverage.fired",
@@ -735,9 +735,9 @@ public struct WhenCheckpolicycoverageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check policy coverage"),
                 ],
-                step: "/WhenCheckpolicycoverageFires/root/procedure/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665"
+                step: "/WhenCheckpolicycoverageFires/root/procedure/470d7d5811e58218cda8e5ea55ceb2adbad7a70178c7b11b1335c9d6e7b70ff8"
             )
-            try await runtime.checkpoint(label: "/WhenCheckpolicycoverageFires/root/procedure/99acc5b34c0f0d06081e1ae1fbf87a715d71c285ea9cc9a55fb2775b15ace665", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckpolicycoverageFires/root/procedure/470d7d5811e58218cda8e5ea55ceb2adbad7a70178c7b11b1335c9d6e7b70ff8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckpolicycoverageFires.complete")

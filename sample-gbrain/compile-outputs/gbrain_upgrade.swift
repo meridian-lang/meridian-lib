@@ -622,18 +622,18 @@ public struct GbrainUpgradeInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "GbrainUpgradeInput", parameters: [:])
 
-        if __meridianShouldRun("/GbrainUpgradeInput/mode-notify-default-steps/procedure/f31a7b25ed20a4c5058bc4393663b233afb8b1c660985ad512444f2b333346ac") {
+        if __meridianShouldRun("/GbrainUpgradeInput/mode-notify-default-steps/procedure/1b9ba56fb33d8e5bd8897610d1acb7cf32982a5fd7e7ea36a09c0eec1a8751b1") {
             // L84
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain self-upgrade --check-only --json"),
                 ],
-                step: "/GbrainUpgradeInput/mode-notify-default-steps/procedure/f31a7b25ed20a4c5058bc4393663b233afb8b1c660985ad512444f2b333346ac",
+                step: "/GbrainUpgradeInput/mode-notify-default-steps/procedure/1b9ba56fb33d8e5bd8897610d1acb7cf32982a5fd7e7ea36a09c0eec1a8751b1",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/GbrainUpgradeInput/mode-notify-default-steps/procedure/f31a7b25ed20a4c5058bc4393663b233afb8b1c660985ad512444f2b333346ac", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GbrainUpgradeInput/mode-notify-default-steps/procedure/1b9ba56fb33d8e5bd8897610d1acb7cf32982a5fd7e7ea36a09c0eec1a8751b1", state: state.snapshot())
         }
         // L91
         let __meridianProseResults_L91 = try await runtime.executeProsePlan(
@@ -641,7 +641,7 @@ public struct GbrainUpgradeInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["exec", "shell.run"],
             outputKind: "record",
-            step: "/GbrainUpgradeInput/mode-notify-default-steps-2/procedure/0674f942c7943ade6a2f54fb865fbea03cadec1ef0d76f43db43d0d46316c526",
+            step: "/GbrainUpgradeInput/mode-notify-default-steps-2/procedure/36afadb4cbd6d5b6dd94ba226937736bd0d406951b500771f3221f0596d5fe5e",
             guidance: "If `update_available` is `true`, tell the operator WHAT they'll get before\nasking. The JSON includes `changelog_diff` (CHANGELOG entries between their\nversion and the new one) and `release_url`. Summarize it into 3-5 plain bullets\nof what's new — do NOT paste the raw diff. Then present the 4-option question:\nIf `changelog_diff` is empty (network blip / no notes), ask without the bullets\nrather than blocking — the version numbers alone are enough to decide\nYes → `gbrain self-upgrade`\nAlways → `gbrain config set self_upgrade.mode auto` then `gbrain self-upgrade`\nNever → `gbrain config set self_upgrade.mode off`"
         )
         for (__key, __value) in __meridianProseResults_L91 {
@@ -704,12 +704,12 @@ public struct WhenGbrainupdateavailableFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainupdateavailableFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474") {
+        if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/da54a23d4cc645711846751b8077e0ea0c2261eed6427534fbbde197c7ff34f9") {
             // L1
             try await runtime.wait(.event("gbrainUpdateAvailable", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainupdateavailableFires/root/procedure/c4cf5dcab52085c36810d03191143232819e3fa14a9efa698afbf245cfe5b474", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainupdateavailableFires/root/procedure/da54a23d4cc645711846751b8077e0ea0c2261eed6427534fbbde197c7ff34f9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519") {
+        if __meridianShouldRun("/WhenGbrainupdateavailableFires/root/procedure/01cdd7fb640af3264e86dcc0a3ddccf3ce3d104a4d5e486b2f9bdae21c1e9961") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainUpdateAvailable.fired",
@@ -717,9 +717,9 @@ public struct WhenGbrainupdateavailableFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain update available"),
                 ],
-                step: "/WhenGbrainupdateavailableFires/root/procedure/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519"
+                step: "/WhenGbrainupdateavailableFires/root/procedure/01cdd7fb640af3264e86dcc0a3ddccf3ce3d104a4d5e486b2f9bdae21c1e9961"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainupdateavailableFires/root/procedure/e1d394c71fe971c7516bf53ae01409adfad44995a2f6c99be74ed30b78cc1519", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainupdateavailableFires/root/procedure/01cdd7fb640af3264e86dcc0a3ddccf3ce3d104a4d5e486b2f9bdae21c1e9961", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainupdateavailableFires.complete")
@@ -778,12 +778,12 @@ public struct WhenUpgradeavailableFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenUpgradeavailableFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15") {
+        if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/aac90b948a1556476d1ca7258749927864a21ffbe5cdb1630c51159826a975ba") {
             // L1
             try await runtime.wait(.event("upgradeAvailable", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenUpgradeavailableFires/root/procedure/a489297c56561daa9519ba50872d1decd7ad8ca7f16a2621549dfba19377fb15", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpgradeavailableFires/root/procedure/aac90b948a1556476d1ca7258749927864a21ffbe5cdb1630c51159826a975ba", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa") {
+        if __meridianShouldRun("/WhenUpgradeavailableFires/root/procedure/fe3a558c6c279655d9e69ff9c22f3ead0208e1ce93672100d37ebff2852b63bc") {
             // L1
             try await runtime.emit(
                 event: "trigger.upgradeAvailable.fired",
@@ -791,9 +791,9 @@ public struct WhenUpgradeavailableFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("UPGRADE_AVAILABLE"),
                 ],
-                step: "/WhenUpgradeavailableFires/root/procedure/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa"
+                step: "/WhenUpgradeavailableFires/root/procedure/fe3a558c6c279655d9e69ff9c22f3ead0208e1ce93672100d37ebff2852b63bc"
             )
-            try await runtime.checkpoint(label: "/WhenUpgradeavailableFires/root/procedure/3d3d24867cf050093764f63f9851a72e5785bf31738c528464bfdba1e22988fa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpgradeavailableFires/root/procedure/fe3a558c6c279655d9e69ff9c22f3ead0208e1ce93672100d37ebff2852b63bc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenUpgradeavailableFires.complete")
@@ -852,12 +852,12 @@ public struct WhenUpgradegbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenUpgradegbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef") {
+        if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/644f3df660fa0cafd80dd6f0f86b3acbbf7a4556cc6730eb40023c0c4e9d92a0") {
             // L1
             try await runtime.wait(.event("upgradeGbrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenUpgradegbrainFires/root/procedure/49b6af454b315b5a5604bf7c5a2e4a9a0f7150c833937b18fbe944c71b9daaef", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpgradegbrainFires/root/procedure/644f3df660fa0cafd80dd6f0f86b3acbbf7a4556cc6730eb40023c0c4e9d92a0", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5") {
+        if __meridianShouldRun("/WhenUpgradegbrainFires/root/procedure/0b5e4429633b2cea6a40b88671c54dec805d45239c0ff8553ccd84ebf1c7bcc6") {
             // L1
             try await runtime.emit(
                 event: "trigger.upgradeGbrain.fired",
@@ -865,9 +865,9 @@ public struct WhenUpgradegbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("upgrade gbrain"),
                 ],
-                step: "/WhenUpgradegbrainFires/root/procedure/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5"
+                step: "/WhenUpgradegbrainFires/root/procedure/0b5e4429633b2cea6a40b88671c54dec805d45239c0ff8553ccd84ebf1c7bcc6"
             )
-            try await runtime.checkpoint(label: "/WhenUpgradegbrainFires/root/procedure/77833aef214e815dd4b441417e5285530a53a8040f0d45d9a61acb714b6e95f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpgradegbrainFires/root/procedure/0b5e4429633b2cea6a40b88671c54dec805d45239c0ff8553ccd84ebf1c7bcc6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenUpgradegbrainFires.complete")
@@ -926,12 +926,12 @@ public struct WhenUpdategbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenUpdategbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08") {
+        if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/518f4f89ae2f83a33e02afbe8ae4e010ecfb58b799ed71bc5e866b9010e952b6") {
             // L1
             try await runtime.wait(.event("updateGbrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenUpdategbrainFires/root/procedure/e729d262ca2c5dca5b6b9bb0cdcf9f793b13b42a663917afcf0f279a4b6c7b08", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpdategbrainFires/root/procedure/518f4f89ae2f83a33e02afbe8ae4e010ecfb58b799ed71bc5e866b9010e952b6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28") {
+        if __meridianShouldRun("/WhenUpdategbrainFires/root/procedure/c969802760bf15588f113c39d2576e4a903fb21c3b7f60af2e2eca254cfd8748") {
             // L1
             try await runtime.emit(
                 event: "trigger.updateGbrain.fired",
@@ -939,9 +939,9 @@ public struct WhenUpdategbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("update gbrain"),
                 ],
-                step: "/WhenUpdategbrainFires/root/procedure/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28"
+                step: "/WhenUpdategbrainFires/root/procedure/c969802760bf15588f113c39d2576e4a903fb21c3b7f60af2e2eca254cfd8748"
             )
-            try await runtime.checkpoint(label: "/WhenUpdategbrainFires/root/procedure/4ec51a59c1a0026cd637cfbf55f0b407ea4ac45923c42b7136b666121c181d28", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUpdategbrainFires/root/procedure/c969802760bf15588f113c39d2576e4a903fb21c3b7f60af2e2eca254cfd8748", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenUpdategbrainFires.complete")
@@ -1000,12 +1000,12 @@ public struct WhenGbrainisoutdateFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainisoutdateFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852") {
+        if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/f9134d3a400343c856601ce8b7684c0f1ad3ee9ec093885a6edd8ce9588e16bb") {
             // L1
             try await runtime.wait(.event("gbrainIsOutDate", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainisoutdateFires/root/procedure/a322627838f61ddf3a5ded5bf9b9775a35971c63e763bdf1e598153f3a387852", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainisoutdateFires/root/procedure/f9134d3a400343c856601ce8b7684c0f1ad3ee9ec093885a6edd8ce9588e16bb", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2") {
+        if __meridianShouldRun("/WhenGbrainisoutdateFires/root/procedure/07cc3f6c77ef582386515aa5076443741b050ee7b0ac556ef2ba2bf74cfec16a") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainIsOutDate.fired",
@@ -1013,9 +1013,9 @@ public struct WhenGbrainisoutdateFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain is out of date"),
                 ],
-                step: "/WhenGbrainisoutdateFires/root/procedure/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2"
+                step: "/WhenGbrainisoutdateFires/root/procedure/07cc3f6c77ef582386515aa5076443741b050ee7b0ac556ef2ba2bf74cfec16a"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainisoutdateFires/root/procedure/8315034318ed87cfcfa62fed918bf515c4b25b55e7c266e0f2f034a7e113b3f2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainisoutdateFires/root/procedure/07cc3f6c77ef582386515aa5076443741b050ee7b0ac556ef2ba2bf74cfec16a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainisoutdateFires.complete")
@@ -1074,12 +1074,12 @@ public struct WhenGbrainselfupgradeFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainselfupgradeFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d") {
+        if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/99f1ac88c4246ec3e5035bc80617372884da96146fd2832d2da0ec1d07a2f8ba") {
             // L1
             try await runtime.wait(.event("gbrainSelfUpgrade", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainselfupgradeFires/root/procedure/e43e218da36ebab5dd693408441cc4a61202834c94dfe086410fd38dd4709f7d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainselfupgradeFires/root/procedure/99f1ac88c4246ec3e5035bc80617372884da96146fd2832d2da0ec1d07a2f8ba", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f") {
+        if __meridianShouldRun("/WhenGbrainselfupgradeFires/root/procedure/6ced488025525daac11c79a1990257b09eae5a699eafb1781d8f704f72fa9a78") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainSelfUpgrade.fired",
@@ -1087,9 +1087,9 @@ public struct WhenGbrainselfupgradeFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain self-upgrade"),
                 ],
-                step: "/WhenGbrainselfupgradeFires/root/procedure/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f"
+                step: "/WhenGbrainselfupgradeFires/root/procedure/6ced488025525daac11c79a1990257b09eae5a699eafb1781d8f704f72fa9a78"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainselfupgradeFires/root/procedure/5e7689443bcf843331d03032a56e6fbc8b6ffddc221de94d824e8c0a74a12f9f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainselfupgradeFires/root/procedure/6ced488025525daac11c79a1990257b09eae5a699eafb1781d8f704f72fa9a78", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainselfupgradeFires.complete")
@@ -1148,12 +1148,12 @@ public struct WhenIsgbrainupdateFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIsgbrainupdateFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87") {
+        if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/7d82232b44d28f7f360248dbb131e4c2f1dd7502719c453518924fc6d5d42de8") {
             // L1
             try await runtime.wait(.event("isGbrainUpDate", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIsgbrainupdateFires/root/procedure/6f3622aa92e1981294a99e752cf75ec3b6ec3aa325e2c577ebe7be210f18ea87", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsgbrainupdateFires/root/procedure/7d82232b44d28f7f360248dbb131e4c2f1dd7502719c453518924fc6d5d42de8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd") {
+        if __meridianShouldRun("/WhenIsgbrainupdateFires/root/procedure/f3175fcb298073da47905677e2be44ec8cd5cb3ef62ea55d337f7c12fd940240") {
             // L1
             try await runtime.emit(
                 event: "trigger.isGbrainUpDate.fired",
@@ -1161,9 +1161,9 @@ public struct WhenIsgbrainupdateFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("is gbrain up to date"),
                 ],
-                step: "/WhenIsgbrainupdateFires/root/procedure/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd"
+                step: "/WhenIsgbrainupdateFires/root/procedure/f3175fcb298073da47905677e2be44ec8cd5cb3ef62ea55d337f7c12fd940240"
             )
-            try await runtime.checkpoint(label: "/WhenIsgbrainupdateFires/root/procedure/e60c8d324e15c6e94b775f105833df8ba3f2f026f2a3f1ccebb2b40a8654acbd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsgbrainupdateFires/root/procedure/f3175fcb298073da47905677e2be44ec8cd5cb3ef62ea55d337f7c12fd940240", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIsgbrainupdateFires.complete")
@@ -1222,12 +1222,12 @@ public struct WhenKeepgbraincurrentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenKeepgbraincurrentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959") {
+        if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/6018cdfd69487ae779a9a1e80c12956dac31f424a37836266edb4ce52035c68f") {
             // L1
             try await runtime.wait(.event("keepGbrainCurrent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenKeepgbraincurrentFires/root/procedure/d913f668103e42f12a6c10e7acd448fe6905fdf9ff3c201cd85d82d37ee66959", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenKeepgbraincurrentFires/root/procedure/6018cdfd69487ae779a9a1e80c12956dac31f424a37836266edb4ce52035c68f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3") {
+        if __meridianShouldRun("/WhenKeepgbraincurrentFires/root/procedure/29d824414f0ce71e754a0937498cac6e4636aeb2bdca209c562c6765a41a5af1") {
             // L1
             try await runtime.emit(
                 event: "trigger.keepGbrainCurrent.fired",
@@ -1235,9 +1235,9 @@ public struct WhenKeepgbraincurrentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("keep gbrain current"),
                 ],
-                step: "/WhenKeepgbraincurrentFires/root/procedure/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3"
+                step: "/WhenKeepgbraincurrentFires/root/procedure/29d824414f0ce71e754a0937498cac6e4636aeb2bdca209c562c6765a41a5af1"
             )
-            try await runtime.checkpoint(label: "/WhenKeepgbraincurrentFires/root/procedure/5f52773f2a9aa3974e607dfd477e2fbf1aca92209ca0f6aa7ac96622a2a85cf3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenKeepgbraincurrentFires/root/procedure/29d824414f0ce71e754a0937498cac6e4636aeb2bdca209c562c6765a41a5af1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenKeepgbraincurrentFires.complete")

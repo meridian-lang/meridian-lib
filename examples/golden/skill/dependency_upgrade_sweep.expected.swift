@@ -777,109 +777,109 @@ public struct DependencyUpgradeSweepPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DependencyUpgradeSweepPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9229c45c33b9c54645408c81dce61b039ff65b85902b0727d92b04a9a843cc34") {
+        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9907113003c992caccdfd20af9893de10b3e9ddcc5df56b8db6c4bec5272dc65") {
             let outdated = try await runtime.invoke(
                 tool: "listOutdatedDependencies",
                 args: [
                     "repo": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9229c45c33b9c54645408c81dce61b039ff65b85902b0727d92b04a9a843cc34",
+                step: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9907113003c992caccdfd20af9893de10b3e9ddcc5df56b8db6c4bec5272dc65",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "listOutdatedDependencies")
             )
             state.bind("outdated", outdated)
 
-            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9229c45c33b9c54645408c81dce61b039ff65b85902b0727d92b04a9a843cc34", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/plan-the-sweep/procedure/9907113003c992caccdfd20af9893de10b3e9ddcc5df56b8db6c4bec5272dc65", state: state.snapshot())
         }
         let __meridianColl_0_3 = (state.get("dependencies")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"dependencies\")", step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/ce19ab2a3280d190b2e57e25e0318b2499949502e0884eb6f97f18c1b0314490")
+        try await runtime.recordIterateStart(over: "state.get(\"dependencies\")", step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/aa14d5f90703465d87a3bd591a12e66a465c0a96cae968ff7142d439547a9f23")
         for (__meridianLoopIndex_0_3, dependency) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/ce19ab2a3280d190b2e57e25e0318b2499949502e0884eb6f97f18c1b0314490")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/aa14d5f90703465d87a3bd591a12e66a465c0a96cae968ff7142d439547a9f23")
             state.bind("dependency", dependency)
-                if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/iterate.body/5de2bfdce5af1ad206564dfe0370da4ac7d7a4a26c7779f89ea4fd9a4a91fc5f") {
+                if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/iterate.body/05158524b077b7d8cc66fe81debdcc4e39c7fc869d8031359bd27de2eea50692") {
                     _ = try await UpgradeDependency(runtime: runtime, dependency: (try Value.from(dependency).coerce(to: Dependency.self))).run()
-                    try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/iterate.body/5de2bfdce5af1ad206564dfe0370da4ac7d7a4a26c7779f89ea4fd9a4a91fc5f", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/iterate.body/05158524b077b7d8cc66fe81debdcc4e39c7fc869d8031359bd27de2eea50692", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"dependencies\")", count: __meridianColl_0_3.count, step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/ce19ab2a3280d190b2e57e25e0318b2499949502e0884eb6f97f18c1b0314490")
+        try await runtime.recordIterateEnd(over: "state.get(\"dependencies\")", count: __meridianColl_0_3.count, step: "/DependencyUpgradeSweepPullRequest/apply-upgrades-one-by-one/procedure/aa14d5f90703465d87a3bd591a12e66a465c0a96cae968ff7142d439547a9f23")
 
-        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/28cc792f59346193e6a9dc508ce242f9326272b7b423c4c563d844c8055dbc96") {
+        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/c25e89c99070bae94c05efc887a22ac9867f168598f70086348ae6b120363001") {
             let testResult = try await runtime.invoke(
                 tool: "runTestSuite",
                 args: [
                     "repo": state.get("pullRequest.number") ?? .null,
                     "target": .string("all"),
                 ],
-                step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/28cc792f59346193e6a9dc508ce242f9326272b7b423c4c563d844c8055dbc96",
+                step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/c25e89c99070bae94c05efc887a22ac9867f168598f70086348ae6b120363001",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "runTestSuite")
             )
             state.bind("testResult", testResult)
 
-            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/28cc792f59346193e6a9dc508ce242f9326272b7b423c4c563d844c8055dbc96", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/c25e89c99070bae94c05efc887a22ac9867f168598f70086348ae6b120363001", state: state.snapshot())
         }
         do {
-            if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+            if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
                 let ciStatus = try await runtime.invoke(
                     tool: "getCIStatus",
                     args: [
                         "pr": state.get("pullRequest.number") ?? .null,
                     ],
-                    step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                    step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
                 )
                 state.bind("ciStatus", ciStatus)
 
-                try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.body/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
             }
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/32fdb41c4a6c4c49b7d72201aa9c2a7de5da239ce7a8bc09a7b0d6874c7278d3")
-            if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/834ac4ec07ce03e345728ef0a80ca6c902ecdef59f56827ad2d907e93a317c83") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/2012756fd5ea9279a9910a3083ced2e4bc4de43b1b37949c3336e317ff284e3d")
+            if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/077f70c1aec71f7d0ecc0bded2f10fb960476394234b0c83545b2507eba4306f") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("regression suite failed during dependency sweep"),
                     ],
-                    step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/834ac4ec07ce03e345728ef0a80ca6c902ecdef59f56827ad2d907e93a317c83"
+                    step: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/077f70c1aec71f7d0ecc0bded2f10fb960476394234b0c83545b2507eba4306f"
                 )
-                try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/834ac4ec07ce03e345728ef0a80ca6c902ecdef59f56827ad2d907e93a317c83", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/run-regression-tests-after-the-sweep/procedure/recover.handler/077f70c1aec71f7d0ecc0bded2f10fb960476394234b0c83545b2507eba4306f", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/DependencyUpgradeSweepPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/DependencyUpgradeSweepPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/DependencyUpgradeSweepPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DependencyUpgradeSweepPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DependencyUpgradeSweepPullRequest.complete")
@@ -943,32 +943,32 @@ public struct UpgradeDependency: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "UpgradeDependency", parameters: [:])
 
         do {
-            if __meridianShouldRun("/UpgradeDependency/per-dependency-workflow/procedure/recover.body/201c4a885e6f46e0a8dd03dc2148200587e3a197178e930ced6fab8657f77914") {
+            if __meridianShouldRun("/UpgradeDependency/per-dependency-workflow/procedure/recover.body/69bc1bfa12bab7f5c05216fa653793e41bec4988e1069cd469e31b6a9157ae47") {
                 let dependency = try await runtime.invoke(
                     tool: "upgradeDependency",
                     args: [
                         "name": state.get("dependency.name") ?? .null,
                         "target": state.get("dependency.availableVersion") ?? .null,
                     ],
-                    step: "/UpgradeDependency/per-dependency-workflow/procedure/recover.body/201c4a885e6f46e0a8dd03dc2148200587e3a197178e930ced6fab8657f77914",
+                    step: "/UpgradeDependency/per-dependency-workflow/procedure/recover.body/69bc1bfa12bab7f5c05216fa653793e41bec4988e1069cd469e31b6a9157ae47",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "upgradeDependency")
                 )
                 state.bind("dependency", dependency)
 
-                try await runtime.checkpoint(label: "/UpgradeDependency/per-dependency-workflow/procedure/recover.body/201c4a885e6f46e0a8dd03dc2148200587e3a197178e930ced6fab8657f77914", state: state.snapshot())
+                try await runtime.checkpoint(label: "/UpgradeDependency/per-dependency-workflow/procedure/recover.body/69bc1bfa12bab7f5c05216fa653793e41bec4988e1069cd469e31b6a9157ae47", state: state.snapshot())
             }
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/UpgradeDependency/per-dependency-workflow/procedure/38ff731662f80dd3c880c682fce3d8e4c2b4ad456c07acbaa77278ee0dd05620")
-            if __meridianShouldRun("/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/081f3f22999609b80bf448c7fda54392e258987a15fd92d25416a3285edd13d5") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/UpgradeDependency/per-dependency-workflow/procedure/c3ddbc1417063cc0e2bcc22e0710ae06b06df0a285d5f4c973499a288baab751")
+            if __meridianShouldRun("/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/1dbde306b62d0ff8eda2425d425cf01ec640814f6e52be0d02ad9da5a61a3037") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("single dependency upgrade failed"),
                     ],
-                    step: "/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/081f3f22999609b80bf448c7fda54392e258987a15fd92d25416a3285edd13d5"
+                    step: "/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/1dbde306b62d0ff8eda2425d425cf01ec640814f6e52be0d02ad9da5a61a3037"
                 )
-                try await runtime.checkpoint(label: "/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/081f3f22999609b80bf448c7fda54392e258987a15fd92d25416a3285edd13d5", state: state.snapshot())
+                try await runtime.checkpoint(label: "/UpgradeDependency/per-dependency-workflow/procedure/recover.handler/1dbde306b62d0ff8eda2425d425cf01ec640814f6e52be0d02ad9da5a61a3037", state: state.snapshot())
             }
         }
 

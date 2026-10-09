@@ -623,7 +623,7 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "DailyTaskManagerInput", parameters: [:])
 
-        if __meridianShouldRun("/DailyTaskManagerInput/phases-steps/procedure/bbfda99fa524c1365c726185a80ecc5502dde26c46a54a9308acaea6ccf67fe2") {
+        if __meridianShouldRun("/DailyTaskManagerInput/phases-steps/procedure/bed2c08a22c7f9153fea75cb34d25b81d76bdf4cbd68f03d996ee6f98a20f43e") {
             // L46
             // Load current tasks.  — read the task list
             _ = try await runtime.invoke(
@@ -631,11 +631,11 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain get ops/tasks"),
                 ],
-                step: "/DailyTaskManagerInput/phases-steps/procedure/bbfda99fa524c1365c726185a80ecc5502dde26c46a54a9308acaea6ccf67fe2",
+                step: "/DailyTaskManagerInput/phases-steps/procedure/bed2c08a22c7f9153fea75cb34d25b81d76bdf4cbd68f03d996ee6f98a20f43e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/DailyTaskManagerInput/phases-steps/procedure/bbfda99fa524c1365c726185a80ecc5502dde26c46a54a9308acaea6ccf67fe2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DailyTaskManagerInput/phases-steps/procedure/bed2c08a22c7f9153fea75cb34d25b81d76bdf4cbd68f03d996ee6f98a20f43e", state: state.snapshot())
         }
         // L50
         let __meridianProseResults_L50 = try await runtime.executeProsePlan(
@@ -643,7 +643,7 @@ public struct DailyTaskManagerInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["add_timeline_entry", "get_page", "page.get", "page.search", "publish", "put_page", "search", "shell.run", "timeline.add"],
             outputKind: "record",
-            step: "/DailyTaskManagerInput/phases-steps-2/procedure/0bc7c098fdab7980218df525d54cbbae6dce7ef487835b5774d2d57ee10d1701",
+            step: "/DailyTaskManagerInput/phases-steps-2/procedure/0528a9e03902e5611ca1a1237a9d1b0ebc297148380e3eca865a2934de0cd3da",
             guidance: "**Defer:** Move to next day/week with reason\nSave. `gbrain put ops/tasks` — write updated task list"
         )
         for (__key, __value) in __meridianProseResults_L50 {
@@ -706,12 +706,12 @@ public struct WhenAddtaskFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAddtaskFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAddtaskFires/root/procedure/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738") {
+        if __meridianShouldRun("/WhenAddtaskFires/root/procedure/91ff253651991af3f8f2feda0b537ff327dad1e24706a80559d4d67722591795") {
             // L1
             try await runtime.wait(.event("addTask", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAddtaskFires/root/procedure/766785ae567a0bb95b7b515105e7f7a97f82b83481380837fedd36f8d3601738", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAddtaskFires/root/procedure/91ff253651991af3f8f2feda0b537ff327dad1e24706a80559d4d67722591795", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAddtaskFires/root/procedure/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c") {
+        if __meridianShouldRun("/WhenAddtaskFires/root/procedure/34c4549ff51021884a0eac81cfb988bc1c07e0d85315a1d6cacfd8ea0e1441a5") {
             // L1
             try await runtime.emit(
                 event: "trigger.addTask.fired",
@@ -719,9 +719,9 @@ public struct WhenAddtaskFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("add task"),
                 ],
-                step: "/WhenAddtaskFires/root/procedure/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c"
+                step: "/WhenAddtaskFires/root/procedure/34c4549ff51021884a0eac81cfb988bc1c07e0d85315a1d6cacfd8ea0e1441a5"
             )
-            try await runtime.checkpoint(label: "/WhenAddtaskFires/root/procedure/7c7e753a03e6cd26c53e059067d207198ea2af7bb2b3c8b1c0a8bca12ea0aa3c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAddtaskFires/root/procedure/34c4549ff51021884a0eac81cfb988bc1c07e0d85315a1d6cacfd8ea0e1441a5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAddtaskFires.complete")
@@ -780,12 +780,12 @@ public struct WhenCompletetaskFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCompletetaskFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2") {
+        if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/e02c82c63d0110be6e61f81903769cfe31bc023581dfe8b7041a124711d7035c") {
             // L1
             try await runtime.wait(.event("completeTask", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCompletetaskFires/root/procedure/2f84fa3bb2852767d995168fa8294ba9a888c129e8a5d4539a6ee520467e02c2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCompletetaskFires/root/procedure/e02c82c63d0110be6e61f81903769cfe31bc023581dfe8b7041a124711d7035c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5") {
+        if __meridianShouldRun("/WhenCompletetaskFires/root/procedure/407ccf430943f1d36bd032d7719cd804a42251d134f1edc979db4c00583c2003") {
             // L1
             try await runtime.emit(
                 event: "trigger.completeTask.fired",
@@ -793,9 +793,9 @@ public struct WhenCompletetaskFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("complete task"),
                 ],
-                step: "/WhenCompletetaskFires/root/procedure/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5"
+                step: "/WhenCompletetaskFires/root/procedure/407ccf430943f1d36bd032d7719cd804a42251d134f1edc979db4c00583c2003"
             )
-            try await runtime.checkpoint(label: "/WhenCompletetaskFires/root/procedure/d8558973a838008789951c01ca81aafeddff5b52e22ce7752f994df79257f1b5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCompletetaskFires/root/procedure/407ccf430943f1d36bd032d7719cd804a42251d134f1edc979db4c00583c2003", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCompletetaskFires.complete")
@@ -854,12 +854,12 @@ public struct WhenWhataremytasksFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhataremytasksFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319") {
+        if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/7b869ae3f82341c876547bb3f005e7ec07d8ce33079229e991b85f097296fa29") {
             // L1
             try await runtime.wait(.event("whatAreMyTasks", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhataremytasksFires/root/procedure/e2413e80d712e5beee7309cb40d83c7beed96abc18cb8dd61a2a926f6652f319", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhataremytasksFires/root/procedure/7b869ae3f82341c876547bb3f005e7ec07d8ce33079229e991b85f097296fa29", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a") {
+        if __meridianShouldRun("/WhenWhataremytasksFires/root/procedure/bcede20d60b6e4ab929393da1bdbe82e9b8345284ff16ac7755dcb3ef814461d") {
             // L1
             try await runtime.emit(
                 event: "trigger.whatAreMyTasks.fired",
@@ -867,9 +867,9 @@ public struct WhenWhataremytasksFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("what are my tasks"),
                 ],
-                step: "/WhenWhataremytasksFires/root/procedure/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a"
+                step: "/WhenWhataremytasksFires/root/procedure/bcede20d60b6e4ab929393da1bdbe82e9b8345284ff16ac7755dcb3ef814461d"
             )
-            try await runtime.checkpoint(label: "/WhenWhataremytasksFires/root/procedure/2d3f6eff013ba634724f960815ad6334e7ca71f6edb98eef2c6c8ed8c6da5e3a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhataremytasksFires/root/procedure/bcede20d60b6e4ab929393da1bdbe82e9b8345284ff16ac7755dcb3ef814461d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhataremytasksFires.complete")
@@ -928,12 +928,12 @@ public struct WhenTasklistFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenTasklistFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTasklistFires/root/procedure/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4") {
+        if __meridianShouldRun("/WhenTasklistFires/root/procedure/b9ee62afe64ba778a922857689dc3782b3fb9f7dd0cf2c54f4c6e9555ffbbb9d") {
             // L1
             try await runtime.wait(.event("taskList", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTasklistFires/root/procedure/69d0ae6fa8485abc789ea3c7efae697c1c3cc48adbbac838e0fba42980caffd4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTasklistFires/root/procedure/b9ee62afe64ba778a922857689dc3782b3fb9f7dd0cf2c54f4c6e9555ffbbb9d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTasklistFires/root/procedure/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2") {
+        if __meridianShouldRun("/WhenTasklistFires/root/procedure/cc3fe123a30988304d288dee0053ded4205c43750be664cf8cb588e61c8837bc") {
             // L1
             try await runtime.emit(
                 event: "trigger.taskList.fired",
@@ -941,9 +941,9 @@ public struct WhenTasklistFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("task list"),
                 ],
-                step: "/WhenTasklistFires/root/procedure/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2"
+                step: "/WhenTasklistFires/root/procedure/cc3fe123a30988304d288dee0053ded4205c43750be664cf8cb588e61c8837bc"
             )
-            try await runtime.checkpoint(label: "/WhenTasklistFires/root/procedure/bf4b96558979b4d615112abf4b5350c7d0fb58b316beb4b5117c9f542c5f12b2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTasklistFires/root/procedure/cc3fe123a30988304d288dee0053ded4205c43750be664cf8cb588e61c8837bc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTasklistFires.complete")
@@ -1002,12 +1002,12 @@ public struct WhenDefertaskFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDefertaskFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDefertaskFires/root/procedure/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71") {
+        if __meridianShouldRun("/WhenDefertaskFires/root/procedure/3bd88d46f786ee42bfd6914c17fd0c6e01cc892532dd500156d987b4476b99b0") {
             // L1
             try await runtime.wait(.event("deferTask", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDefertaskFires/root/procedure/21186dac9f011b007f5f86ccb12770a46c717b73e9bf9670b5e8d832778f8d71", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDefertaskFires/root/procedure/3bd88d46f786ee42bfd6914c17fd0c6e01cc892532dd500156d987b4476b99b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDefertaskFires/root/procedure/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29") {
+        if __meridianShouldRun("/WhenDefertaskFires/root/procedure/c12e126696b1b55dac4a73e78a79f6e80fe5e5d930bc93b75a347f6f0fb8b14e") {
             // L1
             try await runtime.emit(
                 event: "trigger.deferTask.fired",
@@ -1015,9 +1015,9 @@ public struct WhenDefertaskFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("defer task"),
                 ],
-                step: "/WhenDefertaskFires/root/procedure/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29"
+                step: "/WhenDefertaskFires/root/procedure/c12e126696b1b55dac4a73e78a79f6e80fe5e5d930bc93b75a347f6f0fb8b14e"
             )
-            try await runtime.checkpoint(label: "/WhenDefertaskFires/root/procedure/6d12e24dfb0bd694834efb0d58f05a8669646029e453f08af2bc45fd3e787d29", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDefertaskFires/root/procedure/c12e126696b1b55dac4a73e78a79f6e80fe5e5d930bc93b75a347f6f0fb8b14e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDefertaskFires.complete")

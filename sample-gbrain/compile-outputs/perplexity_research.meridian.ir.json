@@ -4,112 +4,112 @@
       "canonical" : "emit trigger.currentState.fired with kind = \"keyword\", spec = \"current state of\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCurrentstateFires\/root\/procedure\/448aa4db63ef1c1733a8bfd740d8ea868b6aa04ada7557204527b458b50eacb6",
+      "stable_step_path" : "\/WhenCurrentstateFires\/root\/procedure\/722b5c7925899582c390ea54ae095c68c7456c1a6f1307339f2193c46221f71b",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event currentState.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCurrentstateFires\/root\/procedure\/5c9350742979cfb0d87b917dd01149b12acbf7df6a8bb62b148125d331312126",
+      "stable_step_path" : "\/WhenCurrentstateFires\/root\/procedure\/d0393b486ac0ef563f9c9b9a857aa0cae10fa12b71c9a8fc3bba9df21e533aaa",
+      "swift_line" : 1151
+    },
+    {
+      "canonical" : "wait for event perplexityResearch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenPerplexityresearchFires\/root\/procedure\/3ffc5e8abb8db7c05228321f448ef691ab78c59d96dd3daa30c2d9d5623a8e2c",
       "swift_line" : 1151
     },
     {
       "canonical" : "emit trigger.perplexityResearch.fired with kind = \"keyword\", spec = \"perplexity research\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenPerplexityresearchFires\/root\/procedure\/521d4cab3ec8908dde96e06e40870f78eec27111ab26efee1c009a4703e5c1f9",
+      "stable_step_path" : "\/WhenPerplexityresearchFires\/root\/procedure\/56c3dc8240cb15d1a01293d76c5c07c437ab00bc9edd647184b48176814f544d",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event perplexityResearch.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenPerplexityresearchFires\/root\/procedure\/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f",
+      "stable_step_path" : "\/WhenPerplexityresearchFires2\/root\/procedure\/3ffc5e8abb8db7c05228321f448ef691ab78c59d96dd3daa30c2d9d5623a8e2c",
       "swift_line" : 1151
     },
     {
       "canonical" : "emit trigger.perplexityResearch.fired with kind = \"keyword\", spec = \"perplexity-research\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenPerplexityresearchFires2\/root\/procedure\/35fd96aeee48e9fadd435e8da92614d565123244ef5a17896d5e71b36ef6ae0b",
-      "swift_line" : 1151
-    },
-    {
-      "canonical" : "wait for event perplexityResearch.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenPerplexityresearchFires2\/root\/procedure\/f176afdc7d90ae3c049037cd3f541c716a3f5e6343426d3731ba893354ac2f7f",
+      "stable_step_path" : "\/WhenPerplexityresearchFires2\/root\/procedure\/599cf50ff3e312fc4f79737849effb48dacff5338c6cc0a6841eca47682d2542",
       "swift_line" : 1151
     },
     {
       "canonical" : "emit trigger.surfaceNewDevelopments.fired with kind = \"keyword\", spec = \"surface new developments\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSurfacenewdevelopmentsFires\/root\/procedure\/f3d92926b754a6b4da3e5a604da27c73d41fa19ebaba817c634e82c94fd55de1",
+      "stable_step_path" : "\/WhenSurfacenewdevelopmentsFires\/root\/procedure\/408ec98b1bf9d04f2858a058c4cd59f8eddf375c4751f04c9300c55e5cb36322",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event surfaceNewDevelopments.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSurfacenewdevelopmentsFires\/root\/procedure\/f5b83e1576031200a71cf7a2549a6cb4bd13b8f03009f99fe307aa35a62c1537",
+      "stable_step_path" : "\/WhenSurfacenewdevelopmentsFires\/root\/procedure\/dbe0986f2d40ba326fb99a7697ed5e327985fec8f19add348573460d777ff9cd",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event webResearch.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenWebresearchFires\/root\/procedure\/8a85185365c3caf13f9347bf9b2710d3373b15c7aace504cd60c50dcbc45cacf",
+      "stable_step_path" : "\/WhenWebresearchFires\/root\/procedure\/117a3fd42d2bb58376e4827316a09dc029324706537121ddf03bf18b83bf0e96",
       "swift_line" : 1151
     },
     {
       "canonical" : "emit trigger.webResearch.fired with kind = \"keyword\", spec = \"web research\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenWebresearchFires\/root\/procedure\/a1ea5d46f4de430453d885c31356d295eac7da9a010c03aaf966375a68d01463",
-      "swift_line" : 1151
-    },
-    {
-      "canonical" : "emit trigger.whatChanged.fired with kind = \"keyword\", spec = \"what changed about\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenWhatchangedFires\/root\/procedure\/2aeab5f49b21c8434e5331f9075d6b823ed9f6d359a256667e2853930b96b941",
+      "stable_step_path" : "\/WhenWebresearchFires\/root\/procedure\/c47f2f4b9497f0cb4d3245f6cd841d1ebca5c9a69c309689ce12559340f60bea",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event whatChanged.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenWhatchangedFires\/root\/procedure\/a0ecfd1c049b8f24fba3d280997330623ebfa468f917d36131c6086e5f11718a",
+      "stable_step_path" : "\/WhenWhatchangedFires\/root\/procedure\/3cda79562322b37fbaabd3731b09f1873e89671b059c76ae5f732673e3cc0173",
       "swift_line" : 1151
     },
     {
-      "canonical" : "emit trigger.whatSNew.fired with kind = \"keyword\", spec = \"what's new about\".",
+      "canonical" : "emit trigger.whatChanged.fired with kind = \"keyword\", spec = \"what changed about\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenWhatsnewFires\/root\/procedure\/4b77ce63e01936134ef085beb2c41a9a94e116984d4a8fd883cd8c7c082513ff",
+      "stable_step_path" : "\/WhenWhatchangedFires\/root\/procedure\/46d09da0fc97f6d49a7d2d57e462756f5305099005c8308e91f8e3d424a968b6",
       "swift_line" : 1151
     },
     {
       "canonical" : "wait for event whatSNew.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenWhatsnewFires\/root\/procedure\/ea79268257ab44e3d6c83746e206045db6e4bcd0fd465aeb00cfe027da03b80c",
+      "stable_step_path" : "\/WhenWhatsnewFires\/root\/procedure\/cbf0b5cf55e634a34e41f54e5cb71725ef18da8da3f17df6a32c57eeb98e6d4c",
+      "swift_line" : 1151
+    },
+    {
+      "canonical" : "emit trigger.whatSNew.fired with kind = \"keyword\", spec = \"what's new about\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatsnewFires\/root\/procedure\/f2f3168e4bf4dc954229dbca7fa550bf01d67a048df2782b4b1a7a06b7adc9e6",
       "swift_line" : 1151
     },
     {
       "canonical" : "use judgment to follow the What this does — steps guidance:\n  Combines existing brain knowledge with Perplexity's web search. The\n  agent sends brain context about a topic into a Perplexity query;\n  Perplexity searches + reads + synthesizes multiple pages with citations,\n  focused on what's NEW relative to the supplied context\n  **The key insight:** Perplexity doesn't just search — it reads and\n  synthesizes with citations. By sending brain context in the\n  instructions, it knows what you already know, so it surfaces the delta\n  instead of repeating settled fact\n  table:decision:fCBOZWVkIHwgVXNlIHwKfC0tLS0tLXwtLS0tLXwKfCBEZWVwIHJlc2VhcmNoIHdpdGggY2l0YXRpb25zIHwgVGhpcyBza2lsbCDigJQgUGVycGxleGl0eSArIE9wdXMgfAp8IFF1aWNrIFVSTCBjb250ZW50IHwgYHdlYl9mZXRjaGAgfAp8IEJyYWluLW9ubHkgbG9va3VwIHwgYGdicmFpbiBxdWVyeWAgLyBgZ2JyYWluIHNlYXJjaGAgfAp8IFJlYWwtdGltZSBzb2NpYWwgbW9uaXRvcmluZyB8IGV4dGVybmFsIFggLyBzb2NpYWwtbWVkaWEgY29sbGVjdG9ycyB8CnwgU3RydWN0dXJlZCBkYXRhIGxvb2t1cCBhZ2FpbnN0IGEgdHJhY2tlciB8IGBza2lsbHMvZGF0YS1yZXNlYXJjaC9TS0lMTC5tZGAgfA==\n  The skill is markdown agent instructions; the agent uses Perplexity's\n  API directly (or a host-provided `perplexity` CLI if installed):\n  codeblock:bash:IyAxLiBQdWxsIGJyYWluIGNvbnRleHQKZ2JyYWluIGdldCA8c2x1Zz4gICAgICAgICAgICAgICAgICAgICMgb3IKZ2JyYWluIHF1ZXJ5ICI8dG9waWMga2V5d29yZHM+IgoKIyAyLiBDb21wb3NlIHRoZSBQZXJwbGV4aXR5IHF1ZXJ5IHdpdGggYnJhaW4gY29udGV4dCBpbmxpbmU6CiMgICAgIiIiCiMgICAgVG9waWM6IDx0b3BpYz4KIyAgICBCcmFpbiBjb250ZXh0ICh3aGF0IHdlIGFscmVhZHkga25vdyk6IDxlbWJlZGRlZCBnYnJhaW4gY29udGVudD4KIyAgICBGaW5kOiB3aGF0J3MgTkVXIHNpbmNlIDIwMjYtTU0tREQgdGhhdCB0aGUgYnJhaW4gZG9lc24ndCByZWZsZWN0LgojICAgIENpdGUgZXZlcnkgY2xhaW0uCiMgICAgIiIiCgojIDMuIENhbGwgUGVycGxleGl0eSBBUEkgb3IgdGhlIGhvc3QncyBwZXJwbGV4aXR5IGJpbmFyeToKIyAgICBjdXJsIGh0dHBzOi8vYXBpLnBlcnBsZXhpdHkuYWkvY2hhdC9jb21wbGV0aW9ucyBcCiMgICAgICAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyICRQRVJQTEVYSVRZX0FQSV9LRVkiIFwKIyAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKIyAgICAgIC1kICd7Im1vZGVsIjogInNvbmFyLXBybyIsICJtZXNzYWdlcyI6IFt7InJvbGUiOiJ1c2VyIiwiY29udGVudCI6Ii4uLiJ9XX0nCgojIDQuIFdyaXRlIHRoZSBzdHJ1Y3R1cmVkIHJlc2VhcmNoIHBhZ2UgdmlhIHB1dF9wYWdlOgpnYnJhaW4gcHV0X3BhZ2UgcmVzZWFyY2gvPHNsdWc+ICAgICAgIyB2aWEgdGhlIHB1dF9wYWdlIG9wZXJhdGlvbgoKIyA1LiBDcm9zcy1saW5rIGVudGl0aWVzIG1lbnRpb25lZCAocGVvcGxlLCBjb21wYW5pZXMpIHBlciBJcm9uIExhdy4=\n  table:decision:fCBNb2RlbCB8IENvc3QgLyBxdWVyeSB8IFVzZSB3aGVuIHwKfC0tLS0tLS18LS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tfAp8IFBlcnBsZXhpdHkgc29uYXItcHJvIHwgflwkMC4wNCB8IERlZXAgYW5hbHlzaXMsIGVudGl0eSBlbnJpY2htZW50LCBkZWFsIHJlc2VhcmNoIHwKfCBQZXJwbGV4aXR5IHNvbmFyIHwgflwkMC4wMDcgfCBRdWljayBsb29rdXBzLCBidWxrIG1vbml0b3JpbmcsIGJyaWVmaW5nIHBpcGVsaW5lcyB8\n  Default to sonar-pro. Drop to sonar for bulk \/ cron contexts where cost\n  matters more than depth\n  Called by `skills\/enrich\/SKILL.md` when an entity page (person, company)\n  needs current web context:\n  codeblock:bash:QlJBSU49JChnYnJhaW4gZ2V0IHBlb3BsZS88c2x1Zz4gMj4vZGV2L251bGwpCiMgU2VuZCA8c2x1Zz4ncyBwYWdlIGNvbnRlbnQgYXMgYnJhaW5fY29udGV4dCB0byBQZXJwbGV4aXR5LCBnZXQgY3VycmVudAojIG5ld3MgLyByb2xlIC8gY29udGV4dCwgdGhlbiB1cGRhdGUgdGhlIGJyYWluIHBhZ2Ugd2l0aCB3aGF0J3MgbmV3Lg==\n  For each active item under `deals\/` or `companies\/`:\n  codeblock:bash:IyBXZWVrbHk6IHB1bGwgcmVjZW50IG5ld3MgcGVyIGNvbXBhbnk7IGZsYWcgY2hhbmdlcyBmb3IgcmV2aWV3Lg==\n  `PERPLEXITY_API_KEY` set in the agent's environment (or in\n  `~\/.gbrain\/.env`)\n  Optional: install Perplexity's official CLI for richer streaming output\n  `skills\/academic-verify\/SKILL.md` — wraps perplexity-research for\n  citation-verified academic claim checking\n  `skills\/enrich\/SKILL.md` — calls perplexity-research as part of the\n  entity-enrichment loop\n  `skills\/data-research\/SKILL.md` — structured-data trackers (different\n  shape: parameterized YAML recipes, not free-form research)",
       "meridian_line" : 35,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/PerplexityResearchInput\/what-this-does-steps\/procedure\/d47d3ea3607d375fa4bc799d05f48079a527c9089c6b2326439f2debb9c87fcf",
+      "stable_step_path" : "\/PerplexityResearchInput\/what-this-does-steps\/procedure\/fee366dab5bac53e9944fdb16c65e447884bbc0963fad50e15aeadc4063d4a9c",
       "swift_line" : 632
     },
     {
       "canonical" : "assert not the (❌ discarding citations. every claim in the output must's U r l) is not empty.",
       "meridian_line" : 191,
       "primitive" : "assert",
-      "stable_step_path" : "\/PerplexityResearchInput\/anti-patterns-steps\/prohibitions\/8cb68bd312045aced9814c31d98cfe54a9da0756dd0e9554f3d2e691db2b0468",
+      "stable_step_path" : "\/PerplexityResearchInput\/anti-patterns-steps\/prohibitions\/6d6db994523e1f5399158d349c1f8527e52bfbe812386cba8c6065c3d842be49",
       "swift_line" : 628
     }
   ],

@@ -441,69 +441,69 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DoseCheckNurseMedicationOrder", parameters: [:])
 
-        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/rules-steps/procedure/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4") {
+        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/rules-steps/procedure/96ffbf6f7cad182786f96f86ea122851bbca1db32361776c502db5d101832330") {
             // L35
             try await runtime.assert((MeridianComparison.le(state.get("doseCount"), .number(Decimal(2)))) || (MeridianComparison.le(state.get("doseCount"), .number(Decimal(2)))), message: "Permission required: A nurse may administer medication orders whose dose count is at most 2")
-            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/rules-steps/procedure/4b59dacf8b2f70dcd9b7efdee9d59908c871d454ab5158ec0c575a42013ad1c4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/rules-steps/procedure/96ffbf6f7cad182786f96f86ea122851bbca1db32361776c502db5d101832330", state: state.snapshot())
         }
         // L42
         if MeridianComparison.le(state.get("nurse.doseCount"), Value.from(constants.doseLimit)) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde")
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/51d643bb455498aa11d44f8c210258c4f25834283e1979e120bb45e9f05a82b0")
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad") {
                 // L43
                 let medicationOrder = try await runtime.invoke(
                     tool: "medication.administer",
                     args: [
                         "order": state.get("medicationOrder") ?? .null,
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5",
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "medication.administer")
                 )
                 state.bind("medicationOrder", medicationOrder)
 
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/f1195b45c80d65c49c1089b66c2fb7a8a6d19c8603449af4fde6023f6d8227d5", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad", state: state.snapshot())
             }
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9") {
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5") {
                 // L44
                 try await runtime.emit(
                     event: "clinical.report",
                     payload: [
                         "message": .string("dose check cleared"),
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9"
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5"
                 )
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/ef64b71fca0bdb3cf3c1cb737fb966631cb5e825d991ece043aa08e7e46b71f9", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/1d67bdcbfbcaa4af82e0c57e5a4944bf02e815d8028e6279fe6366ff09d03fde")
+            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/51d643bb455498aa11d44f8c210258c4f25834283e1979e120bb45e9f05a82b0")
         }
 
         // L45
         if MeridianComparison.gt(state.get("nurse.doseCount"), Value.from(constants.doseLimit)) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204")
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/70af866cf9ae9b4bc30720da17b11a0f49c3bb5fc599eb5dfd7e091f59d74513")
+            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/fbc5a39e5d138d96caa56c20c088dd88c0ee9794b486e214a3b47b064cdd71de") {
                 // L46
                 try await runtime.emit(
                     event: "clinical.note",
                     payload: [
                         "message": .string("dose limit reached for this nurse, hand off to another nurse"),
                     ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c"
+                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/fbc5a39e5d138d96caa56c20c088dd88c0ee9794b486e214a3b47b064cdd71de"
                 )
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/82e45db80738529e88cc03429632375dbf046c31491411839156d01083ec0d1c", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/fbc5a39e5d138d96caa56c20c088dd88c0ee9794b486e214a3b47b064cdd71de", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/472b6c03401fa2fe42432f12b1fcc88242f61516336171ddf6186f9e1f47c204")
+            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/70af866cf9ae9b4bc30720da17b11a0f49c3bb5fc599eb5dfd7e091f59d74513")
         }
 
-        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038") {
+        if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/9ec1f07002bc1d77b98008c867b276267cca1e9a504567bb52803c87d82e0543") {
             // L47
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("dose check pass complete"),
                 ],
-                step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038"
+                step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/9ec1f07002bc1d77b98008c867b276267cca1e9a504567bb52803c87d82e0543"
             )
-            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/57d7f5e33dfb7d8bdae574f80893b024fa5f547b78fd0a690d1d0c1fd165d038", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/9ec1f07002bc1d77b98008c867b276267cca1e9a504567bb52803c87d82e0543", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DoseCheckNurseMedicationOrder.complete")
@@ -563,12 +563,12 @@ public struct WhenCheckdosecountFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckdosecountFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf") {
+        if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/be28c83ee8443e58a252e8ede1f54608e75e9d4a8c21817971b943b6779a17d5") {
             // L1
             try await runtime.wait(.event("checkDoseCount", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckdosecountFires/root/procedure/eab385d1166a9836bf52e68655a7b7566c64479d033a1be17bb038d701aff1bf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckdosecountFires/root/procedure/be28c83ee8443e58a252e8ede1f54608e75e9d4a8c21817971b943b6779a17d5", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498") {
+        if __meridianShouldRun("/WhenCheckdosecountFires/root/procedure/a53b60943c75d562aaa624398c47720501e686fee022db84f2e025d2d5fabb6d") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkDoseCount.fired",
@@ -576,9 +576,9 @@ public struct WhenCheckdosecountFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check dose count"),
                 ],
-                step: "/WhenCheckdosecountFires/root/procedure/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498"
+                step: "/WhenCheckdosecountFires/root/procedure/a53b60943c75d562aaa624398c47720501e686fee022db84f2e025d2d5fabb6d"
             )
-            try await runtime.checkpoint(label: "/WhenCheckdosecountFires/root/procedure/2cf88f88079f65aa66ac8d7715f784ad8aaae883b1650679292f12d6a2fbb498", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckdosecountFires/root/procedure/a53b60943c75d562aaa624398c47720501e686fee022db84f2e025d2d5fabb6d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckdosecountFires.complete")
@@ -638,12 +638,12 @@ public struct WhenRundoselimitcheckFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRundoselimitcheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec") {
+        if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/2f400c10eb7278328547c5fe860f19bd541e63cf66418d2fcc1888bf8db510bf") {
             // L1
             try await runtime.wait(.event("runDoseLimitCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRundoselimitcheckFires/root/procedure/ef004ab10090a6112ce1bec81b5689fa670572c3783bdbafc2fcd0b4fef45aec", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundoselimitcheckFires/root/procedure/2f400c10eb7278328547c5fe860f19bd541e63cf66418d2fcc1888bf8db510bf", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6") {
+        if __meridianShouldRun("/WhenRundoselimitcheckFires/root/procedure/efb0eaca0ff71b12a03a870f04216d3f5734bddfcc20b859737714d99494eafc") {
             // L1
             try await runtime.emit(
                 event: "trigger.runDoseLimitCheck.fired",
@@ -651,9 +651,9 @@ public struct WhenRundoselimitcheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run dose limit check"),
                 ],
-                step: "/WhenRundoselimitcheckFires/root/procedure/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6"
+                step: "/WhenRundoselimitcheckFires/root/procedure/efb0eaca0ff71b12a03a870f04216d3f5734bddfcc20b859737714d99494eafc"
             )
-            try await runtime.checkpoint(label: "/WhenRundoselimitcheckFires/root/procedure/622d84986a25912535eb3292dd29a81f91b80ea4a309134c2c172cb1608db6f6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundoselimitcheckFires/root/procedure/efb0eaca0ff71b12a03a870f04216d3f5734bddfcc20b859737714d99494eafc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRundoselimitcheckFires.complete")

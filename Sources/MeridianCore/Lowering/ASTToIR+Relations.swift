@@ -327,7 +327,7 @@ extension ASTToIR {
             filters.append(qualifyToLoopVar(try lowerExpr(wp), loopVar: elementVar))
         }
 
-        let sort = d.sort.map { (path: camelCase($0.property), ascending: $0.ascending) }
+        let sort = d.sort.map { IRSortSpec(path: camelCase($0.property), ascending: $0.ascending) }
         return DescriptionPlan(
             ir: DescriptionIR(collection: collection, elementVar: elementVar,
                               filters: filters, sort: sort, take: d.take, takeFromEnd: d.takeFromEnd),

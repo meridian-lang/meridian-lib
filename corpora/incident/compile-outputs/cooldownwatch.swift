@@ -418,91 +418,91 @@ public struct CooldownWatch: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "CooldownWatch", parameters: [:])
 
-        if __meridianShouldRun("/CooldownWatch/guarantees/invariants/315361ba5f62af9d96b21b09cb10dda660fc18dbce3e1ea5605812870b653a3c") {
+        if __meridianShouldRun("/CooldownWatch/guarantees/invariants/9315bd3ca7bb4f0a71cc6654c1571660225162250072d9eb8f576c12a6601d95") {
             // L47
             try await runtime.assert(((((state.get("alerts")?.asList ?? []).filter { __e in (MeridianComparison.isWithinPast(__e.member("firedAt"), Duration.seconds(900))) }).isEmpty)) && (MeridianComparison.eq(state.get("whoseStatus"), .string("firing"))), message: "Expected no alerts whose fired at is within the last 15 minutes and whose status is \"firing\"")
-            try await runtime.checkpoint(label: "/CooldownWatch/guarantees/invariants/315361ba5f62af9d96b21b09cb10dda660fc18dbce3e1ea5605812870b653a3c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CooldownWatch/guarantees/invariants/9315bd3ca7bb4f0a71cc6654c1571660225162250072d9eb8f576c12a6601d95", state: state.snapshot())
         }
-        if __meridianShouldRun("/CooldownWatch/workflow/procedure/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5") {
+        if __meridianShouldRun("/CooldownWatch/workflow/procedure/de9295ecccf96c86c9dcfcba33b6c08ccd566f568472ecbc37bf40c1cebe05d7") {
             // L26
             let alerts = try await runtime.invoke(
                 tool: "alert.list",
                 args: [
                     "status": .string("firing"),
                 ],
-                step: "/CooldownWatch/workflow/procedure/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5",
+                step: "/CooldownWatch/workflow/procedure/de9295ecccf96c86c9dcfcba33b6c08ccd566f568472ecbc37bf40c1cebe05d7",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "alert.list")
             )
             state.bind("alerts", alerts)
 
-            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/de9295ecccf96c86c9dcfcba33b6c08ccd566f568472ecbc37bf40c1cebe05d7", state: state.snapshot())
         }
-        if __meridianShouldRun("/CooldownWatch/workflow/procedure/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219") {
+        if __meridianShouldRun("/CooldownWatch/workflow/procedure/e763c2c91d66ab0456b58bb5f3e32569b23a4bdb7706ba203d3169916605f98d") {
             // L27
             try await runtime.assert((!((state.get("alerts")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("firing"))) }).isEmpty), message: "Expected any alerts whose status is \"firing\"")
-            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/e763c2c91d66ab0456b58bb5f3e32569b23a4bdb7706ba203d3169916605f98d", state: state.snapshot())
         }
         // L28
         var __meridianLoopIndex_0_3 = 0
-        try await runtime.recordIterateStart(over: "while (!((state.get(\"alerts\")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member(\"status\"), .string(\"firing\"))) }).isEmpty)", step: "/CooldownWatch/workflow/procedure/9b9699d0d6c60e9e68c437fbb852cf3c89af48835f7f58491667b9b385ed3249")
+        try await runtime.recordIterateStart(over: "while (!((state.get(\"alerts\")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member(\"status\"), .string(\"firing\"))) }).isEmpty)", step: "/CooldownWatch/workflow/procedure/d5dd7406806848fcaa9b7deecabbebafab3a799a23dda1a07ab6d17f7799b3b2")
         while (!((state.get("alerts")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("firing"))) }).isEmpty) {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             __meridianLoopIndex_0_3 += 1
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3 - 1, step: "/CooldownWatch/workflow/procedure/9b9699d0d6c60e9e68c437fbb852cf3c89af48835f7f58491667b9b385ed3249")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3 - 1, step: "/CooldownWatch/workflow/procedure/d5dd7406806848fcaa9b7deecabbebafab3a799a23dda1a07ab6d17f7799b3b2")
                 // L29
                 let __meridianSrc_0_3_body_0 = ((state.get("alerts"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("firing"))) }
-                try await runtime.recordIterateStart(over: "state.get(\"alerts\")", step: "/CooldownWatch/workflow/procedure/iterate.body/4dde0f68731671d8bffba1a63822fac1b936da7d7541766f3ce80f1b4be9ffbf")
+                try await runtime.recordIterateStart(over: "state.get(\"alerts\")", step: "/CooldownWatch/workflow/procedure/iterate.body/de9d926868062651dfddd017c1dbec8db87881007d4364e74f1b5e16e9acf53c")
                 for (__meridianLoopIndex_0_3_body_0, alert) in __meridianSrc_0_3_body_0.enumerated() {
                     let __meridianLoopLabel_0_3_body_0 = "progress:0.3.body.0:iteration:\(__meridianLoopIndex_0_3_body_0)"
                     if __meridianShouldRun(__meridianLoopLabel_0_3_body_0) {
-                        try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_body_0, step: "/CooldownWatch/workflow/procedure/iterate.body/4dde0f68731671d8bffba1a63822fac1b936da7d7541766f3ce80f1b4be9ffbf")
+                        try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_body_0, step: "/CooldownWatch/workflow/procedure/iterate.body/de9d926868062651dfddd017c1dbec8db87881007d4364e74f1b5e16e9acf53c")
                     state.bind("alert", alert)
                         // L30
                         if !(meridianDef_Alert_stale(state.get("alert"))) {
-                            try await runtime.recordBranchTaken(condition: "!(meridianDef_Alert_stale(state.get(\"alert\")))", into: "then", step: "/CooldownWatch/workflow/procedure/iterate.body/a536212f5ea2261fe5289492946513046ad7a4d73ce6a9d04dc512bbc25b2f73")
-                            if __meridianShouldRun("/CooldownWatch/workflow/procedure/branch.then/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76") {
+                            try await runtime.recordBranchTaken(condition: "!(meridianDef_Alert_stale(state.get(\"alert\")))", into: "then", step: "/CooldownWatch/workflow/procedure/iterate.body/dac04f81ae2aec5656ac7a4e7602f5c3077ff674d21b901b1276f8e311e3b632")
+                            if __meridianShouldRun("/CooldownWatch/workflow/procedure/branch.then/eebd1304a81659d6d5ab8ba5ed89e19eecf75ab2ae050c2021ad4215c72e3a90") {
                                 // L30
                                 let alert = try await runtime.invoke(
                                     tool: "page.ack",
                                     args: [
                                         "alert": state.get("alert") ?? .null,
                                     ],
-                                    step: "/CooldownWatch/workflow/procedure/branch.then/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76",
+                                    step: "/CooldownWatch/workflow/procedure/branch.then/eebd1304a81659d6d5ab8ba5ed89e19eecf75ab2ae050c2021ad4215c72e3a90",
                                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "page.ack")
                                 )
                                 state.bind("alert", alert)
 
-                                try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/branch.then/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/branch.then/eebd1304a81659d6d5ab8ba5ed89e19eecf75ab2ae050c2021ad4215c72e3a90", state: state.snapshot())
                             }
-                            try await runtime.recordBranchEnded(into: "then", step: "/CooldownWatch/workflow/procedure/iterate.body/a536212f5ea2261fe5289492946513046ad7a4d73ce6a9d04dc512bbc25b2f73")
+                            try await runtime.recordBranchEnded(into: "then", step: "/CooldownWatch/workflow/procedure/iterate.body/dac04f81ae2aec5656ac7a4e7602f5c3077ff674d21b901b1276f8e311e3b632")
                         }
 
                         try await runtime.checkpoint(label: __meridianLoopLabel_0_3_body_0, state: state.snapshot())
                     }
                 }
-                try await runtime.recordIterateEnd(over: "state.get(\"alerts\")", count: __meridianSrc_0_3_body_0.count, step: "/CooldownWatch/workflow/procedure/iterate.body/4dde0f68731671d8bffba1a63822fac1b936da7d7541766f3ce80f1b4be9ffbf")
+                try await runtime.recordIterateEnd(over: "state.get(\"alerts\")", count: __meridianSrc_0_3_body_0.count, step: "/CooldownWatch/workflow/procedure/iterate.body/de9d926868062651dfddd017c1dbec8db87881007d4364e74f1b5e16e9acf53c")
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "while (!((state.get(\"alerts\")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member(\"status\"), .string(\"firing\"))) }).isEmpty)", count: __meridianLoopIndex_0_3, step: "/CooldownWatch/workflow/procedure/9b9699d0d6c60e9e68c437fbb852cf3c89af48835f7f58491667b9b385ed3249")
+        try await runtime.recordIterateEnd(over: "while (!((state.get(\"alerts\")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member(\"status\"), .string(\"firing\"))) }).isEmpty)", count: __meridianLoopIndex_0_3, step: "/CooldownWatch/workflow/procedure/d5dd7406806848fcaa9b7deecabbebafab3a799a23dda1a07ab6d17f7799b3b2")
 
-        if __meridianShouldRun("/CooldownWatch/workflow/procedure/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f") {
+        if __meridianShouldRun("/CooldownWatch/workflow/procedure/bdfdc34d9ec947a46ebd4badd04d6d08d6e8edea81d01843fe2d502f7dd128cc") {
             // L31
             try await runtime.wait(.duration(.seconds(600)), sourceRange: nil)
-            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/bdfdc34d9ec947a46ebd4badd04d6d08d6e8edea81d01843fe2d502f7dd128cc", state: state.snapshot())
         }
-        if __meridianShouldRun("/CooldownWatch/workflow/procedure/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6") {
+        if __meridianShouldRun("/CooldownWatch/workflow/procedure/4bbdebee1867abd0e74ecdce134e7f8a1220fc0403b7a529ac05f582860c3220") {
             // L32
             try await runtime.emit(
                 event: "incident.report",
                 payload: [
                     "message": .string("cooldown watch pass complete"),
                 ],
-                step: "/CooldownWatch/workflow/procedure/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6"
+                step: "/CooldownWatch/workflow/procedure/4bbdebee1867abd0e74ecdce134e7f8a1220fc0403b7a529ac05f582860c3220"
             )
-            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CooldownWatch/workflow/procedure/4bbdebee1867abd0e74ecdce134e7f8a1220fc0403b7a529ac05f582860c3220", state: state.snapshot())
         }
         // L41
         let __meridianProseResults_L41 = try await runtime.executeProsePlan(
@@ -510,7 +510,7 @@ public struct CooldownWatch: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["alert.list", "deploy.list", "deploy.rollback", "incident.close", "incident.escalate", "incident.list", "incident.open", "oncall.roster", "page.ack", "page.send", "postmortem.publish", "runbook.list", "runbook.lookup", "service.healthcheck", "service.list", "status.post"],
             outputKind: "record",
-            step: "/CooldownWatch/anti-patterns-steps/procedure/4b29b5274e2f7293e655a44ebdc40d01b61fe8ed6f662b77aced8511fc3ccb96",
+            step: "/CooldownWatch/anti-patterns-steps/procedure/d1638b446c40603aa9aecac925928eb6f3218feb888a56c83b9a47f7965aa524",
             guidance: "Don't shorten the cooldown window to make the receipt look cleaner\nfaster. The window exists so a genuinely flapping alert gets time to\nsettle before this skill decides it's done"
         )
         for (__key, __value) in __meridianProseResults_L41 {
@@ -574,12 +574,12 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenWatchalertcooldownFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90") {
+        if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/b896afd6a50bf480ae3df60f49f9e47b7ee34be3d6ee715b261f07b3f878f364") {
             // L1
             try await runtime.wait(.event("watchAlertCooldown", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWatchalertcooldownFires/root/procedure/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWatchalertcooldownFires/root/procedure/b896afd6a50bf480ae3df60f49f9e47b7ee34be3d6ee715b261f07b3f878f364", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98") {
+        if __meridianShouldRun("/WhenWatchalertcooldownFires/root/procedure/7144214824373785226909eb9294f3f7c7a6bae4105ececc07fcb5a5a103c47d") {
             // L1
             try await runtime.emit(
                 event: "trigger.watchAlertCooldown.fired",
@@ -587,9 +587,9 @@ public struct WhenWatchalertcooldownFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("watch alert cooldown"),
                 ],
-                step: "/WhenWatchalertcooldownFires/root/procedure/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98"
+                step: "/WhenWatchalertcooldownFires/root/procedure/7144214824373785226909eb9294f3f7c7a6bae4105ececc07fcb5a5a103c47d"
             )
-            try await runtime.checkpoint(label: "/WhenWatchalertcooldownFires/root/procedure/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWatchalertcooldownFires/root/procedure/7144214824373785226909eb9294f3f7c7a6bae4105ececc07fcb5a5a103c47d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWatchalertcooldownFires.complete")
@@ -649,12 +649,12 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRuncooldownwatchFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297") {
+        if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/135b1e8b8a36c4cf4ba210d4c742265fb1206a158bf045f9eaf5609e19381f7f") {
             // L1
             try await runtime.wait(.event("runCooldownWatch", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRuncooldownwatchFires/root/procedure/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuncooldownwatchFires/root/procedure/135b1e8b8a36c4cf4ba210d4c742265fb1206a158bf045f9eaf5609e19381f7f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3") {
+        if __meridianShouldRun("/WhenRuncooldownwatchFires/root/procedure/74fec347a1e7f6b43acfdb41cba219a764092f2547e4bb797a1ac3f9fd6d21de") {
             // L1
             try await runtime.emit(
                 event: "trigger.runCooldownWatch.fired",
@@ -662,9 +662,9 @@ public struct WhenRuncooldownwatchFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("run cooldown watch"),
                 ],
-                step: "/WhenRuncooldownwatchFires/root/procedure/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3"
+                step: "/WhenRuncooldownwatchFires/root/procedure/74fec347a1e7f6b43acfdb41cba219a764092f2547e4bb797a1ac3f9fd6d21de"
             )
-            try await runtime.checkpoint(label: "/WhenRuncooldownwatchFires/root/procedure/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuncooldownwatchFires/root/procedure/74fec347a1e7f6b43acfdb41cba219a764092f2547e4bb797a1ac3f9fd6d21de", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRuncooldownwatchFires.complete")
@@ -724,12 +724,12 @@ public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunalertcooldownpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487") {
+        if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/c90aa3608319da2bf8716d555026bc969f388ca90e5f826f358b38dd4ba37b61") {
             // L1
             try await runtime.wait(.event("runAlertCooldownPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunalertcooldownpassFires/root/procedure/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunalertcooldownpassFires/root/procedure/c90aa3608319da2bf8716d555026bc969f388ca90e5f826f358b38dd4ba37b61", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa") {
+        if __meridianShouldRun("/WhenRunalertcooldownpassFires/root/procedure/207411aee8354ae58803923da696531da547f3c46854fa48d3d9217a395ace73") {
             // L1
             try await runtime.emit(
                 event: "trigger.runAlertCooldownPass.fired",
@@ -737,9 +737,9 @@ public struct WhenRunalertcooldownpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the alert cooldown pass"),
                 ],
-                step: "/WhenRunalertcooldownpassFires/root/procedure/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa"
+                step: "/WhenRunalertcooldownpassFires/root/procedure/207411aee8354ae58803923da696531da547f3c46854fa48d3d9217a395ace73"
             )
-            try await runtime.checkpoint(label: "/WhenRunalertcooldownpassFires/root/procedure/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunalertcooldownpassFires/root/procedure/207411aee8354ae58803923da696531da547f3c46854fa48d3d9217a395ace73", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunalertcooldownpassFires.complete")

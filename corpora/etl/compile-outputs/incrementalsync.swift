@@ -382,60 +382,60 @@ public struct IncrementalSync: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "IncrementalSync", parameters: [:])
 
-        if __meridianShouldRun("/IncrementalSync/guarantees/invariants/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf") {
+        if __meridianShouldRun("/IncrementalSync/guarantees/invariants/7a7889ebd7c54f30489364ae6b7a66a33350f0e77501a58510e1515c00ff25c6") {
             // L48
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("stale"))) }).isEmpty), message: "Expected no datasets whose status is \"stale\"")
-            try await runtime.checkpoint(label: "/IncrementalSync/guarantees/invariants/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncrementalSync/guarantees/invariants/7a7889ebd7c54f30489364ae6b7a66a33350f0e77501a58510e1515c00ff25c6", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L30
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/IncrementalSync/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/IncrementalSync/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/563d8b87225746cb810168bb8702659a8c24b2243ed4f78e45dce667788c339e") {
+        if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/67dfb1fa4a643a61f65b732b1a7af85762db761084b073a71048b78efbc2cc6a") {
             // L31
             try await runtime.assert((!((state.get("datasets")?.asList ?? [])).isEmpty), message: "Expected any datasets")
-            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/563d8b87225746cb810168bb8702659a8c24b2243ed4f78e45dce667788c339e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/67dfb1fa4a643a61f65b732b1a7af85762db761084b073a71048b78efbc2cc6a", state: state.snapshot())
         }
         // L32
         let __meridianColl_0_3 = (state.get("datasets")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/IncrementalSync/workflow-steps/procedure/ddfea92eb6a5c6c0ffb2465fa2b23874589c6150e48830cd8b7d5cbcaf21fc27")
+        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/IncrementalSync/workflow-steps/procedure/445592ae6e20d2cf083499c357782d8e82741e9d2556c86a84cae1a089d669f9")
         for (__meridianLoopIndex_0_3, dataset) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/IncrementalSync/workflow-steps/procedure/ddfea92eb6a5c6c0ffb2465fa2b23874589c6150e48830cd8b7d5cbcaf21fc27")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/IncrementalSync/workflow-steps/procedure/445592ae6e20d2cf083499c357782d8e82741e9d2556c86a84cae1a089d669f9")
             state.bind("dataset", dataset)
-                if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/iterate.body/bcccd8c82bf302e53f0498a0856aea145c9ba74fa0bb78e3a918eb397ecafda8") {
+                if __meridianShouldRun("/IncrementalSync/workflow-steps/procedure/iterate.body/2848e77d402547721ebd08ab2893d1c81674f460f99102593153889c62b5ec47") {
                     // L33
                     let watermark = try await runtime.invoke(
                         tool: "watermark.read",
                         args: [
                             "dataset": state.get("dataset") ?? .null,
                         ],
-                        step: "/IncrementalSync/workflow-steps/procedure/iterate.body/bcccd8c82bf302e53f0498a0856aea145c9ba74fa0bb78e3a918eb397ecafda8",
+                        step: "/IncrementalSync/workflow-steps/procedure/iterate.body/2848e77d402547721ebd08ab2893d1c81674f460f99102593153889c62b5ec47",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "watermark.read")
                     )
                     state.bind("watermark", watermark)
 
-                    try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/iterate.body/bcccd8c82bf302e53f0498a0856aea145c9ba74fa0bb78e3a918eb397ecafda8", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps/procedure/iterate.body/2848e77d402547721ebd08ab2893d1c81674f460f99102593153889c62b5ec47", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_3.count, step: "/IncrementalSync/workflow-steps/procedure/ddfea92eb6a5c6c0ffb2465fa2b23874589c6150e48830cd8b7d5cbcaf21fc27")
+        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_3.count, step: "/IncrementalSync/workflow-steps/procedure/445592ae6e20d2cf083499c357782d8e82741e9d2556c86a84cae1a089d669f9")
 
-        if __meridianShouldRun("/IncrementalSync/workflow-steps-2/procedure/0a957feaa475f2c4325022ad7fe52120ebc737a012fbbba6ce43f13543c6d28c") {
+        if __meridianShouldRun("/IncrementalSync/workflow-steps-2/procedure/6f01a8fd8695915c5f783beba02cd6b9ebf0c71e017ffe12352f785b2eb04928") {
             // L37
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("incremental sync pass complete"),
                 ],
-                step: "/IncrementalSync/workflow-steps-2/procedure/0a957feaa475f2c4325022ad7fe52120ebc737a012fbbba6ce43f13543c6d28c"
+                step: "/IncrementalSync/workflow-steps-2/procedure/6f01a8fd8695915c5f783beba02cd6b9ebf0c71e017ffe12352f785b2eb04928"
             )
-            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps-2/procedure/0a957feaa475f2c4325022ad7fe52120ebc737a012fbbba6ce43f13543c6d28c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncrementalSync/workflow-steps-2/procedure/6f01a8fd8695915c5f783beba02cd6b9ebf0c71e017ffe12352f785b2eb04928", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "IncrementalSync.complete")
@@ -495,12 +495,12 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunincrementalsyncFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/c2fc7620ec59cdc6c7d2e7fb11083b850679502a53eaff666dde2ee03d101b8d") {
+        if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/31a1feb1a3d163a932cdd19cf7645af91adb4627ef77b61f930e59b8abf1bd98") {
             // L1
             try await runtime.wait(.event("runIncrementalSync", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunincrementalsyncFires/root/procedure/c2fc7620ec59cdc6c7d2e7fb11083b850679502a53eaff666dde2ee03d101b8d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunincrementalsyncFires/root/procedure/31a1feb1a3d163a932cdd19cf7645af91adb4627ef77b61f930e59b8abf1bd98", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/0045a78cb2c767c0baf515f602040900a8a63f6ab116e499ac9b0a2987dea07b") {
+        if __meridianShouldRun("/WhenRunincrementalsyncFires/root/procedure/cc179c548e074f6ab6d1e22ba9a5bb86a80c3f88288f9fdbd232e63f260ae113") {
             // L1
             try await runtime.emit(
                 event: "trigger.runIncrementalSync.fired",
@@ -508,9 +508,9 @@ public struct WhenRunincrementalsyncFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run incremental sync"),
                 ],
-                step: "/WhenRunincrementalsyncFires/root/procedure/0045a78cb2c767c0baf515f602040900a8a63f6ab116e499ac9b0a2987dea07b"
+                step: "/WhenRunincrementalsyncFires/root/procedure/cc179c548e074f6ab6d1e22ba9a5bb86a80c3f88288f9fdbd232e63f260ae113"
             )
-            try await runtime.checkpoint(label: "/WhenRunincrementalsyncFires/root/procedure/0045a78cb2c767c0baf515f602040900a8a63f6ab116e499ac9b0a2987dea07b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunincrementalsyncFires/root/procedure/cc179c548e074f6ab6d1e22ba9a5bb86a80c3f88288f9fdbd232e63f260ae113", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunincrementalsyncFires.complete")
@@ -570,12 +570,12 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSyncdatasetwatermarksFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/231ac4d6d0d66c9e0b822ddc57a110b6f8d77b52462cf361c8b08631cbf1e721") {
+        if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/0d73f3f624243838c10516e5e1d240a9d0a1da1af02b626dbdde75cc05db7297") {
             // L1
             try await runtime.wait(.event("syncDatasetWatermarks", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSyncdatasetwatermarksFires/root/procedure/231ac4d6d0d66c9e0b822ddc57a110b6f8d77b52462cf361c8b08631cbf1e721", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSyncdatasetwatermarksFires/root/procedure/0d73f3f624243838c10516e5e1d240a9d0a1da1af02b626dbdde75cc05db7297", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/9a448351204ec9a7b222a19a143172a8aaf8d8f027072ce0c3c58f6b261909ba") {
+        if __meridianShouldRun("/WhenSyncdatasetwatermarksFires/root/procedure/ae44f740fc46f9a67e3c2001512151ade3c121203a859fb729096e1738447439") {
             // L1
             try await runtime.emit(
                 event: "trigger.syncDatasetWatermarks.fired",
@@ -583,9 +583,9 @@ public struct WhenSyncdatasetwatermarksFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("sync dataset watermarks"),
                 ],
-                step: "/WhenSyncdatasetwatermarksFires/root/procedure/9a448351204ec9a7b222a19a143172a8aaf8d8f027072ce0c3c58f6b261909ba"
+                step: "/WhenSyncdatasetwatermarksFires/root/procedure/ae44f740fc46f9a67e3c2001512151ade3c121203a859fb729096e1738447439"
             )
-            try await runtime.checkpoint(label: "/WhenSyncdatasetwatermarksFires/root/procedure/9a448351204ec9a7b222a19a143172a8aaf8d8f027072ce0c3c58f6b261909ba", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSyncdatasetwatermarksFires/root/procedure/ae44f740fc46f9a67e3c2001512151ade3c121203a859fb729096e1738447439", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSyncdatasetwatermarksFires.complete")
@@ -645,12 +645,12 @@ public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunwatermarksyncpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/b1985dad8108579e676fe3730620c486dcbcea55fd313712b0f871e0165c7d4a") {
+        if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/600c7d9a31517f05b6ddaae9e7894e8bb5711ec7feef63d21e7919f5df078d6f") {
             // L1
             try await runtime.wait(.event("runWatermarkSyncPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunwatermarksyncpassFires/root/procedure/b1985dad8108579e676fe3730620c486dcbcea55fd313712b0f871e0165c7d4a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunwatermarksyncpassFires/root/procedure/600c7d9a31517f05b6ddaae9e7894e8bb5711ec7feef63d21e7919f5df078d6f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/0502e5f06e94e4b9d70051fe59da236a3310c16c233978f03a63943750eb7ea0") {
+        if __meridianShouldRun("/WhenRunwatermarksyncpassFires/root/procedure/ee4c806962bd79928ed5379da848ff46b3645c5bc4d9ac3c0f462d0b251cb3d2") {
             // L1
             try await runtime.emit(
                 event: "trigger.runWatermarkSyncPass.fired",
@@ -658,9 +658,9 @@ public struct WhenRunwatermarksyncpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the watermark sync pass"),
                 ],
-                step: "/WhenRunwatermarksyncpassFires/root/procedure/0502e5f06e94e4b9d70051fe59da236a3310c16c233978f03a63943750eb7ea0"
+                step: "/WhenRunwatermarksyncpassFires/root/procedure/ee4c806962bd79928ed5379da848ff46b3645c5bc4d9ac3c0f462d0b251cb3d2"
             )
-            try await runtime.checkpoint(label: "/WhenRunwatermarksyncpassFires/root/procedure/0502e5f06e94e4b9d70051fe59da236a3310c16c233978f03a63943750eb7ea0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunwatermarksyncpassFires/root/procedure/ee4c806962bd79928ed5379da848ff46b3645c5bc4d9ac3c0f462d0b251cb3d2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunwatermarksyncpassFires.complete")

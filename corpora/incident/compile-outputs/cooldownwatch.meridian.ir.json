@@ -4,112 +4,112 @@
       "canonical" : "emit trigger.runAlertCooldownPass.fired with kind = \"keyword\", spec = \"run the alert cooldown pass\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunalertcooldownpassFires\/root\/procedure\/5617945d14825e53b75f39ffea4dc71fe415b3b2c2fea2df384da387f7339cfa",
+      "stable_step_path" : "\/WhenRunalertcooldownpassFires\/root\/procedure\/207411aee8354ae58803923da696531da547f3c46854fa48d3d9217a395ace73",
       "swift_line" : 733
     },
     {
       "canonical" : "wait for event runAlertCooldownPass.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunalertcooldownpassFires\/root\/procedure\/b7038b0f43bacc0b78a511f265f915efaf06dae182c45f2e8056b98b5fe43487",
+      "stable_step_path" : "\/WhenRunalertcooldownpassFires\/root\/procedure\/c90aa3608319da2bf8716d555026bc969f388ca90e5f826f358b38dd4ba37b61",
       "swift_line" : 733
     },
     {
       "canonical" : "wait for event runCooldownWatch.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRuncooldownwatchFires\/root\/procedure\/3f721204cff11d9d613eef060698e54e4ce006d07e0ebf1f6676cb98f4684297",
+      "stable_step_path" : "\/WhenRuncooldownwatchFires\/root\/procedure\/135b1e8b8a36c4cf4ba210d4c742265fb1206a158bf045f9eaf5609e19381f7f",
       "swift_line" : 733
     },
     {
       "canonical" : "emit trigger.runCooldownWatch.fired with kind = \"ambient\", spec = \"run cooldown watch\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRuncooldownwatchFires\/root\/procedure\/727a5f9bcc975158024b7c5837c3ccfe3d065706b414f066eab44a54038e6da3",
-      "swift_line" : 733
-    },
-    {
-      "canonical" : "wait for event watchAlertCooldown.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenWatchalertcooldownFires\/root\/procedure\/14a2b4ae54ce976daddff06ebbcea728cb7b4db12082cda32f22f24e6c12bd90",
+      "stable_step_path" : "\/WhenRuncooldownwatchFires\/root\/procedure\/74fec347a1e7f6b43acfdb41cba219a764092f2547e4bb797a1ac3f9fd6d21de",
       "swift_line" : 733
     },
     {
       "canonical" : "emit trigger.watchAlertCooldown.fired with kind = \"ambient\", spec = \"watch alert cooldown\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenWatchalertcooldownFires\/root\/procedure\/2096fbd7090e95c683591d889c21022d428359bcf282af359f4989a43719ea98",
+      "stable_step_path" : "\/WhenWatchalertcooldownFires\/root\/procedure\/7144214824373785226909eb9294f3f7c7a6bae4105ececc07fcb5a5a103c47d",
+      "swift_line" : 733
+    },
+    {
+      "canonical" : "wait for event watchAlertCooldown.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWatchalertcooldownFires\/root\/procedure\/b896afd6a50bf480ae3df60f49f9e47b7ee34be3d6ee715b261f07b3f878f364",
       "swift_line" : 733
     },
     {
       "canonical" : "bind alerts = invoke alert.list with status = \"firing\".",
       "meridian_line" : 26,
       "primitive" : "invoke",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/9914653ceda26a29cad825320097e8b2d0b36c7c4e302cae514ab6a830c6fea5",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/de9295ecccf96c86c9dcfcba33b6c08ccd566f568472ecbc37bf40c1cebe05d7",
       "swift_line" : 427
     },
     {
       "canonical" : "assert any alerts whose status equals \"firing\".",
       "meridian_line" : 27,
       "primitive" : "assert",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/8c301383abb114a3bb589d9a043e5b6cebaa0ad7f5f426574f0892b3e6537219",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/e763c2c91d66ab0456b58bb5f3e32569b23a4bdb7706ba203d3169916605f98d",
       "swift_line" : 441
     },
     {
       "canonical" : "while any alerts whose status equals \"firing\",\n  for each alerts whose status equals \"firing\",\n    bind alert = invoke page.ack with alert = alert unless alert is stale.",
       "meridian_line" : 28,
       "primitive" : "iterate",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/9b9699d0d6c60e9e68c437fbb852cf3c89af48835f7f58491667b9b385ed3249",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/d5dd7406806848fcaa9b7deecabbebafab3a799a23dda1a07ab6d17f7799b3b2",
       "swift_line" : 445
     },
     {
       "canonical" : "for each alerts whose status equals \"firing\",\n  bind alert = invoke page.ack with alert = alert unless alert is stale.",
       "meridian_line" : 29,
       "primitive" : "iterate",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/iterate.body\/4dde0f68731671d8bffba1a63822fac1b936da7d7541766f3ce80f1b4be9ffbf",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/iterate.body\/de9d926868062651dfddd017c1dbec8db87881007d4364e74f1b5e16e9acf53c",
       "swift_line" : 453
     },
     {
       "canonical" : "bind alert = invoke page.ack with alert = alert.",
       "meridian_line" : 30,
       "primitive" : "invoke",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/branch.then\/8f2641c78dec38ade624641e13fccff52e98a2d68772e40c3f4c3cbad639cb76",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/branch.then\/eebd1304a81659d6d5ab8ba5ed89e19eecf75ab2ae050c2021ad4215c72e3a90",
       "swift_line" : 465
     },
     {
       "canonical" : "bind alert = invoke page.ack with alert = alert unless alert is stale.",
       "meridian_line" : 30,
       "primitive" : "branch",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/iterate.body\/a536212f5ea2261fe5289492946513046ad7a4d73ce6a9d04dc512bbc25b2f73",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/iterate.body\/dac04f81ae2aec5656ac7a4e7602f5c3077ff674d21b901b1276f8e311e3b632",
       "swift_line" : 465
     },
     {
       "canonical" : "wait 600 seconds.",
       "meridian_line" : 31,
       "primitive" : "wait",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/6a13d0df3e51c143e8a6f73d6ae4269b7185a531f2e338235a92aed189c57e3f",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/bdfdc34d9ec947a46ebd4badd04d6d08d6e8edea81d01843fe2d502f7dd128cc",
       "swift_line" : 492
     },
     {
       "canonical" : "emit incident.report with message = \"cooldown watch pass complete\".",
       "meridian_line" : 32,
       "primitive" : "emit",
-      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/85cf9916af318fc79d2f528b02e57b4dced42b66d7c1ae6cc5c00277ae791ce6",
+      "stable_step_path" : "\/CooldownWatch\/workflow\/procedure\/4bbdebee1867abd0e74ecdce134e7f8a1220fc0403b7a529ac05f582860c3220",
       "swift_line" : 497
     },
     {
       "canonical" : "use judgment to follow the Anti-Patterns — steps guidance:\n  Don't shorten the cooldown window to make the receipt look cleaner\n  faster. The window exists so a genuinely flapping alert gets time to\n  settle before this skill decides it's done",
       "meridian_line" : 41,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/CooldownWatch\/anti-patterns-steps\/procedure\/4b29b5274e2f7293e655a44ebdc40d01b61fe8ed6f662b77aced8511fc3ccb96",
+      "stable_step_path" : "\/CooldownWatch\/anti-patterns-steps\/procedure\/d1638b446c40603aa9aecac925928eb6f3218feb888a56c83b9a47f7965aa524",
       "swift_line" : 507
     },
     {
       "canonical" : "assert no alerts whose fired at is within the last 900 seconds and whose status equals \"firing\".",
       "meridian_line" : 47,
       "primitive" : "assert",
-      "stable_step_path" : "\/CooldownWatch\/guarantees\/invariants\/315361ba5f62af9d96b21b09cb10dda660fc18dbce3e1ea5605812870b653a3c",
+      "stable_step_path" : "\/CooldownWatch\/guarantees\/invariants\/9315bd3ca7bb4f0a71cc6654c1571660225162250072d9eb8f576c12a6601d95",
       "swift_line" : 422
     }
   ],

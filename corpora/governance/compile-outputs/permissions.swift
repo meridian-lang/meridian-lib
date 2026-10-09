@@ -460,17 +460,17 @@ public struct LetUserAccessResource: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "LetUserAccessResource", parameters: [:])
 
-        if __meridianShouldRun("/LetUserAccessResource/root/procedure/2b031dcb54499fa7d96f42b8b5dbcc552166bd484d960265724b728618cd9a59") {
+        if __meridianShouldRun("/LetUserAccessResource/root/procedure/cf6ac58b20bcf74dbbb80cdc486f871a09ecf3d80d67750a6f7e9a519badda57") {
             // L21
             try await runtime.wait(.approval(of: state.get("userAccess") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/2b031dcb54499fa7d96f42b8b5dbcc552166bd484d960265724b728618cd9a59", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/cf6ac58b20bcf74dbbb80cdc486f871a09ecf3d80d67750a6f7e9a519badda57", state: state.snapshot())
         }
-        if __meridianShouldRun("/LetUserAccessResource/root/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076") {
+        if __meridianShouldRun("/LetUserAccessResource/root/procedure/7400af1ef342b5a909b6a151a2fff4eb19899448c459a28d8fb232288408bf65") {
             // L15
             try await runtime.assert((!(MeridianComparison.eq(state.get("user.clearance"), .string("denied")))) || (MeridianComparison.eq(state.get("user.role"), state.get("admin"))), message: "A user with clearance \"denied\" must not access classified resources")
-            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/7400af1ef342b5a909b6a151a2fff4eb19899448c459a28d8fb232288408bf65", state: state.snapshot())
         }
-        if __meridianShouldRun("/LetUserAccessResource/root/procedure/257419b4bacc9d2b54cc29ce90ed57f803b3dd924f54617992a50c43aa527b9c") {
+        if __meridianShouldRun("/LetUserAccessResource/root/procedure/86465d7a187643a0e056474798397f15e8e860d5f3e6d636ffcfe2a3fa3d80bd") {
             // L28
             _ = try await runtime.invoke(
                 tool: "access.grant",
@@ -478,11 +478,11 @@ public struct LetUserAccessResource: MeridianWorkflow {
                     "user": state.get("user") ?? .null,
                     "resource": state.get("resource") ?? .null,
                 ],
-                step: "/LetUserAccessResource/root/procedure/257419b4bacc9d2b54cc29ce90ed57f803b3dd924f54617992a50c43aa527b9c",
+                step: "/LetUserAccessResource/root/procedure/86465d7a187643a0e056474798397f15e8e860d5f3e6d636ffcfe2a3fa3d80bd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "access.grant")
             )
 
-            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/257419b4bacc9d2b54cc29ce90ed57f803b3dd924f54617992a50c43aa527b9c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/LetUserAccessResource/root/procedure/86465d7a187643a0e056474798397f15e8e860d5f3e6d636ffcfe2a3fa3d80bd", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "LetUserAccessResource.complete")
@@ -548,28 +548,28 @@ public struct HaveReviewerApproveAccessRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "HaveReviewerApproveAccessRequest", parameters: [:])
 
-        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/75e2ed92237afbb931b5dd2e2d495cfabe13f7630cb1cea6cb81f0f15569655c") {
+        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/70e92a4b151320b77463e647dd96ce311929ca03a4a11a8a4893c54dbf5f8dbb") {
             // L21
             try await runtime.wait(.approval(of: state.get("reviewerApprove") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/75e2ed92237afbb931b5dd2e2d495cfabe13f7630cb1cea6cb81f0f15569655c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/70e92a4b151320b77463e647dd96ce311929ca03a4a11a8a4893c54dbf5f8dbb", state: state.snapshot())
         }
-        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353") {
+        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669") {
             // L19
             try await runtime.assert((MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Permission required: A reviewer may approve access requests whose queue position is at most 3")
-            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669", state: state.snapshot())
         }
-        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711") {
+        if __meridianShouldRun("/HaveReviewerApproveAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd") {
             // L31
             _ = try await runtime.invoke(
                 tool: "audit.log",
                 args: [
                     "request": state.get("accessRequest") ?? .null,
                 ],
-                step: "/HaveReviewerApproveAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711",
+                step: "/HaveReviewerApproveAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit.log")
             )
 
-            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HaveReviewerApproveAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "HaveReviewerApproveAccessRequest.complete")
@@ -635,17 +635,17 @@ public struct GrantAccessRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "GrantAccessRequest", parameters: [:])
 
-        if __meridianShouldRun("/GrantAccessRequest/root/procedure/3b233f93b6659d7e5ecf82b38168972f75aaeab9943ec3a13449dcc0bd4e906e") {
+        if __meridianShouldRun("/GrantAccessRequest/root/procedure/5e2b9e5895180b18428308dad38dc317e3cd82447f09c5d0b4095262af00735f") {
             // L21
             try await runtime.wait(.approval(of: state.get("accessRequest") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/3b233f93b6659d7e5ecf82b38168972f75aaeab9943ec3a13449dcc0bd4e906e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/5e2b9e5895180b18428308dad38dc317e3cd82447f09c5d0b4095262af00735f", state: state.snapshot())
         }
-        if __meridianShouldRun("/GrantAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353") {
+        if __meridianShouldRun("/GrantAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669") {
             // L19
             try await runtime.assert((MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Permission required: A reviewer may approve access requests whose queue position is at most 3")
-            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669", state: state.snapshot())
         }
-        if __meridianShouldRun("/GrantAccessRequest/root/procedure/f3de08021097474026cc3f69e0af9bf6700376421a8142c9fc5177c59c3707d6") {
+        if __meridianShouldRun("/GrantAccessRequest/root/procedure/bf3fe803b4537b9324c64e8d7fabf699c368cc3c6573ca21ba50e56570346588") {
             // L34
             _ = try await runtime.invoke(
                 tool: "access.grant",
@@ -653,11 +653,11 @@ public struct GrantAccessRequest: MeridianWorkflow {
                     "user": state.get("accessRequest.requestor") ?? .null,
                     "resource": state.get("resource") ?? .null,
                 ],
-                step: "/GrantAccessRequest/root/procedure/f3de08021097474026cc3f69e0af9bf6700376421a8142c9fc5177c59c3707d6",
+                step: "/GrantAccessRequest/root/procedure/bf3fe803b4537b9324c64e8d7fabf699c368cc3c6573ca21ba50e56570346588",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "access.grant")
             )
 
-            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/f3de08021097474026cc3f69e0af9bf6700376421a8142c9fc5177c59c3707d6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessRequest/root/procedure/bf3fe803b4537b9324c64e8d7fabf699c368cc3c6573ca21ba50e56570346588", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "GrantAccessRequest.complete")
@@ -720,28 +720,28 @@ public struct EscalateOverdueAccessRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "EscalateOverdueAccessRequest", parameters: [:])
 
-        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/be4d5da2b1a96fbddd7d74e312fa48c0259d897c40c225172f76b4bdb4be7f16") {
+        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/11d9b79f7650d83441cff7ff27fa5f4471a5ac92a0f97d216d04ae04c3c7bce9") {
             // L21
             try await runtime.wait(.approval(of: state.get("overdueAccessRequest") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/be4d5da2b1a96fbddd7d74e312fa48c0259d897c40c225172f76b4bdb4be7f16", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/11d9b79f7650d83441cff7ff27fa5f4471a5ac92a0f97d216d04ae04c3c7bce9", state: state.snapshot())
         }
-        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353") {
+        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669") {
             // L19
             try await runtime.assert((MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Permission required: A reviewer may approve access requests whose queue position is at most 3")
-            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669", state: state.snapshot())
         }
-        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711") {
+        if __meridianShouldRun("/EscalateOverdueAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd") {
             // L37
             _ = try await runtime.invoke(
                 tool: "audit.log",
                 args: [
                     "request": state.get("accessRequest") ?? .null,
                 ],
-                step: "/EscalateOverdueAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711",
+                step: "/EscalateOverdueAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit.log")
             )
 
-            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/d6bb58f0aeac03bf9f84a4785d72ae2abddd4ec6d77f402cc10df4be32cd9711", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateOverdueAccessRequest/root/procedure/b4c3571df696ef5ac0bfe9e13e271839e1da483599d6374bfb89da162ee2b0dd", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "EscalateOverdueAccessRequest.complete")
@@ -801,12 +801,12 @@ public struct WhenAccessRequestIs: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAccessRequestIs", parameters: [:])
 
-        if __meridianShouldRun("/WhenAccessRequestIs/root/procedure/4c329036885f4005af854bef5d58bca2d2d6fa4493f61f5b3eb77360fad7d18b") {
+        if __meridianShouldRun("/WhenAccessRequestIs/root/procedure/b15fd749c77dcc8498ddce6590151c6c3b7b388b4ee0d53133f8be08bf29cab5") {
             // L23
             try await runtime.wait(.event("accessRequestIsFlaggedAs", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAccessRequestIs/root/procedure/4c329036885f4005af854bef5d58bca2d2d6fa4493f61f5b3eb77360fad7d18b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAccessRequestIs/root/procedure/b15fd749c77dcc8498ddce6590151c6c3b7b388b4ee0d53133f8be08bf29cab5", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAccessRequestIs/root/procedure/a048dbcdea622e8668f786b404454497963d7f5e9338a754a5a33de997aef243") {
+        if __meridianShouldRun("/WhenAccessRequestIs/root/procedure/b203f601a047ae5d81506b413581c779bf6591f30ca42fa4f234f1a90ac04564") {
             // L23
             try await runtime.emit(
                 event: "trigger.accessRequestIsFlaggedAs.fired",
@@ -814,9 +814,9 @@ public struct WhenAccessRequestIs: MeridianWorkflow {
                     "action": .string("escalate the access request"),
                     "condition": .string("an access request is flagged as overdue"),
                 ],
-                step: "/WhenAccessRequestIs/root/procedure/a048dbcdea622e8668f786b404454497963d7f5e9338a754a5a33de997aef243"
+                step: "/WhenAccessRequestIs/root/procedure/b203f601a047ae5d81506b413581c779bf6591f30ca42fa4f234f1a90ac04564"
             )
-            try await runtime.checkpoint(label: "/WhenAccessRequestIs/root/procedure/a048dbcdea622e8668f786b404454497963d7f5e9338a754a5a33de997aef243", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAccessRequestIs/root/procedure/b203f601a047ae5d81506b413581c779bf6591f30ca42fa4f234f1a90ac04564", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAccessRequestIs.complete")

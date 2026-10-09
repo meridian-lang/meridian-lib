@@ -438,72 +438,72 @@ public struct ConsentCapturePatient: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ConsentCapturePatient", parameters: [:])
 
-        if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a") {
+        if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3") {
             // L30
             let consent = try await runtime.invoke(
                 tool: "consent.record",
                 args: [
                     "patient": state.get("patient") ?? .null,
                 ],
-                step: "/ConsentCapturePatient/workflow/procedure/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a",
+                step: "/ConsentCapturePatient/workflow/procedure/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "consent.record")
             )
             state.bind("consent", consent)
 
-            try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3", state: state.snapshot())
         }
         // L31
         if meridianDef_Consent_granted(state.get("consent")) {
-            try await runtime.recordBranchTaken(condition: "meridianDef_Consent_granted(state.get(\"consent\"))", into: "then", step: "/ConsentCapturePatient/workflow/procedure/fda9fba934a73fc827ae1cbad28be99d75e629f0646311cd0e432fbfb5b8a24e")
-            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/956e24fa222a8c4087832d9bf71be49d521b4bdac90eb43fe3e8d2969e686563") {
+            try await runtime.recordBranchTaken(condition: "meridianDef_Consent_granted(state.get(\"consent\"))", into: "then", step: "/ConsentCapturePatient/workflow/procedure/26a9fb0f894012ac7b61959dd95b415d765b09b4b41e5e43d03abccb9d971880")
+            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/beee85b659cb960dda1bbbcb7d419346abc4bf125491c234c712014267f2f5cd") {
                 // L32
                 try await runtime.emit(
                     event: "clinical.report",
                     payload: [
                         "message": .string("consent captured"),
                     ],
-                    step: "/ConsentCapturePatient/workflow/procedure/branch.then/956e24fa222a8c4087832d9bf71be49d521b4bdac90eb43fe3e8d2969e686563"
+                    step: "/ConsentCapturePatient/workflow/procedure/branch.then/beee85b659cb960dda1bbbcb7d419346abc4bf125491c234c712014267f2f5cd"
                 )
-                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/956e24fa222a8c4087832d9bf71be49d521b4bdac90eb43fe3e8d2969e686563", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/beee85b659cb960dda1bbbcb7d419346abc4bf125491c234c712014267f2f5cd", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/fda9fba934a73fc827ae1cbad28be99d75e629f0646311cd0e432fbfb5b8a24e")
+            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/26a9fb0f894012ac7b61959dd95b415d765b09b4b41e5e43d03abccb9d971880")
         }
 
         // L33
         if !(meridianDef_Consent_granted(state.get("consent"))) {
-            try await runtime.recordBranchTaken(condition: "!(meridianDef_Consent_granted(state.get(\"consent\")))", into: "then", step: "/ConsentCapturePatient/workflow/procedure/8821e557c04c15e78a02bc1d342a951e3303adbdfe541b4555b4fb2c2397d9f7")
-            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/20ea19025110b67f3701a9480c63509f8fce0350cd86101f10cb8f2263ea8e95") {
+            try await runtime.recordBranchTaken(condition: "!(meridianDef_Consent_granted(state.get(\"consent\")))", into: "then", step: "/ConsentCapturePatient/workflow/procedure/484804dd3513908540c1a554dae4e18532d429fe8d7cc981e6a7383772014f4a")
+            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/ceeac8afd76326b78a43f21cba9a31f17e15c736453b208a6e50ae991c29c68b") {
                 // L34
                 try await runtime.wait(.signal("consent_follow_up"), sourceRange: nil)
-                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/20ea19025110b67f3701a9480c63509f8fce0350cd86101f10cb8f2263ea8e95", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/ceeac8afd76326b78a43f21cba9a31f17e15c736453b208a6e50ae991c29c68b", state: state.snapshot())
             }
-            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a") {
+            if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/branch.then/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3") {
                 // L35
                 let consent = try await runtime.invoke(
                     tool: "consent.record",
                     args: [
                         "patient": state.get("patient") ?? .null,
                     ],
-                    step: "/ConsentCapturePatient/workflow/procedure/branch.then/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a",
+                    step: "/ConsentCapturePatient/workflow/procedure/branch.then/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "consent.record")
                 )
                 state.bind("consent", consent)
 
-                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/e2886613465db7610a893f8084c78d8cef7b5b4831ba657a8449a64faa74ed1a", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/branch.then/a4b0a6030a619d66dce16655b948d6f9986145afe1d5faf50dce33f111df61c3", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/8821e557c04c15e78a02bc1d342a951e3303adbdfe541b4555b4fb2c2397d9f7")
+            try await runtime.recordBranchEnded(into: "then", step: "/ConsentCapturePatient/workflow/procedure/484804dd3513908540c1a554dae4e18532d429fe8d7cc981e6a7383772014f4a")
         }
 
-        if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/bea0691c5b9689cc8bb71f8b1837669fe1e2e39b3d70a909595915c7eb338e4b") {
+        if __meridianShouldRun("/ConsentCapturePatient/workflow/procedure/9cd2e452854ddd8cc19dbecd389c7a13cc58aa6dc4a38cf0f1a437fe566f5f2e") {
             // L36
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("consent capture pass complete"),
                 ],
-                step: "/ConsentCapturePatient/workflow/procedure/bea0691c5b9689cc8bb71f8b1837669fe1e2e39b3d70a909595915c7eb338e4b"
+                step: "/ConsentCapturePatient/workflow/procedure/9cd2e452854ddd8cc19dbecd389c7a13cc58aa6dc4a38cf0f1a437fe566f5f2e"
             )
-            try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/bea0691c5b9689cc8bb71f8b1837669fe1e2e39b3d70a909595915c7eb338e4b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ConsentCapturePatient/workflow/procedure/9cd2e452854ddd8cc19dbecd389c7a13cc58aa6dc4a38cf0f1a437fe566f5f2e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ConsentCapturePatient.complete")
@@ -563,12 +563,12 @@ public struct WhenCapturepatientconsentFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCapturepatientconsentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/aa7b2048db6e800940fc835badf0eed500fb7ebc7fd45ae52705335d98c2602f") {
+        if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/35cf707044868f9ad19bbafdd52d575b69e35dcad2f9dc6ff07ed66f924babbf") {
             // L1
             try await runtime.wait(.event("capturePatientConsent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCapturepatientconsentFires/root/procedure/aa7b2048db6e800940fc835badf0eed500fb7ebc7fd45ae52705335d98c2602f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCapturepatientconsentFires/root/procedure/35cf707044868f9ad19bbafdd52d575b69e35dcad2f9dc6ff07ed66f924babbf", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/d97abcf5d2a98099aa602928e630ac61246dfa180e250afbebd7ccdb637773a2") {
+        if __meridianShouldRun("/WhenCapturepatientconsentFires/root/procedure/933c804c3b74ee2ec7fdd26bfd2182a307e1f82e03e95911ca81ba81381d2ff3") {
             // L1
             try await runtime.emit(
                 event: "trigger.capturePatientConsent.fired",
@@ -576,9 +576,9 @@ public struct WhenCapturepatientconsentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("capture patient consent"),
                 ],
-                step: "/WhenCapturepatientconsentFires/root/procedure/d97abcf5d2a98099aa602928e630ac61246dfa180e250afbebd7ccdb637773a2"
+                step: "/WhenCapturepatientconsentFires/root/procedure/933c804c3b74ee2ec7fdd26bfd2182a307e1f82e03e95911ca81ba81381d2ff3"
             )
-            try await runtime.checkpoint(label: "/WhenCapturepatientconsentFires/root/procedure/d97abcf5d2a98099aa602928e630ac61246dfa180e250afbebd7ccdb637773a2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCapturepatientconsentFires/root/procedure/933c804c3b74ee2ec7fdd26bfd2182a307e1f82e03e95911ca81ba81381d2ff3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCapturepatientconsentFires.complete")
@@ -638,12 +638,12 @@ public struct WhenRecordconsentFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRecordconsentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/525b52c794bdc8b145c3132d7964b86ce5c7846c134b9eb4a970523806454a92") {
+        if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/5a72b1ab73440ccf0543acff70b166b717220c7211425d39f44fd17807e91eae") {
             // L1
             try await runtime.wait(.event("recordConsent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRecordconsentFires/root/procedure/525b52c794bdc8b145c3132d7964b86ce5c7846c134b9eb4a970523806454a92", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRecordconsentFires/root/procedure/5a72b1ab73440ccf0543acff70b166b717220c7211425d39f44fd17807e91eae", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/634adb8c09c7fa256f5dd75df5f1b562d7aa9b2e628e424914e5ae8e5ef55f25") {
+        if __meridianShouldRun("/WhenRecordconsentFires/root/procedure/64806859942991ab211abec8787f966bb2709b9bb7151da1cdd20294591f93cf") {
             // L1
             try await runtime.emit(
                 event: "trigger.recordConsent.fired",
@@ -651,9 +651,9 @@ public struct WhenRecordconsentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("record consent"),
                 ],
-                step: "/WhenRecordconsentFires/root/procedure/634adb8c09c7fa256f5dd75df5f1b562d7aa9b2e628e424914e5ae8e5ef55f25"
+                step: "/WhenRecordconsentFires/root/procedure/64806859942991ab211abec8787f966bb2709b9bb7151da1cdd20294591f93cf"
             )
-            try await runtime.checkpoint(label: "/WhenRecordconsentFires/root/procedure/634adb8c09c7fa256f5dd75df5f1b562d7aa9b2e628e424914e5ae8e5ef55f25", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRecordconsentFires/root/procedure/64806859942991ab211abec8787f966bb2709b9bb7151da1cdd20294591f93cf", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRecordconsentFires.complete")

@@ -382,54 +382,54 @@ public struct ExtractLoad: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ExtractLoad", parameters: [:])
 
-        if __meridianShouldRun("/ExtractLoad/guarantees/invariants/b7015453c8a778936b41b0114ea4dfbe9006239b0689c387014fba49a73ade7a") {
+        if __meridianShouldRun("/ExtractLoad/guarantees/invariants/5c2cf0ea2aac8aabfc7941e201c4ca89052217c602ed64431ceaf1157591f704") {
             // L50
             try await runtime.assert(((state.get("datasets")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all datasets have a name")
-            try await runtime.checkpoint(label: "/ExtractLoad/guarantees/invariants/b7015453c8a778936b41b0114ea4dfbe9006239b0689c387014fba49a73ade7a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/guarantees/invariants/5c2cf0ea2aac8aabfc7941e201c4ca89052217c602ed64431ceaf1157591f704", state: state.snapshot())
         }
-        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L28
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/ExtractLoad/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/ExtractLoad/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
-        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/b7015453c8a778936b41b0114ea4dfbe9006239b0689c387014fba49a73ade7a") {
+        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/5c2cf0ea2aac8aabfc7941e201c4ca89052217c602ed64431ceaf1157591f704") {
             // L29
             try await runtime.assert(((state.get("datasets")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all datasets have a name")
-            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/b7015453c8a778936b41b0114ea4dfbe9006239b0689c387014fba49a73ade7a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/5c2cf0ea2aac8aabfc7941e201c4ca89052217c602ed64431ceaf1157591f704", state: state.snapshot())
         }
-        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285") {
+        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1") {
             // L30
             let dataset = try await runtime.invoke(
                 tool: "extract",
                 args: [
                     "source": Value.from(instances.objectStoreSource),
                 ],
-                step: "/ExtractLoad/workflow-steps/procedure/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285",
+                step: "/ExtractLoad/workflow-steps/procedure/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "extract")
             )
             state.bind("dataset", dataset)
 
-            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1", state: state.snapshot())
         }
-        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067") {
+        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e") {
             // L31
             let schema = try await runtime.invoke(
                 tool: "schema.validate",
                 args: [
                     "dataset": state.get("dataset") ?? .null,
                 ],
-                step: "/ExtractLoad/workflow-steps/procedure/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067",
+                step: "/ExtractLoad/workflow-steps/procedure/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "schema.validate")
             )
             state.bind("schema", schema)
 
-            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e", state: state.snapshot())
         }
         // L33
         do {
-            if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/recover.body/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc") {
+            if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/recover.body/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f") {
                 // L32
                 let dataset = try await runtime.invoke(
                     tool: "load",
@@ -437,37 +437,37 @@ public struct ExtractLoad: MeridianWorkflow {
                         "dataset": state.get("dataset") ?? .null,
                         "warehouse sink": state.get("warehouseWarehouseSink") ?? .null,
                     ],
-                    step: "/ExtractLoad/workflow-steps/procedure/recover.body/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc",
+                    step: "/ExtractLoad/workflow-steps/procedure/recover.body/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "load")
                 )
                 state.bind("dataset", dataset)
 
-                try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/recover.body/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/recover.body/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f", state: state.snapshot())
             }
         } catch let _recoveredError where meridianMatches(_recoveredError, named: "load.failed") {
-            try await runtime.recordRecoverEngaged(pattern: "load.failed", step: "/ExtractLoad/workflow-steps/procedure/9cacf9ef1de9bd364e84f1bf8cc3311a504a8ef90290cf9a565f5094bced1aaa")
-            if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/recover.handler/17f83f81221e03fe65bc90bc2834eee03b7e7e1c023862da202f84e02de0db4b") {
+            try await runtime.recordRecoverEngaged(pattern: "load.failed", step: "/ExtractLoad/workflow-steps/procedure/2ed785367900c5cfa81390a919e5ea81f3ec4bf09ec3d8a9d446e9f268f47f7a")
+            if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/recover.handler/5ac265d68f017f24e0e846ee0aa4aba42df9faba6f4f581dd6d1edf29909de59") {
                 // L34
                 try await runtime.emit(
                     event: "etl.note",
                     payload: [
                         "message": .string("load failed, dataset held for replay"),
                     ],
-                    step: "/ExtractLoad/workflow-steps/procedure/recover.handler/17f83f81221e03fe65bc90bc2834eee03b7e7e1c023862da202f84e02de0db4b"
+                    step: "/ExtractLoad/workflow-steps/procedure/recover.handler/5ac265d68f017f24e0e846ee0aa4aba42df9faba6f4f581dd6d1edf29909de59"
                 )
-                try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/recover.handler/17f83f81221e03fe65bc90bc2834eee03b7e7e1c023862da202f84e02de0db4b", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/recover.handler/5ac265d68f017f24e0e846ee0aa4aba42df9faba6f4f581dd6d1edf29909de59", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/aabb0a912f2aa7d3c3d4fb3f9021a0f0b8dc80eb7d852ceb69eac191b8be9242") {
+        if __meridianShouldRun("/ExtractLoad/workflow-steps/procedure/2189b6b868192f231ff678363de12b6d3f8b705b49cb92a310e1de499d3b4b72") {
             // L35
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("extract load pass complete"),
                 ],
-                step: "/ExtractLoad/workflow-steps/procedure/aabb0a912f2aa7d3c3d4fb3f9021a0f0b8dc80eb7d852ceb69eac191b8be9242"
+                step: "/ExtractLoad/workflow-steps/procedure/2189b6b868192f231ff678363de12b6d3f8b705b49cb92a310e1de499d3b4b72"
             )
-            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/aabb0a912f2aa7d3c3d4fb3f9021a0f0b8dc80eb7d852ceb69eac191b8be9242", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ExtractLoad/workflow-steps/procedure/2189b6b868192f231ff678363de12b6d3f8b705b49cb92a310e1de499d3b4b72", state: state.snapshot())
         }
         // L44
         let __meridianProseResults_L44 = try await runtime.executeProsePlan(
@@ -475,7 +475,7 @@ public struct ExtractLoad: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["dataset.list", "extract", "load", "partition.backfill", "partition.list", "pipeline.list", "pipeline.replay", "quality.run", "record.dedupe", "schema.validate", "transform", "watermark.read"],
             outputKind: "record",
-            step: "/ExtractLoad/anti-patterns-steps/procedure/67e8f64f3783016364681b362f171e12506607f3085a3da6d71b62a2057fba32",
+            step: "/ExtractLoad/anti-patterns-steps/procedure/49f3b50ae6519d377f709a3d59d5b4f6d8ef3f837b8311283e187c1b5079f5e1",
             guidance: "Don't retry a failed load inline in a tight loop. Hold it for replay —\n`pipeline triage` is the skill that decides whether a failure is worth\nreplaying at all"
         )
         for (__key, __value) in __meridianProseResults_L44 {
@@ -539,12 +539,12 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunextractloadFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/798a99e2009f5a0944f9745aa59f74142f296fd1de68aa5b1c6ec905557b91fa") {
+        if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/40ab1d2a97dea07fe3f44f1679e3d5e76ae7f12d19372671cb9ffe00b30b17ec") {
             // L1
             try await runtime.wait(.event("runExtractLoad", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunextractloadFires/root/procedure/798a99e2009f5a0944f9745aa59f74142f296fd1de68aa5b1c6ec905557b91fa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunextractloadFires/root/procedure/40ab1d2a97dea07fe3f44f1679e3d5e76ae7f12d19372671cb9ffe00b30b17ec", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/7c7545a3f5448662ff30e23e18d473fc6c7a056f405ea128ef540d387512f55f") {
+        if __meridianShouldRun("/WhenRunextractloadFires/root/procedure/737f9281844f4b50b1d7f920d2fdcfd11d73b816d87b71c8b2e3e300cdaab433") {
             // L1
             try await runtime.emit(
                 event: "trigger.runExtractLoad.fired",
@@ -552,9 +552,9 @@ public struct WhenRunextractloadFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run extract load"),
                 ],
-                step: "/WhenRunextractloadFires/root/procedure/7c7545a3f5448662ff30e23e18d473fc6c7a056f405ea128ef540d387512f55f"
+                step: "/WhenRunextractloadFires/root/procedure/737f9281844f4b50b1d7f920d2fdcfd11d73b816d87b71c8b2e3e300cdaab433"
             )
-            try await runtime.checkpoint(label: "/WhenRunextractloadFires/root/procedure/7c7545a3f5448662ff30e23e18d473fc6c7a056f405ea128ef540d387512f55f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunextractloadFires/root/procedure/737f9281844f4b50b1d7f920d2fdcfd11d73b816d87b71c8b2e3e300cdaab433", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunextractloadFires.complete")
@@ -614,12 +614,12 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenExtractandloaddatasetsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/c9dcafda8706f4849e329905596efb6678c41044b9434c301356f961da3b0ec4") {
+        if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/721c79c695e255c04766e2a238ed5c21b34a05968629668bdd1c0b715efdeda1") {
             // L1
             try await runtime.wait(.event("extractAndLoadDatasets", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenExtractandloaddatasetsFires/root/procedure/c9dcafda8706f4849e329905596efb6678c41044b9434c301356f961da3b0ec4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenExtractandloaddatasetsFires/root/procedure/721c79c695e255c04766e2a238ed5c21b34a05968629668bdd1c0b715efdeda1", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/29b33e6a91c345f04c812bfc87a30b733c63dd01a2a21c3c0cc987e108dd0144") {
+        if __meridianShouldRun("/WhenExtractandloaddatasetsFires/root/procedure/e09f7da56c8de8d04c151d363acb0b614147092b2c30651f01c4d1f728b730f7") {
             // L1
             try await runtime.emit(
                 event: "trigger.extractAndLoadDatasets.fired",
@@ -627,9 +627,9 @@ public struct WhenExtractandloaddatasetsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("extract and load datasets"),
                 ],
-                step: "/WhenExtractandloaddatasetsFires/root/procedure/29b33e6a91c345f04c812bfc87a30b733c63dd01a2a21c3c0cc987e108dd0144"
+                step: "/WhenExtractandloaddatasetsFires/root/procedure/e09f7da56c8de8d04c151d363acb0b614147092b2c30651f01c4d1f728b730f7"
             )
-            try await runtime.checkpoint(label: "/WhenExtractandloaddatasetsFires/root/procedure/29b33e6a91c345f04c812bfc87a30b733c63dd01a2a21c3c0cc987e108dd0144", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenExtractandloaddatasetsFires/root/procedure/e09f7da56c8de8d04c151d363acb0b614147092b2c30651f01c4d1f728b730f7", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenExtractandloaddatasetsFires.complete")
@@ -689,12 +689,12 @@ public struct WhenRunextractloadpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunextractloadpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/425355ef9892abd7d8c8a7fa1340857aa92d48f7e0f0c2b242ab82903438b962") {
+        if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/2166670c23eafa168695792c8db430f0fe998a2651ac707c4e21f44475e5322d") {
             // L1
             try await runtime.wait(.event("runExtractLoadPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunextractloadpassFires/root/procedure/425355ef9892abd7d8c8a7fa1340857aa92d48f7e0f0c2b242ab82903438b962", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunextractloadpassFires/root/procedure/2166670c23eafa168695792c8db430f0fe998a2651ac707c4e21f44475e5322d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/fbf466a7455483627187c97a6bdb852abc8edff8ca816d248a4876bd65acec1a") {
+        if __meridianShouldRun("/WhenRunextractloadpassFires/root/procedure/b1f09f2e1c69177775cc3aeaaba9b2dbe4e7a91e059200796fb44cbb183173f5") {
             // L1
             try await runtime.emit(
                 event: "trigger.runExtractLoadPass.fired",
@@ -702,9 +702,9 @@ public struct WhenRunextractloadpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the extract-load pass"),
                 ],
-                step: "/WhenRunextractloadpassFires/root/procedure/fbf466a7455483627187c97a6bdb852abc8edff8ca816d248a4876bd65acec1a"
+                step: "/WhenRunextractloadpassFires/root/procedure/b1f09f2e1c69177775cc3aeaaba9b2dbe4e7a91e059200796fb44cbb183173f5"
             )
-            try await runtime.checkpoint(label: "/WhenRunextractloadpassFires/root/procedure/fbf466a7455483627187c97a6bdb852abc8edff8ca816d248a4876bd65acec1a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunextractloadpassFires/root/procedure/b1f09f2e1c69177775cc3aeaaba9b2dbe4e7a91e059200796fb44cbb183173f5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunextractloadpassFires.complete")

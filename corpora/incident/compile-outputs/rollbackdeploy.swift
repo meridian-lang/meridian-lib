@@ -418,58 +418,58 @@ public struct RollbackDeploy: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "RollbackDeploy", parameters: [:])
 
-        if __meridianShouldRun("/RollbackDeploy/guarantees/invariants/1ecabfae0b4ee79fba416d72fb503b8a76e6eeeca73577efa9c747e1701fa5e9") {
+        if __meridianShouldRun("/RollbackDeploy/guarantees/invariants/6c728980e4ca07fa19a38778b0fb95588658f792ed0d61ed07d1af03f6c279b4") {
             // L51
             try await runtime.assert((((state.get("deploys")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no deploys whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/RollbackDeploy/guarantees/invariants/1ecabfae0b4ee79fba416d72fb503b8a76e6eeeca73577efa9c747e1701fa5e9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RollbackDeploy/guarantees/invariants/6c728980e4ca07fa19a38778b0fb95588658f792ed0d61ed07d1af03f6c279b4", state: state.snapshot())
         }
-        if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/787cb9662b3b02d753baedc00291e3ceb3b52b80799d646ad3a0a9fe9805deb1") {
+        if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/70d9dd773a9c5cce7ea1e4d64525b596ac048bc3564d65aa42615a30495f7374") {
             // L31
             let deploys = try await runtime.invoke(
                 tool: "deploy.list",
                 args: [
                     "status": .string("failed"),
                 ],
-                step: "/RollbackDeploy/workflow-steps/procedure/787cb9662b3b02d753baedc00291e3ceb3b52b80799d646ad3a0a9fe9805deb1",
+                step: "/RollbackDeploy/workflow-steps/procedure/70d9dd773a9c5cce7ea1e4d64525b596ac048bc3564d65aa42615a30495f7374",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "deploy.list")
             )
             state.bind("deploys", deploys)
 
-            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/787cb9662b3b02d753baedc00291e3ceb3b52b80799d646ad3a0a9fe9805deb1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/70d9dd773a9c5cce7ea1e4d64525b596ac048bc3564d65aa42615a30495f7374", state: state.snapshot())
         }
-        if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/fded44bcc90b31a83bd96f50c338b9435ec927b83512767500af77f4703e0ae6") {
+        if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/206c23ec883fb3ba86c95d390c8910b238bec24ca75f0d3b99d4d9e40d240a27") {
             // L32
             try await runtime.assert((!((state.get("deploys")?.asList ?? []).filter { __e in (meridianDef_Deploy_unhealthy(__e)) }).isEmpty), message: "Expected any unhealthy deploys")
-            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/fded44bcc90b31a83bd96f50c338b9435ec927b83512767500af77f4703e0ae6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/206c23ec883fb3ba86c95d390c8910b238bec24ca75f0d3b99d4d9e40d240a27", state: state.snapshot())
         }
         // L33
         let __meridianColl_0_3 = (state.get("deploys")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"deploys\")", step: "/RollbackDeploy/workflow-steps/procedure/bff37b2ce7b3ca3ea3144f5e87f592e52ee5d791464900021666a6e3b664eead")
+        try await runtime.recordIterateStart(over: "state.get(\"deploys\")", step: "/RollbackDeploy/workflow-steps/procedure/02d8db2337700c085a8954b88030537da9aec0a1571c908254b9e5ad3aa84ab7")
         for (__meridianLoopIndex_0_3, deploy) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RollbackDeploy/workflow-steps/procedure/bff37b2ce7b3ca3ea3144f5e87f592e52ee5d791464900021666a6e3b664eead")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RollbackDeploy/workflow-steps/procedure/02d8db2337700c085a8954b88030537da9aec0a1571c908254b9e5ad3aa84ab7")
             state.bind("deploy", deploy)
-                if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/iterate.body/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60") {
+                if __meridianShouldRun("/RollbackDeploy/workflow-steps/procedure/iterate.body/e9387cb73f32c5dc0328bd3c1d70687a51f547a69da6dfe1ed900f5f194daec2") {
                     // L34
                     try await runtime.wait(.approval(of: state.get("deploy") ?? .null, by: RoleRef(identifier: "an oncall engineer")), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/iterate.body/354ff3b043c93366481158a390f829745a8bd1f332a7de559128a167c1e80c60", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps/procedure/iterate.body/e9387cb73f32c5dc0328bd3c1d70687a51f547a69da6dfe1ed900f5f194daec2", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"deploys\")", count: __meridianColl_0_3.count, step: "/RollbackDeploy/workflow-steps/procedure/bff37b2ce7b3ca3ea3144f5e87f592e52ee5d791464900021666a6e3b664eead")
+        try await runtime.recordIterateEnd(over: "state.get(\"deploys\")", count: __meridianColl_0_3.count, step: "/RollbackDeploy/workflow-steps/procedure/02d8db2337700c085a8954b88030537da9aec0a1571c908254b9e5ad3aa84ab7")
 
-        if __meridianShouldRun("/RollbackDeploy/workflow-steps-2/procedure/932cc610d4a861a1044047e721bc8719818096efaf1c09e86bee02b6d467f4d1") {
+        if __meridianShouldRun("/RollbackDeploy/workflow-steps-2/procedure/1b9abbe8a7b7b822ced0aa99eea3943ffd0cebd99da84ea6dfd4987e023449b5") {
             // L40
             try await runtime.emit(
                 event: "incident.report",
                 payload: [
                     "message": .string("deploy rollback pass complete"),
                 ],
-                step: "/RollbackDeploy/workflow-steps-2/procedure/932cc610d4a861a1044047e721bc8719818096efaf1c09e86bee02b6d467f4d1"
+                step: "/RollbackDeploy/workflow-steps-2/procedure/1b9abbe8a7b7b822ced0aa99eea3943ffd0cebd99da84ea6dfd4987e023449b5"
             )
-            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps-2/procedure/932cc610d4a861a1044047e721bc8719818096efaf1c09e86bee02b6d467f4d1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RollbackDeploy/workflow-steps-2/procedure/1b9abbe8a7b7b822ced0aa99eea3943ffd0cebd99da84ea6dfd4987e023449b5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "RollbackDeploy.complete")
@@ -529,12 +529,12 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRollbackunhealthydeploysFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8") {
+        if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/94d636430da873970817f6a1440c32ace00f82a89391ca7e913541409ccb7c84") {
             // L1
             try await runtime.wait(.event("rollBackUnhealthyDeploys", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRollbackunhealthydeploysFires/root/procedure/5d81519a5bbfbe4ca4cf4d5d9ff1faae9779f029e197f386c804f94a21adeea8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRollbackunhealthydeploysFires/root/procedure/94d636430da873970817f6a1440c32ace00f82a89391ca7e913541409ccb7c84", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31") {
+        if __meridianShouldRun("/WhenRollbackunhealthydeploysFires/root/procedure/442950d70c9853c359ff0b2f77ba449b128d93c9a03cf799b284315a6eb5f597") {
             // L1
             try await runtime.emit(
                 event: "trigger.rollBackUnhealthyDeploys.fired",
@@ -542,9 +542,9 @@ public struct WhenRollbackunhealthydeploysFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("roll back unhealthy deploys"),
                 ],
-                step: "/WhenRollbackunhealthydeploysFires/root/procedure/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31"
+                step: "/WhenRollbackunhealthydeploysFires/root/procedure/442950d70c9853c359ff0b2f77ba449b128d93c9a03cf799b284315a6eb5f597"
             )
-            try await runtime.checkpoint(label: "/WhenRollbackunhealthydeploysFires/root/procedure/d25c2441bbeaaa3e3f31b6a9979e78e2204e7280a6dbd5d025fde1f8e6ea3b31", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRollbackunhealthydeploysFires/root/procedure/442950d70c9853c359ff0b2f77ba449b128d93c9a03cf799b284315a6eb5f597", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRollbackunhealthydeploysFires.complete")
@@ -604,12 +604,12 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRevertfaileddeployFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b") {
+        if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/5f244205c7869bb60fa3b57e7f0f88a51cf737086e028a8d3985e82e46811976") {
             // L1
             try await runtime.wait(.event("revertFailedDeploy", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRevertfaileddeployFires/root/procedure/2f0a7f548b6c077c2c50dc6156c5fceece25d0187d87908c1473a18998aaf11b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRevertfaileddeployFires/root/procedure/5f244205c7869bb60fa3b57e7f0f88a51cf737086e028a8d3985e82e46811976", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642") {
+        if __meridianShouldRun("/WhenRevertfaileddeployFires/root/procedure/c483257dc4b5b753320e0fa50c5ffb5aed8a8779e3004a4f056744373c0eebe4") {
             // L1
             try await runtime.emit(
                 event: "trigger.revertFailedDeploy.fired",
@@ -617,9 +617,9 @@ public struct WhenRevertfaileddeployFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("revert failed deploy"),
                 ],
-                step: "/WhenRevertfaileddeployFires/root/procedure/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642"
+                step: "/WhenRevertfaileddeployFires/root/procedure/c483257dc4b5b753320e0fa50c5ffb5aed8a8779e3004a4f056744373c0eebe4"
             )
-            try await runtime.checkpoint(label: "/WhenRevertfaileddeployFires/root/procedure/af676eb1b7324f44618693ba9b391351e307411b8de497cf5f640cf1374c4642", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRevertfaileddeployFires/root/procedure/c483257dc4b5b753320e0fa50c5ffb5aed8a8779e3004a4f056744373c0eebe4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRevertfaileddeployFires.complete")
@@ -679,12 +679,12 @@ public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRundeployrollbackpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987") {
+        if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/e81c241b7ea55814aee56df41f3e84505d341903ae19caff7b16e096b3c5acfc") {
             // L1
             try await runtime.wait(.event("runDeployRollbackPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRundeployrollbackpassFires/root/procedure/0cc6099d7896166c5a260f9d2abaf63a168676eddf13768c6bad7bde798b6987", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundeployrollbackpassFires/root/procedure/e81c241b7ea55814aee56df41f3e84505d341903ae19caff7b16e096b3c5acfc", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7") {
+        if __meridianShouldRun("/WhenRundeployrollbackpassFires/root/procedure/339fe14d0db013d9a43794a9a1e3473ee79598d32805243db5372758c0c2b6e6") {
             // L1
             try await runtime.emit(
                 event: "trigger.runDeployRollbackPass.fired",
@@ -692,9 +692,9 @@ public struct WhenRundeployrollbackpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the deploy rollback pass"),
                 ],
-                step: "/WhenRundeployrollbackpassFires/root/procedure/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7"
+                step: "/WhenRundeployrollbackpassFires/root/procedure/339fe14d0db013d9a43794a9a1e3473ee79598d32805243db5372758c0c2b6e6"
             )
-            try await runtime.checkpoint(label: "/WhenRundeployrollbackpassFires/root/procedure/9f1324bcdfae2f60e4f1316ea62e410034f9c23b9d8ef8d016cffc79fd23bdf7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundeployrollbackpassFires/root/procedure/339fe14d0db013d9a43794a9a1e3473ee79598d32805243db5372758c0c2b6e6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRundeployrollbackpassFires.complete")

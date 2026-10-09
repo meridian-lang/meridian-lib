@@ -213,34 +213,34 @@ public struct CustomerSupportPullRequest: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "CustomerSupportPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/CustomerSupportPullRequest/gather-context/procedure/9bd583c79ce9895a4f2db79ce2691dff40e0a59acd4a3777fa5c5c2a6f5c434e") {
+        if __meridianShouldRun("/CustomerSupportPullRequest/gather-context/procedure/8c3273ede926e9e9ad4580de28a2d8bc5651aa9479fe5efe29bf3aa5d8769062") {
             let comments = try await runtime.invoke(
                 tool: "listPRComments",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/CustomerSupportPullRequest/gather-context/procedure/9bd583c79ce9895a4f2db79ce2691dff40e0a59acd4a3777fa5c5c2a6f5c434e",
+                step: "/CustomerSupportPullRequest/gather-context/procedure/8c3273ede926e9e9ad4580de28a2d8bc5651aa9479fe5efe29bf3aa5d8769062",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "listPRComments")
             )
             state.bind("comments", comments)
 
-            try await runtime.checkpoint(label: "/CustomerSupportPullRequest/gather-context/procedure/9bd583c79ce9895a4f2db79ce2691dff40e0a59acd4a3777fa5c5c2a6f5c434e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportPullRequest/gather-context/procedure/8c3273ede926e9e9ad4580de28a2d8bc5651aa9479fe5efe29bf3aa5d8769062", state: state.snapshot())
         }
         let __meridianColl_0_1 = (state.get("comments")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/CustomerSupportPullRequest/gather-context/procedure/ec6c0b07ab915099fd01843c4e6cbc9388f9aa516421100f3955eff2ba4544c4")
+        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/CustomerSupportPullRequest/gather-context/procedure/ec747bd793524df2fa9d3e4ca5cc8208597f683ae20c0ec3c09a7763c59655ef")
         for (__meridianLoopIndex_0_1, comment) in __meridianColl_0_1.enumerated() {
             let __meridianLoopLabel_0_1 = "progress:0.1:iteration:\(__meridianLoopIndex_0_1)"
             if __meridianShouldRun(__meridianLoopLabel_0_1) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/CustomerSupportPullRequest/gather-context/procedure/ec6c0b07ab915099fd01843c4e6cbc9388f9aa516421100f3955eff2ba4544c4")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/CustomerSupportPullRequest/gather-context/procedure/ec747bd793524df2fa9d3e4ca5cc8208597f683ae20c0ec3c09a7763c59655ef")
             state.bind("comment", comment)
-                if __meridianShouldRun("/CustomerSupportPullRequest/gather-context/procedure/iterate.body/1f5adda74dc17a3211734f3565178a6f73cb543f8276e4dfb1af48dbdf065545") {
+                if __meridianShouldRun("/CustomerSupportPullRequest/gather-context/procedure/iterate.body/fb34ea48b45759830ad4b6bc1a28739449d49092f15556d89bb6e557515e5a6e") {
                     _ = try await ReviewComment(runtime: runtime, comment: (try Value.from(comment).coerce(to: Comment.self))).run()
-                    try await runtime.checkpoint(label: "/CustomerSupportPullRequest/gather-context/procedure/iterate.body/1f5adda74dc17a3211734f3565178a6f73cb543f8276e4dfb1af48dbdf065545", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/CustomerSupportPullRequest/gather-context/procedure/iterate.body/fb34ea48b45759830ad4b6bc1a28739449d49092f15556d89bb6e557515e5a6e", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_1, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_1.count, step: "/CustomerSupportPullRequest/gather-context/procedure/ec6c0b07ab915099fd01843c4e6cbc9388f9aa516421100f3955eff2ba4544c4")
+        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_1.count, step: "/CustomerSupportPullRequest/gather-context/procedure/ec747bd793524df2fa9d3e4ca5cc8208597f683ae20c0ec3c09a7763c59655ef")
 
 
         await runtime.complete(reason: nil, step: "CustomerSupportPullRequest.complete")
@@ -302,21 +302,21 @@ public struct ReviewComment: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "ReviewComment", parameters: [:])
 
         if try await runtime.discretion.decide(DiscretionContext(question: "the comment requires a public reply", snapshot: state.snapshot())) {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment requires a public reply\", snapshot: state.snapshot()))", into: "then", step: "/ReviewComment/gather-context/procedure/3c09fcb1199ceac439d60d866ca93f140dd1ddac64dcfa965bf1659ed98f63bf")
-            if __meridianShouldRun("/ReviewComment/gather-context/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7") {
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment requires a public reply\", snapshot: state.snapshot()))", into: "then", step: "/ReviewComment/gather-context/procedure/c10de39840de5534aa2da956f30000a78b3d4cf9229fa78556fb942b7bb4916b")
+            if __meridianShouldRun("/ReviewComment/gather-context/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b") {
                 let comment = try await runtime.invoke(
                     tool: "resolveComment",
                     args: [
                         "commentId": state.get("comment.id") ?? .null,
                     ],
-                    step: "/ReviewComment/gather-context/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7",
+                    step: "/ReviewComment/gather-context/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "resolveComment")
                 )
                 state.bind("comment", comment)
 
-                try await runtime.checkpoint(label: "/ReviewComment/gather-context/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
+                try await runtime.checkpoint(label: "/ReviewComment/gather-context/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/ReviewComment/gather-context/procedure/3c09fcb1199ceac439d60d866ca93f140dd1ddac64dcfa965bf1659ed98f63bf")
+            try await runtime.recordBranchEnded(into: "then", step: "/ReviewComment/gather-context/procedure/c10de39840de5534aa2da956f30000a78b3d4cf9229fa78556fb942b7bb4916b")
         }
 
 
@@ -383,7 +383,7 @@ public struct DraftSupportResponse: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["approvePR", "commitFix", "getCIStatus", "getConflicts", "listPRComments", "mergePR", "pushBranch", "requestChanges", "resolveComment", "syncBranch"],
             outputKind: "record",
-            step: "/DraftSupportResponse/gather-context/procedure/c8c36d26b01f4626627aa885a64a9eb1b8b1f6e77b7e4efe0a7935c4eccc4416"
+            step: "/DraftSupportResponse/gather-context/procedure/6ddf67a8d846b580677c3211771e0f61429e8e61387608c7afed8c2f0bf11f8c"
         )
         for (__key, __value) in __meridianProseResults_L18 {
             state.bind(__key, __value)

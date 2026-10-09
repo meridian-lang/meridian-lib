@@ -777,55 +777,55 @@ public struct FlakyCiStabilizerPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "FlakyCiStabilizerPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/216079532c4295f7f22921909bcabb7973d31ab9864af04c401c7e0e49d33dbf") {
+        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ba094353283d7a886d4b386be72185d75e98a51d3ddf977844111838d8fe91e5") {
             let failingJobs = try await runtime.invoke(
                 tool: "getFailingJobs",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/216079532c4295f7f22921909bcabb7973d31ab9864af04c401c7e0e49d33dbf",
+                step: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ba094353283d7a886d4b386be72185d75e98a51d3ddf977844111838d8fe91e5",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getFailingJobs")
             )
             state.bind("failingJobs", failingJobs)
 
-            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/216079532c4295f7f22921909bcabb7973d31ab9864af04c401c7e0e49d33dbf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/initial-snapshot/procedure/ba094353283d7a886d4b386be72185d75e98a51d3ddf977844111838d8fe91e5", state: state.snapshot())
         }
-        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/hand-the-repair-loop-to-the-autonomy-planner/procedure/23fcf03a6ab1459d2ca0dc14b77cf420b1d611d34bbd890c2bd9955bd7c18bad") {
+        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/hand-the-repair-loop-to-the-autonomy-planner/procedure/bc7e2a4c0e71b5baeb3fdd8dbad146594930ec94dc060d68fc597bb9a22406dd") {
             _ = try await AutonomouslyStabilizeCi(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/hand-the-repair-loop-to-the-autonomy-planner/procedure/23fcf03a6ab1459d2ca0dc14b77cf420b1d611d34bbd890c2bd9955bd7c18bad", state: state.snapshot())
+            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/hand-the-repair-loop-to-the-autonomy-planner/procedure/bc7e2a4c0e71b5baeb3fdd8dbad146594930ec94dc060d68fc597bb9a22406dd", state: state.snapshot())
         }
-        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/FlakyCiStabilizerPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/FlakyCiStabilizerPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/FlakyCiStabilizerPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/close-out/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/FlakyCiStabilizerPullRequest/close-out/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "FlakyCiStabilizerPullRequest.complete")
@@ -895,7 +895,7 @@ public struct AutonomouslyStabilizeCi: MeridianWorkflow {
             maxSteps: 6,
             replanAfterFailures: 2,
             outputKind: "record",
-            step: "/AutonomouslyStabilizeCi/inner-workflows/procedure/164acedafc69a91245eba85b0c4a13afea1c47a07f32e8aa52df6bb4342eebcc",
+            step: "/AutonomouslyStabilizeCi/inner-workflows/procedure/cfef1a6dc356cec9a7b38403375bae9bf352327078117861ca52b96b2fab408c",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

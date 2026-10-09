@@ -311,7 +311,7 @@ struct VerbalizerCoverageTests {
             body: block(),
             source: IRIterationRefinement(
                 filters: [.comparison(.identifierRef(name: "status"), .equal, .literal(.string("open")))],
-                sort: (path: "score", ascending: true),
+                sort: IRSortSpec(path: "score", ascending: true),
                 take: 3
             )
         )))
@@ -319,7 +319,7 @@ struct VerbalizerCoverageTests {
         #expect(verbalizer.verbalize(.iterate(IterateIR(
             mode: .overCollection(parameter: "order", kind: KindRef("Order"), collection: .identifierRef(name: "incoming orders")),
             body: block(),
-            source: IRIterationRefinement(sort: (path: "score", ascending: false))
+            source: IRIterationRefinement(sort: IRSortSpec(path: "score", ascending: false))
         ))).contains("sorted by score, descending"))
         #expect(verbalizer.verbalize(.iterate(IterateIR(
             mode: .overCollection(parameter: "order", kind: KindRef("Order"), collection: .identifierRef(name: "incoming orders")),
@@ -335,7 +335,7 @@ struct VerbalizerCoverageTests {
         let fallbackSort = fallbackMarkerVerbalizer.verbalize(.description(DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
-            sort: (path: "score", ascending: true)
+            sort: IRSortSpec(path: "score", ascending: true)
         )))
         #expect(fallbackSort.contains("sorted by score"), Comment(rawValue: fallbackSort))
         #expect(fallbackMarkerVerbalizer.verbalize(.quantified(QuantifierIR(
@@ -600,7 +600,7 @@ struct VerbalizerCoverageTests {
         }
         #expect(!IREquality.structurallyEqual(
             DescriptionIR(collection: .identifierRef(name: "pages"), elementVar: "page", sort: nil),
-            DescriptionIR(collection: .identifierRef(name: "pages"), elementVar: "page", sort: (path: "score", ascending: true))
+            DescriptionIR(collection: .identifierRef(name: "pages"), elementVar: "page", sort: IRSortSpec(path: "score", ascending: true))
         ))
         #expect(!IREquality.structurallyEqual(
             InvokeIR(toolID: "demo.tool", resultBinding: nil),
@@ -1012,7 +1012,7 @@ struct VerbalizerCoverageTests {
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
             filters: [.comparison(.propertyAccess(.identifierRef(name: "page"), propertyName: "score"), .greaterThan, .literal(.number(1)))],
-            sort: (path: "score", ascending: false),
+            sort: IRSortSpec(path: "score", ascending: false),
             take: 2
         )
     }

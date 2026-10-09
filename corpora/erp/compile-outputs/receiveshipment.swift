@@ -575,7 +575,7 @@ public struct ReceiveShipment: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ReceiveShipment", parameters: [:])
 
-        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/8600e4b2a6c7ab3066aa8db7faba8faede862fff9dee1ec354cf2c6b6db68de9") {
+        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/a4b5d5a2fec76fbeb8a01d4ef319122b662d6daf58b50cb168cd706249938dbe") {
             // L16
             // snapshot inbound manifests
             _ = try await runtime.invoke(
@@ -583,27 +583,27 @@ public struct ReceiveShipment: MeridianWorkflow {
                 args: [
                     "command": .string("ofbiz warehouse receive --today --json"),
                 ],
-                step: "/ReceiveShipment/workflow/procedure/8600e4b2a6c7ab3066aa8db7faba8faede862fff9dee1ec354cf2c6b6db68de9",
+                step: "/ReceiveShipment/workflow/procedure/a4b5d5a2fec76fbeb8a01d4ef319122b662d6daf58b50cb168cd706249938dbe",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/8600e4b2a6c7ab3066aa8db7faba8faede862fff9dee1ec354cf2c6b6db68de9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/a4b5d5a2fec76fbeb8a01d4ef319122b662d6daf58b50cb168cd706249938dbe", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028") {
+        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/225acfee94d4009c16ed5cb067e5f486ea9294e18ecb5bece8972e38ec62c83c") {
             // L17
             try await runtime.wait(.signal("manifest_confirmed"), sourceRange: nil)
-            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/a6136c730bee3a679d4bd8594ff1ff5c2261f77f7bfc9a2e5cf842a1e5dba028", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/225acfee94d4009c16ed5cb067e5f486ea9294e18ecb5bece8972e38ec62c83c", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd") {
+        if __meridianShouldRun("/ReceiveShipment/workflow/procedure/634d440b7f2c20c1834764a487da7d9b0199b52536bc6a13a4a56fd8b3bf4aad") {
             // L18
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("warehouse receiving manifest captured"),
                 ],
-                step: "/ReceiveShipment/workflow/procedure/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd"
+                step: "/ReceiveShipment/workflow/procedure/634d440b7f2c20c1834764a487da7d9b0199b52536bc6a13a4a56fd8b3bf4aad"
             )
-            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/f5cd686af0fe56a7747965147b7194f3e696d9b1554edab6bb0318a0188a68bd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReceiveShipment/workflow/procedure/634d440b7f2c20c1834764a487da7d9b0199b52536bc6a13a4a56fd8b3bf4aad", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ReceiveShipment.complete")
@@ -663,12 +663,12 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReceiveinboundshipmentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438") {
+        if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/1f70a871873328003d0407a92a8818bcbfa1e9b843e36775e9ad71d5dc145789") {
             // L1
             try await runtime.wait(.event("receiveInboundShipment", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReceiveinboundshipmentFires/root/procedure/493233c1b51a17bf581620693e8e87edaf9cb3ed306154149e576478530e7438", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReceiveinboundshipmentFires/root/procedure/1f70a871873328003d0407a92a8818bcbfa1e9b843e36775e9ad71d5dc145789", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df") {
+        if __meridianShouldRun("/WhenReceiveinboundshipmentFires/root/procedure/49d16629c0f491cdc37cfdbd096c95432f389de4417ab7efa20b9267cbcc5f32") {
             // L1
             try await runtime.emit(
                 event: "trigger.receiveInboundShipment.fired",
@@ -676,9 +676,9 @@ public struct WhenReceiveinboundshipmentFires: MeridianWorkflow {
                     "kind": .string("ambient"),
                     "spec": .string("receive inbound shipment"),
                 ],
-                step: "/WhenReceiveinboundshipmentFires/root/procedure/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df"
+                step: "/WhenReceiveinboundshipmentFires/root/procedure/49d16629c0f491cdc37cfdbd096c95432f389de4417ab7efa20b9267cbcc5f32"
             )
-            try await runtime.checkpoint(label: "/WhenReceiveinboundshipmentFires/root/procedure/a62f0d51c05000a49eabacfd7ecaa6bca3b9ffdaa85c67cb893d7818fe3801df", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReceiveinboundshipmentFires/root/procedure/49d16629c0f491cdc37cfdbd096c95432f389de4417ab7efa20b9267cbcc5f32", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReceiveinboundshipmentFires.complete")
@@ -738,12 +738,12 @@ public struct WhenShipmentreceivedFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenShipmentreceivedFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225") {
+        if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/daf818b643a847f7f7c5092f7ecd8b62e0867484216a30f32e0e7e3ba6ebcc89") {
             // L1
             try await runtime.wait(.event("shipmentReceived", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenShipmentreceivedFires/root/procedure/71b0508a621e89ff6284efe19c6765b8316d5889abddc7664286e6b0451e7225", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenShipmentreceivedFires/root/procedure/daf818b643a847f7f7c5092f7ecd8b62e0867484216a30f32e0e7e3ba6ebcc89", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43") {
+        if __meridianShouldRun("/WhenShipmentreceivedFires/root/procedure/4bc7219662edf8c92a233fae07a8412d8438aceb063f9ee1a7a8e6cd50bcef51") {
             // L1
             try await runtime.emit(
                 event: "trigger.shipmentReceived.fired",
@@ -751,9 +751,9 @@ public struct WhenShipmentreceivedFires: MeridianWorkflow {
                     "kind": .string("event"),
                     "spec": .string("shipment received"),
                 ],
-                step: "/WhenShipmentreceivedFires/root/procedure/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43"
+                step: "/WhenShipmentreceivedFires/root/procedure/4bc7219662edf8c92a233fae07a8412d8438aceb063f9ee1a7a8e6cd50bcef51"
             )
-            try await runtime.checkpoint(label: "/WhenShipmentreceivedFires/root/procedure/9482fee283205773ba1629e0d4ac0de61267179457df67e37b957b336544aa43", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenShipmentreceivedFires/root/procedure/4bc7219662edf8c92a233fae07a8412d8438aceb063f9ee1a7a8e6cd50bcef51", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenShipmentreceivedFires.complete")

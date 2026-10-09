@@ -48,19 +48,19 @@ struct VerbalizerEqualityTests {
         let a = DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
-            sort: (path: "createdAt", ascending: false),
+            sort: IRSortSpec(path: "createdAt", ascending: false),
             take: 3
         )
         let b = DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
-            sort: (path: "createdAt", ascending: false),
+            sort: IRSortSpec(path: "createdAt", ascending: false),
             take: 3
         )
         let c = DescriptionIR(
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
-            sort: (path: "createdAt", ascending: true),
+            sort: IRSortSpec(path: "createdAt", ascending: true),
             take: 3
         )
 

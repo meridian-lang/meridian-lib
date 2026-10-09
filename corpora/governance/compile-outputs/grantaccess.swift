@@ -462,22 +462,22 @@ public struct GrantAccessUserResource: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "GrantAccessUserResource", parameters: [:])
 
-        if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/b42750b436d783bf1662c5570df1a553bb6090b700c7d4cce711d8453be1825c") {
+        if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/26007ae00578988155d3346d7551576db2aec87006f9e1effe21ee58850dc129") {
             // L43
             try await runtime.wait(.approval(of: state.get("user") ?? .null, by: RoleRef(identifier: "security officer")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/b42750b436d783bf1662c5570df1a553bb6090b700c7d4cce711d8453be1825c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/26007ae00578988155d3346d7551576db2aec87006f9e1effe21ee58850dc129", state: state.snapshot())
         }
-        if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076") {
+        if __meridianShouldRun("/GrantAccessUserResource/rules-steps/procedure/7400af1ef342b5a909b6a151a2fff4eb19899448c459a28d8fb232288408bf65") {
             // L41
             try await runtime.assert((!(MeridianComparison.eq(state.get("user.clearance"), .string("denied")))) || (MeridianComparison.eq(state.get("user.role"), state.get("admin"))), message: "A user with clearance \"denied\" must not access classified resources")
-            try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/435eba4dd884e4a36d74eac65bc4b262dd9c5f7372904d0f6e550131ca35b076", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessUserResource/rules-steps/procedure/7400af1ef342b5a909b6a151a2fff4eb19899448c459a28d8fb232288408bf65", state: state.snapshot())
         }
         // L50
         if meridianDef_User_authorized(state.get("user")) {
-            try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
+            try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/952f1e6d81b16ddc79ac1a1a59a4aaf98d19d4698e54f4253984415946ea944b")
             // L52
             do {
-                if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.body/f3fd1e43e9ecf268a3db28fa99ce5b8ddd3968598e58a7964d27604b7b195c96") {
+                if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.body/d8a56e7f6f6a39e18eb67e407a349cf4cd9f2d7370e162bad04abde8e8147f57") {
                     // L51
                     let access = try await runtime.invoke(
                         tool: "access.grant",
@@ -485,55 +485,55 @@ public struct GrantAccessUserResource: MeridianWorkflow {
                             "user": state.get("user") ?? .null,
                             "resource": state.get("resource") ?? .null,
                         ],
-                        step: "/GrantAccessUserResource/workflow-steps/procedure/recover.body/f3fd1e43e9ecf268a3db28fa99ce5b8ddd3968598e58a7964d27604b7b195c96",
+                        step: "/GrantAccessUserResource/workflow-steps/procedure/recover.body/d8a56e7f6f6a39e18eb67e407a349cf4cd9f2d7370e162bad04abde8e8147f57",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "access.grant")
                     )
                     state.bind("access", access)
 
-                    try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/recover.body/f3fd1e43e9ecf268a3db28fa99ce5b8ddd3968598e58a7964d27604b7b195c96", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/recover.body/d8a56e7f6f6a39e18eb67e407a349cf4cd9f2d7370e162bad04abde8e8147f57", state: state.snapshot())
                 }
             } catch let _recoveredError where meridianMatches(_recoveredError, named: "access.denied") {
-                try await runtime.recordRecoverEngaged(pattern: "access.denied", step: "/GrantAccessUserResource/workflow-steps/procedure/branch.then/cde085f366546cf5dadbf16682f938f6a45103dbd34639c63f0e067a2a7209c3")
-                if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.handler/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52") {
+                try await runtime.recordRecoverEngaged(pattern: "access.denied", step: "/GrantAccessUserResource/workflow-steps/procedure/branch.then/d6c52094fd1d27bda59f647511b24923ade21848206f94f65f403dbadaeeff6e")
+                if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/recover.handler/35fcc77a39896545e90cd294d5bf84dd95bf71090015f4469c57e179f88734d9") {
                     // L53
                     try await runtime.emit(
                         event: "governance.note",
                         payload: [
                             "message": .string("access denied by provider, escalate manually"),
                         ],
-                        step: "/GrantAccessUserResource/workflow-steps/procedure/recover.handler/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52"
+                        step: "/GrantAccessUserResource/workflow-steps/procedure/recover.handler/35fcc77a39896545e90cd294d5bf84dd95bf71090015f4469c57e179f88734d9"
                     )
-                    try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/recover.handler/e5c5464976076d1621459abb02bf58ec2e57fd0c4b520a1cc55c77c55367dd52", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/recover.handler/35fcc77a39896545e90cd294d5bf84dd95bf71090015f4469c57e179f88734d9", state: state.snapshot())
                 }
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
+            try await runtime.recordBranchEnded(into: "then", step: "/GrantAccessUserResource/workflow-steps/procedure/952f1e6d81b16ddc79ac1a1a59a4aaf98d19d4698e54f4253984415946ea944b")
         } else {
-            try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
+            try await runtime.recordBranchTaken(condition: "meridianDef_User_authorized(state.get(\"user\"))", into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/952f1e6d81b16ddc79ac1a1a59a4aaf98d19d4698e54f4253984415946ea944b")
 
-            if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/branch.else/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35") {
+            if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/branch.else/a5c069667dde897b1db0df210fecf44dd5988ee74c82fd5beb90d1085f6a98fb") {
                 // L55
                 try await runtime.emit(
                     event: "governance.note",
                     payload: [
                         "message": .string("user not authorized for this resource"),
                     ],
-                    step: "/GrantAccessUserResource/workflow-steps/procedure/branch.else/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35"
+                    step: "/GrantAccessUserResource/workflow-steps/procedure/branch.else/a5c069667dde897b1db0df210fecf44dd5988ee74c82fd5beb90d1085f6a98fb"
                 )
-                try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/branch.else/edb6ffbe9972173d68f431e40094807a9d199ae0f7130bac2f0a1f174f746e35", state: state.snapshot())
+                try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/branch.else/a5c069667dde897b1db0df210fecf44dd5988ee74c82fd5beb90d1085f6a98fb", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/b05108cbee2843c900de6a9b89fdf2f29c3e8ef32d162b41e480eed3543605a1")
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/GrantAccessUserResource/workflow-steps/procedure/952f1e6d81b16ddc79ac1a1a59a4aaf98d19d4698e54f4253984415946ea944b")
         }
 
-        if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/04c2732d34f8491de523ba46110f72401b13cf24b233d3d89d02a3f949e87007") {
+        if __meridianShouldRun("/GrantAccessUserResource/workflow-steps/procedure/b7f54cf9d3d3d70a2db2fc72bc2e3c91734a7876d56450303b86ca0fdf79de1b") {
             // L56
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("grant access pass complete"),
                 ],
-                step: "/GrantAccessUserResource/workflow-steps/procedure/04c2732d34f8491de523ba46110f72401b13cf24b233d3d89d02a3f949e87007"
+                step: "/GrantAccessUserResource/workflow-steps/procedure/b7f54cf9d3d3d70a2db2fc72bc2e3c91734a7876d56450303b86ca0fdf79de1b"
             )
-            try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/04c2732d34f8491de523ba46110f72401b13cf24b233d3d89d02a3f949e87007", state: state.snapshot())
+            try await runtime.checkpoint(label: "/GrantAccessUserResource/workflow-steps/procedure/b7f54cf9d3d3d70a2db2fc72bc2e3c91734a7876d56450303b86ca0fdf79de1b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "GrantAccessUserResource.complete")
@@ -593,12 +593,12 @@ public struct WhenGrantaccessFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenGrantaccessFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/72f6c82d026ff8f15a52b5aec40ba7ab6c7c002517c45c4ddf9cd301937ac848") {
+        if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/c9256c5a0b8551cf32c9cd366df4268eadb56a1c7a6a4a0639970632c51e9060") {
             // L1
             try await runtime.wait(.event("grantAccess", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGrantaccessFires/root/procedure/72f6c82d026ff8f15a52b5aec40ba7ab6c7c002517c45c4ddf9cd301937ac848", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGrantaccessFires/root/procedure/c9256c5a0b8551cf32c9cd366df4268eadb56a1c7a6a4a0639970632c51e9060", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61") {
+        if __meridianShouldRun("/WhenGrantaccessFires/root/procedure/f708fcf50ea3f5103dcc0d9302210c2ba8f87a368211326e53a112061ecb12be") {
             // L1
             try await runtime.emit(
                 event: "trigger.grantAccess.fired",
@@ -606,9 +606,9 @@ public struct WhenGrantaccessFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("grant access"),
                 ],
-                step: "/WhenGrantaccessFires/root/procedure/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61"
+                step: "/WhenGrantaccessFires/root/procedure/f708fcf50ea3f5103dcc0d9302210c2ba8f87a368211326e53a112061ecb12be"
             )
-            try await runtime.checkpoint(label: "/WhenGrantaccessFires/root/procedure/32b4f376124392cb3322e16d4c32943b1a5be71b888466533bf5d41c4d0a9e61", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGrantaccessFires/root/procedure/f708fcf50ea3f5103dcc0d9302210c2ba8f87a368211326e53a112061ecb12be", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGrantaccessFires.complete")
@@ -668,12 +668,12 @@ public struct WhenGrantresourceaccessFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenGrantresourceaccessFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/e407b65796bf01753c4787c3a0cbe2daa1a24d50e9acb606a0d4599b828dfce8") {
+        if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/90663f3b9ccdcf36a494dbafcf3544fd6ca8d2b4fbee5e339b2cdd6b2810ecd2") {
             // L1
             try await runtime.wait(.event("grantResourceAccess", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGrantresourceaccessFires/root/procedure/e407b65796bf01753c4787c3a0cbe2daa1a24d50e9acb606a0d4599b828dfce8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGrantresourceaccessFires/root/procedure/90663f3b9ccdcf36a494dbafcf3544fd6ca8d2b4fbee5e339b2cdd6b2810ecd2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791") {
+        if __meridianShouldRun("/WhenGrantresourceaccessFires/root/procedure/118fb8fc493c7cddbf234f17ee5ec3429d3050c09a509920a0ed00c4c87b6485") {
             // L1
             try await runtime.emit(
                 event: "trigger.grantResourceAccess.fired",
@@ -681,9 +681,9 @@ public struct WhenGrantresourceaccessFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("grant resource access"),
                 ],
-                step: "/WhenGrantresourceaccessFires/root/procedure/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791"
+                step: "/WhenGrantresourceaccessFires/root/procedure/118fb8fc493c7cddbf234f17ee5ec3429d3050c09a509920a0ed00c4c87b6485"
             )
-            try await runtime.checkpoint(label: "/WhenGrantresourceaccessFires/root/procedure/647acfb1d4a4d5c0a15e2cab188aa3c1991c9b327fc8d48c4125d16484e29791", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGrantresourceaccessFires/root/procedure/118fb8fc493c7cddbf234f17ee5ec3429d3050c09a509920a0ed00c4c87b6485", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGrantresourceaccessFires.complete")
@@ -743,12 +743,12 @@ public struct WhenAuthorizeresourceaccessFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAuthorizeresourceaccessFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df") {
+        if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/dd098cafeaa6e815861308954c79364eb3e3b276c7f9bbca06b2e7dfbf86e680") {
             // L1
             try await runtime.wait(.event("authorizeResourceAccess", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAuthorizeresourceaccessFires/root/procedure/81e4d2685ab97a0d92c076bbda8757577df6095618bed16ef49421a8294936df", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuthorizeresourceaccessFires/root/procedure/dd098cafeaa6e815861308954c79364eb3e3b276c7f9bbca06b2e7dfbf86e680", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/b38ccd91ad43e21933f42f1b7d0d416c548fdc83d88368b606f218d1dd2e57f1") {
+        if __meridianShouldRun("/WhenAuthorizeresourceaccessFires/root/procedure/252805f889284c9ec6787c679a32b7eb1c372c0b478d723c3b39e677be1f8bec") {
             // L1
             try await runtime.emit(
                 event: "trigger.authorizeResourceAccess.fired",
@@ -756,9 +756,9 @@ public struct WhenAuthorizeresourceaccessFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("authorize resource access"),
                 ],
-                step: "/WhenAuthorizeresourceaccessFires/root/procedure/b38ccd91ad43e21933f42f1b7d0d416c548fdc83d88368b606f218d1dd2e57f1"
+                step: "/WhenAuthorizeresourceaccessFires/root/procedure/252805f889284c9ec6787c679a32b7eb1c372c0b478d723c3b39e677be1f8bec"
             )
-            try await runtime.checkpoint(label: "/WhenAuthorizeresourceaccessFires/root/procedure/b38ccd91ad43e21933f42f1b7d0d416c548fdc83d88368b606f218d1dd2e57f1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAuthorizeresourceaccessFires/root/procedure/252805f889284c9ec6787c679a32b7eb1c372c0b478d723c3b39e677be1f8bec", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAuthorizeresourceaccessFires.complete")

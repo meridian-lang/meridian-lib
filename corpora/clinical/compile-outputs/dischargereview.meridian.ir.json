@@ -4,77 +4,77 @@
       "canonical" : "emit trigger.dischargePatient.fired with kind = \"keyword\", spec = \"discharge patient\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2",
+      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/2d78f5c78fa277f122d1fcfc585bc4e0d97ab1f430dd9c1da63e35398bd144a5",
       "swift_line" : 647
     },
     {
       "canonical" : "wait for event dischargePatient.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d",
-      "swift_line" : 647
-    },
-    {
-      "canonical" : "wait for event reviewDischarge.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c",
+      "stable_step_path" : "\/WhenDischargepatientFires\/root\/procedure\/a91ad09b0321ef27b9e3b9142f8615bdb7328a4f68124498013c57da311a2e3c",
       "swift_line" : 647
     },
     {
       "canonical" : "emit trigger.reviewDischarge.fired with kind = \"keyword\", spec = \"review discharge\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4",
+      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/1870fb74a9d2cfd23cbd2db614133d8efc5a9d58f4ee493dd817802d1c7c2606",
+      "swift_line" : 647
+    },
+    {
+      "canonical" : "wait for event reviewDischarge.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenReviewdischargeFires\/root\/procedure\/632c88b5a73897e23cb2487d5db7a2ed1660b1cfc7626c2c488a306a2e81f38c",
       "swift_line" : 647
     },
     {
       "canonical" : "assert either not the patient's status equals \"held\" or the clinician's role equals \"attending\".",
       "meridian_line" : 35,
       "primitive" : "assert",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/rules-steps\/procedure\/5b785a6f38e1ef38aa0406fe6ed3c49b8aa13851e03c65c79047d8a22caf9648",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/rules-steps\/procedure\/c84317c3df982bf743a326c66adcc85501b403eb9f7f053630c7a1a81e0ba0d1",
       "swift_line" : 445
     },
     {
       "canonical" : "if the patient's status equals \"held\",\n  bind hold = invoke order.override with order = medication order.\n  emit clinical.note with message = \"hold overridden by attending, discharge may proceed\".",
       "meridian_line" : 39,
       "primitive" : "branch",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/c6628fa43732ceb5dfa620197eb49fb19c0b5111d2fe9a8b946497b332fb45e1",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/68af88402194c2b19ea4a111e306339a0167217ae49ed20dae59c3c11f39106a",
       "swift_line" : 449
     },
     {
       "canonical" : "bind hold = invoke order.override with order = medication order.",
       "meridian_line" : 40,
       "primitive" : "invoke",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/ca7a51411cdc03f2b94331fa7e5b43b2686bc76cdadcb72496dc37ce3858b21b",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/bf79633e9f1c589cfde2451acd21c48538cf0db1cdca58cb7b08c95531435d22",
       "swift_line" : 453
     },
     {
       "canonical" : "emit clinical.note with message = \"hold overridden by attending, discharge may proceed\".",
       "meridian_line" : 41,
       "primitive" : "emit",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/a1559f318a08e05c20ce69426205db7f73e883db92b0ad6a66986098f977fd60",
       "swift_line" : 467
     },
     {
       "canonical" : "if not the patient's status equals \"held\",\n  emit clinical.note with message = \"no active hold, discharge proceeds normally\".",
       "meridian_line" : 42,
       "primitive" : "branch",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/4c90a9201e885bdbcf09809f34858dbfdc06d1ae710cb2155d287401d1234aaa",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/d86ad92425327959247962a9a191e62883695df230262ba8b06c46c4bfe76bdd",
       "swift_line" : 480
     },
     {
       "canonical" : "emit clinical.note with message = \"no active hold, discharge proceeds normally\".",
       "meridian_line" : 43,
       "primitive" : "emit",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/branch.then\/4e823d46c54f32b92aeee63e455f386e5a34e91dd47eaa1c580c3514033f18a7",
       "swift_line" : 484
     },
     {
       "canonical" : "emit clinical.report with message = \"discharge review pass complete\".",
       "meridian_line" : 44,
       "primitive" : "emit",
-      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db",
+      "stable_step_path" : "\/DischargeReviewPatientClinician\/workflow\/procedure\/4887682fe3f132f8423296eb4b358cb304e9a0f26a7c889bbac4b3b06ffd8569",
       "swift_line" : 498
     }
   ],

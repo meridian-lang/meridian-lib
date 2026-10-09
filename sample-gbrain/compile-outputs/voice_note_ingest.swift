@@ -630,7 +630,7 @@ public struct VoiceNoteIngestInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/VoiceNoteIngestInput/iron-law-steps-2/procedure/b4f3809564d562495d51b712d6fbc8afb2692a99e804e40f9df122a832f51b16",
+            step: "/VoiceNoteIngestInput/iron-law-steps-2/procedure/8aa4d14e482f77307d457cbc5930bcb00c9a5a2eb7f5e1c305642cf6bf962335",
             guidance: "The Analysis section can interpret; the transcript section is sacred\n✅ `\"The ambition-to-lifespan ratio has never been more fucked\"`\n❌ `User noted the tension between ambition and mortality`\nNone of the above / random thought / doesn't fit cleanly —\n→ `voice-notes/YYYY-MM-DD-<slug>.md` (catch-all)\nAudio files: `YYYY-MM-DD-<brief-slug>.<ext>` (e.g.,\n`2026-04-13-rick-rubin-creative-philosophy.ogg`)\nBrain pages: match the slug of the destination directory\nNo batching\n`skills/signal-detector/SKILL.md` — same exact-phrasing pattern for\ntext-channel idea capture\n`skills/idea-ingest/SKILL.md` — for typed-text idea ingestion\n`skills/conventions/quality.md` — citation + back-link rules"
         )
         for (__key, __value) in __meridianProseResults_L43 {
@@ -693,12 +693,12 @@ public struct WhenVoicenoteFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenVoicenoteFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/79d521402844c0ab0d138c9e5a694b710c46e722cb215d36f0546bcd465d8cef") {
+        if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/ee8fdf9a41b77657dfb41e9c873b2dab0b686144d54375e9d8f402838fcc37c6") {
             // L1
             try await runtime.wait(.event("voiceNote", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenVoicenoteFires/root/procedure/79d521402844c0ab0d138c9e5a694b710c46e722cb215d36f0546bcd465d8cef", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoicenoteFires/root/procedure/ee8fdf9a41b77657dfb41e9c873b2dab0b686144d54375e9d8f402838fcc37c6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/dd7f5ecd950f3d5e6397f87f80f7f07bc3cc58a8e4cea3f52ceab6d951c9e4d7") {
+        if __meridianShouldRun("/WhenVoicenoteFires/root/procedure/76c6b2640676eb693bcf02610dd584025aa17e4b54acae7d7fb339b20bcc8324") {
             // L1
             try await runtime.emit(
                 event: "trigger.voiceNote.fired",
@@ -706,9 +706,9 @@ public struct WhenVoicenoteFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("voice note"),
                 ],
-                step: "/WhenVoicenoteFires/root/procedure/dd7f5ecd950f3d5e6397f87f80f7f07bc3cc58a8e4cea3f52ceab6d951c9e4d7"
+                step: "/WhenVoicenoteFires/root/procedure/76c6b2640676eb693bcf02610dd584025aa17e4b54acae7d7fb339b20bcc8324"
             )
-            try await runtime.checkpoint(label: "/WhenVoicenoteFires/root/procedure/dd7f5ecd950f3d5e6397f87f80f7f07bc3cc58a8e4cea3f52ceab6d951c9e4d7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoicenoteFires/root/procedure/76c6b2640676eb693bcf02610dd584025aa17e4b54acae7d7fb339b20bcc8324", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenVoicenoteFires.complete")
@@ -767,12 +767,12 @@ public struct WhenIngestthisvoicememoFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIngestthisvoicememoFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/39f7f5b975578b53bfb32dc17ce5ae8381d38e707aa38d9d0968eca0f14a7c77") {
+        if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/4a0f2331e3ae9c33de9dd3c1db557db12971983d5d2031dba46568d67c258e47") {
             // L1
             try await runtime.wait(.event("ingestThisVoiceMemo", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIngestthisvoicememoFires/root/procedure/39f7f5b975578b53bfb32dc17ce5ae8381d38e707aa38d9d0968eca0f14a7c77", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIngestthisvoicememoFires/root/procedure/4a0f2331e3ae9c33de9dd3c1db557db12971983d5d2031dba46568d67c258e47", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/d9702b10b1fdcbcc9dcd0cf83448805ed69dc3f59309459e39011ed827fd8de3") {
+        if __meridianShouldRun("/WhenIngestthisvoicememoFires/root/procedure/446acb21351ab8327afef425efec485f71a5d983b2b5473bb37d0cfcf3eed169") {
             // L1
             try await runtime.emit(
                 event: "trigger.ingestThisVoiceMemo.fired",
@@ -780,9 +780,9 @@ public struct WhenIngestthisvoicememoFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("ingest this voice memo"),
                 ],
-                step: "/WhenIngestthisvoicememoFires/root/procedure/d9702b10b1fdcbcc9dcd0cf83448805ed69dc3f59309459e39011ed827fd8de3"
+                step: "/WhenIngestthisvoicememoFires/root/procedure/446acb21351ab8327afef425efec485f71a5d983b2b5473bb37d0cfcf3eed169"
             )
-            try await runtime.checkpoint(label: "/WhenIngestthisvoicememoFires/root/procedure/d9702b10b1fdcbcc9dcd0cf83448805ed69dc3f59309459e39011ed827fd8de3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIngestthisvoicememoFires/root/procedure/446acb21351ab8327afef425efec485f71a5d983b2b5473bb37d0cfcf3eed169", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIngestthisvoicememoFires.complete")
@@ -841,12 +841,12 @@ public struct WhenTranscribeandfileFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenTranscribeandfileFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/c02411c85fce1198a2a4c5ee74b07a019d07baae165bab6c35f157ad136e2e22") {
+        if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/661a5fc75a9b2ed02ae1f4f6c1ed06eaaceab58218602fa324eb67c82a4d99db") {
             // L1
             try await runtime.wait(.event("transcribeAndFile", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTranscribeandfileFires/root/procedure/c02411c85fce1198a2a4c5ee74b07a019d07baae165bab6c35f157ad136e2e22", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTranscribeandfileFires/root/procedure/661a5fc75a9b2ed02ae1f4f6c1ed06eaaceab58218602fa324eb67c82a4d99db", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/8f568d893d8077512fe347e110c0d2c558821f512cf504b04383905be2735903") {
+        if __meridianShouldRun("/WhenTranscribeandfileFires/root/procedure/74d67514f6648eadf011acb0eb44b75c9f49aca7568f57ad6da3ffac34b1c1d9") {
             // L1
             try await runtime.emit(
                 event: "trigger.transcribeAndFile.fired",
@@ -854,9 +854,9 @@ public struct WhenTranscribeandfileFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("transcribe and file"),
                 ],
-                step: "/WhenTranscribeandfileFires/root/procedure/8f568d893d8077512fe347e110c0d2c558821f512cf504b04383905be2735903"
+                step: "/WhenTranscribeandfileFires/root/procedure/74d67514f6648eadf011acb0eb44b75c9f49aca7568f57ad6da3ffac34b1c1d9"
             )
-            try await runtime.checkpoint(label: "/WhenTranscribeandfileFires/root/procedure/8f568d893d8077512fe347e110c0d2c558821f512cf504b04383905be2735903", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTranscribeandfileFires/root/procedure/74d67514f6648eadf011acb0eb44b75c9f49aca7568f57ad6da3ffac34b1c1d9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTranscribeandfileFires.complete")
@@ -915,12 +915,12 @@ public struct WhenVoicenoteingestFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenVoicenoteingestFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/a93947e8f2cace6de651d5874da954bd9202b05552fa9caaad1af9d0d81fe2fc") {
+        if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/d39220eb71b9e916149f246b355928d553a5feb95bcf3c873893cdeb6e395bd2") {
             // L1
             try await runtime.wait(.event("voiceNoteIngest", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenVoicenoteingestFires/root/procedure/a93947e8f2cace6de651d5874da954bd9202b05552fa9caaad1af9d0d81fe2fc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoicenoteingestFires/root/procedure/d39220eb71b9e916149f246b355928d553a5feb95bcf3c873893cdeb6e395bd2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/e37b84b284a4ca96d95f3196ff3cefa49e54c31a901d774ff124ea591aa9b289") {
+        if __meridianShouldRun("/WhenVoicenoteingestFires/root/procedure/f1706e4ed15e782598f03c46922d9f641be8c4415a11107e7bd656248b215a34") {
             // L1
             try await runtime.emit(
                 event: "trigger.voiceNoteIngest.fired",
@@ -928,9 +928,9 @@ public struct WhenVoicenoteingestFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("voice note ingest"),
                 ],
-                step: "/WhenVoicenoteingestFires/root/procedure/e37b84b284a4ca96d95f3196ff3cefa49e54c31a901d774ff124ea591aa9b289"
+                step: "/WhenVoicenoteingestFires/root/procedure/f1706e4ed15e782598f03c46922d9f641be8c4415a11107e7bd656248b215a34"
             )
-            try await runtime.checkpoint(label: "/WhenVoicenoteingestFires/root/procedure/e37b84b284a4ca96d95f3196ff3cefa49e54c31a901d774ff124ea591aa9b289", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVoicenoteingestFires/root/procedure/f1706e4ed15e782598f03c46922d9f641be8c4415a11107e7bd656248b215a34", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenVoicenoteingestFires.complete")
@@ -989,12 +989,12 @@ public struct WhenSavethisaudionoteFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSavethisaudionoteFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/0c35120059690d75eb505b7a29da24384619982aec6e73902287fe5b54852279") {
+        if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/41f39830a0cf791a38dfade52493c28bd3a3020abf94912b090202bc4885e4ff") {
             // L1
             try await runtime.wait(.event("saveThisAudioNote", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSavethisaudionoteFires/root/procedure/0c35120059690d75eb505b7a29da24384619982aec6e73902287fe5b54852279", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavethisaudionoteFires/root/procedure/41f39830a0cf791a38dfade52493c28bd3a3020abf94912b090202bc4885e4ff", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/67c9282aec02130c092de466e4a4cbe70767cf58758eeffec426a9b395e617c2") {
+        if __meridianShouldRun("/WhenSavethisaudionoteFires/root/procedure/31c21f52265bc692ddaf89def69e90a54041d7d45d114f87054e4fb6158cbf98") {
             // L1
             try await runtime.emit(
                 event: "trigger.saveThisAudioNote.fired",
@@ -1002,9 +1002,9 @@ public struct WhenSavethisaudionoteFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("save this audio note"),
                 ],
-                step: "/WhenSavethisaudionoteFires/root/procedure/67c9282aec02130c092de466e4a4cbe70767cf58758eeffec426a9b395e617c2"
+                step: "/WhenSavethisaudionoteFires/root/procedure/31c21f52265bc692ddaf89def69e90a54041d7d45d114f87054e4fb6158cbf98"
             )
-            try await runtime.checkpoint(label: "/WhenSavethisaudionoteFires/root/procedure/67c9282aec02130c092de466e4a4cbe70767cf58758eeffec426a9b395e617c2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavethisaudionoteFires/root/procedure/31c21f52265bc692ddaf89def69e90a54041d7d45d114f87054e4fb6158cbf98", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSavethisaudionoteFires.complete")
@@ -1063,12 +1063,12 @@ public struct WhenAudiomessageFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAudiomessageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/2a775861f7fe8e92b0ceeb42d83b50beede47fe14128b1f282bffbab8f78cda6") {
+        if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/697d026d5af4a3fda647bc9cdbb4074f9457cf98875ff44a09891b5361ce0e1a") {
             // L1
             try await runtime.wait(.event("audioMessage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAudiomessageFires/root/procedure/2a775861f7fe8e92b0ceeb42d83b50beede47fe14128b1f282bffbab8f78cda6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAudiomessageFires/root/procedure/697d026d5af4a3fda647bc9cdbb4074f9457cf98875ff44a09891b5361ce0e1a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/2688c5cff537808bbdc6491d3bcf34b5a2c09e39e2c2918e20d8d79b030bacdb") {
+        if __meridianShouldRun("/WhenAudiomessageFires/root/procedure/281879fb511c003c04c79bd7675e524f103fe51a910385f8efc031495a743f33") {
             // L1
             try await runtime.emit(
                 event: "trigger.audioMessage.fired",
@@ -1076,9 +1076,9 @@ public struct WhenAudiomessageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("audio message"),
                 ],
-                step: "/WhenAudiomessageFires/root/procedure/2688c5cff537808bbdc6491d3bcf34b5a2c09e39e2c2918e20d8d79b030bacdb"
+                step: "/WhenAudiomessageFires/root/procedure/281879fb511c003c04c79bd7675e524f103fe51a910385f8efc031495a743f33"
             )
-            try await runtime.checkpoint(label: "/WhenAudiomessageFires/root/procedure/2688c5cff537808bbdc6491d3bcf34b5a2c09e39e2c2918e20d8d79b030bacdb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAudiomessageFires/root/procedure/281879fb511c003c04c79bd7675e524f103fe51a910385f8efc031495a743f33", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAudiomessageFires.complete")

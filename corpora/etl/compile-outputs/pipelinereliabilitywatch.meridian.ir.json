@@ -4,119 +4,119 @@
       "canonical" : "wait for event checkPipelineReliability.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/23826838d041224389668447b72a651091c0990a943774793439d88a40e955ee",
+      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/8b9affd96462e9f8e56da3a4f9b8e4e03c35d862d822f16bbb8d5030a4247760",
       "swift_line" : 770
     },
     {
       "canonical" : "emit trigger.checkPipelineReliability.fired with kind = \"keyword\", spec = \"check pipeline reliability\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/d3cd4f52dc9bd0661687f0d669549803b0f065f785305f896fa962012e3570e0",
+      "stable_step_path" : "\/WhenCheckpipelinereliabilityFires\/root\/procedure\/ba54a43e7c71ed0042d53967d189619f067aa7fdc7e3495152b575688ef373dd",
       "swift_line" : 770
     },
     {
       "canonical" : "wait for event monitorExtractLoadReliability.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/4bd0523b0b913b2a002cac193a7e3e19f5f7b8688bbd1839d08abeefcd10ffd1",
+      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/3b5bd94a1494952a5f50daf1200847892519ee319cefdcd7fdae8e9ea11a03e2",
       "swift_line" : 770
     },
     {
       "canonical" : "emit trigger.monitorExtractLoadReliability.fired with kind = \"keyword\", spec = \"monitor extract load reliability\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/ee5dab199a1b25881869856cc0932e76ed1f4def758389d5fe390f4888c6cecc",
-      "swift_line" : 770
-    },
-    {
-      "canonical" : "wait for event runPipelineReliabilityWatch.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/8492b5adc05b2301f238e724ee0500432ec616dd72a3e3f0c7c975916cae34f6",
+      "stable_step_path" : "\/WhenMonitorextractloadreliabilityFires\/root\/procedure\/ba763706d9188880c35de9f5c4307b917d7edf2cd557f11fc2c3405745a541fe",
       "swift_line" : 770
     },
     {
       "canonical" : "emit trigger.runPipelineReliabilityWatch.fired with kind = \"ambient\", spec = \"run pipeline reliability watch\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/dea4bc3d83e623e12ddd914d871ef308c3d2a1938ae9002410e1f0f6d3f86086",
+      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/1166fa737660ae2d6fd1810cce0ccf39493202904127634b2658b94849ec2dd5",
+      "swift_line" : 770
+    },
+    {
+      "canonical" : "wait for event runPipelineReliabilityWatch.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunpipelinereliabilitywatchFires\/root\/procedure\/f2a99f339945c4adce4fc3b609a9bf1eb8e00a09e642b3d82f9f3d360c8cdb5b",
       "swift_line" : 770
     },
     {
       "canonical" : "assert the extract step succeeds in at least 90% of runs, checked every 86400 seconds.",
       "meridian_line" : 20,
       "primitive" : "assert",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/b5eb9b467faf192e404bc18d8b7049c0ebd3d9b50fbc209b1387ca7efd75f0fc",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/44f6e6ac1d78fb6361b9ad42918d85c18736fc1b30d5c62e2fa2d6acd87f4eed",
       "swift_line" : 386
     },
     {
       "canonical" : "assert the load step fails in at most 10% of runs, checked every 86400 seconds.",
       "meridian_line" : 21,
       "primitive" : "assert",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/9199922282fa65f0a88780facb36c3e97104316572e87ef8d8e52c5c3052afbc",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/contract\/invariants\/d0e06bfb02f0926c9473b0c398596a9180d620d41440851a35370ab80160cba1",
       "swift_line" : 406
     },
     {
       "canonical" : "if the extract step succeeds in at least 90% of runs within the last 2592000 seconds,\n  emit etl.report with message = \"pipeline reliability saw healthy run frequency\".\nif it is unknown whether:\n  emit etl.report with message = \"pipeline reliability run frequency is indeterminate below the sample floor\".",
       "meridian_line" : 36,
       "primitive" : "branch",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/5af2860da83bbbb9b1c8de544cd14a71d83ecbf8dd6fb0c991a349b83bbeb78e",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/f0e2d036c8f07393721f766689c9efba910a0a2dbd9589058e2a13e5af4d9648",
       "swift_line" : 465
     },
     {
       "canonical" : "emit etl.report with message = \"pipeline reliability saw healthy run frequency\".",
       "meridian_line" : 37,
       "primitive" : "emit",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.then\/1d359d9dbb8061460c7f85126f6265962289045e38238c38768d7e02e2843868",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.then\/0ec3492776f62a6e076f51b9613872bc42551c755c06e8172e8237ec2db26d6f",
       "swift_line" : 478
     },
     {
       "canonical" : "emit etl.report with message = \"pipeline reliability run frequency is indeterminate below the sample floor\".",
       "meridian_line" : 39,
       "primitive" : "emit",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.unknown\/1ef6dfe7269518e1d57adea01649c498de35510832247c17fe8d020ee926add4",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps\/procedure\/branch.unknown\/b0bebeddec20ac92ed9d1d6e835ffcf4e6a64479ee4d3249fda79413fa9f3e77",
       "swift_line" : 492
     },
     {
       "canonical" : "if the load step fails in at most 5% of occurrences within the last 2592000 seconds,\n  emit etl.report with message = \"pipeline reliability saw healthy occurrence frequency\".\nif it is unknown whether:\n  emit etl.report with message = \"pipeline reliability occurrence frequency is indeterminate below the sample floor\".",
       "meridian_line" : 43,
       "primitive" : "branch",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/4b3ca47fcec42903200858b4cfe0a140a99d09b182ea653cfa976c9307d05195",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/3a8c98492715b435d927db5818ae1ac613f927d9cb8d87d77099ccd310b78aee",
       "swift_line" : 505
     },
     {
       "canonical" : "emit etl.report with message = \"pipeline reliability saw healthy occurrence frequency\".",
       "meridian_line" : 44,
       "primitive" : "emit",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.then\/31b7063368fb6760dc3b0ad35d752562b5fde14e909025db24e2110607fa594c",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.then\/0da4c716e9c115ba1987162ecd87281eb0664348c4dcc35f57536077773bd054",
       "swift_line" : 518
     },
     {
       "canonical" : "emit etl.report with message = \"pipeline reliability occurrence frequency is indeterminate below the sample floor\".",
       "meridian_line" : 46,
       "primitive" : "emit",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.unknown\/a641f78aa3d450c8b098adea7b6dcfeee33a59b04047466e049b0401ef70e00d",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-2\/procedure\/branch.unknown\/4204f66d6d4de934ab62ae6f3d7589aa8963417da1512a5c7016f60b0a7c03fb",
       "swift_line" : 532
     },
     {
       "canonical" : "emit etl.report with message = \"pipeline reliability watch pass complete\".",
       "meridian_line" : 50,
       "primitive" : "emit",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-3\/procedure\/57d436791e4233eccc6c92e120ed7f636357ca861092528e0a5f4fe65bbc5d8f",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/workflow-steps-3\/procedure\/d5b5bdfcfc7f00bb7e96a8a63c780667c091cc6a3a4346d4dd481ca7d270d65a",
       "swift_line" : 546
     },
     {
       "canonical" : "assert the extract step succeeds in at least 90% of runs within the last 2592000 seconds.",
       "meridian_line" : 67,
       "primitive" : "assert",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps\/invariants\/1f02cefe3742b29c9c1269cd4dc4ab5e953f8643f4ce8e14900e14607f9e728e",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps\/invariants\/eb3fd7296f1241b1796f051f2eebb86e14b48e86e481976c6b3634aded0299d7",
       "swift_line" : 426
     },
     {
       "canonical" : "assert the load step fails in at most 5% of occurrences within the last 2592000 seconds.",
       "meridian_line" : 71,
       "primitive" : "assert",
-      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps-2\/invariants\/793dd0e3f38ab87493f5484c63d24a9bcfbdb61a04666247409ab611fe003061",
+      "stable_step_path" : "\/PipelineReliabilityWatch\/guarantees-steps-2\/invariants\/9d341efd2438fef31c3e233b21df11b04da7ba43d9b1b96adc8a8f114ef3602a",
       "swift_line" : 446
     }
   ],

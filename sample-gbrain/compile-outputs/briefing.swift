@@ -622,7 +622,7 @@ public struct BriefingInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BriefingInput", parameters: [:])
 
-        if __meridianShouldRun("/BriefingInput/contract-steps/invariants/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22") {
+        if __meridianShouldRun("/BriefingInput/contract-steps/invariants/b3455d0d62f7477b18ceca4dd7c71e0821750ac96a5d845030d6181c8c1b2a07") {
             // L34
             // make sure Every fact in the briefing includes an inline  citation
             _ = try await runtime.invoke(
@@ -630,11 +630,11 @@ public struct BriefingInput: MeridianWorkflow {
                 args: [
                     "command": .string("[Source: slug, updated DATE]"),
                 ],
-                step: "/BriefingInput/contract-steps/invariants/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22",
+                step: "/BriefingInput/contract-steps/invariants/b3455d0d62f7477b18ceca4dd7c71e0821750ac96a5d845030d6181c8c1b2a07",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BriefingInput/contract-steps/invariants/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BriefingInput/contract-steps/invariants/b3455d0d62f7477b18ceca4dd7c71e0821750ac96a5d845030d6181c8c1b2a07", state: state.snapshot())
         }
         // L75
         let __meridianProseResults_L75 = try await runtime.executeProsePlan(
@@ -642,7 +642,7 @@ public struct BriefingInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["get_health", "get_page", "get_timeline", "health.get", "list_pages", "page.get", "page.list", "page.search", "query", "search", "shell.run"],
             outputKind: "record",
-            step: "/BriefingInput/phases-steps-2/procedure/76cdc64261e598f9b7c9cb18f89bfd8c58ebef9aa9c8bfb977434d0d1c9e924a",
+            step: "/BriefingInput/phases-steps-2/procedure/9a0d4ff9ea83fd5b5852dbf4a7c2063a26778204da621b40a69da7be12e25baa",
             guidance: "**Pending consolidation footer** — when `pending_consolidation_count > 0`,\nnote `N facts await dream-cycle consolidation` so the operator can decide\nwhether to run `gbrain dream` before reading further\nFor each meeting on the calendar:\nList deal pages in gbrain filtered to active status:\nDeadlines approaching in the next 7 days\nList person pages in gbrain sorted by recency:\nFor every attendee on the calendar invite:\n`gbrain search \"<attendee name>\"` -- find their brain page\n`gbrain get <slug>` -- load compiled truth, recent timeline, relationship context\nIf no page exists, note the gap (\"No brain page for Sarah Chen -- consider enrichment\")\n`gbrain search \"<sender name>\"` -- load sender context\nuse judgment to follow the Before an email reply — steps 2 guidance:\nRead their compiled truth to understand who they are, what they care about, and\nyour relationship history. This turns a cold reply into an informed one\n`gbrain query \"active deals status\"` -- deal pipeline snapshot\n`gbrain query \"meetings this week\"` -- recent meeting pages with insights\n`gbrain query \"pending commitments follow-ups\"` -- open threads and action items\n`gbrain search --type person --sort updated --limit 10` -- people in play\nIf the briefing creates or updates any brain pages (e.g., new meeting prep\npages, updated entity pages), the back-linking iron law applies: every entity\nmentioned must have a back-link from their page. See `skills/_brain-filing-rules.md`\nuse judgment to follow the Citation in Briefings — steps 2 guidance:\nThis lets the user trace any claim back to the brain page and assess freshness"
         )
         for (__key, __value) in __meridianProseResults_L75 {
@@ -705,12 +705,12 @@ public struct WhenDailybriefingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDailybriefingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1") {
+        if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/5fe24969e6e70966ac73ddbcd5aa2b0cd12da849b6224c1bc7724fb5962bef42") {
             // L1
             try await runtime.wait(.event("dailyBriefing", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDailybriefingFires/root/procedure/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDailybriefingFires/root/procedure/5fe24969e6e70966ac73ddbcd5aa2b0cd12da849b6224c1bc7724fb5962bef42", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547") {
+        if __meridianShouldRun("/WhenDailybriefingFires/root/procedure/e1c4f5043a6042dd25198c991ae43ddb6d492bd306a14a629249a23179b40ffa") {
             // L1
             try await runtime.emit(
                 event: "trigger.dailyBriefing.fired",
@@ -718,9 +718,9 @@ public struct WhenDailybriefingFires: MeridianWorkflow {
                     "kind": .string("schedule"),
                     "spec": .string("daily briefing"),
                 ],
-                step: "/WhenDailybriefingFires/root/procedure/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547"
+                step: "/WhenDailybriefingFires/root/procedure/e1c4f5043a6042dd25198c991ae43ddb6d492bd306a14a629249a23179b40ffa"
             )
-            try await runtime.checkpoint(label: "/WhenDailybriefingFires/root/procedure/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDailybriefingFires/root/procedure/e1c4f5043a6042dd25198c991ae43ddb6d492bd306a14a629249a23179b40ffa", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDailybriefingFires.complete")
@@ -779,12 +779,12 @@ public struct WhenMorningbriefingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenMorningbriefingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb") {
+        if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/e9053bfe2eed1e4bae6fd34070077ebb0f3c94bd635191cfd7b582bd857667db") {
             // L1
             try await runtime.wait(.event("morningBriefing", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMorningbriefingFires/root/procedure/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMorningbriefingFires/root/procedure/e9053bfe2eed1e4bae6fd34070077ebb0f3c94bd635191cfd7b582bd857667db", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51") {
+        if __meridianShouldRun("/WhenMorningbriefingFires/root/procedure/4e8168f5f8ad2250485963806479bf1a0e550f40687982274c3683b9ff42c3d8") {
             // L1
             try await runtime.emit(
                 event: "trigger.morningBriefing.fired",
@@ -792,9 +792,9 @@ public struct WhenMorningbriefingFires: MeridianWorkflow {
                     "kind": .string("schedule"),
                     "spec": .string("morning briefing"),
                 ],
-                step: "/WhenMorningbriefingFires/root/procedure/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51"
+                step: "/WhenMorningbriefingFires/root/procedure/4e8168f5f8ad2250485963806479bf1a0e550f40687982274c3683b9ff42c3d8"
             )
-            try await runtime.checkpoint(label: "/WhenMorningbriefingFires/root/procedure/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMorningbriefingFires/root/procedure/4e8168f5f8ad2250485963806479bf1a0e550f40687982274c3683b9ff42c3d8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMorningbriefingFires.complete")
@@ -853,12 +853,12 @@ public struct WhenWhatshappeningtodayFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhatshappeningtodayFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8") {
+        if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/ea380c250f6c8b7fb37d17ab1b693a20561e638d80bf473331a630b8eaa8e782") {
             // L1
             try await runtime.wait(.event("whatSHappeningToday", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhatshappeningtodayFires/root/procedure/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatshappeningtodayFires/root/procedure/ea380c250f6c8b7fb37d17ab1b693a20561e638d80bf473331a630b8eaa8e782", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0") {
+        if __meridianShouldRun("/WhenWhatshappeningtodayFires/root/procedure/5954c2ba12b97194b16727fd36c8818dcf438d02fd1c3b63aa75bd104f81b265") {
             // L1
             try await runtime.emit(
                 event: "trigger.whatSHappeningToday.fired",
@@ -866,9 +866,9 @@ public struct WhenWhatshappeningtodayFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("what's happening today"),
                 ],
-                step: "/WhenWhatshappeningtodayFires/root/procedure/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0"
+                step: "/WhenWhatshappeningtodayFires/root/procedure/5954c2ba12b97194b16727fd36c8818dcf438d02fd1c3b63aa75bd104f81b265"
             )
-            try await runtime.checkpoint(label: "/WhenWhatshappeningtodayFires/root/procedure/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatshappeningtodayFires/root/procedure/5954c2ba12b97194b16727fd36c8818dcf438d02fd1c3b63aa75bd104f81b265", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhatshappeningtodayFires.complete")

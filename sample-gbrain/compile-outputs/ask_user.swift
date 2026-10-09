@@ -624,22 +624,22 @@ public struct AskUserInput: MeridianWorkflow {
 
         // L65
         if MeridianComparison.gt(state.get("timeCriticalOperationsWhereDelayCosts"), state.get("wrongChoice")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"timeCriticalOperationsWhereDelayCosts\"), state.get(\"wrongChoice\"))", into: "then", step: "/AskUserInput/when-not-to-use-steps/negative-applicability/9568b620bfb6105bd3b8f2a44face8fe595edce2502f9694ddb20e7dbae2e9c3")
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"timeCriticalOperationsWhereDelayCosts\"), state.get(\"wrongChoice\"))", into: "then", step: "/AskUserInput/when-not-to-use-steps/negative-applicability/276ddcaa3c7ea77d8c0d3793b370bc946958b1c98ba642bb565b5a357e6458f1")
             // L65
-            await runtime.complete(reason: nil, step: "/AskUserInput/when-not-to-use-steps/negative-applicability/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
+            await runtime.complete(reason: nil, step: "/AskUserInput/when-not-to-use-steps/negative-applicability/branch.then/6a6dcde53a3aa6d99391d0785a5e2a23eeddfb93f68ef0cba2091567ee6ec34e")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/AskUserInput/when-not-to-use-steps/negative-applicability/9568b620bfb6105bd3b8f2a44face8fe595edce2502f9694ddb20e7dbae2e9c3")
+            try await runtime.recordBranchEnded(into: "then", step: "/AskUserInput/when-not-to-use-steps/negative-applicability/276ddcaa3c7ea77d8c0d3793b370bc946958b1c98ba642bb565b5a357e6458f1")
         }
 
-        if __meridianShouldRun("/AskUserInput/anti-patterns-steps-2/prohibitions/0a3257413247dd5ce1fc2fdc2206c33eadc70ba4a686cf9b2a047e1943f3d517") {
+        if __meridianShouldRun("/AskUserInput/anti-patterns-steps-2/prohibitions/c5f9add7603417af20966578d8efadcf2032460227a0f5f4a430af30b8368e56") {
             // L265
             try await runtime.assert(!(MeridianComparison.eq(state.get("(everyChoiceGateMustLetTheUserDecline.\"noneOfThese\"/\"skip\"/\"cancel\""), state.get("mandatory)"))), message: "Expected not (Every choice gate must let the user decline. \"None of these\" / \"Skip\" / \"Cancel\" is mandatory)")
-            try await runtime.checkpoint(label: "/AskUserInput/anti-patterns-steps-2/prohibitions/0a3257413247dd5ce1fc2fdc2206c33eadc70ba4a686cf9b2a047e1943f3d517", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AskUserInput/anti-patterns-steps-2/prohibitions/c5f9add7603417af20966578d8efadcf2032460227a0f5f4a430af30b8368e56", state: state.snapshot())
         }
-        if __meridianShouldRun("/AskUserInput/anti-patterns-steps-3/prohibitions/1e459cfa5bccf46b8455d3c6c39800d78836ed4f8cb5aaf7b656998eb3c2dd28") {
+        if __meridianShouldRun("/AskUserInput/anti-patterns-steps-3/prohibitions/eb5022f06416ee0356c87232fbc7c28219b7cd8c1f0ebdea59dcfac7aa1faaf3") {
             // L269
             try await runtime.assert(!(MeridianComparison.eq(state.get("(\"option1\"ForcesReReadingTheContext.\"mergeIntoExistingPage\""), state.get("selfExplanatory)"))), message: "Expected not (\"Option 1\" forces re-reading the context. \"Merge into existing page\" is self-explanatory)")
-            try await runtime.checkpoint(label: "/AskUserInput/anti-patterns-steps-3/prohibitions/1e459cfa5bccf46b8455d3c6c39800d78836ed4f8cb5aaf7b656998eb3c2dd28", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AskUserInput/anti-patterns-steps-3/prohibitions/eb5022f06416ee0356c87232fbc7c28219b7cd8c1f0ebdea59dcfac7aa1faaf3", state: state.snapshot())
         }
         // L141
         let __meridianProseResults_L141 = try await runtime.executeProsePlan(
@@ -647,7 +647,7 @@ public struct AskUserInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/AskUserInput/how-to-gate-critical-steps-2/procedure/923442c5df21f45c9e2400742d0ebdb0e0f3779be78345eac5db9cf86d5df735",
+            step: "/AskUserInput/how-to-gate-critical-steps-2/procedure/921821a5a13bc60169ae6656955b5d136c1c80cc4869a36f8568af0dd4528290",
             guidance: "❌ Continue with \"while you decide, I'll start on...\"\nuse judgment to follow the Context block — steps guidance:\n1-3 lines maximum. The user should understand the decision in under 5 seconds\nFormat: `Action verb — brief qualifier`\n✅ \"Merge — combine with existing page\"\n✅ \"Create new — separate meeting page\"\n❌ \"Option 1\"\n❌ \"Click here to merge the content into the existing brain page\"\nWhen building a new skill that needs user input at a decision point,\nreference this pattern rather than inventing a new one"
         )
         for (__key, __value) in __meridianProseResults_L141 {
@@ -710,12 +710,12 @@ public struct WhenPresentoptionsFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPresentoptionsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/eec06581dc5176ad236722549a810aa91e1afc2996fe8af3ad3ec9337f844235") {
+        if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/55a50d49a278818b664f987053e55c871cb2e4c2679a3f2664c8da621295dcba") {
             // L1
             try await runtime.wait(.event("presentOptions", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPresentoptionsFires/root/procedure/eec06581dc5176ad236722549a810aa91e1afc2996fe8af3ad3ec9337f844235", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPresentoptionsFires/root/procedure/55a50d49a278818b664f987053e55c871cb2e4c2679a3f2664c8da621295dcba", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/a66d2f8de212d21dd8759f2fe39bddd8d1086d7a701b04787f4a4cd1f5546dd1") {
+        if __meridianShouldRun("/WhenPresentoptionsFires/root/procedure/cfe0efc66baed7f395fb13596377e97a266704b41303520f30c4c6c2a8c67ee5") {
             // L1
             try await runtime.emit(
                 event: "trigger.presentOptions.fired",
@@ -723,9 +723,9 @@ public struct WhenPresentoptionsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("present options"),
                 ],
-                step: "/WhenPresentoptionsFires/root/procedure/a66d2f8de212d21dd8759f2fe39bddd8d1086d7a701b04787f4a4cd1f5546dd1"
+                step: "/WhenPresentoptionsFires/root/procedure/cfe0efc66baed7f395fb13596377e97a266704b41303520f30c4c6c2a8c67ee5"
             )
-            try await runtime.checkpoint(label: "/WhenPresentoptionsFires/root/procedure/a66d2f8de212d21dd8759f2fe39bddd8d1086d7a701b04787f4a4cd1f5546dd1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPresentoptionsFires/root/procedure/cfe0efc66baed7f395fb13596377e97a266704b41303520f30c4c6c2a8c67ee5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPresentoptionsFires.complete")
@@ -784,12 +784,12 @@ public struct WhenAskproceedingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAskproceedingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/4ed67a188948f3fa0d7644910757bd7990d4ca72b054b74ad030949df8a84c40") {
+        if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/046e8c97b1deb3c97a47678f59b2c25d250ceeab59633b9fcb959c3d812fb61d") {
             // L1
             try await runtime.wait(.event("askProceeding", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAskproceedingFires/root/procedure/4ed67a188948f3fa0d7644910757bd7990d4ca72b054b74ad030949df8a84c40", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAskproceedingFires/root/procedure/046e8c97b1deb3c97a47678f59b2c25d250ceeab59633b9fcb959c3d812fb61d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/02c18d54276b8abbe3ea14f17bf6fd1b7a756fd1b4153314f8ce55e7e9784b8b") {
+        if __meridianShouldRun("/WhenAskproceedingFires/root/procedure/4f2141dc5c8d3ed37045a74bce4e8f5bac1f25e23e3e834bc242262b512b99c0") {
             // L1
             try await runtime.emit(
                 event: "trigger.askProceeding.fired",
@@ -797,9 +797,9 @@ public struct WhenAskproceedingFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("ask before proceeding"),
                 ],
-                step: "/WhenAskproceedingFires/root/procedure/02c18d54276b8abbe3ea14f17bf6fd1b7a756fd1b4153314f8ce55e7e9784b8b"
+                step: "/WhenAskproceedingFires/root/procedure/4f2141dc5c8d3ed37045a74bce4e8f5bac1f25e23e3e834bc242262b512b99c0"
             )
-            try await runtime.checkpoint(label: "/WhenAskproceedingFires/root/procedure/02c18d54276b8abbe3ea14f17bf6fd1b7a756fd1b4153314f8ce55e7e9784b8b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAskproceedingFires/root/procedure/4f2141dc5c8d3ed37045a74bce4e8f5bac1f25e23e3e834bc242262b512b99c0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAskproceedingFires.complete")
@@ -858,12 +858,12 @@ public struct WhenChoicegateFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenChoicegateFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenChoicegateFires/root/procedure/2203a20380ad8c8a5ea10174aed02b92428cce230482cbf4e99b8d615abd9e8f") {
+        if __meridianShouldRun("/WhenChoicegateFires/root/procedure/b5706f8efc4db5061a2c24f6804bd94b654f96049224d478d981ae088fa1931d") {
             // L1
             try await runtime.wait(.event("choiceGate", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenChoicegateFires/root/procedure/2203a20380ad8c8a5ea10174aed02b92428cce230482cbf4e99b8d615abd9e8f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChoicegateFires/root/procedure/b5706f8efc4db5061a2c24f6804bd94b654f96049224d478d981ae088fa1931d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenChoicegateFires/root/procedure/1dc63646e13eaa9e69be702ec78f00ce62af5df37543a9393bfc30eb9d1ff754") {
+        if __meridianShouldRun("/WhenChoicegateFires/root/procedure/f97d030f343f65299bb11de98af9527047248fc9f6cf5373a9ba2944ca95f8c8") {
             // L1
             try await runtime.emit(
                 event: "trigger.choiceGate.fired",
@@ -871,9 +871,9 @@ public struct WhenChoicegateFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("choice gate"),
                 ],
-                step: "/WhenChoicegateFires/root/procedure/1dc63646e13eaa9e69be702ec78f00ce62af5df37543a9393bfc30eb9d1ff754"
+                step: "/WhenChoicegateFires/root/procedure/f97d030f343f65299bb11de98af9527047248fc9f6cf5373a9ba2944ca95f8c8"
             )
-            try await runtime.checkpoint(label: "/WhenChoicegateFires/root/procedure/1dc63646e13eaa9e69be702ec78f00ce62af5df37543a9393bfc30eb9d1ff754", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChoicegateFires/root/procedure/f97d030f343f65299bb11de98af9527047248fc9f6cf5373a9ba2944ca95f8c8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenChoicegateFires.complete")
@@ -932,12 +932,12 @@ public struct WhenUserdecisionFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenUserdecisionFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/3c8face1c339d35233cbe105ff826741c92b1a73a9dc8612514ff244feb1f1aa") {
+        if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/4017869afd84f55338cdd87265fdca768e37353b97a7fbfb5cc41c38d22ebc6e") {
             // L1
             try await runtime.wait(.event("userDecision", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenUserdecisionFires/root/procedure/3c8face1c339d35233cbe105ff826741c92b1a73a9dc8612514ff244feb1f1aa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUserdecisionFires/root/procedure/4017869afd84f55338cdd87265fdca768e37353b97a7fbfb5cc41c38d22ebc6e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/0663a1962caa3ecd076728407790717d5ee9221c3ce4b5b7d67f351a4783cf3f") {
+        if __meridianShouldRun("/WhenUserdecisionFires/root/procedure/5c1b301f0201db9dbe8c83f9d0bad7e53f29fac90bc01e64a6fa8fe98e8669d2") {
             // L1
             try await runtime.emit(
                 event: "trigger.userDecision.fired",
@@ -945,9 +945,9 @@ public struct WhenUserdecisionFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("user decision"),
                 ],
-                step: "/WhenUserdecisionFires/root/procedure/0663a1962caa3ecd076728407790717d5ee9221c3ce4b5b7d67f351a4783cf3f"
+                step: "/WhenUserdecisionFires/root/procedure/5c1b301f0201db9dbe8c83f9d0bad7e53f29fac90bc01e64a6fa8fe98e8669d2"
             )
-            try await runtime.checkpoint(label: "/WhenUserdecisionFires/root/procedure/0663a1962caa3ecd076728407790717d5ee9221c3ce4b5b7d67f351a4783cf3f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenUserdecisionFires/root/procedure/5c1b301f0201db9dbe8c83f9d0bad7e53f29fac90bc01e64a6fa8fe98e8669d2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenUserdecisionFires.complete")

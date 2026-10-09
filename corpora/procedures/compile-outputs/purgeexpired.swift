@@ -453,84 +453,84 @@ public struct PurgeExpired: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PurgeExpired", parameters: [:])
 
-        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57") {
+        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465") {
             // L19
             let records = try await runtime.invoke(
                 tool: "record.list",
                 args: [
                     "status": .string("stale"),
                 ],
-                step: "/PurgeExpired/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
+                step: "/PurgeExpired/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.list")
             )
             state.bind("records", records)
 
-            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465", state: state.snapshot())
         }
-        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0") {
+        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/6d1236bbd051a151b92879e30394646cabe11edbcbf90b0391634e2e863976a7") {
             // L20
             try await runtime.assert((!((state.get("records")?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }).isEmpty), message: "Expected any stale records")
-            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/6d1236bbd051a151b92879e30394646cabe11edbcbf90b0391634e2e863976a7", state: state.snapshot())
         }
-        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/7caf006036a7e08bb2e99292e0bed951b0e3b7b6acc0687b469b5c8e77139c53") {
+        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/1574ea1eb122897fe4bf24a7aa0cb59dc917a4245adbf41513a0c4a00d8bad0c") {
             // L21
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }).count <= 500), message: "Expected at most 500 stale records")
-            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/7caf006036a7e08bb2e99292e0bed951b0e3b7b6acc0687b469b5c8e77139c53", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/1574ea1eb122897fe4bf24a7aa0cb59dc917a4245adbf41513a0c4a00d8bad0c", state: state.snapshot())
         }
         // L24
         do {
             // L22
             let __meridianSrc_0_3_do_0 = ((state.get("records"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("stale"))) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("updatedAt"), __b.member("updatedAt"), ascending: true) }
             let __meridianSrc_0_3_do_0Refined = Array(__meridianSrc_0_3_do_0.prefix(100))
-            try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/PurgeExpired/procedure-steps/procedure/recover.body/588d72d4fba0ec8e227c9fbf325551b58afe4a843fa29b42a640ff2aeb237495")
+            try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/PurgeExpired/procedure-steps/procedure/recover.body/fca5d33af6001ee2c371954c34cdde74a5854a19261b2442a6e36b89b587e56d")
             for (__meridianLoopIndex_0_3_do_0, record) in __meridianSrc_0_3_do_0Refined.enumerated() {
                 let __meridianLoopLabel_0_3_do_0 = "progress:0.3.do.0:iteration:\(__meridianLoopIndex_0_3_do_0)"
                 if __meridianShouldRun(__meridianLoopLabel_0_3_do_0) {
-                    try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_do_0, step: "/PurgeExpired/procedure-steps/procedure/recover.body/588d72d4fba0ec8e227c9fbf325551b58afe4a843fa29b42a640ff2aeb237495")
+                    try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_do_0, step: "/PurgeExpired/procedure-steps/procedure/recover.body/fca5d33af6001ee2c371954c34cdde74a5854a19261b2442a6e36b89b587e56d")
                 state.bind("record", record)
-                    if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/iterate.body/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd") {
+                    if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/iterate.body/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b") {
                         // L23
                         let record = try await runtime.invoke(
                             tool: "record.purge",
                             args: [
                                 "record": state.get("record") ?? .null,
                             ],
-                            step: "/PurgeExpired/procedure-steps/procedure/iterate.body/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd",
+                            step: "/PurgeExpired/procedure-steps/procedure/iterate.body/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.purge")
                         )
                         state.bind("record", record)
 
-                        try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/iterate.body/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/iterate.body/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b", state: state.snapshot())
                     }
                     try await runtime.checkpoint(label: __meridianLoopLabel_0_3_do_0, state: state.snapshot())
                 }
             }
-            try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianSrc_0_3_do_0Refined.count, step: "/PurgeExpired/procedure-steps/procedure/recover.body/588d72d4fba0ec8e227c9fbf325551b58afe4a843fa29b42a640ff2aeb237495")
+            try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianSrc_0_3_do_0Refined.count, step: "/PurgeExpired/procedure-steps/procedure/recover.body/fca5d33af6001ee2c371954c34cdde74a5854a19261b2442a6e36b89b587e56d")
 
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/PurgeExpired/procedure-steps/procedure/9df94050cb768646ba2b59907aa3896ca64a1155e2534dec90e6229a86f2e112")
-            if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/recover.handler/f4a60324d9e15f8d488a939b7cd61b74c7e4c91da554f3a81d21380473d284f8") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/PurgeExpired/procedure-steps/procedure/222fc3433ea5f662de00031d0fcf10e000cf4cdbf809dd27a5c7df362cbbe736")
+            if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/recover.handler/c952d0ef196bdba2c1f77da3f6d9cdfecfad0cf716b543b2627e358e5a542a3c") {
                 // L25
                 try await runtime.emit(
                     event: "procedure.report",
                     payload: [
                         "message": .string("expired record purge failed"),
                     ],
-                    step: "/PurgeExpired/procedure-steps/procedure/recover.handler/f4a60324d9e15f8d488a939b7cd61b74c7e4c91da554f3a81d21380473d284f8"
+                    step: "/PurgeExpired/procedure-steps/procedure/recover.handler/c952d0ef196bdba2c1f77da3f6d9cdfecfad0cf716b543b2627e358e5a542a3c"
                 )
-                try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/recover.handler/f4a60324d9e15f8d488a939b7cd61b74c7e4c91da554f3a81d21380473d284f8", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/recover.handler/c952d0ef196bdba2c1f77da3f6d9cdfecfad0cf716b543b2627e358e5a542a3c", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/a42a7dcf25ff610f8d392366cbe82e1fafff00615825e3ec21876d647dfc6335") {
+        if __meridianShouldRun("/PurgeExpired/procedure-steps/procedure/574866f2712c7f57c717061ef4a4b8184a90a8c82d4f557273067ef4402d9bf4") {
             // L26
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("expired records purged"),
                 ],
-                step: "/PurgeExpired/procedure-steps/procedure/a42a7dcf25ff610f8d392366cbe82e1fafff00615825e3ec21876d647dfc6335"
+                step: "/PurgeExpired/procedure-steps/procedure/574866f2712c7f57c717061ef4a4b8184a90a8c82d4f557273067ef4402d9bf4"
             )
-            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/a42a7dcf25ff610f8d392366cbe82e1fafff00615825e3ec21876d647dfc6335", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PurgeExpired/procedure-steps/procedure/574866f2712c7f57c717061ef4a4b8184a90a8c82d4f557273067ef4402d9bf4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PurgeExpired.complete")
@@ -590,12 +590,12 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenPurgeexpiredrecordsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/1b0c806591ba4b0123a4bd695fcba2aad4c81b816e95682020a39714798b5d9b") {
+        if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/d82a6906bc2e4bd627a9863d90ece0ca294dd70d9a4a88aa968cd6608ce9b788") {
             // L1
             try await runtime.wait(.event("purgeExpiredRecords", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPurgeexpiredrecordsFires/root/procedure/1b0c806591ba4b0123a4bd695fcba2aad4c81b816e95682020a39714798b5d9b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPurgeexpiredrecordsFires/root/procedure/d82a6906bc2e4bd627a9863d90ece0ca294dd70d9a4a88aa968cd6608ce9b788", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/2a6dac93e00ae15b73720f0e32ef7a03bf3e56d00b490ac6d8605d1d56387fb3") {
+        if __meridianShouldRun("/WhenPurgeexpiredrecordsFires/root/procedure/834fa5a4664ba5cad2a6b85c43a7664ab77a59e85f1330e1e6f86fecd7bd3e13") {
             // L1
             try await runtime.emit(
                 event: "trigger.purgeExpiredRecords.fired",
@@ -603,9 +603,9 @@ public struct WhenPurgeexpiredrecordsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("purge expired records"),
                 ],
-                step: "/WhenPurgeexpiredrecordsFires/root/procedure/2a6dac93e00ae15b73720f0e32ef7a03bf3e56d00b490ac6d8605d1d56387fb3"
+                step: "/WhenPurgeexpiredrecordsFires/root/procedure/834fa5a4664ba5cad2a6b85c43a7664ab77a59e85f1330e1e6f86fecd7bd3e13"
             )
-            try await runtime.checkpoint(label: "/WhenPurgeexpiredrecordsFires/root/procedure/2a6dac93e00ae15b73720f0e32ef7a03bf3e56d00b490ac6d8605d1d56387fb3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPurgeexpiredrecordsFires/root/procedure/834fa5a4664ba5cad2a6b85c43a7664ab77a59e85f1330e1e6f86fecd7bd3e13", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPurgeexpiredrecordsFires.complete")
@@ -665,12 +665,12 @@ public struct WhenRetentioncleanupFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRetentioncleanupFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/f4a72123048bcf0da7a4cc654e09b7143c9d6d611bc91d2f23c37377141bcdeb") {
+        if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/75d777390519730285ca5e6117b28bdc02d6c7ab88dfd36bdb560aa96f200ae8") {
             // L1
             try await runtime.wait(.event("retentionCleanup", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRetentioncleanupFires/root/procedure/f4a72123048bcf0da7a4cc654e09b7143c9d6d611bc91d2f23c37377141bcdeb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetentioncleanupFires/root/procedure/75d777390519730285ca5e6117b28bdc02d6c7ab88dfd36bdb560aa96f200ae8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/361196238cefd448112923cb2d3076adf3544a24ae0d3a1a0aa2214d79815a37") {
+        if __meridianShouldRun("/WhenRetentioncleanupFires/root/procedure/3b85fd09d0cd6215fe7c8ef4e154ea42d90b3bfd0d0cb98226bec2900db5b961") {
             // L1
             try await runtime.emit(
                 event: "trigger.retentionCleanup.fired",
@@ -678,9 +678,9 @@ public struct WhenRetentioncleanupFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("retention cleanup"),
                 ],
-                step: "/WhenRetentioncleanupFires/root/procedure/361196238cefd448112923cb2d3076adf3544a24ae0d3a1a0aa2214d79815a37"
+                step: "/WhenRetentioncleanupFires/root/procedure/3b85fd09d0cd6215fe7c8ef4e154ea42d90b3bfd0d0cb98226bec2900db5b961"
             )
-            try await runtime.checkpoint(label: "/WhenRetentioncleanupFires/root/procedure/361196238cefd448112923cb2d3076adf3544a24ae0d3a1a0aa2214d79815a37", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetentioncleanupFires/root/procedure/3b85fd09d0cd6215fe7c8ef4e154ea42d90b3bfd0d0cb98226bec2900db5b961", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRetentioncleanupFires.complete")

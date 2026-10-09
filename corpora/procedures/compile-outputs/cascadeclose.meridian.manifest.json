@@ -323,11 +323,11 @@
       "skill_version_hash" : "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a",
       "source_name" : "cascade close",
       "step_paths" : [
-        "\/CascadeClose\/transaction-body\/procedure\/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480",
-        "\/CascadeClose\/transaction-body\/procedure\/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e",
-        "\/CascadeClose\/transaction-body\/procedure\/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c",
-        "\/CascadeClose\/transaction-body\/procedure\/baa143e9b9beb2018f7f8b44003a07c6a50aa6df2403a206725de5f1963db949",
-        "\/CascadeClose\/transaction-body\/procedure\/ec2289974229065919e891c39d1f0ce0f89fe732af798834d2ee8307b4c42e59"
+        "\/CascadeClose\/transaction-body\/procedure\/06d0ef78c290cf63c94b82af133f443529dc71895b1e2ee46cd8d79770598bec",
+        "\/CascadeClose\/transaction-body\/procedure\/596c1279487597300671af77ff3cc948423b597788fa0fc1067058e86b4a21ac",
+        "\/CascadeClose\/transaction-body\/procedure\/98c791d4338bc675f16fb9789baf028e9d2c76e5a20a3217885576f0d9486674",
+        "\/CascadeClose\/transaction-body\/procedure\/f670c04bf5c8e954c20fac7095e896b1eac61f04b0e4f341aa28900bc2584386",
+        "\/CascadeClose\/transaction-body\/procedure\/fd540791d9d7754090a6caccf6219f2232900ace40b676338373b55c80872701"
       ],
       "swift_struct" : "CascadeClose"
     },
@@ -340,8 +340,8 @@
       "skill_version_hash" : "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a",
       "source_name" : "when cascadeClose fires",
       "step_paths" : [
-        "\/WhenCascadecloseFires\/root\/procedure\/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111",
-        "\/WhenCascadecloseFires\/root\/procedure\/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0"
+        "\/WhenCascadecloseFires\/root\/procedure\/09aca6b343e35bbcaafdc5a6b21ebc7b0d1a8c6c92ede2871c27b224fc54a6be",
+        "\/WhenCascadecloseFires\/root\/procedure\/219f6c26d6bcd860780203dbaf6e09e1900f33618f801b64e4023ba5f2e68ff4"
       ],
       "swift_struct" : "WhenCascadecloseFires"
     },
@@ -354,8 +354,8 @@
       "skill_version_hash" : "e452ca66307490d6c28e76c28bf03ab653153fb0738c7bcb3ba5847963a47a5a",
       "source_name" : "when orphanedAuditRows fires",
       "step_paths" : [
-        "\/WhenOrphanedauditrowsFires\/root\/procedure\/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3",
-        "\/WhenOrphanedauditrowsFires\/root\/procedure\/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f"
+        "\/WhenOrphanedauditrowsFires\/root\/procedure\/3423b49c6986eb09f4c29fa7af2cc2e96da5c6faa664921dd98f8fb4cb1bd08d",
+        "\/WhenOrphanedauditrowsFires\/root\/procedure\/a6b8724be8b50bde79f73636dfb2aada3a9ef4d2fd2945bd90cceeeb0368748f"
       ],
       "swift_struct" : "WhenOrphanedauditrowsFires"
     }

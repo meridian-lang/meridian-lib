@@ -382,75 +382,75 @@ public struct QualityGate: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "QualityGate", parameters: [:])
 
-        if __meridianShouldRun("/QualityGate/guarantees/invariants/4dd626fee7ea4c66f724635aefad8e841d3a8e88d5a151fcf9266997f96f5b14") {
+        if __meridianShouldRun("/QualityGate/guarantees/invariants/75ffa5b9af150550479b8460eed92630b5e1216ec17b484d729c898dbe6dadd4") {
             // L60
             try await runtime.assert((((state.get("qualityReport"))?.description ?? "")).contains(("quality-gate")), message: "Expected the quality report contains \"quality-gate\"")
-            try await runtime.checkpoint(label: "/QualityGate/guarantees/invariants/4dd626fee7ea4c66f724635aefad8e841d3a8e88d5a151fcf9266997f96f5b14", state: state.snapshot())
+            try await runtime.checkpoint(label: "/QualityGate/guarantees/invariants/75ffa5b9af150550479b8460eed92630b5e1216ec17b484d729c898dbe6dadd4", state: state.snapshot())
         }
         // L26
         state.bind("thresholds", Value.list([.record(["name": .string("high"), "floor": .number(Decimal(100))]), .record(["name": .string("low"), "floor": .number(Decimal(0))])]))
-        if __meridianShouldRun("/QualityGate/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/QualityGate/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L41
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/QualityGate/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/QualityGate/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/QualityGate/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/QualityGate/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
         // L42
         let __meridianColl_0_3 = (state.get("datasets")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/QualityGate/workflow-steps/procedure/0fcb88e7fd516bcfd7ae086cf94676aa0aecaab35eca89168e25b1d9e861212f")
+        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/QualityGate/workflow-steps/procedure/d4b0289e132cfdc409911ad00753ff9ebd83f7ae1381c1f371a7bb8f1c170402")
         for (__meridianLoopIndex_0_3, dataset) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/QualityGate/workflow-steps/procedure/0fcb88e7fd516bcfd7ae086cf94676aa0aecaab35eca89168e25b1d9e861212f")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/QualityGate/workflow-steps/procedure/d4b0289e132cfdc409911ad00753ff9ebd83f7ae1381c1f371a7bb8f1c170402")
             state.bind("dataset", dataset)
-                if __meridianShouldRun("/QualityGate/workflow-steps/procedure/iterate.body/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a") {
+                if __meridianShouldRun("/QualityGate/workflow-steps/procedure/iterate.body/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255") {
                     // L43
                     let qualityCheck = try await runtime.invoke(
                         tool: "quality.run",
                         args: [
                             "dataset": state.get("dataset") ?? .null,
                         ],
-                        step: "/QualityGate/workflow-steps/procedure/iterate.body/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a",
+                        step: "/QualityGate/workflow-steps/procedure/iterate.body/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "quality.run")
                     )
                     state.bind("qualityCheck", qualityCheck)
 
-                    try await runtime.checkpoint(label: "/QualityGate/workflow-steps/procedure/iterate.body/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/QualityGate/workflow-steps/procedure/iterate.body/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_3.count, step: "/QualityGate/workflow-steps/procedure/0fcb88e7fd516bcfd7ae086cf94676aa0aecaab35eca89168e25b1d9e861212f")
+        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_3.count, step: "/QualityGate/workflow-steps/procedure/d4b0289e132cfdc409911ad00753ff9ebd83f7ae1381c1f371a7bb8f1c170402")
 
         // L44
         state.bind("passingCount", Decimal(((state.get("qualityChecks"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("passed"))) }.count))
-        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/3e78edb07ba05d64896442d3aeedd129e411ae911fb3354365e8cad659f4c2e5") {
+        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/902314d3a2386b808b2a4c94e96e5493c1c93f38a7b482802d6bb0ce61db621e") {
             // L48
             try await runtime.emit(
                 event: "etl.quality_report",
                 payload: [
                     "body": state.get("qualityReport") ?? .null,
                 ],
-                step: "/QualityGate/workflow-steps-2/procedure/3e78edb07ba05d64896442d3aeedd129e411ae911fb3354365e8cad659f4c2e5"
+                step: "/QualityGate/workflow-steps-2/procedure/902314d3a2386b808b2a4c94e96e5493c1c93f38a7b482802d6bb0ce61db621e"
             )
-            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/3e78edb07ba05d64896442d3aeedd129e411ae911fb3354365e8cad659f4c2e5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/902314d3a2386b808b2a4c94e96e5493c1c93f38a7b482802d6bb0ce61db621e", state: state.snapshot())
         }
-        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/9c6ad3a0df997efda018a98d4b7a57c71f7ac861afd6cb7740f300c04e53f921") {
+        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/53a6023081e162dea03c242161af56b1f0269366bb44281775f64d0fb1c7b54c") {
             // L49
             try await runtime.assert(MeridianComparison.ge(state.get("passingCount"), .number(Decimal(0))), message: "Expected the passing count is at least 0")
-            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/9c6ad3a0df997efda018a98d4b7a57c71f7ac861afd6cb7740f300c04e53f921", state: state.snapshot())
+            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/53a6023081e162dea03c242161af56b1f0269366bb44281775f64d0fb1c7b54c", state: state.snapshot())
         }
-        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/83f51a6ce42d45eba080cc636d5a54a143c96208ef59500ce2f64e709c7d30c6") {
+        if __meridianShouldRun("/QualityGate/workflow-steps-2/procedure/1eb9cb36af5cdadff17e6f482e9165b47f6d5c1fba37ab3324670aed3a290a39") {
             // L50
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("quality gate pass complete"),
                 ],
-                step: "/QualityGate/workflow-steps-2/procedure/83f51a6ce42d45eba080cc636d5a54a143c96208ef59500ce2f64e709c7d30c6"
+                step: "/QualityGate/workflow-steps-2/procedure/1eb9cb36af5cdadff17e6f482e9165b47f6d5c1fba37ab3324670aed3a290a39"
             )
-            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/83f51a6ce42d45eba080cc636d5a54a143c96208ef59500ce2f64e709c7d30c6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/QualityGate/workflow-steps-2/procedure/1eb9cb36af5cdadff17e6f482e9165b47f6d5c1fba37ab3324670aed3a290a39", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "QualityGate.complete")
@@ -510,12 +510,12 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunqualitygateFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/a5d30ae97db9f4bf6b35e35ea5e0009456c69976b34e47f40887b033ea886621") {
+        if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/0b37aa0ea1aca7718f503eadccd07a8784e486b62369cb91ff4c9ecaaff10305") {
             // L1
             try await runtime.wait(.event("runQualityGate", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunqualitygateFires/root/procedure/a5d30ae97db9f4bf6b35e35ea5e0009456c69976b34e47f40887b033ea886621", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunqualitygateFires/root/procedure/0b37aa0ea1aca7718f503eadccd07a8784e486b62369cb91ff4c9ecaaff10305", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/2dc6996084fec1e926741fd2c1ff5cd99ee659090815cbe95a5b8ffc02421b8f") {
+        if __meridianShouldRun("/WhenRunqualitygateFires/root/procedure/8afe012016569c960679f61528416750e9ec0983a85eefb2476bceddc2691ded") {
             // L1
             try await runtime.emit(
                 event: "trigger.runQualityGate.fired",
@@ -523,9 +523,9 @@ public struct WhenRunqualitygateFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run quality gate"),
                 ],
-                step: "/WhenRunqualitygateFires/root/procedure/2dc6996084fec1e926741fd2c1ff5cd99ee659090815cbe95a5b8ffc02421b8f"
+                step: "/WhenRunqualitygateFires/root/procedure/8afe012016569c960679f61528416750e9ec0983a85eefb2476bceddc2691ded"
             )
-            try await runtime.checkpoint(label: "/WhenRunqualitygateFires/root/procedure/2dc6996084fec1e926741fd2c1ff5cd99ee659090815cbe95a5b8ffc02421b8f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunqualitygateFires/root/procedure/8afe012016569c960679f61528416750e9ec0983a85eefb2476bceddc2691ded", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunqualitygateFires.complete")
@@ -585,12 +585,12 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckdataqualityFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/f19603e13fb622f6678dc9f0f2b739d2018025a518d802e01e405560e032d4ff") {
+        if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/80a89215e2a3db553cf5b87b2c341c7247ba31a8cb4bd641e7c97a0a2cfef4ba") {
             // L1
             try await runtime.wait(.event("checkDataQuality", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckdataqualityFires/root/procedure/f19603e13fb622f6678dc9f0f2b739d2018025a518d802e01e405560e032d4ff", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckdataqualityFires/root/procedure/80a89215e2a3db553cf5b87b2c341c7247ba31a8cb4bd641e7c97a0a2cfef4ba", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/7bd0b45e67ff201c392c5274e0613bd5a6af836a985f3993aac759caccdb0153") {
+        if __meridianShouldRun("/WhenCheckdataqualityFires/root/procedure/369efdaed95189684d0095efa3321457ec78277fea9eff8e0f08b6f56585e8c6") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkDataQuality.fired",
@@ -598,9 +598,9 @@ public struct WhenCheckdataqualityFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check data quality"),
                 ],
-                step: "/WhenCheckdataqualityFires/root/procedure/7bd0b45e67ff201c392c5274e0613bd5a6af836a985f3993aac759caccdb0153"
+                step: "/WhenCheckdataqualityFires/root/procedure/369efdaed95189684d0095efa3321457ec78277fea9eff8e0f08b6f56585e8c6"
             )
-            try await runtime.checkpoint(label: "/WhenCheckdataqualityFires/root/procedure/7bd0b45e67ff201c392c5274e0613bd5a6af836a985f3993aac759caccdb0153", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckdataqualityFires/root/procedure/369efdaed95189684d0095efa3321457ec78277fea9eff8e0f08b6f56585e8c6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckdataqualityFires.complete")
@@ -660,12 +660,12 @@ public struct WhenRunqualitygatepassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunqualitygatepassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/f0e67ce878717aeebcb5f2bd721a97e06de915e5bdb632034764c11eff7a35e1") {
+        if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/c8d7ab8ed8d477a263e450ecf662fc3dcdf22b76cd661da6ff7eb79ccd4b71ff") {
             // L1
             try await runtime.wait(.event("runQualityGatePass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunqualitygatepassFires/root/procedure/f0e67ce878717aeebcb5f2bd721a97e06de915e5bdb632034764c11eff7a35e1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunqualitygatepassFires/root/procedure/c8d7ab8ed8d477a263e450ecf662fc3dcdf22b76cd661da6ff7eb79ccd4b71ff", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/3d436ce95245b8e67cb21cf95a8a8374d657717343d46cfb73895ea4f555ddbc") {
+        if __meridianShouldRun("/WhenRunqualitygatepassFires/root/procedure/a2a4d6cba79fe28bcee8402e656e058b9e1d355fac6f932135a06a4159627f86") {
             // L1
             try await runtime.emit(
                 event: "trigger.runQualityGatePass.fired",
@@ -673,9 +673,9 @@ public struct WhenRunqualitygatepassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the quality gate pass"),
                 ],
-                step: "/WhenRunqualitygatepassFires/root/procedure/3d436ce95245b8e67cb21cf95a8a8374d657717343d46cfb73895ea4f555ddbc"
+                step: "/WhenRunqualitygatepassFires/root/procedure/a2a4d6cba79fe28bcee8402e656e058b9e1d355fac6f932135a06a4159627f86"
             )
-            try await runtime.checkpoint(label: "/WhenRunqualitygatepassFires/root/procedure/3d436ce95245b8e67cb21cf95a8a8374d657717343d46cfb73895ea4f555ddbc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunqualitygatepassFires/root/procedure/a2a4d6cba79fe28bcee8402e656e058b9e1d355fac6f932135a06a4159627f86", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunqualitygatepassFires.complete")

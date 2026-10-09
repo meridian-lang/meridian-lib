@@ -624,24 +624,24 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "ArchiveCrawlerInput", parameters: [:])
 
-        if __meridianShouldRun("/ArchiveCrawlerInput/anti-patterns-steps-2/prohibitions/643790a0eed0bbf5c68f1e85b04834819abe5f5e2768ef1e9a5ec7d314c69039") {
+        if __meridianShouldRun("/ArchiveCrawlerInput/anti-patterns-steps-2/prohibitions/52260b3f997c515139da2673c4fec45428e20a1583dfbc4bb17de5399cfdd8aa") {
             // L327
             try await runtime.assert(!(MeridianComparison.eq(state.get("(❌ReShowingItemsAlreadyMarkedInTheManifest.TheUser.time"), state.get("scarcestResource)"))), message: "Expected not (❌ Re-showing items already marked in the manifest. The user's time is the scarcest resource)")
-            try await runtime.checkpoint(label: "/ArchiveCrawlerInput/anti-patterns-steps-2/prohibitions/643790a0eed0bbf5c68f1e85b04834819abe5f5e2768ef1e9a5ec7d314c69039", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ArchiveCrawlerInput/anti-patterns-steps-2/prohibitions/52260b3f997c515139da2673c4fec45428e20a1583dfbc4bb17de5399cfdd8aa", state: state.snapshot())
         }
-        if __meridianShouldRun("/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/2257c15eb10c604e3c64979d5dd484b123375be40631cdf6e002eff41db98521") {
+        if __meridianShouldRun("/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/f2337d317413b584f39af6e9228fa0d39758b967961e29778bb28d3f911f0701") {
             // L146
             let captured = try await runtime.invoke(
                 tool: "capture",
                 args: [
                     "note": state.get("exactReaction—TrackTheUser.responseInTheManifestUsingTheirExactWords(perConventions/quality.md)") ?? .null,
                 ],
-                step: "/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/2257c15eb10c604e3c64979d5dd484b123375be40631cdf6e002eff41db98521",
+                step: "/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/f2337d317413b584f39af6e9228fa0d39758b967961e29778bb28d3f911f0701",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "capture")
             )
             state.bind("captured", captured)
 
-            try await runtime.checkpoint(label: "/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/2257c15eb10c604e3c64979d5dd484b123375be40631cdf6e002eff41db98521", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ArchiveCrawlerInput/phase-2-crawl-steps/procedure/f2337d317413b584f39af6e9228fa0d39758b967961e29778bb28d3f911f0701", state: state.snapshot())
         }
         // L198
         let __meridianProseResults_L198 = try await runtime.executeProsePlan(
@@ -649,7 +649,7 @@ public struct ArchiveCrawlerInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/ArchiveCrawlerInput/phase-3-ingest-steps-2/procedure/e095842abbf78e9ebf8c20471a0a7c705fedba52d21d4a851d4e9381894db68b",
+            step: "/ArchiveCrawlerInput/phase-3-ingest-steps-2/procedure/fec2c9ad9df806229855f4c2430e55c5f8b29477017df795939938dfb0ac0af4",
             guidance: "**The skill is schema-generic.** It does NOT bake in any specific\nera-folder structure (e.g., `originals/archive/` for pre-2003,\n`originals/yc-era/` for post-2019, etc.). The user's filing rules from\n`_brain-filing-rules.json` are read at runtime; the agent decides per-page\nwhere content lands within those sanctioned directories\ncodeblock:bash:IyAuZG9jeCAobW9kZXJuKQpweXRob24zIC1jICIKaW1wb3J0IHppcGZpbGUsIHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAp3aXRoIHppcGZpbGUuWmlwRmlsZSgnL3BhdGgvdG8vZmlsZS5kb2N4JykgYXMgejoKICAgIHRyZWUgPSBFVC5wYXJzZSh6Lm9wZW4oJ3dvcmQvZG9jdW1lbnQueG1sJykpCiAgICBwcmludCgnJy5qb2luKHQudGV4dCBvciAnJyBmb3IgdCBpbiB0cmVlLml0ZXIoJ3todHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvd29yZHByb2Nlc3NpbmdtbC8yMDA2L21haW59dCcpKSkKIgoKIyAuZG9jIChsZWdhY3ksIHJlcXVpcmVzIGFudGl3b3JkIG9yIGNhdGRvYykKYW50aXdvcmQgL3BhdGgvdG8vZmlsZS5kb2MgMj4vZGV2L251bGwgfHwgY2F0ZG9jIC9wYXRoL3RvL2ZpbGUuZG9jIDI+L2Rldi9udWxs\ncodeblock:bash:IyBWYWxpZGF0ZSBmaXJzdDsgbWFueSBQU1RzIGFyZSBudWxsIGJ5dGVzCnB5dGhvbjMgLWMgIgp3aXRoIG9wZW4oJy9wYXRoL3RvL2ZpbGUucHN0JywgJ3JiJykgYXMgZjoKICAgIHByaW50KCdWYWxpZCBQU1QnIGlmIGYucmVhZCg0KSA9PSBiJyFCRE4nIGVsc2UgJ0NPUlJVUFQvTlVMTCcpCiIKIyBJZiB2YWxpZDoKcmVhZHBzdCAtbyAvdG1wL3BzdC1vdXRwdXQgL3BhdGgvdG8vZmlsZS5wc3Q=\n`skills/voice-note-ingest/SKILL.md` — same exact-phrasing pattern for\naudio capture\n`skills/conventions/quality.md` — citations, back-links, voice"
         )
         for (__key, __value) in __meridianProseResults_L198 {
@@ -712,12 +712,12 @@ public struct WhenCrawlmyarchiveFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCrawlmyarchiveFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/76ff20733fe0dbc864d0119e3437c4b62059645b5d2878146f3fd9db055366ff") {
+        if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/e4e8308706af11f909c8aea5f5c7d71a30ae01539f734a4cbd4b40724c1bbfba") {
             // L1
             try await runtime.wait(.event("crawlMyArchive", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCrawlmyarchiveFires/root/procedure/76ff20733fe0dbc864d0119e3437c4b62059645b5d2878146f3fd9db055366ff", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCrawlmyarchiveFires/root/procedure/e4e8308706af11f909c8aea5f5c7d71a30ae01539f734a4cbd4b40724c1bbfba", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/5dfb7530f295005afab7a85f94be693b527044364312ceb06c4d9bef72ef1aee") {
+        if __meridianShouldRun("/WhenCrawlmyarchiveFires/root/procedure/3389f293136261b16e3250707f4f9373d1e39d940b2d3e139fe24207ca0dfb9e") {
             // L1
             try await runtime.emit(
                 event: "trigger.crawlMyArchive.fired",
@@ -725,9 +725,9 @@ public struct WhenCrawlmyarchiveFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("crawl my archive"),
                 ],
-                step: "/WhenCrawlmyarchiveFires/root/procedure/5dfb7530f295005afab7a85f94be693b527044364312ceb06c4d9bef72ef1aee"
+                step: "/WhenCrawlmyarchiveFires/root/procedure/3389f293136261b16e3250707f4f9373d1e39d940b2d3e139fe24207ca0dfb9e"
             )
-            try await runtime.checkpoint(label: "/WhenCrawlmyarchiveFires/root/procedure/5dfb7530f295005afab7a85f94be693b527044364312ceb06c4d9bef72ef1aee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCrawlmyarchiveFires/root/procedure/3389f293136261b16e3250707f4f9373d1e39d940b2d3e139fe24207ca0dfb9e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCrawlmyarchiveFires.complete")
@@ -786,12 +786,12 @@ public struct WhenFindgoldinmyarchiveFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenFindgoldinmyarchiveFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/79cc1b74a92da57e447432a167ed72748cbf87f118c4ced7131ec0585ac2ff19") {
+        if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/8e596b50df27afd549e048a3baf6cf3bcf0abdf5e4280edbab5f6c7394584041") {
             // L1
             try await runtime.wait(.event("findGoldInMyArchive", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenFindgoldinmyarchiveFires/root/procedure/79cc1b74a92da57e447432a167ed72748cbf87f118c4ced7131ec0585ac2ff19", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFindgoldinmyarchiveFires/root/procedure/8e596b50df27afd549e048a3baf6cf3bcf0abdf5e4280edbab5f6c7394584041", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/91b4a558ed01b69d1247a1c30dd2b44b785f2cb0694072f0a4e95329955df004") {
+        if __meridianShouldRun("/WhenFindgoldinmyarchiveFires/root/procedure/de6e2d6a6373c498bfcf534f070a69d09dc5b230e72965db14d5dd6b17cdd748") {
             // L1
             try await runtime.emit(
                 event: "trigger.findGoldInMyArchive.fired",
@@ -799,9 +799,9 @@ public struct WhenFindgoldinmyarchiveFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("find gold in my archive"),
                 ],
-                step: "/WhenFindgoldinmyarchiveFires/root/procedure/91b4a558ed01b69d1247a1c30dd2b44b785f2cb0694072f0a4e95329955df004"
+                step: "/WhenFindgoldinmyarchiveFires/root/procedure/de6e2d6a6373c498bfcf534f070a69d09dc5b230e72965db14d5dd6b17cdd748"
             )
-            try await runtime.checkpoint(label: "/WhenFindgoldinmyarchiveFires/root/procedure/91b4a558ed01b69d1247a1c30dd2b44b785f2cb0694072f0a4e95329955df004", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFindgoldinmyarchiveFires/root/procedure/de6e2d6a6373c498bfcf534f070a69d09dc5b230e72965db14d5dd6b17cdd748", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenFindgoldinmyarchiveFires.complete")
@@ -860,12 +860,12 @@ public struct WhenArchivecrawlerFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenArchivecrawlerFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/07868597b0b96d577a917108e6bf07624a771f3ca20aa16e22a1b6782b9aef24") {
+        if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/1d36f323029b48b03b9d596025bba1ef0ab6d0cc3fc74ae83d5090d47b1d3c2b") {
             // L1
             try await runtime.wait(.event("archiveCrawler", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenArchivecrawlerFires/root/procedure/07868597b0b96d577a917108e6bf07624a771f3ca20aa16e22a1b6782b9aef24", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenArchivecrawlerFires/root/procedure/1d36f323029b48b03b9d596025bba1ef0ab6d0cc3fc74ae83d5090d47b1d3c2b", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/dbaa5b380387b63222d997863fce64056bbda53352de07b883c4536dcd971d15") {
+        if __meridianShouldRun("/WhenArchivecrawlerFires/root/procedure/b747abe732eeb7a654c7e44d393fcd888cb0676b639413ed4da61f1d14d00283") {
             // L1
             try await runtime.emit(
                 event: "trigger.archiveCrawler.fired",
@@ -873,9 +873,9 @@ public struct WhenArchivecrawlerFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("archive crawler"),
                 ],
-                step: "/WhenArchivecrawlerFires/root/procedure/dbaa5b380387b63222d997863fce64056bbda53352de07b883c4536dcd971d15"
+                step: "/WhenArchivecrawlerFires/root/procedure/b747abe732eeb7a654c7e44d393fcd888cb0676b639413ed4da61f1d14d00283"
             )
-            try await runtime.checkpoint(label: "/WhenArchivecrawlerFires/root/procedure/dbaa5b380387b63222d997863fce64056bbda53352de07b883c4536dcd971d15", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenArchivecrawlerFires/root/procedure/b747abe732eeb7a654c7e44d393fcd888cb0676b639413ed4da61f1d14d00283", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenArchivecrawlerFires.complete")
@@ -934,12 +934,12 @@ public struct WhenScanmydropboxFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenScanmydropboxFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/dfd2d6870cca56877c68a361f70e8f813bde5e2d4d77617ea57c2bcb103ec036") {
+        if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/98dddb36b400119ac809ba2c300541e32d2876e12a209c0ee33ff66bfb673324") {
             // L1
             try await runtime.wait(.event("scanMyDropbox", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenScanmydropboxFires/root/procedure/dfd2d6870cca56877c68a361f70e8f813bde5e2d4d77617ea57c2bcb103ec036", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenScanmydropboxFires/root/procedure/98dddb36b400119ac809ba2c300541e32d2876e12a209c0ee33ff66bfb673324", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/00b40c101caea2a32ec553ab492ad2a2be29e5831922493d7b4a14d482fd9af2") {
+        if __meridianShouldRun("/WhenScanmydropboxFires/root/procedure/23bee6f4c72de67554496ae6229ef0fe78fa7d9fbe3eef82ef7b822eab5555cb") {
             // L1
             try await runtime.emit(
                 event: "trigger.scanMyDropbox.fired",
@@ -947,9 +947,9 @@ public struct WhenScanmydropboxFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("scan my dropbox for"),
                 ],
-                step: "/WhenScanmydropboxFires/root/procedure/00b40c101caea2a32ec553ab492ad2a2be29e5831922493d7b4a14d482fd9af2"
+                step: "/WhenScanmydropboxFires/root/procedure/23bee6f4c72de67554496ae6229ef0fe78fa7d9fbe3eef82ef7b822eab5555cb"
             )
-            try await runtime.checkpoint(label: "/WhenScanmydropboxFires/root/procedure/00b40c101caea2a32ec553ab492ad2a2be29e5831922493d7b4a14d482fd9af2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenScanmydropboxFires/root/procedure/23bee6f4c72de67554496ae6229ef0fe78fa7d9fbe3eef82ef7b822eab5555cb", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenScanmydropboxFires.complete")
@@ -1008,12 +1008,12 @@ public struct WhenMinemyoldfilesFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenMinemyoldfilesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/6bc49f13c0acf3dccb52f31485babf6f68991d9701bec0a7bedef0d44f6968ad") {
+        if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/6f0044461017145f4349cd95b08df7db2e37f4a6e4f9d0d00f910dd5b034316e") {
             // L1
             try await runtime.wait(.event("mineMyOldFiles", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMinemyoldfilesFires/root/procedure/6bc49f13c0acf3dccb52f31485babf6f68991d9701bec0a7bedef0d44f6968ad", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMinemyoldfilesFires/root/procedure/6f0044461017145f4349cd95b08df7db2e37f4a6e4f9d0d00f910dd5b034316e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/9923550151fcdcd2da6ea9bc112ed6235d3e96b176854b16ae8f58246f76fa59") {
+        if __meridianShouldRun("/WhenMinemyoldfilesFires/root/procedure/e5a1bb499717727a75d478d41eaf5d7efb79c23d83aeea0b10d9bec0913e7e44") {
             // L1
             try await runtime.emit(
                 event: "trigger.mineMyOldFiles.fired",
@@ -1021,9 +1021,9 @@ public struct WhenMinemyoldfilesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("mine my old files for"),
                 ],
-                step: "/WhenMinemyoldfilesFires/root/procedure/9923550151fcdcd2da6ea9bc112ed6235d3e96b176854b16ae8f58246f76fa59"
+                step: "/WhenMinemyoldfilesFires/root/procedure/e5a1bb499717727a75d478d41eaf5d7efb79c23d83aeea0b10d9bec0913e7e44"
             )
-            try await runtime.checkpoint(label: "/WhenMinemyoldfilesFires/root/procedure/9923550151fcdcd2da6ea9bc112ed6235d3e96b176854b16ae8f58246f76fa59", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMinemyoldfilesFires/root/procedure/e5a1bb499717727a75d478d41eaf5d7efb79c23d83aeea0b10d9bec0913e7e44", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMinemyoldfilesFires.complete")

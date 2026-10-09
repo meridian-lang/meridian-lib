@@ -4,84 +4,84 @@
       "canonical" : "emit trigger.revokeStaleAccess.fired with kind = \"keyword\", spec = \"revoke stale access\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRevokestaleaccessFires\/root\/procedure\/11a30359dde81f3a35da975fe2ec0e09b9f572995d4a2a9f9b307aa1b77a4570",
+      "stable_step_path" : "\/WhenRevokestaleaccessFires\/root\/procedure\/772ae4c43925feca8e0982fc9de5df36f17b7caf0ff9fdd057c7932d060fa840",
       "swift_line" : 732
     },
     {
       "canonical" : "wait for event revokeStaleAccess.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRevokestaleaccessFires\/root\/procedure\/737eb7ca44a17b97b66c4d676615376d28113ed8b85894048dab1d112c6219d2",
-      "swift_line" : 732
-    },
-    {
-      "canonical" : "wait for event runAccessRevocationSweep.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunaccessrevocationsweepFires\/root\/procedure\/c64904bdc5e91f9608f53d1984ec29b462507e01ed475d5c9d0d7ce59a89e2d0",
+      "stable_step_path" : "\/WhenRevokestaleaccessFires\/root\/procedure\/9961f5f72908a7a447e6ef772b4712971ebf93d0b241bab833e501d4896e5325",
       "swift_line" : 732
     },
     {
       "canonical" : "emit trigger.runAccessRevocationSweep.fired with kind = \"keyword\", spec = \"run the access revocation sweep\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunaccessrevocationsweepFires\/root\/procedure\/c82e3ef9c2fa7ad908dbf337b2e0f1e03db1f3a95f6264baf13c98ceda8b6daf",
+      "stable_step_path" : "\/WhenRunaccessrevocationsweepFires\/root\/procedure\/66d8a76340c343843f7ab6cb671d708ca3a4ba8b8defada73f08aaa089f2ced0",
+      "swift_line" : 732
+    },
+    {
+      "canonical" : "wait for event runAccessRevocationSweep.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenRunaccessrevocationsweepFires\/root\/procedure\/f0fdfd27239de205447ec379da7718912b0938b32d546ca40751b7ac82378cc4",
       "swift_line" : 732
     },
     {
       "canonical" : "wait for event sweepDeniedAccess.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSweepdeniedaccessFires\/root\/procedure\/3e11a67e4a6f2f8b3e8e9819e60842f6b3ee8683b8c64c557b26f6e6c8bafa6f",
+      "stable_step_path" : "\/WhenSweepdeniedaccessFires\/root\/procedure\/0c31c4ec190f6ca198abbe7dc0b4d67d4d2733a38d3bcd52ca18f4ea47988e95",
       "swift_line" : 732
     },
     {
       "canonical" : "emit trigger.sweepDeniedAccess.fired with kind = \"keyword\", spec = \"sweep denied access\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSweepdeniedaccessFires\/root\/procedure\/4f7dc9828f8bac257990bac5223f5d993c219383781f43c04960735e551046aa",
+      "stable_step_path" : "\/WhenSweepdeniedaccessFires\/root\/procedure\/3fc08649da950be8b9ba5730d6833c8f190737f21b3c70058f466fe72ea14288",
       "swift_line" : 732
     },
     {
       "canonical" : "bind accessRequests = invoke request.list with status = \"pending\".",
       "meridian_line" : 26,
       "primitive" : "invoke",
-      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0",
       "swift_line" : 464
     },
     {
       "canonical" : "bind revokedCount = the number of access requests whose status equals \"granted\".",
       "meridian_line" : 27,
       "primitive" : "bind",
-      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/b49b59772a6b9e8dde2a0efaeec34bacfa0a2c12c067e37912f87bfc0fdb8868",
+      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/86fa7cce4cf865f92a1d64117cb2065df45a682f7b2b2412f56c15dccfe2d606",
       "swift_line" : 477
     },
     {
       "canonical" : "for each accessrequests whose status equals \"granted\",\n  bind accessRequest = invoke access.revoke with user = the access request's requestor, resource = the access request's resource name.",
       "meridian_line" : 28,
       "primitive" : "iterate",
-      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/0cd2fc4694e8bab486d54bb10bd74f17f5687771124e24ad6eac25951cdadf23",
+      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/33d4f7e3fbfeae7cf0f44817b5facb120fdf3581052f4021956cc277e47a99f2",
       "swift_line" : 479
     },
     {
       "canonical" : "bind accessRequest = invoke access.revoke with user = the access request's requestor, resource = the access request's resource name.",
       "meridian_line" : 29,
       "primitive" : "invoke",
-      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/iterate.body\/553c9b3e4fb0edd0e750c4404407cd51e8a0e3a23e7229cef643158b976cde52",
+      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/iterate.body\/2b320fc952ccbeb6fdc9aeba51c36ee31053777bc43969f9f96e4008e6217a99",
       "swift_line" : 488
     },
     {
       "canonical" : "emit governance.report with message = \"revoke stale access pass complete\".",
       "meridian_line" : 30,
       "primitive" : "emit",
-      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/9246c4077599b4384050f27014618a5e3a3d6fc54c65cdfd07adf13561dd112d",
+      "stable_step_path" : "\/RevokeStaleAccess\/workflow\/procedure\/0d7881a7bb11b409ded07c3fdb8161cb150296f49276f262bfc9c84c37c4b83f",
       "swift_line" : 508
     },
     {
       "canonical" : "assert no users whose clearance equals \"denied\" and whose status equals \"active\".",
       "meridian_line" : 41,
       "primitive" : "assert",
-      "stable_step_path" : "\/RevokeStaleAccess\/guarantees\/invariants\/b3616f5a1cb8e530223fba8caf43405aa0416682e3a0d405dca16411d804d364",
+      "stable_step_path" : "\/RevokeStaleAccess\/guarantees\/invariants\/c22bced5e1d7de28e570f033d79312e92467a9c2361da31819ddd305b78d3b28",
       "swift_line" : 459
     }
   ],

@@ -629,7 +629,7 @@ public struct MinionOrchestratorInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["cancel_job", "get_job", "get_job_progress", "jobs.status", "jobs.submit", "list_jobs", "page.list", "pause_job", "replay_job", "resume_job", "send_job_message", "shell.run", "submit_job"],
             outputKind: "record",
-            step: "/MinionOrchestratorInput/route-the-request-shell-job-vs-subagent-steps/procedure/a9bdb95c38fa78e7d4539345c2f01c8acbd97969515f436d01f7104ed677b80f"
+            step: "/MinionOrchestratorInput/route-the-request-shell-job-vs-subagent-steps/procedure/69a36ae37abfa7e5a1e2332c81b7a118fa3f77d2aafb350d1a2671a7681a906e"
         )
         for (__key, __value) in __meridianProseResults_L75 {
             state.bind(__key, __value)
@@ -640,7 +640,7 @@ public struct MinionOrchestratorInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["cancel_job", "get_job", "get_job_progress", "jobs.status", "jobs.submit", "list_jobs", "page.list", "pause_job", "replay_job", "resume_job", "send_job_message", "shell.run", "submit_job"],
             outputKind: "record",
-            step: "/MinionOrchestratorInput/shell-jobs-deterministic-scripts-steps/procedure/5bd8387a5814b44e311fd909779e7863b89268df16c770c914d193c0fd7d0062",
+            step: "/MinionOrchestratorInput/shell-jobs-deterministic-scripts-steps/procedure/4ef98cbd8f7030dc2d68d2a459de076ca294e1dd53af25c1f22e9409de96aa55",
             guidance: "Use for reproducible command execution, ETL steps, cron work, and scriptable\ntasks where no LLM reasoning loop is needed\n`GBRAIN_ALLOW_SHELL_JOBS=1` must be set on the worker environment\nWithout it, the shell handler refuses to register and submissions sit in\n`waiting` silently. Gate lives in `src/core/minions/handlers/shell.ts`\nVerify setup: after configuration, run `gbrain jobs stats` (CLI) to\nconfirm the worker is registered and consuming the queue\nCheck structured result fields (exit code, stdout/stderr tails, attempts,\ntimings) from `get_job`. Use `gbrain jobs stats` (CLI) for worker/queue\nhealth dashboard\nuse judgment to follow the Subagent Jobs (LLM Orchestration) — steps guidance:\nUse for open-ended reasoning, tool-using research, and fan-out synthesis\nUser-facing entrypoint: `gbrain agent run <prompt>` is the canonical way\nand `subagent_aggregator` are both in `PROTECTED_JOB_NAMES`, so direct MCP\nsubmission requires `{allowProtectedSubmit: true}`, which `gbrain agent run`\nsupplies\nFlags (from `src/commands/agent.ts`):\n`--subagent-def <name>` — named subagent definition\n`--model <id>` — override model\n`--max-turns <N>` — cap the LLM loop\n`--tools <csv>` — allow-listed brain tools (see above)\n`--timeout-ms <N>` — hard timeout per job\n`--fanout-manifest <file>` — N children + 1 aggregator\n`--detach` — submit and return immediately\nQueue/priority/retry tuning is not exposed by `gbrain agent run`; submit the\nraw `subagent` handler via `gbrain jobs submit` (requires CLI trust) if you\nneed those knobs\ncodeblock:plain:bGlzdF9qb2JzIC0tc3RhdHVzIGFjdGl2ZSAgICAgICAgICAjIE1DUCDigJQgd2hhdCdzIHJ1bm5pbmc/CmdldF9qb2IgSUQgICAgICAgICAgICAgICAgICAgICAgICAgIyBNQ1Ag4oCUIGZ1bGwgZGV0YWlscyArIGxvZ3MgKyB0b2tlbnMKZ2V0X2pvYl9wcm9ncmVzcyBJRCAgICAgICAgICAgICAgICAjIE1DUCDigJQgc3RydWN0dXJlZCBwcm9ncmVzcyBzbmFwc2hvdApnYnJhaW4gam9icyBzdGF0cyAgICAgICAgICAgICAgICAgICMgQ0xJIOKAlCBxdWV1ZSBoZWFsdGggZGFzaGJvYXJkCmdicmFpbiBhZ2VudCBsb2dzIElEIC0tZm9sbG93ICAgICAgIyBDTEkg4oCUIHN0cmVhbWluZyB0cmFuc2NyaXB0ICsgaGVhcnRiZWF0\nProgress includes: step count, total steps, message, token usage, last tool called\nSend a message to redirect a running agent:\ncodeblock:plain:c2VuZF9qb2JfbWVzc2FnZSBpZD1JRCBwYXlsb2FkPXsiZGlyZWN0aXZlIjoiZm9jdXMgb24gcmV2ZW51ZSwgc2tpcCBoZWFkY291bnQifQ==\nThe agent handler reads inbox messages on each iteration and injects them as\ncontext. Messages are acknowledged (read receipts tracked)\nOnly the parent job or admin can send messages (sender validation)\ncodeblock:plain:cGF1c2Vfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICAjIGZyZWV6ZSB3aXRob3V0IGxvc2luZyBzdGF0ZQpyZXN1bWVfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgcGljayB1cCB3aGVyZSBpdCBsZWZ0IG9mZgpjYW5jZWxfam9iIGlkPUlEICAgICAgICAgICAgICAgICAgICMgaGFyZCBzdG9wCnJlcGxheV9qb2IgaWQ9SUQgICAgICAgICAgICAgICAgICAgIyByZS1ydW4gd2l0aCBzYW1lIG9yIG1vZGlmaWVkIHBhcmFtcwpyZXBsYXlfam9iIGlkPUlEIGRhdGFfb3ZlcnJpZGVzPXsiZGVwdGgiOiJkZWVwIn0gICMgcmVwbGF5IHdpdGggY2hhbmdlcw==\nAll lifecycle ops are MCP-callable\nChild tokens roll up to parent automatically on completion"
         )
         for (__key, __value) in __meridianProseResults_L90 {
@@ -703,12 +703,12 @@ public struct WhenGbrainjobssubmitFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainjobssubmitFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c") {
+        if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/3f1c0cbacdac849f42c92f31c6859d1a08877ae86bba7ba22d79ae0ea63da32e") {
             // L1
             try await runtime.wait(.event("gbrainJobsSubmit", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainjobssubmitFires/root/procedure/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainjobssubmitFires/root/procedure/3f1c0cbacdac849f42c92f31c6859d1a08877ae86bba7ba22d79ae0ea63da32e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65") {
+        if __meridianShouldRun("/WhenGbrainjobssubmitFires/root/procedure/a609b90cc3ea80a92c73154de3716098a41f9efa134f40873e3e43fdddb9a8df") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainJobsSubmit.fired",
@@ -716,9 +716,9 @@ public struct WhenGbrainjobssubmitFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain jobs submit"),
                 ],
-                step: "/WhenGbrainjobssubmitFires/root/procedure/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65"
+                step: "/WhenGbrainjobssubmitFires/root/procedure/a609b90cc3ea80a92c73154de3716098a41f9efa134f40873e3e43fdddb9a8df"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainjobssubmitFires/root/procedure/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainjobssubmitFires/root/procedure/a609b90cc3ea80a92c73154de3716098a41f9efa134f40873e3e43fdddb9a8df", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainjobssubmitFires.complete")
@@ -777,12 +777,12 @@ public struct WhenSubmitgbrainjobFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSubmitgbrainjobFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d") {
+        if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/415324a558733e64067388c43a53a48f9a157183fe5d452c458a0c20b5517066") {
             // L1
             try await runtime.wait(.event("submitGbrainJob", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSubmitgbrainjobFires/root/procedure/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSubmitgbrainjobFires/root/procedure/415324a558733e64067388c43a53a48f9a157183fe5d452c458a0c20b5517066", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483") {
+        if __meridianShouldRun("/WhenSubmitgbrainjobFires/root/procedure/7b8dbbf3c893a9b539b9edaeaa42cc14419784e890bdc9f48545260dc3217c9e") {
             // L1
             try await runtime.emit(
                 event: "trigger.submitGbrainJob.fired",
@@ -790,9 +790,9 @@ public struct WhenSubmitgbrainjobFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("submit a gbrain job"),
                 ],
-                step: "/WhenSubmitgbrainjobFires/root/procedure/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483"
+                step: "/WhenSubmitgbrainjobFires/root/procedure/7b8dbbf3c893a9b539b9edaeaa42cc14419784e890bdc9f48545260dc3217c9e"
             )
-            try await runtime.checkpoint(label: "/WhenSubmitgbrainjobFires/root/procedure/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSubmitgbrainjobFires/root/procedure/7b8dbbf3c893a9b539b9edaeaa42cc14419784e890bdc9f48545260dc3217c9e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSubmitgbrainjobFires.complete")
@@ -851,12 +851,12 @@ public struct WhenSubmitshelljobFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSubmitshelljobFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c") {
+        if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/db7e5f354730a81cb14ebbe257c39af9c1504c72307cd1c621704e748a983143") {
             // L1
             try await runtime.wait(.event("submitShellJob", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSubmitshelljobFires/root/procedure/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSubmitshelljobFires/root/procedure/db7e5f354730a81cb14ebbe257c39af9c1504c72307cd1c621704e748a983143", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e") {
+        if __meridianShouldRun("/WhenSubmitshelljobFires/root/procedure/ead12a2a24fd5992e7e19afcebf91230e2de2485fd07e9bf133ab21ca5651a5f") {
             // L1
             try await runtime.emit(
                 event: "trigger.submitShellJob.fired",
@@ -864,9 +864,9 @@ public struct WhenSubmitshelljobFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("submit a shell job"),
                 ],
-                step: "/WhenSubmitshelljobFires/root/procedure/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e"
+                step: "/WhenSubmitshelljobFires/root/procedure/ead12a2a24fd5992e7e19afcebf91230e2de2485fd07e9bf133ab21ca5651a5f"
             )
-            try await runtime.checkpoint(label: "/WhenSubmitshelljobFires/root/procedure/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSubmitshelljobFires/root/procedure/ead12a2a24fd5992e7e19afcebf91230e2de2485fd07e9bf133ab21ca5651a5f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSubmitshelljobFires.complete")
@@ -925,12 +925,12 @@ public struct WhenShelljobFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenShelljobFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenShelljobFires/root/procedure/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e") {
+        if __meridianShouldRun("/WhenShelljobFires/root/procedure/3ea92fdcb6b4a683b5c9c21a7b6271428289e0813a70c51f45a7e3800d9bbe1a") {
             // L1
             try await runtime.wait(.event("shellJob", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenShelljobFires/root/procedure/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenShelljobFires/root/procedure/3ea92fdcb6b4a683b5c9c21a7b6271428289e0813a70c51f45a7e3800d9bbe1a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenShelljobFires/root/procedure/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e") {
+        if __meridianShouldRun("/WhenShelljobFires/root/procedure/1a152f7237fa9ddb61805e17496c27e95b7e5f4ec6dba0aceb84a2d9664ebf73") {
             // L1
             try await runtime.emit(
                 event: "trigger.shellJob.fired",
@@ -938,9 +938,9 @@ public struct WhenShelljobFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("shell job"),
                 ],
-                step: "/WhenShelljobFires/root/procedure/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e"
+                step: "/WhenShelljobFires/root/procedure/1a152f7237fa9ddb61805e17496c27e95b7e5f4ec6dba0aceb84a2d9664ebf73"
             )
-            try await runtime.checkpoint(label: "/WhenShelljobFires/root/procedure/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenShelljobFires/root/procedure/1a152f7237fa9ddb61805e17496c27e95b7e5f4ec6dba0aceb84a2d9664ebf73", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenShelljobFires.complete")
@@ -999,12 +999,12 @@ public struct WhenRunshellcommandinbackgroundFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRunshellcommandinbackgroundFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6") {
+        if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/466b481eaaf3f4e1b13fa5c01be115a23ce8ff346d87be9ba1388fb54a79351e") {
             // L1
             try await runtime.wait(.event("runShellCommandInBackground", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunshellcommandinbackgroundFires/root/procedure/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunshellcommandinbackgroundFires/root/procedure/466b481eaaf3f4e1b13fa5c01be115a23ce8ff346d87be9ba1388fb54a79351e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8") {
+        if __meridianShouldRun("/WhenRunshellcommandinbackgroundFires/root/procedure/c752e6bd7a7e0dd19641ee5b18cfccc06727a17ed453dc4fc03a6b57b2272a5a") {
             // L1
             try await runtime.emit(
                 event: "trigger.runShellCommandInBackground.fired",
@@ -1012,9 +1012,9 @@ public struct WhenRunshellcommandinbackgroundFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run shell command in background"),
                 ],
-                step: "/WhenRunshellcommandinbackgroundFires/root/procedure/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8"
+                step: "/WhenRunshellcommandinbackgroundFires/root/procedure/c752e6bd7a7e0dd19641ee5b18cfccc06727a17ed453dc4fc03a6b57b2272a5a"
             )
-            try await runtime.checkpoint(label: "/WhenRunshellcommandinbackgroundFires/root/procedure/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunshellcommandinbackgroundFires/root/procedure/c752e6bd7a7e0dd19641ee5b18cfccc06727a17ed453dc4fc03a6b57b2272a5a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunshellcommandinbackgroundFires.complete")
@@ -1073,12 +1073,12 @@ public struct WhenDeterministicbackgroundtaskFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDeterministicbackgroundtaskFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e") {
+        if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/8284ccd15f75b8112651c31901e8fdd51e9d3ad46bb4c1e161aeb53aafdd48dd") {
             // L1
             try await runtime.wait(.event("deterministicBackgroundTask", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDeterministicbackgroundtaskFires/root/procedure/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDeterministicbackgroundtaskFires/root/procedure/8284ccd15f75b8112651c31901e8fdd51e9d3ad46bb4c1e161aeb53aafdd48dd", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251") {
+        if __meridianShouldRun("/WhenDeterministicbackgroundtaskFires/root/procedure/befde292d7c694fcfe96c51d169da1b584a2220a5bdc3ba29cd6524c8e32bc6c") {
             // L1
             try await runtime.emit(
                 event: "trigger.deterministicBackgroundTask.fired",
@@ -1086,9 +1086,9 @@ public struct WhenDeterministicbackgroundtaskFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("deterministic background task"),
                 ],
-                step: "/WhenDeterministicbackgroundtaskFires/root/procedure/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251"
+                step: "/WhenDeterministicbackgroundtaskFires/root/procedure/befde292d7c694fcfe96c51d169da1b584a2220a5bdc3ba29cd6524c8e32bc6c"
             )
-            try await runtime.checkpoint(label: "/WhenDeterministicbackgroundtaskFires/root/procedure/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDeterministicbackgroundtaskFires/root/procedure/befde292d7c694fcfe96c51d169da1b584a2220a5bdc3ba29cd6524c8e32bc6c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDeterministicbackgroundtaskFires.complete")
@@ -1147,12 +1147,12 @@ public struct WhenSpawnagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSpawnagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288") {
+        if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/71b850543e09b30a1fac1af8ce0889331bfd7d84a217d36722560b223e7063f3") {
             // L1
             try await runtime.wait(.event("spawnAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSpawnagentFires/root/procedure/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSpawnagentFires/root/procedure/71b850543e09b30a1fac1af8ce0889331bfd7d84a217d36722560b223e7063f3", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020") {
+        if __meridianShouldRun("/WhenSpawnagentFires/root/procedure/3d784e13d735905b97cdd3b78a4c1f036a088b5f7fd5007a5953aae78eab539c") {
             // L1
             try await runtime.emit(
                 event: "trigger.spawnAgent.fired",
@@ -1160,9 +1160,9 @@ public struct WhenSpawnagentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("spawn agent"),
                 ],
-                step: "/WhenSpawnagentFires/root/procedure/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020"
+                step: "/WhenSpawnagentFires/root/procedure/3d784e13d735905b97cdd3b78a4c1f036a088b5f7fd5007a5953aae78eab539c"
             )
-            try await runtime.checkpoint(label: "/WhenSpawnagentFires/root/procedure/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSpawnagentFires/root/procedure/3d784e13d735905b97cdd3b78a4c1f036a088b5f7fd5007a5953aae78eab539c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSpawnagentFires.complete")
@@ -1221,12 +1221,12 @@ public struct WhenBackgroundtaskFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenBackgroundtaskFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b") {
+        if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/9b92cf8ed1af4b0b23a6b33e0aae2fbe456b4e41da42ace5fb26002c5b71cf38") {
             // L1
             try await runtime.wait(.event("backgroundTask", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenBackgroundtaskFires/root/procedure/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBackgroundtaskFires/root/procedure/9b92cf8ed1af4b0b23a6b33e0aae2fbe456b4e41da42ace5fb26002c5b71cf38", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf") {
+        if __meridianShouldRun("/WhenBackgroundtaskFires/root/procedure/de3013566099a77aab3d350be7c4f78c47bc9857ec572f0327ec8ce4b5880d1b") {
             // L1
             try await runtime.emit(
                 event: "trigger.backgroundTask.fired",
@@ -1234,9 +1234,9 @@ public struct WhenBackgroundtaskFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("background task"),
                 ],
-                step: "/WhenBackgroundtaskFires/root/procedure/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf"
+                step: "/WhenBackgroundtaskFires/root/procedure/de3013566099a77aab3d350be7c4f78c47bc9857ec572f0327ec8ce4b5880d1b"
             )
-            try await runtime.checkpoint(label: "/WhenBackgroundtaskFires/root/procedure/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBackgroundtaskFires/root/procedure/de3013566099a77aab3d350be7c4f78c47bc9857ec572f0327ec8ce4b5880d1b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenBackgroundtaskFires.complete")
@@ -1295,12 +1295,12 @@ public struct WhenRuninbackgroundFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRuninbackgroundFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8") {
+        if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/8ab647de7c12b59e58ee7c283d59b833880a6c7ace05c5cd2a40b087e7c40ee6") {
             // L1
             try await runtime.wait(.event("runInBackground", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRuninbackgroundFires/root/procedure/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuninbackgroundFires/root/procedure/8ab647de7c12b59e58ee7c283d59b833880a6c7ace05c5cd2a40b087e7c40ee6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9") {
+        if __meridianShouldRun("/WhenRuninbackgroundFires/root/procedure/e0d8135d96ee4e5afd74a7259ab1030bd4781620597376e72f8023a0189b1597") {
             // L1
             try await runtime.emit(
                 event: "trigger.runInBackground.fired",
@@ -1308,9 +1308,9 @@ public struct WhenRuninbackgroundFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run in background"),
                 ],
-                step: "/WhenRuninbackgroundFires/root/procedure/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9"
+                step: "/WhenRuninbackgroundFires/root/procedure/e0d8135d96ee4e5afd74a7259ab1030bd4781620597376e72f8023a0189b1597"
             )
-            try await runtime.checkpoint(label: "/WhenRuninbackgroundFires/root/procedure/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuninbackgroundFires/root/procedure/e0d8135d96ee4e5afd74a7259ab1030bd4781620597376e72f8023a0189b1597", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRuninbackgroundFires.complete")
@@ -1369,12 +1369,12 @@ public struct WhenCheckagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCheckagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckagentFires/root/procedure/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041") {
+        if __meridianShouldRun("/WhenCheckagentFires/root/procedure/6000bb1f61a14c9d921dd79724d371fe6c9e222b67a1664b5b3a01c1fc146422") {
             // L1
             try await runtime.wait(.event("checkAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckagentFires/root/procedure/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckagentFires/root/procedure/6000bb1f61a14c9d921dd79724d371fe6c9e222b67a1664b5b3a01c1fc146422", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckagentFires/root/procedure/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7") {
+        if __meridianShouldRun("/WhenCheckagentFires/root/procedure/20c64252dd61677b3b2b8efd1fd5c13f091284543403677a6f13636d223dbe19") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkAgent.fired",
@@ -1382,9 +1382,9 @@ public struct WhenCheckagentFires: MeridianWorkflow {
                     "kind": .string("event"),
                     "spec": .string("check on agent"),
                 ],
-                step: "/WhenCheckagentFires/root/procedure/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7"
+                step: "/WhenCheckagentFires/root/procedure/20c64252dd61677b3b2b8efd1fd5c13f091284543403677a6f13636d223dbe19"
             )
-            try await runtime.checkpoint(label: "/WhenCheckagentFires/root/procedure/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckagentFires/root/procedure/20c64252dd61677b3b2b8efd1fd5c13f091284543403677a6f13636d223dbe19", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckagentFires.complete")
@@ -1443,12 +1443,12 @@ public struct WhenAgentprogressFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAgentprogressFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166") {
+        if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/dcc5e61f29953e7252ca9771e4c5e8bfb34a65ced8df60488f0c0944eda38bf1") {
             // L1
             try await runtime.wait(.event("agentProgress", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAgentprogressFires/root/procedure/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAgentprogressFires/root/procedure/dcc5e61f29953e7252ca9771e4c5e8bfb34a65ced8df60488f0c0944eda38bf1", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186") {
+        if __meridianShouldRun("/WhenAgentprogressFires/root/procedure/a2de55a904d1cd8649e4cd691aaa70205b545fffd3208f24c140081937665654") {
             // L1
             try await runtime.emit(
                 event: "trigger.agentProgress.fired",
@@ -1456,9 +1456,9 @@ public struct WhenAgentprogressFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("agent progress"),
                 ],
-                step: "/WhenAgentprogressFires/root/procedure/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186"
+                step: "/WhenAgentprogressFires/root/procedure/a2de55a904d1cd8649e4cd691aaa70205b545fffd3208f24c140081937665654"
             )
-            try await runtime.checkpoint(label: "/WhenAgentprogressFires/root/procedure/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAgentprogressFires/root/procedure/a2de55a904d1cd8649e4cd691aaa70205b545fffd3208f24c140081937665654", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAgentprogressFires.complete")
@@ -1517,12 +1517,12 @@ public struct WhenWhatsrunningFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenWhatsrunningFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2") {
+        if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/18d29bc6b0e801cbe1e7df10e4e02c6aef37269c7a3a7c0cf55aed6a05dd8383") {
             // L1
             try await runtime.wait(.event("whatSRunning", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWhatsrunningFires/root/procedure/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatsrunningFires/root/procedure/18d29bc6b0e801cbe1e7df10e4e02c6aef37269c7a3a7c0cf55aed6a05dd8383", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee") {
+        if __meridianShouldRun("/WhenWhatsrunningFires/root/procedure/7dae24900ef9e696a1ac42bba661e90c57f520c103fccaae69a9435cbbbd5c69") {
             // L1
             try await runtime.emit(
                 event: "trigger.whatSRunning.fired",
@@ -1530,9 +1530,9 @@ public struct WhenWhatsrunningFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("what's running"),
                 ],
-                step: "/WhenWhatsrunningFires/root/procedure/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee"
+                step: "/WhenWhatsrunningFires/root/procedure/7dae24900ef9e696a1ac42bba661e90c57f520c103fccaae69a9435cbbbd5c69"
             )
-            try await runtime.checkpoint(label: "/WhenWhatsrunningFires/root/procedure/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWhatsrunningFires/root/procedure/7dae24900ef9e696a1ac42bba661e90c57f520c103fccaae69a9435cbbbd5c69", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWhatsrunningFires.complete")
@@ -1591,12 +1591,12 @@ public struct WhenSteeragentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSteeragentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSteeragentFires/root/procedure/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03") {
+        if __meridianShouldRun("/WhenSteeragentFires/root/procedure/b47673e10410ceb86b94b888c32a79c73423ea4d748a1ad3be7959457e76aed4") {
             // L1
             try await runtime.wait(.event("steerAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSteeragentFires/root/procedure/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSteeragentFires/root/procedure/b47673e10410ceb86b94b888c32a79c73423ea4d748a1ad3be7959457e76aed4", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSteeragentFires/root/procedure/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec") {
+        if __meridianShouldRun("/WhenSteeragentFires/root/procedure/eea2a60c80b01a86c200a44869cf18bc07ebe1bf8523840b831c5f9c4a1fbf69") {
             // L1
             try await runtime.emit(
                 event: "trigger.steerAgent.fired",
@@ -1604,9 +1604,9 @@ public struct WhenSteeragentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("steer agent"),
                 ],
-                step: "/WhenSteeragentFires/root/procedure/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec"
+                step: "/WhenSteeragentFires/root/procedure/eea2a60c80b01a86c200a44869cf18bc07ebe1bf8523840b831c5f9c4a1fbf69"
             )
-            try await runtime.checkpoint(label: "/WhenSteeragentFires/root/procedure/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSteeragentFires/root/procedure/eea2a60c80b01a86c200a44869cf18bc07ebe1bf8523840b831c5f9c4a1fbf69", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSteeragentFires.complete")
@@ -1665,12 +1665,12 @@ public struct WhenChangedirectionFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenChangedirectionFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a") {
+        if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/1900a0e64fc8ec54228d3a6d5c7ee0d7d631b21c016a2d14ac63f449aa3029c6") {
             // L1
             try await runtime.wait(.event("changeDirection", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenChangedirectionFires/root/procedure/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChangedirectionFires/root/procedure/1900a0e64fc8ec54228d3a6d5c7ee0d7d631b21c016a2d14ac63f449aa3029c6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b") {
+        if __meridianShouldRun("/WhenChangedirectionFires/root/procedure/fb23560c780ad2f3b5334a509b5cb899ed40fcd40129565e2a6bcdda89d537ad") {
             // L1
             try await runtime.emit(
                 event: "trigger.changeDirection.fired",
@@ -1678,9 +1678,9 @@ public struct WhenChangedirectionFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("change direction"),
                 ],
-                step: "/WhenChangedirectionFires/root/procedure/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b"
+                step: "/WhenChangedirectionFires/root/procedure/fb23560c780ad2f3b5334a509b5cb899ed40fcd40129565e2a6bcdda89d537ad"
             )
-            try await runtime.checkpoint(label: "/WhenChangedirectionFires/root/procedure/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChangedirectionFires/root/procedure/fb23560c780ad2f3b5334a509b5cb899ed40fcd40129565e2a6bcdda89d537ad", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenChangedirectionFires.complete")
@@ -1739,12 +1739,12 @@ public struct WhenTellagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenTellagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTellagentFires/root/procedure/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd") {
+        if __meridianShouldRun("/WhenTellagentFires/root/procedure/04715c4f52f74ef2b3432b15b291e21dd4afa8740f74bb22b35c213b7d01c14b") {
             // L1
             try await runtime.wait(.event("tellAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTellagentFires/root/procedure/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTellagentFires/root/procedure/04715c4f52f74ef2b3432b15b291e21dd4afa8740f74bb22b35c213b7d01c14b", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTellagentFires/root/procedure/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a") {
+        if __meridianShouldRun("/WhenTellagentFires/root/procedure/3a8f643eeb778edf0261b7d72ab152c9ea16cd59b9b17c71089205663aab3818") {
             // L1
             try await runtime.emit(
                 event: "trigger.tellAgent.fired",
@@ -1752,9 +1752,9 @@ public struct WhenTellagentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("tell the agent"),
                 ],
-                step: "/WhenTellagentFires/root/procedure/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a"
+                step: "/WhenTellagentFires/root/procedure/3a8f643eeb778edf0261b7d72ab152c9ea16cd59b9b17c71089205663aab3818"
             )
-            try await runtime.checkpoint(label: "/WhenTellagentFires/root/procedure/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTellagentFires/root/procedure/3a8f643eeb778edf0261b7d72ab152c9ea16cd59b9b17c71089205663aab3818", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTellagentFires.complete")
@@ -1813,12 +1813,12 @@ public struct WhenPauseagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPauseagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPauseagentFires/root/procedure/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc") {
+        if __meridianShouldRun("/WhenPauseagentFires/root/procedure/5a6e1f3b99393d382b0cc14b7eba1e4d097485c5611b0740ef491d4b3326b9fc") {
             // L1
             try await runtime.wait(.event("pauseAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPauseagentFires/root/procedure/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPauseagentFires/root/procedure/5a6e1f3b99393d382b0cc14b7eba1e4d097485c5611b0740ef491d4b3326b9fc", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPauseagentFires/root/procedure/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6") {
+        if __meridianShouldRun("/WhenPauseagentFires/root/procedure/eb00252cc953c2500976cde6b0b7c10d779ebb8d40434292782b32da7eec4837") {
             // L1
             try await runtime.emit(
                 event: "trigger.pauseAgent.fired",
@@ -1826,9 +1826,9 @@ public struct WhenPauseagentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("pause agent"),
                 ],
-                step: "/WhenPauseagentFires/root/procedure/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6"
+                step: "/WhenPauseagentFires/root/procedure/eb00252cc953c2500976cde6b0b7c10d779ebb8d40434292782b32da7eec4837"
             )
-            try await runtime.checkpoint(label: "/WhenPauseagentFires/root/procedure/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPauseagentFires/root/procedure/eb00252cc953c2500976cde6b0b7c10d779ebb8d40434292782b32da7eec4837", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPauseagentFires.complete")
@@ -1887,12 +1887,12 @@ public struct WhenStopagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenStopagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenStopagentFires/root/procedure/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293") {
+        if __meridianShouldRun("/WhenStopagentFires/root/procedure/5fad69710b88642550c89060c18b829a63083031b17397733ab899b540976381") {
             // L1
             try await runtime.wait(.event("stopAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenStopagentFires/root/procedure/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenStopagentFires/root/procedure/5fad69710b88642550c89060c18b829a63083031b17397733ab899b540976381", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenStopagentFires/root/procedure/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2") {
+        if __meridianShouldRun("/WhenStopagentFires/root/procedure/be1cdbee4010c644e79d3ecc7ded9fc3c5a4d2b84436ef09bf272fe83ea359dc") {
             // L1
             try await runtime.emit(
                 event: "trigger.stopAgent.fired",
@@ -1900,9 +1900,9 @@ public struct WhenStopagentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("stop agent"),
                 ],
-                step: "/WhenStopagentFires/root/procedure/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2"
+                step: "/WhenStopagentFires/root/procedure/be1cdbee4010c644e79d3ecc7ded9fc3c5a4d2b84436ef09bf272fe83ea359dc"
             )
-            try await runtime.checkpoint(label: "/WhenStopagentFires/root/procedure/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenStopagentFires/root/procedure/be1cdbee4010c644e79d3ecc7ded9fc3c5a4d2b84436ef09bf272fe83ea359dc", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenStopagentFires.complete")
@@ -1961,12 +1961,12 @@ public struct WhenResumeagentFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenResumeagentFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenResumeagentFires/root/procedure/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d") {
+        if __meridianShouldRun("/WhenResumeagentFires/root/procedure/b629bb9e5a45c1fca7c3c35c90f620588cf6edf6bed82b3336e9d32b375650c8") {
             // L1
             try await runtime.wait(.event("resumeAgent", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenResumeagentFires/root/procedure/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenResumeagentFires/root/procedure/b629bb9e5a45c1fca7c3c35c90f620588cf6edf6bed82b3336e9d32b375650c8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenResumeagentFires/root/procedure/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070") {
+        if __meridianShouldRun("/WhenResumeagentFires/root/procedure/777bf73b13ae9659580065104c03baed861482983c091a71170e8f1ed2c9bd51") {
             // L1
             try await runtime.emit(
                 event: "trigger.resumeAgent.fired",
@@ -1974,9 +1974,9 @@ public struct WhenResumeagentFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("resume agent"),
                 ],
-                step: "/WhenResumeagentFires/root/procedure/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070"
+                step: "/WhenResumeagentFires/root/procedure/777bf73b13ae9659580065104c03baed861482983c091a71170e8f1ed2c9bd51"
             )
-            try await runtime.checkpoint(label: "/WhenResumeagentFires/root/procedure/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenResumeagentFires/root/procedure/777bf73b13ae9659580065104c03baed861482983c091a71170e8f1ed2c9bd51", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenResumeagentFires.complete")
@@ -2035,12 +2035,12 @@ public struct WhenParalleltasksFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenParalleltasksFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a") {
+        if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/883b482ca34d6ea140fd5fe1ff9576c4e4139dbcc5468c85e60255d8abf7b33e") {
             // L1
             try await runtime.wait(.event("parallelTasks", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenParalleltasksFires/root/procedure/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenParalleltasksFires/root/procedure/883b482ca34d6ea140fd5fe1ff9576c4e4139dbcc5468c85e60255d8abf7b33e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0") {
+        if __meridianShouldRun("/WhenParalleltasksFires/root/procedure/e5796e3ce3fa12ce3a73780ba9b9962ee73de6cc7d57456a5af2725fc797b4b0") {
             // L1
             try await runtime.emit(
                 event: "trigger.parallelTasks.fired",
@@ -2048,9 +2048,9 @@ public struct WhenParalleltasksFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("parallel tasks"),
                 ],
-                step: "/WhenParalleltasksFires/root/procedure/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0"
+                step: "/WhenParalleltasksFires/root/procedure/e5796e3ce3fa12ce3a73780ba9b9962ee73de6cc7d57456a5af2725fc797b4b0"
             )
-            try await runtime.checkpoint(label: "/WhenParalleltasksFires/root/procedure/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenParalleltasksFires/root/procedure/e5796e3ce3fa12ce3a73780ba9b9962ee73de6cc7d57456a5af2725fc797b4b0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenParalleltasksFires.complete")
@@ -2109,12 +2109,12 @@ public struct WhenFanoutFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenFanoutFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenFanoutFires/root/procedure/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9") {
+        if __meridianShouldRun("/WhenFanoutFires/root/procedure/a2ccd8c0e068e0a34e5687180b3ff66b22de622a463f138c1399b0abc06992d5") {
             // L1
             try await runtime.wait(.event("fanOut", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenFanoutFires/root/procedure/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFanoutFires/root/procedure/a2ccd8c0e068e0a34e5687180b3ff66b22de622a463f138c1399b0abc06992d5", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenFanoutFires/root/procedure/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c") {
+        if __meridianShouldRun("/WhenFanoutFires/root/procedure/e0d05c3ca31deec4cad166d2d2fea43c773b5c05a4fda46fc4c5a0edc67feb9c") {
             // L1
             try await runtime.emit(
                 event: "trigger.fanOut.fired",
@@ -2122,9 +2122,9 @@ public struct WhenFanoutFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("fan out"),
                 ],
-                step: "/WhenFanoutFires/root/procedure/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c"
+                step: "/WhenFanoutFires/root/procedure/e0d05c3ca31deec4cad166d2d2fea43c773b5c05a4fda46fc4c5a0edc67feb9c"
             )
-            try await runtime.checkpoint(label: "/WhenFanoutFires/root/procedure/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFanoutFires/root/procedure/e0d05c3ca31deec4cad166d2d2fea43c773b5c05a4fda46fc4c5a0edc67feb9c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenFanoutFires.complete")
@@ -2183,12 +2183,12 @@ public struct WhenDotheseinparallelFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDotheseinparallelFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da") {
+        if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/7f8e83dfcc801e742b8f2e6a7ebcc22c79dd304e99baf3360dbbc3e50cdc7041") {
             // L1
             try await runtime.wait(.event("doTheseInParallel", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDotheseinparallelFires/root/procedure/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDotheseinparallelFires/root/procedure/7f8e83dfcc801e742b8f2e6a7ebcc22c79dd304e99baf3360dbbc3e50cdc7041", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397") {
+        if __meridianShouldRun("/WhenDotheseinparallelFires/root/procedure/5027638eeee53b1a97140648aabf471b35b4e8f582df6f21001160be04f6b313") {
             // L1
             try await runtime.emit(
                 event: "trigger.doTheseInParallel.fired",
@@ -2196,9 +2196,9 @@ public struct WhenDotheseinparallelFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("do these in parallel"),
                 ],
-                step: "/WhenDotheseinparallelFires/root/procedure/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397"
+                step: "/WhenDotheseinparallelFires/root/procedure/5027638eeee53b1a97140648aabf471b35b4e8f582df6f21001160be04f6b313"
             )
-            try await runtime.checkpoint(label: "/WhenDotheseinparallelFires/root/procedure/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDotheseinparallelFires/root/procedure/5027638eeee53b1a97140648aabf471b35b4e8f582df6f21001160be04f6b313", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDotheseinparallelFires.complete")

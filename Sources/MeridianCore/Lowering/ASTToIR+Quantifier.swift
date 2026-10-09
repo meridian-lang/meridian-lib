@@ -103,7 +103,7 @@ extension ASTToIR {
                 .literal(.duration(.seconds(Int64(temporal.seconds))))
             ))
         }
-        let sort = r.sort.map { (path: $0.property, ascending: $0.ascending) }
+        let sort = r.sort.map { IRSortSpec(path: $0.property, ascending: $0.ascending) }
         return IRIterationRefinement(filters: filters, sort: sort, take: r.take, takeFromEnd: r.takeFromEnd)
     }
 

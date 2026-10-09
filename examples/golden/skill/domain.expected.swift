@@ -126,17 +126,17 @@ public struct DomainTableReport: MeridianWorkflow {
         state.bind("table", Value.list([.record(["triggerPhrase": .string("daily briefing"), "skill": .string("briefing"), "score": .number(Decimal(10))]), .record(["triggerPhrase": .string("maintenance sweep"), "skill": .string("maintain"), "score": .number(Decimal(20))])]))
         state.bind("chosenSkill", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("triggerPhrase"), .string("daily briefing")) { return __row.member("skill") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where triggerPhrase matches", cause: nil) })())
         state.bind("reportBody", .string("[date]\n" + ({ () -> String in var __out = ""; for __item in ((state.get("table"))?.asList ?? []) { __out += "- " + meridianStringify(__item.member("skill") ?? .null) + ": " + meridianFormat(__item.member("score") ?? .null, as: "integer") + "\n" }; return __out })() + "\n" + ({ () -> String in if MeridianComparison.eq(state.get("chosenSkill"), state.get("briefing")) { return "chosen briefing" } else { return "chosen another skill" } })()))
-        if __meridianShouldRun("/DomainTableReport/phases/procedure/d6bbff2ce0d74d3ed6341ec99eca048594dd1330d3a85d26a2c3395b80bd9c94") {
+        if __meridianShouldRun("/DomainTableReport/phases/procedure/d883421d1d71c47457c2505db37e326c253c7fa484bd0348198d5fb2d6d7039c") {
             try await runtime.emit(
                 event: "domain.report",
                 payload: [
                     "body": state.get("reportBody") ?? .null,
                 ],
-                step: "/DomainTableReport/phases/procedure/d6bbff2ce0d74d3ed6341ec99eca048594dd1330d3a85d26a2c3395b80bd9c94"
+                step: "/DomainTableReport/phases/procedure/d883421d1d71c47457c2505db37e326c253c7fa484bd0348198d5fb2d6d7039c"
             )
-            try await runtime.checkpoint(label: "/DomainTableReport/phases/procedure/d6bbff2ce0d74d3ed6341ec99eca048594dd1330d3a85d26a2c3395b80bd9c94", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DomainTableReport/phases/procedure/d883421d1d71c47457c2505db37e326c253c7fa484bd0348198d5fb2d6d7039c", state: state.snapshot())
         }
-        await runtime.complete(reason: nil, step: "/DomainTableReport/phases/procedure/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
+        await runtime.complete(reason: nil, step: "/DomainTableReport/phases/procedure/6a6dcde53a3aa6d99391d0785a5e2a23eeddfb93f68ef0cba2091567ee6ec34e")
         return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
         } catch {
             if error is CancellationError { throw error }

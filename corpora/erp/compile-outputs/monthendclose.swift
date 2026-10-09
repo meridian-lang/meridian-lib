@@ -575,61 +575,61 @@ public struct MonthEndClose: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "MonthEndClose", parameters: [:])
 
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617") {
             // L16
             let invoices = try await runtime.invoke(
                 tool: "invoice.list",
                 args: [
                     "status": .string("unpaid"),
                 ],
-                step: "/MonthEndClose/close-sequence/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b",
+                step: "/MonthEndClose/close-sequence/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "invoice.list")
             )
             state.bind("invoices", invoices)
 
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/dd211369bd76fa9ea53272eda7c78c31499cc78a52ad9c2f2ef7f7332410af7b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/20b78d17e90220c567b61e4e039844fc2de15faa8a692836fd975f8f2f4dc617", state: state.snapshot())
         }
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/fcf060af720d98266a2900779404a0f843459d2aacdf4d9ade160e4d78afd0f5") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/99a96f3056b8752f35b0599c5373fcd203ac13dbff3222a4bf7d556958648e61") {
             // L17
             try await runtime.assert((((state.get("invoices")?.asList ?? []).filter { __e in (MeridianComparison.gt(__e.member("balance"), .number(Decimal(0)))) }).isEmpty), message: "Expected no invoices whose balance is more than 0")
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/fcf060af720d98266a2900779404a0f843459d2aacdf4d9ade160e4d78afd0f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/99a96f3056b8752f35b0599c5373fcd203ac13dbff3222a4bf7d556958648e61", state: state.snapshot())
         }
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71") {
             // L18
             let orders = try await runtime.invoke(
                 tool: "order.list",
                 args: [
                     "status": .string("open"),
                 ],
-                step: "/MonthEndClose/close-sequence/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+                step: "/MonthEndClose/close-sequence/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "order.list")
             )
             state.bind("orders", orders)
 
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71", state: state.snapshot())
         }
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/1c5d5bc825d7ebf3c6f0b9d4629c5f4f3f0c2d4b88379885b31b68845a284d4a") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/f67aa76794a9b23c3746052efb7a71ab44cc15864af2d2dbda5e6eee95209957") {
             // L19
             try await runtime.assert((((state.get("orders")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("lifecycle"), .string("blocked"))) }).isEmpty), message: "Expected no orders whose lifecycle is \"blocked\"")
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/1c5d5bc825d7ebf3c6f0b9d4629c5f4f3f0c2d4b88379885b31b68845a284d4a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/f67aa76794a9b23c3746052efb7a71ab44cc15864af2d2dbda5e6eee95209957", state: state.snapshot())
         }
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/0ae359e86883905f0947f38251ae5c2f10c9eb702568153975b9420cc874104e") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/94482c6ce30a3b0434ae88fab3de242ae26c63881eb1855ad15d632effdcb3fe") {
             // L20
-            let accountingPeriod = try await runtime.invoke(tool: "period.close", args: [:], step: "/MonthEndClose/close-sequence/procedure/0ae359e86883905f0947f38251ae5c2f10c9eb702568153975b9420cc874104e", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "period.close"))
+            let accountingPeriod = try await runtime.invoke(tool: "period.close", args: [:], step: "/MonthEndClose/close-sequence/procedure/94482c6ce30a3b0434ae88fab3de242ae26c63881eb1855ad15d632effdcb3fe", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "period.close"))
             state.bind("accountingPeriod", accountingPeriod)
 
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/0ae359e86883905f0947f38251ae5c2f10c9eb702568153975b9420cc874104e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/94482c6ce30a3b0434ae88fab3de242ae26c63881eb1855ad15d632effdcb3fe", state: state.snapshot())
         }
-        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/c6bd182d5fe75d3fa72023223bd4d5bb6b133e477f2f5dfc8766994aa453cd9a") {
+        if __meridianShouldRun("/MonthEndClose/close-sequence/procedure/744528ec181b71f6ba4c1365c3364a232ff519b359b755a043756aa007d55689") {
             // L21
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("accounting period closed"),
                 ],
-                step: "/MonthEndClose/close-sequence/procedure/c6bd182d5fe75d3fa72023223bd4d5bb6b133e477f2f5dfc8766994aa453cd9a"
+                step: "/MonthEndClose/close-sequence/procedure/744528ec181b71f6ba4c1365c3364a232ff519b359b755a043756aa007d55689"
             )
-            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/c6bd182d5fe75d3fa72023223bd4d5bb6b133e477f2f5dfc8766994aa453cd9a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MonthEndClose/close-sequence/procedure/744528ec181b71f6ba4c1365c3364a232ff519b359b755a043756aa007d55689", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "MonthEndClose.complete")
@@ -689,12 +689,12 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenMonthendcloseFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96") {
+        if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/f548794133c004322dd0ad1e048a65b479d1c20ffd6d02919931d85cfcd72025") {
             // L1
             try await runtime.wait(.event("monthEndClose", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMonthendcloseFires/root/procedure/14dffd3a16266a22025f8bf832265ed56b03b6ce20f130568afad360cecaea96", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonthendcloseFires/root/procedure/f548794133c004322dd0ad1e048a65b479d1c20ffd6d02919931d85cfcd72025", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9") {
+        if __meridianShouldRun("/WhenMonthendcloseFires/root/procedure/3fd6b55495bb833f6a4b6b2ccc95249582bb27cd289aae0bb01669532a470993") {
             // L1
             try await runtime.emit(
                 event: "trigger.monthEndClose.fired",
@@ -702,9 +702,9 @@ public struct WhenMonthendcloseFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("month-end close"),
                 ],
-                step: "/WhenMonthendcloseFires/root/procedure/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9"
+                step: "/WhenMonthendcloseFires/root/procedure/3fd6b55495bb833f6a4b6b2ccc95249582bb27cd289aae0bb01669532a470993"
             )
-            try await runtime.checkpoint(label: "/WhenMonthendcloseFires/root/procedure/cb56831ec37992582c074db4c5cda34c8d31ec5aadd6edf03f0cea9078709ec9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonthendcloseFires/root/procedure/3fd6b55495bb833f6a4b6b2ccc95249582bb27cd289aae0bb01669532a470993", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMonthendcloseFires.complete")
@@ -764,12 +764,12 @@ public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCloseaccountingperiodFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4") {
+        if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/6ed02ce52827e2774695d359b62147222bb9876ef790184d1b316e678589bf7f") {
             // L1
             try await runtime.wait(.event("closeAccountingPeriod", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCloseaccountingperiodFires/root/procedure/744f483020ebe9e43a69e5f2d26f7dd899acd9ff51f0cc345e9ae7468ed6b2b4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCloseaccountingperiodFires/root/procedure/6ed02ce52827e2774695d359b62147222bb9876ef790184d1b316e678589bf7f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82") {
+        if __meridianShouldRun("/WhenCloseaccountingperiodFires/root/procedure/81df1e738fcfb19fb4ed58647999d846086e6012725ca21f23885f65f0d09217") {
             // L1
             try await runtime.emit(
                 event: "trigger.closeAccountingPeriod.fired",
@@ -777,9 +777,9 @@ public struct WhenCloseaccountingperiodFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("close accounting period"),
                 ],
-                step: "/WhenCloseaccountingperiodFires/root/procedure/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82"
+                step: "/WhenCloseaccountingperiodFires/root/procedure/81df1e738fcfb19fb4ed58647999d846086e6012725ca21f23885f65f0d09217"
             )
-            try await runtime.checkpoint(label: "/WhenCloseaccountingperiodFires/root/procedure/d3f6a760e9b7579b2728fe827ffa2c4f23513cf5e7aa33ca1ff5abb5da544a82", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCloseaccountingperiodFires/root/procedure/81df1e738fcfb19fb4ed58647999d846086e6012725ca21f23885f65f0d09217", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCloseaccountingperiodFires.complete")

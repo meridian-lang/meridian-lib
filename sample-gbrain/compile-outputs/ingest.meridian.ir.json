@@ -1,108 +1,108 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.ingestThis.fired with kind = \"keyword\", spec = \"ingest this\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenIngestthisFires\/root\/procedure\/a7b53e5bfd4b7b7785fbd2a0c644db486a23aa37700d6905bb97c2d44132f99e",
-      "swift_line" : 961
-    },
-    {
       "canonical" : "wait for event ingestThis.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenIngestthisFires\/root\/procedure\/cf788e98c219f22c187e3006dd53774364ad6ac0f2518cb74e05d2b5946ecbb3",
+      "stable_step_path" : "\/WhenIngestthisFires\/root\/procedure\/6185015ead6c8afc1dbdd490f7b88ba13adc857fae11c8ff0481533503840377",
+      "swift_line" : 961
+    },
+    {
+      "canonical" : "emit trigger.ingestThis.fired with kind = \"keyword\", spec = \"ingest this\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenIngestthisFires\/root\/procedure\/ef516f5d7bebee1f5aa6b816d47f4b1bac1d942422a9e86fe11ab8a264ddee73",
       "swift_line" : 961
     },
     {
       "canonical" : "wait for event processThisMeeting.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenProcessthismeetingFires\/root\/procedure\/5041c6928964481d0af25a635396a6741ad642b4babeac56315e0e9968177c3a",
+      "stable_step_path" : "\/WhenProcessthismeetingFires\/root\/procedure\/076ff70f2227d5e38307aeda93ddff8d2b34361bcc53ba3c7557a3a093e1b502",
       "swift_line" : 961
     },
     {
       "canonical" : "emit trigger.processThisMeeting.fired with kind = \"keyword\", spec = \"process this meeting\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenProcessthismeetingFires\/root\/procedure\/e483ecd4e3b85d83c94b15caf2a90bc911484ced741034cb163428f6c1a94953",
-      "swift_line" : 961
-    },
-    {
-      "canonical" : "emit trigger.saveThisBrain.fired with kind = \"keyword\", spec = \"save this to brain\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenSavethisbrainFires\/root\/procedure\/b48833ee364874b98ba6e94899b93407ec6e88776bc98c88fef2e2665e76aff0",
+      "stable_step_path" : "\/WhenProcessthismeetingFires\/root\/procedure\/5dee3401dc16c72aa01e156334875fea3840a44a9924e4d30d89bb770bdb3133",
       "swift_line" : 961
     },
     {
       "canonical" : "wait for event saveThisBrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSavethisbrainFires\/root\/procedure\/d651e9fd4121e377c713820c5e51dc4e1b1a8956c864f1197d2a38f762cc7330",
+      "stable_step_path" : "\/WhenSavethisbrainFires\/root\/procedure\/3bc26e61eee4af2628ae3651fa6eebbfcb4c3132299a005180e9f955151af9dc",
+      "swift_line" : 961
+    },
+    {
+      "canonical" : "emit trigger.saveThisBrain.fired with kind = \"keyword\", spec = \"save this to brain\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSavethisbrainFires\/root\/procedure\/9a74ab018bddaf8fc2ea58ba9a5a383b18a59031f563ec033d19c77107b2a930",
       "swift_line" : 961
     },
     {
       "canonical" : "`[Source: ...]` -- Every fact written to a brain page must carry an inline  citation.",
       "meridian_line" : 52,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/863081d2e727eec24f16ab281682d6aedcac8671d303f153160cc0451b7ecdd4",
       "swift_line" : 628
     },
     {
       "canonical" : "`[Source: User, {{context}}, YYYY-MM-DD]` -- User's statements.",
       "meridian_line" : 54,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/4365c47aed2bf3603182782ae125f7b4e007426853bef5f51be45870b4440fb8",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/496cac80afa02c0a6274782376820a6b34da978e4655e74358eb2d2db65c4f51",
       "swift_line" : 642
     },
     {
       "canonical" : "`[Source: Meeting \"{{title}}\", YYYY-MM-DD]` -- Meeting data.",
       "meridian_line" : 55,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/fe1b3e89f76894363d8675d9be2eeaf59efbc0bb8bdd40afa8f82ba15e2e5796",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/0ecb04f2c5acdc4f2d1370552a0be7a50f6452a26b28de597c705cf9276ae1f5",
       "swift_line" : 656
     },
     {
       "canonical" : "`[Source: email from {{name}} re: {{subject}}, YYYY-MM-DD]` -- Email\/message.",
       "meridian_line" : 56,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/dc5a15ea4a57dc5aecb3a39fbb7ed92ef2ff0dfa7275bfc0c0cdef11a11a1f91",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/7863731b9b1611af1d66bbb26cb93eb699437c2f9d0fbd19b1c6ff70431177ba",
       "swift_line" : 670
     },
     {
       "canonical" : "`[Source: {{publication}}, {{URL}}, YYYY-MM-DD]` -- Web content.",
       "meridian_line" : 57,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/1d319425079c5ba09bcfec5c3c04bc4fa3028e2ecabd3508264afdeeaf78d838",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/d4120e3f624f52fc57a3a28a277c97acd0d7044fcdbb5ef8c6cf3de8ea2c0a60",
       "swift_line" : 684
     },
     {
       "canonical" : "`[Source: X\/@handle, YYYY-MM-DD](URL)` -- Social media:  (include link).",
       "meridian_line" : 58,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/d7e990aa3752109f30872d8fe690945028f392b9702ec8d3efbc57242a5f26ef",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/23dcd3b7fd7a947a3e4e15ca5e6249e98bab110400f16430328fd0e7e86f8854",
       "swift_line" : 698
     },
     {
       "canonical" : "`[Source: compiled from {{sources}}]` -- Synthesis.",
       "meridian_line" : 59,
       "primitive" : "invoke",
-      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/f2d625143c8b17db3936aa3fee2ecc6d5008998c077fa59fc632a61a26a83eac",
+      "stable_step_path" : "\/IngestInput\/citation-requirements-mandatory\/procedure\/e3d9556aa1904322c20e39c6ae7940eed732599c45f007ae5e8f070fa632c3c5",
       "swift_line" : 712
     },
     {
       "canonical" : "for each entityMentioned in entitymentioneds,",
       "meridian_line" : 77,
       "primitive" : "iterate",
-      "stable_step_path" : "\/IngestInput\/phases-steps\/procedure\/72314c404d110929c5c573ab8c3e59cd4dc8cfabbca495a6062ea2c04aa3d9a0",
+      "stable_step_path" : "\/IngestInput\/phases-steps\/procedure\/004a099d08f01332d181ba8865fe4604da9ac4e4e11a397deb038cb11d1578fb",
       "swift_line" : 725
     },
     {
       "canonical" : "use judgment to follow the What to capture from the user's own thinking — steps 2 guidance:\n  Contrarian positions with reasoning\n  Content the user encounters should be captured in the brain. File by PRIMARY\n  SUBJECT, not by format (see `skills\/_brain-filing-rules.md`)\n  use judgment to follow the Articles & Web Content — steps guidance:\n  Analyze for the user: don't just summarize. What's interesting given what you\n  know about them? Flag connections, contradictions, content opportunities\n  use judgment to follow the Videos & Podcasts — steps guidance:\n  Analyze: executive summary, key ideas, key quotes with speaker attribution,\n  notable stories\/anecdotes, people and companies mentioned\n  HARD RULE: every video\/podcast brain page MUST link to the raw diarized\n  transcript. A page without transcript links is incomplete\n  use judgment to follow the Screenshots & Images — steps guidance:\n  Analyze content (OCR for text-heavy images, description for photos)\n  Entity propagation (MANDATORY): for each attendee and company discussed:\n  Write to: `meetings\/YYYY-MM-DD-short-description.md`\n  Include direct link to the original post (MANDATORY for citations)\n  Write to: `media\/x\/` for daily aggregation, or entity-specific directories\n  if the post is primarily about a person\/company\n  Every ingested item must have its raw source preserved for provenance\n  Use `gbrain files upload-raw` for automatic size routing:\n  codeblock:bash:Z2JyYWluIGZpbGVzIHVwbG9hZC1yYXcgPGZpbGU+IC0tcGFnZSA8cGFnZS1zbHVnPiAtLXR5cGUgPHR5cGU+\n  < 100 MB text\/PDF: stays in git (brain repo `.raw\/` sidecar directories)\n  The `.redirect.yaml` pointer format:\n  `gbrain files signed-url <storage-path>` -- generate 1-hour signed URL for viewing\/sharing\n  `gbrain files restore <dir>` -- download back to local from cloud storage\n  use judgment to follow the Quality Rules — steps 2 guidance:\n  State section is REWRITTEN, not appended to. Current best understanding only",
       "meridian_line" : 129,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/IngestInput\/what-to-capture-from-the-user-s-own-thinking-steps-2\/procedure\/c74fcef89e4cd49bca679e07a2843e9afb8dd3e51c8869b617d7cdcbf6fabc5e",
+      "stable_step_path" : "\/IngestInput\/what-to-capture-from-the-user-s-own-thinking-steps-2\/procedure\/4e44184d24e5c14d3af19b85de3c4da9a1f632b22347ddad5a1105220ac74463",
       "swift_line" : 738
     }
   ],

@@ -453,64 +453,64 @@ public struct SettleBatch: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "SettleBatch", parameters: [:])
 
-        if __meridianShouldRun("/SettleBatch/postconditions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd") {
+        if __meridianShouldRun("/SettleBatch/postconditions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3") {
             // L32
             try await runtime.assert((((state.get("batches")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/SettleBatch/postconditions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SettleBatch/postconditions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3", state: state.snapshot())
         }
-        if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487") {
+        if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0") {
             // L22
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
                     "status": .string("ready"),
                 ],
-                step: "/SettleBatch/batch-body-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
+                step: "/SettleBatch/batch-body-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "batch.list")
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0", state: state.snapshot())
         }
-        if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5") {
+        if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/fb0bb38bce06928a64025cdad2afd4552c7d5a8e0e6b4f2a7b28d9a340286d2b") {
             // L23
             try await runtime.assert(((state.get("batches")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
-            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/fb0bb38bce06928a64025cdad2afd4552c7d5a8e0e6b4f2a7b28d9a340286d2b", state: state.snapshot())
         }
         // L24
         let __meridianColl_0_3 = (state.get("batches")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/SettleBatch/batch-body-steps/procedure/4ac085b8de74a277d4e5be1474e20c4317d3d06bfa39c99239bd86a7944e13a8")
+        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/SettleBatch/batch-body-steps/procedure/d29d03ff6af50c5e91dd7f61f4fddd2d0c2afab229557db6f628c43f3562ff39")
         for (__meridianLoopIndex_0_3, batch) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/SettleBatch/batch-body-steps/procedure/4ac085b8de74a277d4e5be1474e20c4317d3d06bfa39c99239bd86a7944e13a8")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/SettleBatch/batch-body-steps/procedure/d29d03ff6af50c5e91dd7f61f4fddd2d0c2afab229557db6f628c43f3562ff39")
             state.bind("batch", batch)
                 // L25
                 if !(meridianDef_Batch_finalized(state.get("batch"))) {
-                    try await runtime.recordBranchTaken(condition: "!(meridianDef_Batch_finalized(state.get(\"batch\")))", into: "then", step: "/SettleBatch/batch-body-steps/procedure/iterate.body/866d10aec1839980429654c0afd9e59601620f597dbb2052a3212bd7cb5269e1")
-                    if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/branch.then/dc4678ed66a134410ad34b0af6447612ec72ec98e4538ceffb000ccafeacecba") {
+                    try await runtime.recordBranchTaken(condition: "!(meridianDef_Batch_finalized(state.get(\"batch\")))", into: "then", step: "/SettleBatch/batch-body-steps/procedure/iterate.body/a161ae052832ff8a3e54fff8f98635587de7414f36337dec4c08241a7b3ee4ba")
+                    if __meridianShouldRun("/SettleBatch/batch-body-steps/procedure/branch.then/78b3507285d9e0855eaa21dbe4c8b8030f15b320d6d743313a9d8134339c0565") {
                         // L25
                         _ = try await SettleBatch(runtime: runtime).run()
-                        try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/branch.then/dc4678ed66a134410ad34b0af6447612ec72ec98e4538ceffb000ccafeacecba", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps/procedure/branch.then/78b3507285d9e0855eaa21dbe4c8b8030f15b320d6d743313a9d8134339c0565", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/SettleBatch/batch-body-steps/procedure/iterate.body/866d10aec1839980429654c0afd9e59601620f597dbb2052a3212bd7cb5269e1")
+                    try await runtime.recordBranchEnded(into: "then", step: "/SettleBatch/batch-body-steps/procedure/iterate.body/a161ae052832ff8a3e54fff8f98635587de7414f36337dec4c08241a7b3ee4ba")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_3.count, step: "/SettleBatch/batch-body-steps/procedure/4ac085b8de74a277d4e5be1474e20c4317d3d06bfa39c99239bd86a7944e13a8")
+        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_3.count, step: "/SettleBatch/batch-body-steps/procedure/d29d03ff6af50c5e91dd7f61f4fddd2d0c2afab229557db6f628c43f3562ff39")
 
-        if __meridianShouldRun("/SettleBatch/batch-body-steps-2/procedure/b1f978adbfcb930e2d0bd8b89266f148e871d78de3ed51b3e731819f69c5913b") {
+        if __meridianShouldRun("/SettleBatch/batch-body-steps-2/procedure/c45a80484debee44350b13070b2fd1e958e20fbfc60976ca20be0bc46f09f22d") {
             // L29
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("ready batches settled"),
                 ],
-                step: "/SettleBatch/batch-body-steps-2/procedure/b1f978adbfcb930e2d0bd8b89266f148e871d78de3ed51b3e731819f69c5913b"
+                step: "/SettleBatch/batch-body-steps-2/procedure/c45a80484debee44350b13070b2fd1e958e20fbfc60976ca20be0bc46f09f22d"
             )
-            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps-2/procedure/b1f978adbfcb930e2d0bd8b89266f148e871d78de3ed51b3e731819f69c5913b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SettleBatch/batch-body-steps-2/procedure/c45a80484debee44350b13070b2fd1e958e20fbfc60976ca20be0bc46f09f22d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SettleBatch.complete")
@@ -570,12 +570,12 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSettlereadybatchesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/a3480bfa68e51e4af9ba6b4e8a0a55e5b29c8add30d2c8204bfb773f3a61eb48") {
+        if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/1425821b521e6d9fc05a3cc4dfd5d11bdf316738a057af2a8a8b668db9e576b9") {
             // L1
             try await runtime.wait(.event("settleReadyBatches", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSettlereadybatchesFires/root/procedure/a3480bfa68e51e4af9ba6b4e8a0a55e5b29c8add30d2c8204bfb773f3a61eb48", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSettlereadybatchesFires/root/procedure/1425821b521e6d9fc05a3cc4dfd5d11bdf316738a057af2a8a8b668db9e576b9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/6425eb2f15b2ec2224a2344b272e639d54513b0b3475a9e78d5f71aa8a4e8c86") {
+        if __meridianShouldRun("/WhenSettlereadybatchesFires/root/procedure/b8ee9d9aa474c99f840e3c325035ee9156335c039939fcecc5a11de6accf3226") {
             // L1
             try await runtime.emit(
                 event: "trigger.settleReadyBatches.fired",
@@ -583,9 +583,9 @@ public struct WhenSettlereadybatchesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("settle ready batches"),
                 ],
-                step: "/WhenSettlereadybatchesFires/root/procedure/6425eb2f15b2ec2224a2344b272e639d54513b0b3475a9e78d5f71aa8a4e8c86"
+                step: "/WhenSettlereadybatchesFires/root/procedure/b8ee9d9aa474c99f840e3c325035ee9156335c039939fcecc5a11de6accf3226"
             )
-            try await runtime.checkpoint(label: "/WhenSettlereadybatchesFires/root/procedure/6425eb2f15b2ec2224a2344b272e639d54513b0b3475a9e78d5f71aa8a4e8c86", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSettlereadybatchesFires/root/procedure/b8ee9d9aa474c99f840e3c325035ee9156335c039939fcecc5a11de6accf3226", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSettlereadybatchesFires.complete")
@@ -645,12 +645,12 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenBatchsettlementFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/cf8e19405f4b1d20bbd2997031b0a8a40507fd730dda7c3a00114ca986a959e0") {
+        if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/69e433f869ec420bca5d1dd41c4bbfe79b5691f6a2314464f292990968ff9f82") {
             // L1
             try await runtime.wait(.event("batchSettlement", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenBatchsettlementFires/root/procedure/cf8e19405f4b1d20bbd2997031b0a8a40507fd730dda7c3a00114ca986a959e0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBatchsettlementFires/root/procedure/69e433f869ec420bca5d1dd41c4bbfe79b5691f6a2314464f292990968ff9f82", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/f2a2bee69a07f93b4deab6628d1f2bc9155f3973dbf74168f69a04feb355b3c3") {
+        if __meridianShouldRun("/WhenBatchsettlementFires/root/procedure/b57e20ff30999ec134e8d2eeca0bb05de93bc7e8806ee830ce16f5c2e561e3ab") {
             // L1
             try await runtime.emit(
                 event: "trigger.batchSettlement.fired",
@@ -658,9 +658,9 @@ public struct WhenBatchsettlementFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("batch settlement"),
                 ],
-                step: "/WhenBatchsettlementFires/root/procedure/f2a2bee69a07f93b4deab6628d1f2bc9155f3973dbf74168f69a04feb355b3c3"
+                step: "/WhenBatchsettlementFires/root/procedure/b57e20ff30999ec134e8d2eeca0bb05de93bc7e8806ee830ce16f5c2e561e3ab"
             )
-            try await runtime.checkpoint(label: "/WhenBatchsettlementFires/root/procedure/f2a2bee69a07f93b4deab6628d1f2bc9155f3973dbf74168f69a04feb355b3c3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenBatchsettlementFires/root/procedure/b57e20ff30999ec134e8d2eeca0bb05de93bc7e8806ee830ce16f5c2e561e3ab", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenBatchsettlementFires.complete")

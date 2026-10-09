@@ -777,123 +777,123 @@ public struct IncidentPrResponsePullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "IncidentPrResponsePullRequest", parameters: [:])
 
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/1cffe7799e85af6c9dfce7b54eddb52857d6b2a48d1d741d7fbd2d4d45e0b28b") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/47b82233e9e9a755206b06586855f4592545d77166afa0169c84fc3f8aec8a00") {
             try await runtime.emit(
                 event: "incident.received",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/1cffe7799e85af6c9dfce7b54eddb52857d6b2a48d1d741d7fbd2d4d45e0b28b"
+                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/47b82233e9e9a755206b06586855f4592545d77166afa0169c84fc3f8aec8a00"
             )
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/1cffe7799e85af6c9dfce7b54eddb52857d6b2a48d1d741d7fbd2d4d45e0b28b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/47b82233e9e9a755206b06586855f4592545d77166afa0169c84fc3f8aec8a00", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/open-and-capture-initial-signals/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/page-the-on-call/procedure/856dd0005b7368ecbaf7b091b5a1f02d5ede8f612ad091e0a5b0c4600d45ed84") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/page-the-on-call/procedure/8a623f21e33ebdefb9015a98b1472d83fae45836646d16ef9e08ceed03f8d307") {
             let pageResult = try await runtime.invoke(
                 tool: "pageOncall",
                 args: [
                     "service": .string("checkout"),
                     "severity": .string("high"),
                 ],
-                step: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/856dd0005b7368ecbaf7b091b5a1f02d5ede8f612ad091e0a5b0c4600d45ed84",
+                step: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/8a623f21e33ebdefb9015a98b1472d83fae45836646d16ef9e08ceed03f8d307",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "pageOncall")
             )
             state.bind("pageResult", pageResult)
 
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/856dd0005b7368ecbaf7b091b5a1f02d5ede8f612ad091e0a5b0c4600d45ed84", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/8a623f21e33ebdefb9015a98b1472d83fae45836646d16ef9e08ceed03f8d307", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/page-the-on-call/procedure/5dd1c3aa79dfb960f00ec37bd181082ce3e194dec191fcca78f92d75f1cfc729") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/page-the-on-call/procedure/97506f36fee51ca11ac92f9a46b1858b598626e7a6bbb3741bc2219c47bfa9dd") {
             try await runtime.wait(.signal("oncall.acknowledged"), sourceRange: nil)
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/5dd1c3aa79dfb960f00ec37bd181082ce3e194dec191fcca78f92d75f1cfc729", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/page-the-on-call/procedure/97506f36fee51ca11ac92f9a46b1858b598626e7a6bbb3741bc2219c47bfa9dd", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/84896ca8db209c8c7f934309cb889464cd5cc55e0607f038067a21c185c8482d") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/0f5ee61a7fce30b625e0b47ad60fe25051bdcac68c5d0417c2cc53058b2633f7") {
             let health = try await runtime.invoke(
                 tool: "snapshotServiceHealth",
                 args: [
                     "service": .string("checkout"),
                 ],
-                step: "/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/84896ca8db209c8c7f934309cb889464cd5cc55e0607f038067a21c185c8482d",
+                step: "/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/0f5ee61a7fce30b625e0b47ad60fe25051bdcac68c5d0417c2cc53058b2633f7",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "snapshotServiceHealth")
             )
             state.bind("health", health)
 
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/84896ca8db209c8c7f934309cb889464cd5cc55e0607f038067a21c185c8482d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/capture-service-health-snapshot/procedure/0f5ee61a7fce30b625e0b47ad60fe25051bdcac68c5d0417c2cc53058b2633f7", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/plan-mitigation-under-discretion/procedure/f1dd1ab8865c084df7c3a74273c6269fa66f4b23d2d188236b1fd97c210dee23") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/plan-mitigation-under-discretion/procedure/e6a838dcc7b6e3e6516bec7b80994c1cee0b02d1dbf384c45056873ad29d0c83") {
             _ = try await PlanIncidentMitigation(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/plan-mitigation-under-discretion/procedure/f1dd1ab8865c084df7c3a74273c6269fa66f4b23d2d188236b1fd97c210dee23", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/plan-mitigation-under-discretion/procedure/e6a838dcc7b6e3e6516bec7b80994c1cee0b02d1dbf384c45056873ad29d0c83", state: state.snapshot())
         }
         do {
-            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.body/6101a945d56a1f99c20acefd9c4f531f41e9e41bfdb929a6171bbe9eafdb7d6e") {
+            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.body/4fd0a56361434782b45d94f4b4dab250a554fc524c88f41d8cfb234a3fd520ae") {
                 _ = try await AutonomouslyMitigateIncident(runtime: runtime, pullRequest: pullRequest).run()
-                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.body/6101a945d56a1f99c20acefd9c4f531f41e9e41bfdb929a6171bbe9eafdb7d6e", state: state.snapshot())
+                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.body/4fd0a56361434782b45d94f4b4dab250a554fc524c88f41d8cfb234a3fd520ae", state: state.snapshot())
             }
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/7ddc1933e0a5fbfafd141cef67d28f1025bc103577fa60beacdfbcb2ac60220d")
-            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/19b41b177e46bab4506bd126289524cb9d71922b8fa46bf57198a56e36881f38") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/e3a14d800dd870ed839b536be10021bf0d973a0dea277a9c246609a5dcc7c07b")
+            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/eb01e7b93d135ea78c5221ede1f6dcca17f3575c54ec09f84fca8b9d5e56e5d0") {
                 try await runtime.emit(
                     event: "incident.recovered",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("mitigation pipeline failed"),
                     ],
-                    step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/19b41b177e46bab4506bd126289524cb9d71922b8fa46bf57198a56e36881f38"
+                    step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/eb01e7b93d135ea78c5221ede1f6dcca17f3575c54ec09f84fca8b9d5e56e5d0"
                 )
-                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/19b41b177e46bab4506bd126289524cb9d71922b8fa46bf57198a56e36881f38", state: state.snapshot())
+                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/eb01e7b93d135ea78c5221ede1f6dcca17f3575c54ec09f84fca8b9d5e56e5d0", state: state.snapshot())
             }
-            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/96ecad50e67833f28f7ee01bdc8bba794a77deb340063671be6ee6d5be9a6eaa") {
+            if __meridianShouldRun("/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/aa734669e974622030819bbe0a520af9adb329fc7bfc9b9e6a5d98cfcfb53536") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("mitigation pipeline failed; see incident timeline"),
                     ],
-                    step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/96ecad50e67833f28f7ee01bdc8bba794a77deb340063671be6ee6d5be9a6eaa"
+                    step: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/aa734669e974622030819bbe0a520af9adb329fc7bfc9b9e6a5d98cfcfb53536"
                 )
-                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/96ecad50e67833f28f7ee01bdc8bba794a77deb340063671be6ee6d5be9a6eaa", state: state.snapshot())
+                try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/run-mitigation-under-autonomy/procedure/recover.handler/aa734669e974622030819bbe0a520af9adb329fc7bfc9b9e6a5d98cfcfb53536", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/audit-close/procedure/95408eb02477af4e6cf67c04a235c9003285ad3efbc6a0112545672cc45bac69") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/audit-close/procedure/5a10a20150cc56c27f90d339b42ed1b24a7c00eca268d303a9116e9654a45d4c") {
             try await runtime.emit(
                 event: "incident.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentPrResponsePullRequest/audit-close/procedure/95408eb02477af4e6cf67c04a235c9003285ad3efbc6a0112545672cc45bac69"
+                step: "/IncidentPrResponsePullRequest/audit-close/procedure/5a10a20150cc56c27f90d339b42ed1b24a7c00eca268d303a9116e9654a45d4c"
             )
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/audit-close/procedure/95408eb02477af4e6cf67c04a235c9003285ad3efbc6a0112545672cc45bac69", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/audit-close/procedure/5a10a20150cc56c27f90d339b42ed1b24a7c00eca268d303a9116e9654a45d4c", state: state.snapshot())
         }
-        if __meridianShouldRun("/IncidentPrResponsePullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/IncidentPrResponsePullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentPrResponsePullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/IncidentPrResponsePullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentPrResponsePullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "IncidentPrResponsePullRequest.complete")
@@ -961,7 +961,7 @@ public struct PlanIncidentMitigation: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanIncidentMitigation/sub-workflows/procedure/45ed7648b624a9e556d261eaf550465f356f2f900cc228fc66ab91e05532f110"
+            step: "/PlanIncidentMitigation/sub-workflows/procedure/86ba28c97683342b8742f3df50d188c0af504c37aa6ef13b5bab0f554ed41fc9"
         )
         for (__key, __value) in __meridianProseResults_L43 {
             state.bind(__key, __value)
@@ -1034,7 +1034,7 @@ public struct AutonomouslyMitigateIncident: MeridianWorkflow {
             maxSteps: 4,
             replanAfterFailures: 1,
             outputKind: "record",
-            step: "/AutonomouslyMitigateIncident/sub-workflows/procedure/4bae30fabe3b40c1c4e4b07ca0b85985c8ab19b31923d4516b28aabc9353591e",
+            step: "/AutonomouslyMitigateIncident/sub-workflows/procedure/e84344b4b0fed0dec4be1f1be73b66622781f8dfbcd728fcf3c98095227b8517",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

@@ -1,94 +1,94 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.runPatientTriage.fired with kind = \"keyword\", spec = \"run patient triage\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenRunpatienttriageFires\/root\/procedure\/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b",
-      "swift_line" : 671
-    },
-    {
       "canonical" : "wait for event runPatientTriage.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRunpatienttriageFires\/root\/procedure\/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1",
+      "stable_step_path" : "\/WhenRunpatienttriageFires\/root\/procedure\/75d565f24929f55afd526ca19c143f63a256abbd124315ccaa60a3acd25ba1ca",
       "swift_line" : 671
     },
     {
-      "canonical" : "wait for event triagePatient.",
+      "canonical" : "emit trigger.runPatientTriage.fired with kind = \"keyword\", spec = \"run patient triage\".",
       "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenTriagepatientFires\/root\/procedure\/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b",
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenRunpatienttriageFires\/root\/procedure\/f6d7d7c353db5e38ce9def031af35c7afbc109535a916cbe1a08c2598f7e445e",
       "swift_line" : 671
     },
     {
       "canonical" : "emit trigger.triagePatient.fired with kind = \"keyword\", spec = \"triage patient\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenTriagepatientFires\/root\/procedure\/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e",
+      "stable_step_path" : "\/WhenTriagepatientFires\/root\/procedure\/27aef6b322b8fc77774c12573d1a8828b6fde41978124f3a880a45920e713e03",
+      "swift_line" : 671
+    },
+    {
+      "canonical" : "wait for event triagePatient.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTriagepatientFires\/root\/procedure\/af5d8e0e1a586a81fab06a3560483d7b14c0ed8d5c473c8e1c366ce3131a3089",
       "swift_line" : 671
     },
     {
       "canonical" : "bind vitalSigns = invoke vitals.read with patient = patient.",
       "meridian_line" : 31,
       "primitive" : "invoke",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e",
       "swift_line" : 442
     },
     {
       "canonical" : "if any vital signs is critical,\n  bind patient = invoke patient.escalate with patient = patient.\n  emit clinical.report with message = \"triage patient escalated\".",
       "meridian_line" : 32,
       "primitive" : "branch",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/3338ed164c43cdfbe0ddfd6f77a704b8604992bc2cc8eaa7ebf0838d11b8c298",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/d864159d3d20289425a68d2fa96cf22415e74e420f6c9f136bf98f54b08c0dd8",
       "swift_line" : 455
     },
     {
       "canonical" : "bind patient = invoke patient.escalate with patient = patient.",
       "meridian_line" : 33,
       "primitive" : "invoke",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222",
       "swift_line" : 459
     },
     {
       "canonical" : "emit clinical.report with message = \"triage patient escalated\".",
       "meridian_line" : 34,
       "primitive" : "emit",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/fa9d6ca6072caba5c56e234f57b00c17bf9ce6dd8362bbc4ee01540955428f22",
       "swift_line" : 473
     },
     {
       "canonical" : "if not any vital signs is critical,\n  use judgment to weigh every vital sign against its own ceiling and recommend a triage level:\n  ask the user to choose between \"admit\", \"observe\", \"discharge\".",
       "meridian_line" : 35,
       "primitive" : "branch",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/59e53558c7ea84daf93361c86a19bdd003c114d7ce06601adb40e47e2dcf9478",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/ecd4305eda0f4eb3bf68f3f0f65780b273f4444ea781929aa3ac9fbb1e5d64a9",
       "swift_line" : 486
     },
     {
       "canonical" : "use judgment to weigh every vital sign against its own ceiling and recommend a triage level:",
       "meridian_line" : 36,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/4d875d50cd7bfd5f789ab9a60512dbfcd08315de4a3fcaf9f08cb1df7d2fd45b",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/99839ea13e9a3463a11592acdadb2c1300d702669f9e7392d424b4ba63aa8f45",
       "swift_line" : 489
-    },
-    {
-      "canonical" : "ask the user to choose between \"admit\", \"observe\", \"discharge\".",
-      "meridian_line" : 37,
-      "primitive" : "wait",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394",
-      "swift_line" : 513
     },
     {
       "canonical" : "emit ask.choice with prompt = \"ask the user to choose between \\\"admit\\\", \\\"observe\\\", \\\"discharge\\\"\", options = \"admit, observe, discharge\".",
       "meridian_line" : 37,
       "primitive" : "emit",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/f756c4e13ffaa3990759ead03ce69a95f37035fd294ebadb4145217fd17102de",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/1b2ffd685719b572f144f2657690d47d7fb1a710676deba2bcd6a2ca0278b0cc",
+      "swift_line" : 513
+    },
+    {
+      "canonical" : "ask the user to choose between \"admit\", \"observe\", \"discharge\".",
+      "meridian_line" : 37,
+      "primitive" : "wait",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/branch.then\/ddbf297849678c144d23e2c7841ab8f9fb66fff7a656d6bc18fcc3795a544680",
       "swift_line" : 513
     },
     {
       "canonical" : "emit clinical.report with message = \"triage patient pass complete\".",
       "meridian_line" : 38,
       "primitive" : "emit",
-      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122",
+      "stable_step_path" : "\/TriagePatientPatient\/workflow\/procedure\/e16c73590257c510bc972ef6d91c7b23ecafe4e72db449e94fc7471b0c3ded50",
       "swift_line" : 522
     }
   ],

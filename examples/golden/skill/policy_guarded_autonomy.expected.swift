@@ -777,93 +777,93 @@ public struct PolicyGuardedAutonomyPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PolicyGuardedAutonomyPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/capture-the-entry-state/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
         do {
             do {
-                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/459866e5ef347dbef16e608520325d3900087c32baa1e4b3a74bb59691815f42") {
+                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/164d0bc8bfa5032a48191b2b135815f6653088052fb35f20ce71acbefd4dea42") {
                     _ = try await GuardedPlanRepair(runtime: runtime, pullRequest: pullRequest).run()
-                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/459866e5ef347dbef16e608520325d3900087c32baa1e4b3a74bb59691815f42", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/164d0bc8bfa5032a48191b2b135815f6653088052fb35f20ce71acbefd4dea42", state: state.snapshot())
                 }
             } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.host_policy_denied") {
-                try await runtime.recordRecoverEngaged(pattern: "planning.host_policy_denied", step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/cf7a1c8c4eef1c943fb20a07f5f1bae6e1726299fe39fcf7113027e9a66dc620")
-                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/89d47c53b9499a31f3fd9b01c72eb46e9e07bc150d7eb3ad650c955c6e433b9e") {
+                try await runtime.recordRecoverEngaged(pattern: "planning.host_policy_denied", step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.body/45a8dc999760de49471bd17772bee22846a2e532591b2932fb4f5c160f36a9b9")
+                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/88b0f7fe8d1908ee1a230f1900736a5a8ab7a2ca0229d50c2511dc44a449025f") {
                     try await runtime.emit(
                         event: "audit.note",
                         payload: [
                             "pr": state.get("pullRequest.number") ?? .null,
                             "reason": .string("planner action denied by host policy"),
                         ],
-                        step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/89d47c53b9499a31f3fd9b01c72eb46e9e07bc150d7eb3ad650c955c6e433b9e"
+                        step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/88b0f7fe8d1908ee1a230f1900736a5a8ab7a2ca0229d50c2511dc44a449025f"
                     )
-                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/89d47c53b9499a31f3fd9b01c72eb46e9e07bc150d7eb3ad650c955c6e433b9e", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/88b0f7fe8d1908ee1a230f1900736a5a8ab7a2ca0229d50c2511dc44a449025f", state: state.snapshot())
                 }
-                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/668c967fdaadbc8f891ab73766746d7f67bf395f5becc319dec9a70473c1a486") {
+                if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/ca7febf4071dd5605586e2b391e677f8181407c849a0423e6cccd3d5f6d8a233") {
                     try await runtime.emit(
                         event: "policy.denied",
                         payload: [
                             "pr": state.get("pullRequest.number") ?? .null,
                             "reason": .string("host_policy"),
                         ],
-                        step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/668c967fdaadbc8f891ab73766746d7f67bf395f5becc319dec9a70473c1a486"
+                        step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/ca7febf4071dd5605586e2b391e677f8181407c849a0423e6cccd3d5f6d8a233"
                     )
-                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/668c967fdaadbc8f891ab73766746d7f67bf395f5becc319dec9a70473c1a486", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/ca7febf4071dd5605586e2b391e677f8181407c849a0423e6cccd3d5f6d8a233", state: state.snapshot())
                 }
             }
         } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.tool_out_of_scope") {
-            try await runtime.recordRecoverEngaged(pattern: "planning.tool_out_of_scope", step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/521ba6718e27ead0bcd1ffc43c73c8ac1c1a7bc3cf879f2d2ffcc699211e9234")
-            if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/c4fa2127643a7f1f18584096d5d5d7f00488029513505c6050b28bf860b6bf44") {
+            try await runtime.recordRecoverEngaged(pattern: "planning.tool_out_of_scope", step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/3e6f2fdfc22fe27084823b6b07d27a78c22f662c475bcba263f7e40d3eb14315")
+            if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/5e644ff4ab49309f43087d6b238910cf3d025d3934e69407100509cc79fb1f57") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("planner proposed an out-of-scope tool"),
                     ],
-                    step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/c4fa2127643a7f1f18584096d5d5d7f00488029513505c6050b28bf860b6bf44"
+                    step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/5e644ff4ab49309f43087d6b238910cf3d025d3934e69407100509cc79fb1f57"
                 )
-                try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/c4fa2127643a7f1f18584096d5d5d7f00488029513505c6050b28bf860b6bf44", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/5e644ff4ab49309f43087d6b238910cf3d025d3934e69407100509cc79fb1f57", state: state.snapshot())
             }
-            if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/512a26ef44f3f683b0e09a8251d01c3195cf195a1808863110359b6232848f61") {
+            if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/9e2bb32322af69459c0954bc08ca3164d07b441501cfa0b3d86227297fef415f") {
                 try await runtime.emit(
                     event: "policy.scoped_out",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                     ],
-                    step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/512a26ef44f3f683b0e09a8251d01c3195cf195a1808863110359b6232848f61"
+                    step: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/9e2bb32322af69459c0954bc08ca3164d07b441501cfa0b3d86227297fef415f"
                 )
-                try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/512a26ef44f3f683b0e09a8251d01c3195cf195a1808863110359b6232848f61", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/hand-to-the-planner/procedure/recover.handler/9e2bb32322af69459c0954bc08ca3164d07b441501cfa0b3d86227297fef415f", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/PolicyGuardedAutonomyPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PolicyGuardedAutonomyPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/PolicyGuardedAutonomyPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PolicyGuardedAutonomyPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PolicyGuardedAutonomyPullRequest.complete")
@@ -931,7 +931,7 @@ public struct GuardedPlanRepair: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/GuardedPlanRepair/sub-workflow/procedure/6d800f000b3f1e5bec5e1b574bcaa97df2da38f480e749bc683e125fbc863cca"
+            step: "/GuardedPlanRepair/sub-workflow/procedure/69d904efce3d446da682067f44a890a59ba235bf5764a3dbea2038ebec32bd40"
         )
         for (__key, __value) in __meridianProseResults_L32 {
             state.bind(__key, __value)

@@ -462,77 +462,77 @@ public struct ReviewRequestsReviewerAccessRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ReviewRequestsReviewerAccessRequest", parameters: [:])
 
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/rules-steps/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/rules-steps/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669") {
             // L33
             try await runtime.assert((MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Permission required: A reviewer may approve access requests whose queue position is at most 3")
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/rules-steps/procedure/c91fad6e9e018e5007d6093ec73a6eeb54800cdd271b6b3cd37e3e4a18e4c353", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/rules-steps/procedure/f2b4c351f1a5958b4394132481d7ccad105e51ead997b641b44a016dd2e17669", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/guarantees/invariants/8bd1dc391be67a2f49d97f8a2cada8630c84f0750decec99a5ca20fee503694a") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/guarantees/invariants/eb9f27f55766eb6ac9aef68eb88b04c6637024696842699bbec8512100958ccc") {
             // L52
             try await runtime.assert(((((state.get("accessRequests")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("pending"))) }).count <= 20)) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Expected at most 20 access requests whose status is \"pending\"")
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/guarantees/invariants/8bd1dc391be67a2f49d97f8a2cada8630c84f0750decec99a5ca20fee503694a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/guarantees/invariants/eb9f27f55766eb6ac9aef68eb88b04c6637024696842699bbec8512100958ccc", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0") {
             // L36
             let accessRequests = try await runtime.invoke(
                 tool: "request.list",
                 args: [
                     "status": .string("pending"),
                 ],
-                step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+                step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "request.list")
             )
             state.bind("accessRequests", accessRequests)
 
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/fd9bc1850e3919f213b4375c42cee9f8f7a1c026c314a86de402d9e070850b91") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/1e8eccf96510d0f541be0132fce1a500095be1a2223a4cef76fa25a784786d33") {
             // L37
             try await runtime.assert(((((state.get("accessRequests")?.asList ?? []).filter { __e in (meridianDef_AccessRequest_pending(__e)) }).count >= 1)) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Expected at least 1 pending access request")
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/fd9bc1850e3919f213b4375c42cee9f8f7a1c026c314a86de402d9e070850b91", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/1e8eccf96510d0f541be0132fce1a500095be1a2223a4cef76fa25a784786d33", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/0f65d1b125dd2c8d1600e57224b388504cb279e140fe2745ecd03ec1a0af02ab") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/c089112f443ff653dd9ba1991acc406dc33713f1c5a7c0b4c22b5d8da5b0d125") {
             // L38
             try await runtime.assert(((((state.get("accessRequests")?.asList ?? []).filter { __e in (meridianDef_AccessRequest_pending(__e)) }).count <= 20)) || (MeridianComparison.le(state.get("queuePosition"), .number(Decimal(3)))), message: "Expected at most 20 pending access requests")
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/0f65d1b125dd2c8d1600e57224b388504cb279e140fe2745ecd03ec1a0af02ab", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/c089112f443ff653dd9ba1991acc406dc33713f1c5a7c0b4c22b5d8da5b0d125", state: state.snapshot())
         }
         // L39
         let __meridianSrc_0_5 = ((state.get("accessrequests"))?.asList ?? []).filter { __e in (MeridianComparison.le(__e.member("queuePosition"), .number(Decimal(3)))) }
-        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/2121dc77d3d6c9689c362acbd5fb3de2d6556fcb8df732c685f819ac3aa3d6ce")
+        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/d027d036eaec9fe3bfba855a4cb419cfcfb084a30541d4299f05fc667362ba05")
         for (__meridianLoopIndex_0_5, accessRequest) in __meridianSrc_0_5.enumerated() {
             let __meridianLoopLabel_0_5 = "progress:0.5:iteration:\(__meridianLoopIndex_0_5)"
             if __meridianShouldRun(__meridianLoopLabel_0_5) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/2121dc77d3d6c9689c362acbd5fb3de2d6556fcb8df732c685f819ac3aa3d6ce")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/d027d036eaec9fe3bfba855a4cb419cfcfb084a30541d4299f05fc667362ba05")
             state.bind("accessRequest", accessRequest)
-                if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6") {
+                if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d") {
                     // L40
                     let auditEntry = try await runtime.invoke(
                         tool: "audit.log",
                         args: [
                             "request": state.get("accessRequest") ?? .null,
                         ],
-                        step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6",
+                        step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit.log")
                     )
                     state.bind("auditEntry", auditEntry)
 
-                    try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/537550b9a642af34ef3df913e5939230d9d90aff3994665ede6a8aee442bece6", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/iterate.body/ead132d4a933f1dd288ec859d31545f192c8f65339e260ca529491efcb110a5d", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianSrc_0_5.count, step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/2121dc77d3d6c9689c362acbd5fb3de2d6556fcb8df732c685f819ac3aa3d6ce")
+        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianSrc_0_5.count, step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/d027d036eaec9fe3bfba855a4cb419cfcfb084a30541d4299f05fc667362ba05")
 
-        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/01101df8202c9f4b795badf284e523f0462e81ead3c52906cca474eb717819ca") {
+        if __meridianShouldRun("/ReviewRequestsReviewerAccessRequest/workflow/procedure/2dd36b8e7abcb024ed1bfce24c11f92051ba5aa9da4f5dfa50fa6833944d70eb") {
             // L41
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("review requests pass complete"),
                 ],
-                step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/01101df8202c9f4b795badf284e523f0462e81ead3c52906cca474eb717819ca"
+                step: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/2dd36b8e7abcb024ed1bfce24c11f92051ba5aa9da4f5dfa50fa6833944d70eb"
             )
-            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/01101df8202c9f4b795badf284e523f0462e81ead3c52906cca474eb717819ca", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReviewRequestsReviewerAccessRequest/workflow/procedure/2dd36b8e7abcb024ed1bfce24c11f92051ba5aa9da4f5dfa50fa6833944d70eb", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ReviewRequestsReviewerAccessRequest.complete")
@@ -592,12 +592,12 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReviewaccessrequestsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554") {
+        if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/57cdc82b1d2093e2709ce58d760c52a5bcbe2e23b95a495210582be689662386") {
             // L1
             try await runtime.wait(.event("reviewAccessRequests", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReviewaccessrequestsFires/root/procedure/7f1576d68c45c3942ffb5fec4ec74dd6ba5b24a8b317a56a520be610b40fd554", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewaccessrequestsFires/root/procedure/57cdc82b1d2093e2709ce58d760c52a5bcbe2e23b95a495210582be689662386", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661") {
+        if __meridianShouldRun("/WhenReviewaccessrequestsFires/root/procedure/9cac6e1d4c2430bda23dcc79e3e37b97d58f758cf62e0386ce05e02532314509") {
             // L1
             try await runtime.emit(
                 event: "trigger.reviewAccessRequests.fired",
@@ -605,9 +605,9 @@ public struct WhenReviewaccessrequestsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("review access requests"),
                 ],
-                step: "/WhenReviewaccessrequestsFires/root/procedure/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661"
+                step: "/WhenReviewaccessrequestsFires/root/procedure/9cac6e1d4c2430bda23dcc79e3e37b97d58f758cf62e0386ce05e02532314509"
             )
-            try await runtime.checkpoint(label: "/WhenReviewaccessrequestsFires/root/procedure/4b6634052bd78371e8a9b3aed1a0a91277924d2660f6d6671db55e0950163661", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewaccessrequestsFires/root/procedure/9cac6e1d4c2430bda23dcc79e3e37b97d58f758cf62e0386ce05e02532314509", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReviewaccessrequestsFires.complete")
@@ -667,12 +667,12 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReviewpendingrequestsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408") {
+        if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/8de5f741206395964a1ec5e34824e430bb20135f8aee920ed1bbbaeb42fb2feb") {
             // L1
             try await runtime.wait(.event("reviewPendingRequests", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReviewpendingrequestsFires/root/procedure/fe99e43bba10e568318db038dd2a9fe8e613dab714d1fda34a5be9f55928e408", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewpendingrequestsFires/root/procedure/8de5f741206395964a1ec5e34824e430bb20135f8aee920ed1bbbaeb42fb2feb", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394") {
+        if __meridianShouldRun("/WhenReviewpendingrequestsFires/root/procedure/71f96626e3d41f2f483eca68058e3db8704af1a46ce6b239a6156d0f94c2e9d1") {
             // L1
             try await runtime.emit(
                 event: "trigger.reviewPendingRequests.fired",
@@ -680,9 +680,9 @@ public struct WhenReviewpendingrequestsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("review pending requests"),
                 ],
-                step: "/WhenReviewpendingrequestsFires/root/procedure/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394"
+                step: "/WhenReviewpendingrequestsFires/root/procedure/71f96626e3d41f2f483eca68058e3db8704af1a46ce6b239a6156d0f94c2e9d1"
             )
-            try await runtime.checkpoint(label: "/WhenReviewpendingrequestsFires/root/procedure/fd02cd28a30781615a91e809968b39cc9ccad3b3ac156b123fe7e9a5ffec9394", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewpendingrequestsFires/root/procedure/71f96626e3d41f2f483eca68058e3db8704af1a46ce6b239a6156d0f94c2e9d1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReviewpendingrequestsFires.complete")
@@ -742,12 +742,12 @@ public struct WhenWorkrequestqueueFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenWorkrequestqueueFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f") {
+        if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/b7f9d007090cd636be30a3ecb223dcb7f80c2e202e3c6da066ab8af2dfd47752") {
             // L1
             try await runtime.wait(.event("workRequestQueue", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenWorkrequestqueueFires/root/procedure/b1c131bbc41bb2a01d3d9f22af2538b4ad1d5f2686cc7aed96e8a2d9884ac95f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWorkrequestqueueFires/root/procedure/b7f9d007090cd636be30a3ecb223dcb7f80c2e202e3c6da066ab8af2dfd47752", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05") {
+        if __meridianShouldRun("/WhenWorkrequestqueueFires/root/procedure/d35250251c57f6c9bff364b03390a7e63a1f648e16937db296f505464e1475d3") {
             // L1
             try await runtime.emit(
                 event: "trigger.workRequestQueue.fired",
@@ -755,9 +755,9 @@ public struct WhenWorkrequestqueueFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("work the request queue"),
                 ],
-                step: "/WhenWorkrequestqueueFires/root/procedure/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05"
+                step: "/WhenWorkrequestqueueFires/root/procedure/d35250251c57f6c9bff364b03390a7e63a1f648e16937db296f505464e1475d3"
             )
-            try await runtime.checkpoint(label: "/WhenWorkrequestqueueFires/root/procedure/f3cb1b80504d4012a851ee973c8ba9b401d8dfcfeb93d3d0cb08a165fa73ee05", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenWorkrequestqueueFires/root/procedure/d35250251c57f6c9bff364b03390a7e63a1f648e16937db296f505464e1475d3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenWorkrequestqueueFires.complete")

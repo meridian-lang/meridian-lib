@@ -453,7 +453,7 @@ public struct CascadeClose: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "CascadeClose", parameters: [:])
 
-        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480") {
+        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/06d0ef78c290cf63c94b82af133f443529dc71895b1e2ee46cd8d79770598bec") {
             // L16
             // snapshot orphaned audit rows
             _ = try await runtime.invoke(
@@ -461,46 +461,46 @@ public struct CascadeClose: MeridianWorkflow {
                 args: [
                     "command": .string("psql -c \"select key,table_name from audit_rows where status='orphaned'\" --csv"),
                 ],
-                step: "/CascadeClose/transaction-body/procedure/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480",
+                step: "/CascadeClose/transaction-body/procedure/06d0ef78c290cf63c94b82af133f443529dc71895b1e2ee46cd8d79770598bec",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/46446aa2fccadd087d9d58d123062cde195b38a84bc459302f62a4b7e67ce480", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/06d0ef78c290cf63c94b82af133f443529dc71895b1e2ee46cd8d79770598bec", state: state.snapshot())
         }
-        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c") {
+        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/fd540791d9d7754090a6caccf6219f2232900ace40b676338373b55c80872701") {
             // L17
             let auditRows = try await runtime.invoke(
                 tool: "audit_row.list",
                 args: [
                     "status": .string("orphaned"),
                 ],
-                step: "/CascadeClose/transaction-body/procedure/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c",
+                step: "/CascadeClose/transaction-body/procedure/fd540791d9d7754090a6caccf6219f2232900ace40b676338373b55c80872701",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "audit_row.list")
             )
             state.bind("auditRows", auditRows)
 
-            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/a4f9e4029cebe0ad3c948026d76f6b0aa104386d899db4b7a10022043747a05c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/fd540791d9d7754090a6caccf6219f2232900ace40b676338373b55c80872701", state: state.snapshot())
         }
-        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/ec2289974229065919e891c39d1f0ce0f89fe732af798834d2ee8307b4c42e59") {
+        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/98c791d4338bc675f16fb9789baf028e9d2c76e5a20a3217885576f0d9486674") {
             // L18
             try await runtime.assert((!((state.get("auditRows")?.asList ?? []).filter { __e in (meridianDef_AuditRow_orphaned(__e)) }).isEmpty), message: "Expected any orphaned audit rows")
-            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/ec2289974229065919e891c39d1f0ce0f89fe732af798834d2ee8307b4c42e59", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/98c791d4338bc675f16fb9789baf028e9d2c76e5a20a3217885576f0d9486674", state: state.snapshot())
         }
-        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/baa143e9b9beb2018f7f8b44003a07c6a50aa6df2403a206725de5f1963db949") {
+        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/f670c04bf5c8e954c20fac7095e896b1eac61f04b0e4f341aa28900bc2584386") {
             // L19
             try await runtime.assert((((state.get("auditRows")?.asList ?? []).filter { __e in (meridianDef_AuditRow_orphaned(__e)) }).count <= 200), message: "Expected at most 200 orphaned audit rows")
-            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/baa143e9b9beb2018f7f8b44003a07c6a50aa6df2403a206725de5f1963db949", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/f670c04bf5c8e954c20fac7095e896b1eac61f04b0e4f341aa28900bc2584386", state: state.snapshot())
         }
-        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e") {
+        if __meridianShouldRun("/CascadeClose/transaction-body/procedure/596c1279487597300671af77ff3cc948423b597788fa0fc1067058e86b4a21ac") {
             // L20
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("orphaned audit rows recorded for deterministic close"),
                 ],
-                step: "/CascadeClose/transaction-body/procedure/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e"
+                step: "/CascadeClose/transaction-body/procedure/596c1279487597300671af77ff3cc948423b597788fa0fc1067058e86b4a21ac"
             )
-            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/5d6e0e462ba2cf726c0afce208a95cdff1ddf88013f184a053b82c7665ada75e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CascadeClose/transaction-body/procedure/596c1279487597300671af77ff3cc948423b597788fa0fc1067058e86b4a21ac", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "CascadeClose.complete")
@@ -560,12 +560,12 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCascadecloseFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0") {
+        if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/09aca6b343e35bbcaafdc5a6b21ebc7b0d1a8c6c92ede2871c27b224fc54a6be") {
             // L1
             try await runtime.wait(.event("cascadeClose", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCascadecloseFires/root/procedure/cf519df1445dfc0eabfee79ff037b6de7566eb66a59bb1bcc2530ad582bd75d0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCascadecloseFires/root/procedure/09aca6b343e35bbcaafdc5a6b21ebc7b0d1a8c6c92ede2871c27b224fc54a6be", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111") {
+        if __meridianShouldRun("/WhenCascadecloseFires/root/procedure/219f6c26d6bcd860780203dbaf6e09e1900f33618f801b64e4023ba5f2e68ff4") {
             // L1
             try await runtime.emit(
                 event: "trigger.cascadeClose.fired",
@@ -573,9 +573,9 @@ public struct WhenCascadecloseFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("cascade close"),
                 ],
-                step: "/WhenCascadecloseFires/root/procedure/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111"
+                step: "/WhenCascadecloseFires/root/procedure/219f6c26d6bcd860780203dbaf6e09e1900f33618f801b64e4023ba5f2e68ff4"
             )
-            try await runtime.checkpoint(label: "/WhenCascadecloseFires/root/procedure/1f2e77993f006825a6bbe6988042c354bd2eb4053bf6c4b90adfa927e1ef5111", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCascadecloseFires/root/procedure/219f6c26d6bcd860780203dbaf6e09e1900f33618f801b64e4023ba5f2e68ff4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCascadecloseFires.complete")
@@ -635,12 +635,12 @@ public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenOrphanedauditrowsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f") {
+        if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/3423b49c6986eb09f4c29fa7af2cc2e96da5c6faa664921dd98f8fb4cb1bd08d") {
             // L1
             try await runtime.wait(.event("orphanedAuditRows", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenOrphanedauditrowsFires/root/procedure/d216b981bcb42789599c935f0ecfa99acc6584f6e89319df340c991576dfbe3f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenOrphanedauditrowsFires/root/procedure/3423b49c6986eb09f4c29fa7af2cc2e96da5c6faa664921dd98f8fb4cb1bd08d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3") {
+        if __meridianShouldRun("/WhenOrphanedauditrowsFires/root/procedure/a6b8724be8b50bde79f73636dfb2aada3a9ef4d2fd2945bd90cceeeb0368748f") {
             // L1
             try await runtime.emit(
                 event: "trigger.orphanedAuditRows.fired",
@@ -648,9 +648,9 @@ public struct WhenOrphanedauditrowsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("orphaned audit rows"),
                 ],
-                step: "/WhenOrphanedauditrowsFires/root/procedure/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3"
+                step: "/WhenOrphanedauditrowsFires/root/procedure/a6b8724be8b50bde79f73636dfb2aada3a9ef4d2fd2945bd90cceeeb0368748f"
             )
-            try await runtime.checkpoint(label: "/WhenOrphanedauditrowsFires/root/procedure/02045fc5cd3c9258042b7d69b9c7ac0f1f9528ddb9fe2f129b7a7d5c1e3ea8a3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenOrphanedauditrowsFires/root/procedure/a6b8724be8b50bde79f73636dfb2aada3a9ef4d2fd2945bd90cceeeb0368748f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenOrphanedauditrowsFires.complete")

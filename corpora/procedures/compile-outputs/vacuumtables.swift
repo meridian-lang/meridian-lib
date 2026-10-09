@@ -453,31 +453,31 @@ public struct VacuumTables: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "VacuumTables", parameters: [:])
 
-        if __meridianShouldRun("/VacuumTables/guarantees/invariants/1e4742e040a0503ef480cf9189203f3eb2270fe142b1491d1257065977405a88") {
+        if __meridianShouldRun("/VacuumTables/guarantees/invariants/7d016ec6d4be31044ba165081d158da3cde65e1b638af13e0b1414ff26a2e971") {
             // L26
             try await runtime.assert(((state.get("databaseTables")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all database tables have a name")
-            try await runtime.checkpoint(label: "/VacuumTables/guarantees/invariants/1e4742e040a0503ef480cf9189203f3eb2270fe142b1491d1257065977405a88", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VacuumTables/guarantees/invariants/7d016ec6d4be31044ba165081d158da3cde65e1b638af13e0b1414ff26a2e971", state: state.snapshot())
         }
-        if __meridianShouldRun("/VacuumTables/procedure/procedure/e24999af416db76012cb2a84f958e90962af7900dd397f320a18136c5d6f4338") {
+        if __meridianShouldRun("/VacuumTables/procedure/procedure/fce043799849a5511083ad09694d95d3db4bccb38849577ed50113b72ab14f80") {
             // L16
-            let tables = try await runtime.invoke(tool: "table.list", args: [:], step: "/VacuumTables/procedure/procedure/e24999af416db76012cb2a84f958e90962af7900dd397f320a18136c5d6f4338", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "table.list"))
+            let tables = try await runtime.invoke(tool: "table.list", args: [:], step: "/VacuumTables/procedure/procedure/fce043799849a5511083ad09694d95d3db4bccb38849577ed50113b72ab14f80", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "table.list"))
             state.bind("tables", tables)
 
-            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/e24999af416db76012cb2a84f958e90962af7900dd397f320a18136c5d6f4338", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/fce043799849a5511083ad09694d95d3db4bccb38849577ed50113b72ab14f80", state: state.snapshot())
         }
-        if __meridianShouldRun("/VacuumTables/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4") {
+        if __meridianShouldRun("/VacuumTables/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157") {
             // L17
             let indexJobs = try await runtime.invoke(
                 tool: "index.list",
                 args: [
                     "status": .string("lagging"),
                 ],
-                step: "/VacuumTables/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4",
+                step: "/VacuumTables/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "index.list")
             )
             state.bind("indexJobs", indexJobs)
 
-            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157", state: state.snapshot())
         }
         // L18
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -485,80 +485,80 @@ public struct VacuumTables: MeridianWorkflow {
                 var state = state
                     // L19
                     let __meridianSrc_0_3_branch0_0 = ((state.get("tables"))?.asList ?? []).filter { __e in (MeridianComparison.gt(__e.member("rowCount"), Value.from(constants.vacuumRowThreshold))) }
-                    try await runtime.recordIterateStart(over: "state.get(\"tables\")", step: "/VacuumTables/procedure/procedure/simultaneously.branch/eb3dbb282474676efc421b5e9e6d454a3aa3a014559d39caf03cdef758e301ef")
+                    try await runtime.recordIterateStart(over: "state.get(\"tables\")", step: "/VacuumTables/procedure/procedure/simultaneously.branch/3dba74a0d64ff297f909841e948203090b933750cab0ffb0b9a072af4641f423")
                     for (__meridianLoopIndex_0_3_branch0_0, table) in __meridianSrc_0_3_branch0_0.enumerated() {
                         let __meridianLoopLabel_0_3_branch0_0 = "progress:0.3.branch0.0:iteration:\(__meridianLoopIndex_0_3_branch0_0)"
                         if __meridianShouldRun(__meridianLoopLabel_0_3_branch0_0) {
-                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_branch0_0, step: "/VacuumTables/procedure/procedure/simultaneously.branch/eb3dbb282474676efc421b5e9e6d454a3aa3a014559d39caf03cdef758e301ef")
+                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_branch0_0, step: "/VacuumTables/procedure/procedure/simultaneously.branch/3dba74a0d64ff297f909841e948203090b933750cab0ffb0b9a072af4641f423")
                         state.bind("table", table)
-                            if __meridianShouldRun("/VacuumTables/procedure/procedure/iterate.body/82617044ae1ee33267b0c9b63fdb82cfd3227bc032009b72c0f71ec80b238d15") {
+                            if __meridianShouldRun("/VacuumTables/procedure/procedure/iterate.body/2900a516e0777b6335262ad0595793b67f1d76b407d77bb21e3ac95336388c7f") {
                                 // L20
                                 let table = try await runtime.invoke(
                                     tool: "table.vacuum",
                                     args: [
                                         "table": state.get("table") ?? .null,
                                     ],
-                                    step: "/VacuumTables/procedure/procedure/iterate.body/82617044ae1ee33267b0c9b63fdb82cfd3227bc032009b72c0f71ec80b238d15",
+                                    step: "/VacuumTables/procedure/procedure/iterate.body/2900a516e0777b6335262ad0595793b67f1d76b407d77bb21e3ac95336388c7f",
                                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "table.vacuum")
                                 )
                                 state.bind("table", table)
 
-                                try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/iterate.body/82617044ae1ee33267b0c9b63fdb82cfd3227bc032009b72c0f71ec80b238d15", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/iterate.body/2900a516e0777b6335262ad0595793b67f1d76b407d77bb21e3ac95336388c7f", state: state.snapshot())
                             }
                             try await runtime.checkpoint(label: __meridianLoopLabel_0_3_branch0_0, state: state.snapshot())
                         }
                     }
-                    try await runtime.recordIterateEnd(over: "state.get(\"tables\")", count: __meridianSrc_0_3_branch0_0.count, step: "/VacuumTables/procedure/procedure/simultaneously.branch/eb3dbb282474676efc421b5e9e6d454a3aa3a014559d39caf03cdef758e301ef")
+                    try await runtime.recordIterateEnd(over: "state.get(\"tables\")", count: __meridianSrc_0_3_branch0_0.count, step: "/VacuumTables/procedure/procedure/simultaneously.branch/3dba74a0d64ff297f909841e948203090b933750cab0ffb0b9a072af4641f423")
 
             }
             group.addTask {
                 var state = state
                     // L21
                     let __meridianColl_0_3_branch1_0 = (state.get("indexjobs")?.asList ?? [])
-                    try await runtime.recordIterateStart(over: "state.get(\"indexjobs\")", step: "/VacuumTables/procedure/procedure/simultaneously.branch/22ab117b9ae1991a20a17f2e0ae9fc5b397b3052afcb39ed7d41019a24871f66")
+                    try await runtime.recordIterateStart(over: "state.get(\"indexjobs\")", step: "/VacuumTables/procedure/procedure/simultaneously.branch/c1ecf405d9c90cc3f39c490c0cca5967a15a50ab3e488f94d4a42a0ca4ad3490")
                     for (__meridianLoopIndex_0_3_branch1_0, indexJob) in __meridianColl_0_3_branch1_0.enumerated() {
                         let __meridianLoopLabel_0_3_branch1_0 = "progress:0.3.branch1.0:iteration:\(__meridianLoopIndex_0_3_branch1_0)"
                         if __meridianShouldRun(__meridianLoopLabel_0_3_branch1_0) {
-                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_branch1_0, step: "/VacuumTables/procedure/procedure/simultaneously.branch/22ab117b9ae1991a20a17f2e0ae9fc5b397b3052afcb39ed7d41019a24871f66")
+                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_branch1_0, step: "/VacuumTables/procedure/procedure/simultaneously.branch/c1ecf405d9c90cc3f39c490c0cca5967a15a50ab3e488f94d4a42a0ca4ad3490")
                         state.bind("indexJob", indexJob)
                             // L22
                             Task {
                                 var state = state
-                                if __meridianShouldRun("/VacuumTables/procedure/procedure/simultaneously.branch/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c") {
+                                if __meridianShouldRun("/VacuumTables/procedure/procedure/simultaneously.branch/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e") {
                                     // L22
                                     let job = try await runtime.invoke(
                                         tool: "index.rebuild",
                                         args: [
                                             "index job": state.get("indexJob") ?? .null,
                                         ],
-                                        step: "/VacuumTables/procedure/procedure/simultaneously.branch/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c",
+                                        step: "/VacuumTables/procedure/procedure/simultaneously.branch/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e",
                                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "index.rebuild")
                                     )
                                     state.bind("job", job)
 
-                                    try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/simultaneously.branch/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c", state: state.snapshot())
+                                    try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/simultaneously.branch/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e", state: state.snapshot())
                                 }
                             }
 
                             try await runtime.checkpoint(label: __meridianLoopLabel_0_3_branch1_0, state: state.snapshot())
                         }
                     }
-                    try await runtime.recordIterateEnd(over: "state.get(\"indexjobs\")", count: __meridianColl_0_3_branch1_0.count, step: "/VacuumTables/procedure/procedure/simultaneously.branch/22ab117b9ae1991a20a17f2e0ae9fc5b397b3052afcb39ed7d41019a24871f66")
+                    try await runtime.recordIterateEnd(over: "state.get(\"indexjobs\")", count: __meridianColl_0_3_branch1_0.count, step: "/VacuumTables/procedure/procedure/simultaneously.branch/c1ecf405d9c90cc3f39c490c0cca5967a15a50ab3e488f94d4a42a0ca4ad3490")
 
             }
             try await group.waitForAll()
         }
 
-        if __meridianShouldRun("/VacuumTables/procedure/procedure/fb8be05c208b34ae505d94a3ea0f37ded90faa95d2b58f47ebb90aa9924fe2e9") {
+        if __meridianShouldRun("/VacuumTables/procedure/procedure/19fb371049585497cd8799d4139a45e877207b47d0386a7f198faa8df8badc61") {
             // L23
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("table maintenance pass complete"),
                 ],
-                step: "/VacuumTables/procedure/procedure/fb8be05c208b34ae505d94a3ea0f37ded90faa95d2b58f47ebb90aa9924fe2e9"
+                step: "/VacuumTables/procedure/procedure/19fb371049585497cd8799d4139a45e877207b47d0386a7f198faa8df8badc61"
             )
-            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/fb8be05c208b34ae505d94a3ea0f37ded90faa95d2b58f47ebb90aa9924fe2e9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/VacuumTables/procedure/procedure/19fb371049585497cd8799d4139a45e877207b47d0386a7f198faa8df8badc61", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "VacuumTables.complete")
@@ -618,12 +618,12 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenVacuumbloatedtablesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48") {
+        if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/78b04f01d32f9cd1937c1890f213342d00b03b3f01aafb5a8b74fda01164ec52") {
             // L1
             try await runtime.wait(.event("vacuumBloatedTables", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenVacuumbloatedtablesFires/root/procedure/21c981327d7cf5cec8002dddfc9927eb32126339dd9d13ac0f4a589f4923bb48", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVacuumbloatedtablesFires/root/procedure/78b04f01d32f9cd1937c1890f213342d00b03b3f01aafb5a8b74fda01164ec52", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/80117d45da4366a7307ddf4dfbf787161b067f3335b1e12cb16bb2beaf0265e3") {
+        if __meridianShouldRun("/WhenVacuumbloatedtablesFires/root/procedure/4a166d990f5d138058f989eb52f110b018a1a94c6fed3e5e322c8270c8f53bc9") {
             // L1
             try await runtime.emit(
                 event: "trigger.vacuumBloatedTables.fired",
@@ -631,9 +631,9 @@ public struct WhenVacuumbloatedtablesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("vacuum bloated tables"),
                 ],
-                step: "/WhenVacuumbloatedtablesFires/root/procedure/80117d45da4366a7307ddf4dfbf787161b067f3335b1e12cb16bb2beaf0265e3"
+                step: "/WhenVacuumbloatedtablesFires/root/procedure/4a166d990f5d138058f989eb52f110b018a1a94c6fed3e5e322c8270c8f53bc9"
             )
-            try await runtime.checkpoint(label: "/WhenVacuumbloatedtablesFires/root/procedure/80117d45da4366a7307ddf4dfbf787161b067f3335b1e12cb16bb2beaf0265e3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenVacuumbloatedtablesFires/root/procedure/4a166d990f5d138058f989eb52f110b018a1a94c6fed3e5e322c8270c8f53bc9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenVacuumbloatedtablesFires.complete")
@@ -693,12 +693,12 @@ public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRuntablemaintenanceFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246") {
+        if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/de105021cbde69cbd5a1525b48c3d23d67250244e8090a3606b13ece97f35330") {
             // L1
             try await runtime.wait(.event("runTableMaintenance", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRuntablemaintenanceFires/root/procedure/ae67c576fb21460c22d2ad0537a22db72a45e2bfd4f5517fc96d3a9fb4c21246", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuntablemaintenanceFires/root/procedure/de105021cbde69cbd5a1525b48c3d23d67250244e8090a3606b13ece97f35330", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/f97e22ee059002750ae9af05281a2a44c1f10683e8b4773bec42f750c3892a4b") {
+        if __meridianShouldRun("/WhenRuntablemaintenanceFires/root/procedure/de9a5f2bfc088796fedff49c2901121cf762a7cd2b4038796fcbd4fe36fa9e25") {
             // L1
             try await runtime.emit(
                 event: "trigger.runTableMaintenance.fired",
@@ -706,9 +706,9 @@ public struct WhenRuntablemaintenanceFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run table maintenance"),
                 ],
-                step: "/WhenRuntablemaintenanceFires/root/procedure/f97e22ee059002750ae9af05281a2a44c1f10683e8b4773bec42f750c3892a4b"
+                step: "/WhenRuntablemaintenanceFires/root/procedure/de9a5f2bfc088796fedff49c2901121cf762a7cd2b4038796fcbd4fe36fa9e25"
             )
-            try await runtime.checkpoint(label: "/WhenRuntablemaintenanceFires/root/procedure/f97e22ee059002750ae9af05281a2a44c1f10683e8b4773bec42f750c3892a4b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuntablemaintenanceFires/root/procedure/de9a5f2bfc088796fedff49c2901121cf762a7cd2b4038796fcbd4fe36fa9e25", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRuntablemaintenanceFires.complete")

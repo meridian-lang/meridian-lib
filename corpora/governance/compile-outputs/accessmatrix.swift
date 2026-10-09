@@ -455,55 +455,55 @@ public struct AccessMatrix: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "AccessMatrix", parameters: [:])
 
-        if __meridianShouldRun("/AccessMatrix/guarantees/invariants/7c16c55cb20a9ef392b15c52d68dd0abaea4f0740e40062006769f0e162027f2") {
+        if __meridianShouldRun("/AccessMatrix/guarantees/invariants/55eea0983f4b3bb12c648932de5fddc153e60f7046f1a8fc5d4686795407a1fd") {
             // L62
             try await runtime.assert((((state.get("matrixReport"))?.description ?? "")).contains(("access-matrix")), message: "Expected the matrix report contains \"access-matrix\"")
-            try await runtime.checkpoint(label: "/AccessMatrix/guarantees/invariants/7c16c55cb20a9ef392b15c52d68dd0abaea4f0740e40062006769f0e162027f2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AccessMatrix/guarantees/invariants/55eea0983f4b3bb12c648932de5fddc153e60f7046f1a8fc5d4686795407a1fd", state: state.snapshot())
         }
         // L27
         state.bind("accessMatrix", Value.list([.record(["role": .string("admin"), "classification": .string("classified"), "outcome": .string("allow")]), .record(["role": .string("admin"), "classification": .string("public"), "outcome": .string("allow")]), .record(["role": .string("user"), "classification": .string("classified"), "outcome": .string("deny")]), .record(["role": .string("user"), "classification": .string("public"), "outcome": .string("allow")])]))
-        if __meridianShouldRun("/AccessMatrix/workflow-steps/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1") {
+        if __meridianShouldRun("/AccessMatrix/workflow-steps/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0") {
             // L44
             let accessRequests = try await runtime.invoke(
                 tool: "request.list",
                 args: [
                     "status": .string("pending"),
                 ],
-                step: "/AccessMatrix/workflow-steps/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+                step: "/AccessMatrix/workflow-steps/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "request.list")
             )
             state.bind("accessRequests", accessRequests)
 
-            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0", state: state.snapshot())
         }
         // L45
         state.bind("classifiedCount", Decimal(((state.get("accessRequests"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("pending"))) }.count))
-        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/617ad80eae23573b0559732aa396008fab1538a9370c4fc6ea7dfea718327cb4") {
+        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/8be77338a83004c7721d8e9aaa8ec70b389a26992ae15d20444c42219b016253") {
             // L49
             try await runtime.emit(
                 event: "governance.audit",
                 payload: [
                     "body": state.get("matrixReport") ?? .null,
                 ],
-                step: "/AccessMatrix/workflow-steps-2/procedure/617ad80eae23573b0559732aa396008fab1538a9370c4fc6ea7dfea718327cb4"
+                step: "/AccessMatrix/workflow-steps-2/procedure/8be77338a83004c7721d8e9aaa8ec70b389a26992ae15d20444c42219b016253"
             )
-            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/617ad80eae23573b0559732aa396008fab1538a9370c4fc6ea7dfea718327cb4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/8be77338a83004c7721d8e9aaa8ec70b389a26992ae15d20444c42219b016253", state: state.snapshot())
         }
-        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/78a42a0c9c678f7540c16de51f753700072ee8ee488926a5698684ad9b1746cb") {
+        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/3a568959234a988a9495bb6b7c232850d924ea7b59895dcc99f206372c942934") {
             // L50
             try await runtime.assert(MeridianComparison.ge(state.get("classifiedCount"), .number(Decimal(0))), message: "Expected the classified count is at least 0")
-            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/78a42a0c9c678f7540c16de51f753700072ee8ee488926a5698684ad9b1746cb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/3a568959234a988a9495bb6b7c232850d924ea7b59895dcc99f206372c942934", state: state.snapshot())
         }
-        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/c77dd477bc654227d34a9947a5c6ae7b33a6a79a00bd54689cb40f7a33b04152") {
+        if __meridianShouldRun("/AccessMatrix/workflow-steps-2/procedure/bef1b50f5f134eb676e79e75930e158bbfb63d6a4c9446a1ca64f0fc5c0870e0") {
             // L51
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("access matrix pass complete"),
                 ],
-                step: "/AccessMatrix/workflow-steps-2/procedure/c77dd477bc654227d34a9947a5c6ae7b33a6a79a00bd54689cb40f7a33b04152"
+                step: "/AccessMatrix/workflow-steps-2/procedure/bef1b50f5f134eb676e79e75930e158bbfb63d6a4c9446a1ca64f0fc5c0870e0"
             )
-            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/c77dd477bc654227d34a9947a5c6ae7b33a6a79a00bd54689cb40f7a33b04152", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AccessMatrix/workflow-steps-2/procedure/bef1b50f5f134eb676e79e75930e158bbfb63d6a4c9446a1ca64f0fc5c0870e0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "AccessMatrix.complete")
@@ -563,12 +563,12 @@ public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRenderaccessmatrixFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe") {
+        if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/86607c2a07f91ab27ff28431d06f976f92af34f6c17ead8d8c628faad7e526ec") {
             // L1
             try await runtime.wait(.event("renderAccessMatrix", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRenderaccessmatrixFires/root/procedure/a7d1ec003747ff1fec775cb828ad9adadc7a4aa3d8123f0bf94c437192213ffe", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderaccessmatrixFires/root/procedure/86607c2a07f91ab27ff28431d06f976f92af34f6c17ead8d8c628faad7e526ec", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03") {
+        if __meridianShouldRun("/WhenRenderaccessmatrixFires/root/procedure/ba7a076fd1e03625b0a0682e57f7ed59aa99ce743ef8ce976054a713d80d9867") {
             // L1
             try await runtime.emit(
                 event: "trigger.renderAccessMatrix.fired",
@@ -576,9 +576,9 @@ public struct WhenRenderaccessmatrixFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("render access matrix"),
                 ],
-                step: "/WhenRenderaccessmatrixFires/root/procedure/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03"
+                step: "/WhenRenderaccessmatrixFires/root/procedure/ba7a076fd1e03625b0a0682e57f7ed59aa99ce743ef8ce976054a713d80d9867"
             )
-            try await runtime.checkpoint(label: "/WhenRenderaccessmatrixFires/root/procedure/100df55f09a0aa4bef45a75a6a9cdc3848bea5e3f125505735f91bc808e60a03", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderaccessmatrixFires/root/procedure/ba7a076fd1e03625b0a0682e57f7ed59aa99ce743ef8ce976054a713d80d9867", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRenderaccessmatrixFires.complete")
@@ -638,12 +638,12 @@ public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenPublishaccessmatrixFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882") {
+        if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/91adaf5a531f00730f31d224cdce6f5bc670148999d99733f956f28d1a7c7b51") {
             // L1
             try await runtime.wait(.event("publishAccessMatrix", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPublishaccessmatrixFires/root/procedure/10b9a619cedadb16982ce9f34e7a31a6f861e932888aa47a97729b0849c83882", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishaccessmatrixFires/root/procedure/91adaf5a531f00730f31d224cdce6f5bc670148999d99733f956f28d1a7c7b51", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab") {
+        if __meridianShouldRun("/WhenPublishaccessmatrixFires/root/procedure/db70de455c83c11b005a02aa21d036e89b3914520ef041db2f42eaabf29dbf56") {
             // L1
             try await runtime.emit(
                 event: "trigger.publishAccessMatrix.fired",
@@ -651,9 +651,9 @@ public struct WhenPublishaccessmatrixFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("publish access matrix"),
                 ],
-                step: "/WhenPublishaccessmatrixFires/root/procedure/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab"
+                step: "/WhenPublishaccessmatrixFires/root/procedure/db70de455c83c11b005a02aa21d036e89b3914520ef041db2f42eaabf29dbf56"
             )
-            try await runtime.checkpoint(label: "/WhenPublishaccessmatrixFires/root/procedure/4f7b9a6c2b056b2291c0ceb4bb7783c6b6e54821488e7c0cb4fd86ac932023ab", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishaccessmatrixFires/root/procedure/db70de455c83c11b005a02aa21d036e89b3914520ef041db2f42eaabf29dbf56", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPublishaccessmatrixFires.complete")
@@ -713,12 +713,12 @@ public struct WhenGenerateauditmatrixFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenGenerateauditmatrixFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232") {
+        if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/4df0eda2e50ad3c2e8eba5e809822682adc8a2dfc0e7aedb7160b9e745b71321") {
             // L1
             try await runtime.wait(.event("generateAuditMatrix", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGenerateauditmatrixFires/root/procedure/71ab98f506445040a8766c4e83f35d60b4ddd3fd6a81463cc43c771f8b216232", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGenerateauditmatrixFires/root/procedure/4df0eda2e50ad3c2e8eba5e809822682adc8a2dfc0e7aedb7160b9e745b71321", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a") {
+        if __meridianShouldRun("/WhenGenerateauditmatrixFires/root/procedure/370f3ec319999646f7514a788e5d9bb9a2250c84d712f96fadf3662594266fa4") {
             // L1
             try await runtime.emit(
                 event: "trigger.generateAuditMatrix.fired",
@@ -726,9 +726,9 @@ public struct WhenGenerateauditmatrixFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("generate the audit matrix"),
                 ],
-                step: "/WhenGenerateauditmatrixFires/root/procedure/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a"
+                step: "/WhenGenerateauditmatrixFires/root/procedure/370f3ec319999646f7514a788e5d9bb9a2250c84d712f96fadf3662594266fa4"
             )
-            try await runtime.checkpoint(label: "/WhenGenerateauditmatrixFires/root/procedure/1dd2a9b8d51b72c8a002c9ba51aef5b01dfca174138f66edc89d6718fcf4674a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGenerateauditmatrixFires/root/procedure/370f3ec319999646f7514a788e5d9bb9a2250c84d712f96fadf3662594266fa4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGenerateauditmatrixFires.complete")

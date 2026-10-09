@@ -777,88 +777,88 @@ public struct MergeConflictPlaybookPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "MergeConflictPlaybookPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/MergeConflictPlaybookPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/MergeConflictPlaybookPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/snapshot/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57") {
+        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/snapshot/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0") {
             let mergeStatus = try await runtime.invoke(
                 tool: "getMergeStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/MergeConflictPlaybookPullRequest/snapshot/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57",
+                step: "/MergeConflictPlaybookPullRequest/snapshot/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getMergeStatus")
             )
             state.bind("mergeStatus", mergeStatus)
 
-            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/snapshot/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/snapshot/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0", state: state.snapshot())
         }
         if MeridianComparison.eq(state.get("mergeStatus"), .string("behind")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"mergeStatus\"), .string(\"behind\"))", into: "then", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/4aa27c81707869e9eead39738e948556aaf90dd175a267ffa54c0979a0ea1ac6")
-            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/938e7ade9ca31d6ea328d52855f498ed7b03860555f821b5e1d77a0f997ca533") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"mergeStatus\"), .string(\"behind\"))", into: "then", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/fc881e45bf120eb303d0c848b11e2057c8f922bbcfd3fc583806a0594e411b24")
+            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/d72d6e5dbae41a5f38d70451f272326c91a5f7f6f091dbe8db1738ae80fd1efd") {
                 let branch = try await runtime.invoke(
                     tool: "syncBranch",
                     args: [
                         "branch": state.get("pullRequest.branch") ?? .null,
                     ],
-                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/938e7ade9ca31d6ea328d52855f498ed7b03860555f821b5e1d77a0f997ca533",
+                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/d72d6e5dbae41a5f38d70451f272326c91a5f7f6f091dbe8db1738ae80fd1efd",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "syncBranch")
                 )
                 state.bind("branch", branch)
 
-                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/938e7ade9ca31d6ea328d52855f498ed7b03860555f821b5e1d77a0f997ca533", state: state.snapshot())
+                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/d72d6e5dbae41a5f38d70451f272326c91a5f7f6f091dbe8db1738ae80fd1efd", state: state.snapshot())
             }
-            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/593ec3ae6c48674f38a5763705fbb35bff1f4658b592a08121498af1fe102144") {
+            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/44d016ae169b083b9e513ff23212ec1b87542ee965f044916e13bef84fd7ddcd") {
                 let branch = try await runtime.invoke(
                     tool: "pushBranch",
                     args: [
                         "branch": state.get("pullRequest.branch") ?? .null,
                     ],
-                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/593ec3ae6c48674f38a5763705fbb35bff1f4658b592a08121498af1fe102144",
+                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/44d016ae169b083b9e513ff23212ec1b87542ee965f044916e13bef84fd7ddcd",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "pushBranch")
                 )
                 state.bind("branch", branch)
 
-                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/593ec3ae6c48674f38a5763705fbb35bff1f4658b592a08121498af1fe102144", state: state.snapshot())
+                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/44d016ae169b083b9e513ff23212ec1b87542ee965f044916e13bef84fd7ddcd", state: state.snapshot())
             }
-            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+            if __meridianShouldRun("/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
                 let ciStatus = try await runtime.invoke(
                     tool: "getCIStatus",
                     args: [
                         "pr": state.get("pullRequest.number") ?? .null,
                     ],
-                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                    step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
                 )
                 state.bind("ciStatus", ciStatus)
 
-                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+                try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
             }
-            await runtime.complete(reason: "mechanical_sync_done", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/20e96a769d743cc2b4068a94a08209b45e57a94590891ac178bc986c0cb50fc5")
+            await runtime.complete(reason: "mechanical_sync_done", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/branch.then/20a6be0a310becccb35e27166776513cfc7e10352551fc7ddea3dce05c791887")
             return WorkflowResult(reason: "mechanical_sync_done", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/4aa27c81707869e9eead39738e948556aaf90dd175a267ffa54c0979a0ea1ac6")
+            try await runtime.recordBranchEnded(into: "then", step: "/MergeConflictPlaybookPullRequest/mechanical-sync-if-behind/procedure/fc881e45bf120eb303d0c848b11e2057c8f922bbcfd3fc583806a0594e411b24")
         }
 
-        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/plan-non-trivial-conflicts-under-discretion/procedure/7b95ac183976b4b5d180d8adc6e586f10aae1d4a49682c9d1dfd56893c275f2c") {
+        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/plan-non-trivial-conflicts-under-discretion/procedure/23db3bfa86ac5f0b10248aaa746a10a8800ba4644e89936324b26acb7ae53963") {
             _ = try await PlanConflictResolution(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/plan-non-trivial-conflicts-under-discretion/procedure/7b95ac183976b4b5d180d8adc6e586f10aae1d4a49682c9d1dfd56893c275f2c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/plan-non-trivial-conflicts-under-discretion/procedure/23db3bfa86ac5f0b10248aaa746a10a8800ba4644e89936324b26acb7ae53963", state: state.snapshot())
         }
-        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/MergeConflictPlaybookPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/MergeConflictPlaybookPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/MergeConflictPlaybookPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MergeConflictPlaybookPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "MergeConflictPlaybookPullRequest.complete")
@@ -926,7 +926,7 @@ public struct PlanConflictResolution: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanConflictResolution/sub-workflow/procedure/65ca64690547c1c44f434e022817fa897fdb8997e966f6311545fdb399885a9d"
+            step: "/PlanConflictResolution/sub-workflow/procedure/039d63234c9fa6ca1ca5a5f3d224e1c6423a80345283cf414326e4551c46d63f"
         )
         for (__key, __value) in __meridianProseResults_L32 {
             state.bind(__key, __value)

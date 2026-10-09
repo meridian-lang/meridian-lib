@@ -453,88 +453,88 @@ public struct MigrationApply: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "MigrationApply", parameters: [:])
 
-        if __meridianShouldRun("/MigrationApply/postconditions/invariants/969765dfb36cb81887c09123862bd8a00a9facbc3a93948e30c3f0bddbbb1fae") {
+        if __meridianShouldRun("/MigrationApply/postconditions/invariants/fc2a3e9c721bdf075937103221e57e1c77600c8fe887ac5f9473740ea369f439") {
             // L29
             try await runtime.assert((((state.get("migrations")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no migrations whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/MigrationApply/postconditions/invariants/969765dfb36cb81887c09123862bd8a00a9facbc3a93948e30c3f0bddbbb1fae", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MigrationApply/postconditions/invariants/fc2a3e9c721bdf075937103221e57e1c77600c8fe887ac5f9473740ea369f439", state: state.snapshot())
         }
-        if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/06bdc2bdc9d18e1851d38a143b98a60b9371b14004a4501b55a973ef58c9416b") {
+        if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/7d74b8748b1fb7497d435429edf3accbe888bc93e8f86097525c3b4da8c69bae") {
             // L19
             let migrations = try await runtime.invoke(
                 tool: "migration.list",
                 args: [
                     "status": .string("failed"),
                 ],
-                step: "/MigrationApply/procedure-steps/procedure/06bdc2bdc9d18e1851d38a143b98a60b9371b14004a4501b55a973ef58c9416b",
+                step: "/MigrationApply/procedure-steps/procedure/7d74b8748b1fb7497d435429edf3accbe888bc93e8f86097525c3b4da8c69bae",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "migration.list")
             )
             state.bind("migrations", migrations)
 
-            try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/06bdc2bdc9d18e1851d38a143b98a60b9371b14004a4501b55a973ef58c9416b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/7d74b8748b1fb7497d435429edf3accbe888bc93e8f86097525c3b4da8c69bae", state: state.snapshot())
         }
         // L20
         let __meridianColl_0_2 = (state.get("migrations")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"migrations\")", step: "/MigrationApply/procedure-steps/procedure/a6abd6b136a70d82e01b0419e219c45371682ed75b3d91d747c99ee3cc29d612")
+        try await runtime.recordIterateStart(over: "state.get(\"migrations\")", step: "/MigrationApply/procedure-steps/procedure/4f1bfee825ad58f2099bd8cd457b85c74e540bb6a79c870f36af8cc618b4a753")
         for (__meridianLoopIndex_0_2, migration) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/MigrationApply/procedure-steps/procedure/a6abd6b136a70d82e01b0419e219c45371682ed75b3d91d747c99ee3cc29d612")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/MigrationApply/procedure-steps/procedure/4f1bfee825ad58f2099bd8cd457b85c74e540bb6a79c870f36af8cc618b4a753")
             state.bind("migration", migration)
-                if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/iterate.body/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045") {
+                if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/iterate.body/a4aa72cb9c840a5a471b073b04a2cffc247183d76c7d4ce85606146d48d1c330") {
                     // L21
                     try await runtime.wait(.approval(of: state.get("migration") ?? .null, by: RoleRef(identifier: "a database administrator")), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/iterate.body/8bdce4486074d9f47ed03d80bc1c91948c8d7640f910639b58d93b220dc7f045", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/iterate.body/a4aa72cb9c840a5a471b073b04a2cffc247183d76c7d4ce85606146d48d1c330", state: state.snapshot())
                 }
                 // L23
                 do {
-                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.body/093081924ea07368476b391816e3f035f807bd198a44ae4f5b8b9d095edd4fbd") {
+                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.body/6053a887ed1fea0b0d54de4dbb735f75a86f2d46a48a142e32e8c9968ba9fee5") {
                         // L22
                         _ = try await MigrationApply(runtime: runtime).run()
-                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.body/093081924ea07368476b391816e3f035f807bd198a44ae4f5b8b9d095edd4fbd", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.body/6053a887ed1fea0b0d54de4dbb735f75a86f2d46a48a142e32e8c9968ba9fee5", state: state.snapshot())
                     }
                 } catch let _recoveredError where meridianMatches(_recoveredError, named: "migration.failed") {
-                    try await runtime.recordRecoverEngaged(pattern: "migration.failed", step: "/MigrationApply/procedure-steps/procedure/iterate.body/03c69d8a9a6b312981f5cfe3e9e43b3c691e04bd28ecf54c31fa24dcc17e57c4")
-                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.handler/62c6d0b04d72c20ed9e27776bd4754ad266cb7662c7605832bd214287dee38c6") {
+                    try await runtime.recordRecoverEngaged(pattern: "migration.failed", step: "/MigrationApply/procedure-steps/procedure/iterate.body/afa9603d03f670fb9e87833a8c3994e274df12cefeb29efb7539b763bda6f658")
+                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.handler/62f839b721f32dab0771d16686a101f6db1bb90b232cd6cca46ec9aa48740e0f") {
                         // L24
                         let backMigration = try await runtime.invoke(
                             tool: "migration.rollback",
                             args: [
                                 "migration": state.get("migration") ?? .null,
                             ],
-                            step: "/MigrationApply/procedure-steps/procedure/recover.handler/62c6d0b04d72c20ed9e27776bd4754ad266cb7662c7605832bd214287dee38c6",
+                            step: "/MigrationApply/procedure-steps/procedure/recover.handler/62f839b721f32dab0771d16686a101f6db1bb90b232cd6cca46ec9aa48740e0f",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "migration.rollback")
                         )
                         state.bind("backMigration", backMigration)
 
-                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.handler/62c6d0b04d72c20ed9e27776bd4754ad266cb7662c7605832bd214287dee38c6", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.handler/62f839b721f32dab0771d16686a101f6db1bb90b232cd6cca46ec9aa48740e0f", state: state.snapshot())
                     }
-                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.handler/e6da909bf2e224aadb4b5a8e9c3427d895f1a844c218bfce0254f690d0cf7f88") {
+                    if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/recover.handler/bfce76b7748f76268e0c98cb832cc71d5eed27931adcfd57c0401c970cee3a0b") {
                         // L25
                         try await runtime.emit(
                             event: "procedure.report",
                             payload: [
                                 "message": .string("migration rolled back after failure"),
                             ],
-                            step: "/MigrationApply/procedure-steps/procedure/recover.handler/e6da909bf2e224aadb4b5a8e9c3427d895f1a844c218bfce0254f690d0cf7f88"
+                            step: "/MigrationApply/procedure-steps/procedure/recover.handler/bfce76b7748f76268e0c98cb832cc71d5eed27931adcfd57c0401c970cee3a0b"
                         )
-                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.handler/e6da909bf2e224aadb4b5a8e9c3427d895f1a844c218bfce0254f690d0cf7f88", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/recover.handler/bfce76b7748f76268e0c98cb832cc71d5eed27931adcfd57c0401c970cee3a0b", state: state.snapshot())
                     }
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"migrations\")", count: __meridianColl_0_2.count, step: "/MigrationApply/procedure-steps/procedure/a6abd6b136a70d82e01b0419e219c45371682ed75b3d91d747c99ee3cc29d612")
+        try await runtime.recordIterateEnd(over: "state.get(\"migrations\")", count: __meridianColl_0_2.count, step: "/MigrationApply/procedure-steps/procedure/4f1bfee825ad58f2099bd8cd457b85c74e540bb6a79c870f36af8cc618b4a753")
 
-        if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/14d1efb90ffb80dc85fe0e1db6b4c8ae57ae0da3cb86414f8d0d97fcc0d3d092") {
+        if __meridianShouldRun("/MigrationApply/procedure-steps/procedure/2211ceb4c74fe1cc1916971b42dbb65c09c7968eb5ea5b6eba02f9828a36814e") {
             // L26
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("pending migrations applied"),
                 ],
-                step: "/MigrationApply/procedure-steps/procedure/14d1efb90ffb80dc85fe0e1db6b4c8ae57ae0da3cb86414f8d0d97fcc0d3d092"
+                step: "/MigrationApply/procedure-steps/procedure/2211ceb4c74fe1cc1916971b42dbb65c09c7968eb5ea5b6eba02f9828a36814e"
             )
-            try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/14d1efb90ffb80dc85fe0e1db6b4c8ae57ae0da3cb86414f8d0d97fcc0d3d092", state: state.snapshot())
+            try await runtime.checkpoint(label: "/MigrationApply/procedure-steps/procedure/2211ceb4c74fe1cc1916971b42dbb65c09c7968eb5ea5b6eba02f9828a36814e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "MigrationApply.complete")
@@ -594,12 +594,12 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenApplypendingmigrationsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b") {
+        if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/d4c574218b8ad3cfd2c2e5aa96ce883a6040929da9c82a76c49bbb221164854d") {
             // L1
             try await runtime.wait(.event("applyPendingMigrations", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenApplypendingmigrationsFires/root/procedure/8ace2ebea62d02c378d2e0b0dd7359f0c31f77a2da60e04a0d187a51f4a0f81b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenApplypendingmigrationsFires/root/procedure/d4c574218b8ad3cfd2c2e5aa96ce883a6040929da9c82a76c49bbb221164854d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c") {
+        if __meridianShouldRun("/WhenApplypendingmigrationsFires/root/procedure/caf930cdbd8b8f870cc186bb38f77f9af9d31265378729202bd08e053b480dd8") {
             // L1
             try await runtime.emit(
                 event: "trigger.applyPendingMigrations.fired",
@@ -607,9 +607,9 @@ public struct WhenApplypendingmigrationsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("apply pending migrations"),
                 ],
-                step: "/WhenApplypendingmigrationsFires/root/procedure/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c"
+                step: "/WhenApplypendingmigrationsFires/root/procedure/caf930cdbd8b8f870cc186bb38f77f9af9d31265378729202bd08e053b480dd8"
             )
-            try await runtime.checkpoint(label: "/WhenApplypendingmigrationsFires/root/procedure/a3eb9f25aeeee83dfee390cfd24c8e71eb6dc52df64893b6e0793cc8d840aa6c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenApplypendingmigrationsFires/root/procedure/caf930cdbd8b8f870cc186bb38f77f9af9d31265378729202bd08e053b480dd8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenApplypendingmigrationsFires.complete")
@@ -669,12 +669,12 @@ public struct WhenRunschemamigrationFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunschemamigrationFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f") {
+        if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/7fc95122a2907cc2c6726a7c9e526c8b7c194d9dfb095788fbf16f2c50825199") {
             // L1
             try await runtime.wait(.event("runSchemaMigration", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunschemamigrationFires/root/procedure/7b01919af2729b0cba554e111fca51627a32376544e414aabf9d1463911a9d8f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunschemamigrationFires/root/procedure/7fc95122a2907cc2c6726a7c9e526c8b7c194d9dfb095788fbf16f2c50825199", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d") {
+        if __meridianShouldRun("/WhenRunschemamigrationFires/root/procedure/42ccd6e64e880479f9c2e3e2451aff7508c07a0d4096f11e353f8a2353f9821d") {
             // L1
             try await runtime.emit(
                 event: "trigger.runSchemaMigration.fired",
@@ -682,9 +682,9 @@ public struct WhenRunschemamigrationFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run schema migration"),
                 ],
-                step: "/WhenRunschemamigrationFires/root/procedure/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d"
+                step: "/WhenRunschemamigrationFires/root/procedure/42ccd6e64e880479f9c2e3e2451aff7508c07a0d4096f11e353f8a2353f9821d"
             )
-            try await runtime.checkpoint(label: "/WhenRunschemamigrationFires/root/procedure/bb3adac04255081f5056cacb1b1facdb73dbca97093a9f1b538a9e515a43f25d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunschemamigrationFires/root/procedure/42ccd6e64e880479f9c2e3e2451aff7508c07a0d4096f11e353f8a2353f9821d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunschemamigrationFires.complete")

@@ -441,69 +441,69 @@ public struct DischargeReviewPatientClinician: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DischargeReviewPatientClinician", parameters: [:])
 
-        if __meridianShouldRun("/DischargeReviewPatientClinician/rules-steps/procedure/5b785a6f38e1ef38aa0406fe6ed3c49b8aa13851e03c65c79047d8a22caf9648") {
+        if __meridianShouldRun("/DischargeReviewPatientClinician/rules-steps/procedure/c84317c3df982bf743a326c66adcc85501b403eb9f7f053630c7a1a81e0ba0d1") {
             // L35
             try await runtime.assert((!(MeridianComparison.eq(state.get("patient.status"), .string("held")))) || (MeridianComparison.eq(state.get("clinician.role"), .string("attending"))), message: "A patient with status \"held\" must not be discharged")
-            try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/rules-steps/procedure/5b785a6f38e1ef38aa0406fe6ed3c49b8aa13851e03c65c79047d8a22caf9648", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/rules-steps/procedure/c84317c3df982bf743a326c66adcc85501b403eb9f7f053630c7a1a81e0ba0d1", state: state.snapshot())
         }
         // L39
         if MeridianComparison.eq(state.get("patient.status"), .string("held")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"patient.status\"), .string(\"held\"))", into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/c6628fa43732ceb5dfa620197eb49fb19c0b5111d2fe9a8b946497b332fb45e1")
-            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/ca7a51411cdc03f2b94331fa7e5b43b2686bc76cdadcb72496dc37ce3858b21b") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"patient.status\"), .string(\"held\"))", into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/68af88402194c2b19ea4a111e306339a0167217ae49ed20dae59c3c11f39106a")
+            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/bf79633e9f1c589cfde2451acd21c48538cf0db1cdca58cb7b08c95531435d22") {
                 // L40
                 let hold = try await runtime.invoke(
                     tool: "order.override",
                     args: [
                         "order": state.get("medicationOrder") ?? .null,
                     ],
-                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/ca7a51411cdc03f2b94331fa7e5b43b2686bc76cdadcb72496dc37ce3858b21b",
+                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/bf79633e9f1c589cfde2451acd21c48538cf0db1cdca58cb7b08c95531435d22",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "order.override")
                 )
                 state.bind("hold", hold)
 
-                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/ca7a51411cdc03f2b94331fa7e5b43b2686bc76cdadcb72496dc37ce3858b21b", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/bf79633e9f1c589cfde2451acd21c48538cf0db1cdca58cb7b08c95531435d22", state: state.snapshot())
             }
-            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39") {
+            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/a1559f318a08e05c20ce69426205db7f73e883db92b0ad6a66986098f977fd60") {
                 // L41
                 try await runtime.emit(
                     event: "clinical.note",
                     payload: [
                         "message": .string("hold overridden by attending, discharge may proceed"),
                     ],
-                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39"
+                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/a1559f318a08e05c20ce69426205db7f73e883db92b0ad6a66986098f977fd60"
                 )
-                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/225910bd9ed14c9bc519cc816d2406690c99299a484268db9a95a8628a6b7b39", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/a1559f318a08e05c20ce69426205db7f73e883db92b0ad6a66986098f977fd60", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/c6628fa43732ceb5dfa620197eb49fb19c0b5111d2fe9a8b946497b332fb45e1")
+            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/68af88402194c2b19ea4a111e306339a0167217ae49ed20dae59c3c11f39106a")
         }
 
         // L42
         if !(MeridianComparison.eq(state.get("patient.status"), .string("held"))) {
-            try await runtime.recordBranchTaken(condition: "!(MeridianComparison.eq(state.get(\"patient.status\"), .string(\"held\")))", into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/4c90a9201e885bdbcf09809f34858dbfdc06d1ae710cb2155d287401d1234aaa")
-            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe") {
+            try await runtime.recordBranchTaken(condition: "!(MeridianComparison.eq(state.get(\"patient.status\"), .string(\"held\")))", into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/d86ad92425327959247962a9a191e62883695df230262ba8b06c46c4bfe76bdd")
+            if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/branch.then/4e823d46c54f32b92aeee63e455f386e5a34e91dd47eaa1c580c3514033f18a7") {
                 // L43
                 try await runtime.emit(
                     event: "clinical.note",
                     payload: [
                         "message": .string("no active hold, discharge proceeds normally"),
                     ],
-                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe"
+                    step: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/4e823d46c54f32b92aeee63e455f386e5a34e91dd47eaa1c580c3514033f18a7"
                 )
-                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/c83e961eebbb89331326c7cfa68df8b1da67da04f566c7861618ba7d6a30c3fe", state: state.snapshot())
+                try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/branch.then/4e823d46c54f32b92aeee63e455f386e5a34e91dd47eaa1c580c3514033f18a7", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/4c90a9201e885bdbcf09809f34858dbfdc06d1ae710cb2155d287401d1234aaa")
+            try await runtime.recordBranchEnded(into: "then", step: "/DischargeReviewPatientClinician/workflow/procedure/d86ad92425327959247962a9a191e62883695df230262ba8b06c46c4bfe76bdd")
         }
 
-        if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db") {
+        if __meridianShouldRun("/DischargeReviewPatientClinician/workflow/procedure/4887682fe3f132f8423296eb4b358cb304e9a0f26a7c889bbac4b3b06ffd8569") {
             // L44
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("discharge review pass complete"),
                 ],
-                step: "/DischargeReviewPatientClinician/workflow/procedure/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db"
+                step: "/DischargeReviewPatientClinician/workflow/procedure/4887682fe3f132f8423296eb4b358cb304e9a0f26a7c889bbac4b3b06ffd8569"
             )
-            try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/519438765b59926522cad8b8aaca2fee417d9bfbf882ffed4b086e850ad286db", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DischargeReviewPatientClinician/workflow/procedure/4887682fe3f132f8423296eb4b358cb304e9a0f26a7c889bbac4b3b06ffd8569", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DischargeReviewPatientClinician.complete")
@@ -563,12 +563,12 @@ public struct WhenReviewdischargeFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReviewdischargeFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c") {
+        if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/632c88b5a73897e23cb2487d5db7a2ed1660b1cfc7626c2c488a306a2e81f38c") {
             // L1
             try await runtime.wait(.event("reviewDischarge", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReviewdischargeFires/root/procedure/250441ad9d57261f32b30c2d6eca63ed7ca93d87fe1d9e5177622fd0ca90c67c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewdischargeFires/root/procedure/632c88b5a73897e23cb2487d5db7a2ed1660b1cfc7626c2c488a306a2e81f38c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4") {
+        if __meridianShouldRun("/WhenReviewdischargeFires/root/procedure/1870fb74a9d2cfd23cbd2db614133d8efc5a9d58f4ee493dd817802d1c7c2606") {
             // L1
             try await runtime.emit(
                 event: "trigger.reviewDischarge.fired",
@@ -576,9 +576,9 @@ public struct WhenReviewdischargeFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("review discharge"),
                 ],
-                step: "/WhenReviewdischargeFires/root/procedure/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4"
+                step: "/WhenReviewdischargeFires/root/procedure/1870fb74a9d2cfd23cbd2db614133d8efc5a9d58f4ee493dd817802d1c7c2606"
             )
-            try await runtime.checkpoint(label: "/WhenReviewdischargeFires/root/procedure/4c1a37d0c7730606c5cd4dd9d1e62734986f97759574776b91f7ad440419bee4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReviewdischargeFires/root/procedure/1870fb74a9d2cfd23cbd2db614133d8efc5a9d58f4ee493dd817802d1c7c2606", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReviewdischargeFires.complete")
@@ -638,12 +638,12 @@ public struct WhenDischargepatientFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenDischargepatientFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d") {
+        if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/a91ad09b0321ef27b9e3b9142f8615bdb7328a4f68124498013c57da311a2e3c") {
             // L1
             try await runtime.wait(.event("dischargePatient", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDischargepatientFires/root/procedure/be3d6103552a7778c3ad688af3b1d7f58cd03bbc388dba0e63734126b614bd5d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDischargepatientFires/root/procedure/a91ad09b0321ef27b9e3b9142f8615bdb7328a4f68124498013c57da311a2e3c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2") {
+        if __meridianShouldRun("/WhenDischargepatientFires/root/procedure/2d78f5c78fa277f122d1fcfc585bc4e0d97ab1f430dd9c1da63e35398bd144a5") {
             // L1
             try await runtime.emit(
                 event: "trigger.dischargePatient.fired",
@@ -651,9 +651,9 @@ public struct WhenDischargepatientFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("discharge patient"),
                 ],
-                step: "/WhenDischargepatientFires/root/procedure/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2"
+                step: "/WhenDischargepatientFires/root/procedure/2d78f5c78fa277f122d1fcfc585bc4e0d97ab1f430dd9c1da63e35398bd144a5"
             )
-            try await runtime.checkpoint(label: "/WhenDischargepatientFires/root/procedure/4b846337eb22b32f9c30cc658d4e3c57cb5f0ae8a18d44beaaaa1214672a60b2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDischargepatientFires/root/procedure/2d78f5c78fa277f122d1fcfc585bc4e0d97ab1f430dd9c1da63e35398bd144a5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDischargepatientFires.complete")

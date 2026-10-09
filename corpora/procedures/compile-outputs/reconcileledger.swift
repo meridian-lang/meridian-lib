@@ -453,17 +453,17 @@ public struct ReconcileLedger: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ReconcileLedger", parameters: [:])
 
-        if __meridianShouldRun("/ReconcileLedger/assertions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd") {
+        if __meridianShouldRun("/ReconcileLedger/assertions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3") {
             // L37
             try await runtime.assert((((state.get("batches")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/ReconcileLedger/assertions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/assertions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReconcileLedger/assertions/invariants/722daf3fa580060dbec5ba9850e264ac9d9f4ece540924ffb66b0813ef71b96b") {
+        if __meridianShouldRun("/ReconcileLedger/assertions/invariants/e8ca00f5da33173f902d900fc4752b76c54821a8faf5e7d5d6e37ffc712c1206") {
             // L38
             try await runtime.assert(((state.get("batches")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("ledgerId")) }), message: "Expected all batches have a ledger id")
-            try await runtime.checkpoint(label: "/ReconcileLedger/assertions/invariants/722daf3fa580060dbec5ba9850e264ac9d9f4ece540924ffb66b0813ef71b96b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/assertions/invariants/e8ca00f5da33173f902d900fc4752b76c54821a8faf5e7d5d6e37ffc712c1206", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/9d567202c342ba633f5ed316b2fac8af09d37d9308900bde2da933860ff7e1d6") {
+        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/9277d2b608f6a0b52510073c6eae9be4524b84d44f017dff733425dc8cf74dd9") {
             // L23
             // snapshot ready batches
             _ = try await runtime.invoke(
@@ -471,110 +471,110 @@ public struct ReconcileLedger: MeridianWorkflow {
                 args: [
                     "command": .string("psql -c \"select id,status from ledger_batch where status='ready'\" --csv"),
                 ],
-                step: "/ReconcileLedger/procedure-steps/procedure/9d567202c342ba633f5ed316b2fac8af09d37d9308900bde2da933860ff7e1d6",
+                step: "/ReconcileLedger/procedure-steps/procedure/9277d2b608f6a0b52510073c6eae9be4524b84d44f017dff733425dc8cf74dd9",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/9d567202c342ba633f5ed316b2fac8af09d37d9308900bde2da933860ff7e1d6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/9277d2b608f6a0b52510073c6eae9be4524b84d44f017dff733425dc8cf74dd9", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487") {
+        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0") {
             // L24
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
                     "status": .string("ready"),
                 ],
-                step: "/ReconcileLedger/procedure-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
+                step: "/ReconcileLedger/procedure-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "batch.list")
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5") {
+        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/fb0bb38bce06928a64025cdad2afd4552c7d5a8e0e6b4f2a7b28d9a340286d2b") {
             // L25
             try await runtime.assert(((state.get("batches")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all batches have a name")
-            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/fb0bb38bce06928a64025cdad2afd4552c7d5a8e0e6b4f2a7b28d9a340286d2b", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/8f8f7545df700dc2c1770624f0103b825e7a15660c2a650d2efc8de79bcbf9d1") {
+        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/cfdac6215009526d3024ee7a67ab7ad6c834b80639f6c5fb59c2a0cd9b362d18") {
             // L26
             try await runtime.assert((((state.get("batches")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("ready"))) }).count <= 50), message: "Expected at most 50 batches whose status is \"ready\"")
-            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/8f8f7545df700dc2c1770624f0103b825e7a15660c2a650d2efc8de79bcbf9d1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/cfdac6215009526d3024ee7a67ab7ad6c834b80639f6c5fb59c2a0cd9b362d18", state: state.snapshot())
         }
         // L27
         let __meridianColl_0_6 = (state.get("batches")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/ReconcileLedger/procedure-steps/procedure/bfa959f8b1d40821b690ce780dcfda49fd42b61f26d99cabec0d725d5f20e1d3")
+        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/ReconcileLedger/procedure-steps/procedure/9815a7e87d0fd34850ce70e0f8f90abb7601b802e9a900bf0a433ec5ecc03811")
         for (__meridianLoopIndex_0_6, batch) in __meridianColl_0_6.enumerated() {
             let __meridianLoopLabel_0_6 = "progress:0.6:iteration:\(__meridianLoopIndex_0_6)"
             if __meridianShouldRun(__meridianLoopLabel_0_6) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_6, step: "/ReconcileLedger/procedure-steps/procedure/bfa959f8b1d40821b690ce780dcfda49fd42b61f26d99cabec0d725d5f20e1d3")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_6, step: "/ReconcileLedger/procedure-steps/procedure/9815a7e87d0fd34850ce70e0f8f90abb7601b802e9a900bf0a433ec5ecc03811")
             state.bind("batch", batch)
                 // L28
                 if meridianDef_Batch_finalized(state.get("batch")) {
-                    try await runtime.recordBranchTaken(condition: "meridianDef_Batch_finalized(state.get(\"batch\"))", into: "then", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
-                    if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/branch.then/1a7af9050ef9b98315bb27002c1b47e4f039a2b4fd2fe490528bdb2ab49aa315") {
+                    try await runtime.recordBranchTaken(condition: "meridianDef_Batch_finalized(state.get(\"batch\"))", into: "then", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/c7e2c203748a8379929853194806afaba42889a4f77fde371ef1a147ea43938e")
+                    if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/branch.then/d9edd3cbf58bfafaf00c3ceeec76fb204d4864225b16f536678d8ab7f1dd39ba") {
                         // L29
                         try await runtime.emit(
                             event: "procedure.note",
                             payload: [
                                 "message": .string("batch already finalized, skipping settlement"),
                             ],
-                            step: "/ReconcileLedger/procedure-steps/procedure/branch.then/1a7af9050ef9b98315bb27002c1b47e4f039a2b4fd2fe490528bdb2ab49aa315"
+                            step: "/ReconcileLedger/procedure-steps/procedure/branch.then/d9edd3cbf58bfafaf00c3ceeec76fb204d4864225b16f536678d8ab7f1dd39ba"
                         )
-                        try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/branch.then/1a7af9050ef9b98315bb27002c1b47e4f039a2b4fd2fe490528bdb2ab49aa315", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/branch.then/d9edd3cbf58bfafaf00c3ceeec76fb204d4864225b16f536678d8ab7f1dd39ba", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
+                    try await runtime.recordBranchEnded(into: "then", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/c7e2c203748a8379929853194806afaba42889a4f77fde371ef1a147ea43938e")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "meridianDef_Batch_finalized(state.get(\"batch\"))", into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
+                    try await runtime.recordBranchTaken(condition: "meridianDef_Batch_finalized(state.get(\"batch\"))", into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/c7e2c203748a8379929853194806afaba42889a4f77fde371ef1a147ea43938e")
 
                     // L32
                     do {
-                        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/recover.body/4e9048b38d7ff142112ea3383493c85180b952c465c8f6a011e82c0ed2ce3180") {
+                        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/recover.body/c511db97618c541ced8d0444064f3c928dd12d58b8a79142585600229c768fe6") {
                             // L31
                             let settlement = try await runtime.invoke(
                                 tool: "batch.settle",
                                 args: [
                                     "batch": state.get("batch") ?? .null,
                                 ],
-                                step: "/ReconcileLedger/procedure-steps/procedure/recover.body/4e9048b38d7ff142112ea3383493c85180b952c465c8f6a011e82c0ed2ce3180",
+                                step: "/ReconcileLedger/procedure-steps/procedure/recover.body/c511db97618c541ced8d0444064f3c928dd12d58b8a79142585600229c768fe6",
                                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "batch.settle")
                             )
                             state.bind("settlement", settlement)
 
-                            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/recover.body/4e9048b38d7ff142112ea3383493c85180b952c465c8f6a011e82c0ed2ce3180", state: state.snapshot())
+                            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/recover.body/c511db97618c541ced8d0444064f3c928dd12d58b8a79142585600229c768fe6", state: state.snapshot())
                         }
                     } catch let _recoveredError {
-                        try await runtime.recordRecoverEngaged(pattern: "any", step: "/ReconcileLedger/procedure-steps/procedure/branch.else/adbcc566d992c764ab5fd21d7366a463395aeb3e6326c83571904f5458dcc880")
-                        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/recover.handler/05dcbfeb9c9728f8af02d890801a11c721a315b04608fea1597398d86e7e2607") {
+                        try await runtime.recordRecoverEngaged(pattern: "any", step: "/ReconcileLedger/procedure-steps/procedure/branch.else/ce18b3de90319df18b821600d511fa81b14bd1b629d61e6190dd47b4e36e9e73")
+                        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/recover.handler/0f8361bec2018f4943950d3eeafbada2421fc322745426afafe35f1ca4da386b") {
                             // L33
                             try await runtime.emit(
                                 event: "procedure.note",
                                 payload: [
                                     "message": .string("settlement failed, deferring to next reconciliation pass"),
                                 ],
-                                step: "/ReconcileLedger/procedure-steps/procedure/recover.handler/05dcbfeb9c9728f8af02d890801a11c721a315b04608fea1597398d86e7e2607"
+                                step: "/ReconcileLedger/procedure-steps/procedure/recover.handler/0f8361bec2018f4943950d3eeafbada2421fc322745426afafe35f1ca4da386b"
                             )
-                            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/recover.handler/05dcbfeb9c9728f8af02d890801a11c721a315b04608fea1597398d86e7e2607", state: state.snapshot())
+                            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/recover.handler/0f8361bec2018f4943950d3eeafbada2421fc322745426afafe35f1ca4da386b", state: state.snapshot())
                         }
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ReconcileLedger/procedure-steps/procedure/iterate.body/c7e2c203748a8379929853194806afaba42889a4f77fde371ef1a147ea43938e")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_6, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_6.count, step: "/ReconcileLedger/procedure-steps/procedure/bfa959f8b1d40821b690ce780dcfda49fd42b61f26d99cabec0d725d5f20e1d3")
+        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_6.count, step: "/ReconcileLedger/procedure-steps/procedure/9815a7e87d0fd34850ce70e0f8f90abb7601b802e9a900bf0a433ec5ecc03811")
 
-        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/861c51541a4851fb32c6352741fd93d1f4e6dc308a6a540c504c80cc142188db") {
+        if __meridianShouldRun("/ReconcileLedger/procedure-steps/procedure/1a1013d5961b7fe6fd7d8e08be61231baccd7649190fde82ac1abda2765827ca") {
             // L34
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("ledger batches reconciled"),
                 ],
-                step: "/ReconcileLedger/procedure-steps/procedure/861c51541a4851fb32c6352741fd93d1f4e6dc308a6a540c504c80cc142188db"
+                step: "/ReconcileLedger/procedure-steps/procedure/1a1013d5961b7fe6fd7d8e08be61231baccd7649190fde82ac1abda2765827ca"
             )
-            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/861c51541a4851fb32c6352741fd93d1f4e6dc308a6a540c504c80cc142188db", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReconcileLedger/procedure-steps/procedure/1a1013d5961b7fe6fd7d8e08be61231baccd7649190fde82ac1abda2765827ca", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ReconcileLedger.complete")
@@ -634,12 +634,12 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReconcileledgerFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/dcf74d2566263dfbd0ffe7a864497592b348558cebdf2e8045191d6589c1ff7b") {
+        if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/33015d35c70e219bda90873794607f90f33f48b80128a4095d50f2e0d11c6716") {
             // L1
             try await runtime.wait(.event("reconcileLedger", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReconcileledgerFires/root/procedure/dcf74d2566263dfbd0ffe7a864497592b348558cebdf2e8045191d6589c1ff7b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReconcileledgerFires/root/procedure/33015d35c70e219bda90873794607f90f33f48b80128a4095d50f2e0d11c6716", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/ece0d38361b58228d42667cec0b4f6ab845f35a7004cf3f5023476644f81615e") {
+        if __meridianShouldRun("/WhenReconcileledgerFires/root/procedure/07d3bc72ddfe26ad3c8117b04fb0987de453c46efccab9e8664521216677007d") {
             // L1
             try await runtime.emit(
                 event: "trigger.reconcileLedger.fired",
@@ -647,9 +647,9 @@ public struct WhenReconcileledgerFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("reconcile ledger"),
                 ],
-                step: "/WhenReconcileledgerFires/root/procedure/ece0d38361b58228d42667cec0b4f6ab845f35a7004cf3f5023476644f81615e"
+                step: "/WhenReconcileledgerFires/root/procedure/07d3bc72ddfe26ad3c8117b04fb0987de453c46efccab9e8664521216677007d"
             )
-            try await runtime.checkpoint(label: "/WhenReconcileledgerFires/root/procedure/ece0d38361b58228d42667cec0b4f6ab845f35a7004cf3f5023476644f81615e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReconcileledgerFires/root/procedure/07d3bc72ddfe26ad3c8117b04fb0987de453c46efccab9e8664521216677007d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReconcileledgerFires.complete")
@@ -709,12 +709,12 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSettleledgerbatchesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/8e7415832252a95ef6f588e814875903e24e76195c5519f32fdaaee8c9d1216c") {
+        if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/531995dfc10fa9a2815f9e8d2ba8886d654748ff9d8968789781c05575132e01") {
             // L1
             try await runtime.wait(.event("settleLedgerBatches", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSettleledgerbatchesFires/root/procedure/8e7415832252a95ef6f588e814875903e24e76195c5519f32fdaaee8c9d1216c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSettleledgerbatchesFires/root/procedure/531995dfc10fa9a2815f9e8d2ba8886d654748ff9d8968789781c05575132e01", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/87ab5c2ce4a8de558114e11cb4422bedd06aee23180263afba320eeb133a1693") {
+        if __meridianShouldRun("/WhenSettleledgerbatchesFires/root/procedure/696485fdad40e2fdc8ff4fb239ae240e6174464cc6ec16ec8c4793aba45c2c90") {
             // L1
             try await runtime.emit(
                 event: "trigger.settleLedgerBatches.fired",
@@ -722,9 +722,9 @@ public struct WhenSettleledgerbatchesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("settle ledger batches"),
                 ],
-                step: "/WhenSettleledgerbatchesFires/root/procedure/87ab5c2ce4a8de558114e11cb4422bedd06aee23180263afba320eeb133a1693"
+                step: "/WhenSettleledgerbatchesFires/root/procedure/696485fdad40e2fdc8ff4fb239ae240e6174464cc6ec16ec8c4793aba45c2c90"
             )
-            try await runtime.checkpoint(label: "/WhenSettleledgerbatchesFires/root/procedure/87ab5c2ce4a8de558114e11cb4422bedd06aee23180263afba320eeb133a1693", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSettleledgerbatchesFires/root/procedure/696485fdad40e2fdc8ff4fb239ae240e6174464cc6ec16ec8c4793aba45c2c90", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSettleledgerbatchesFires.complete")

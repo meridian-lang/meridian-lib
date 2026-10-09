@@ -4,84 +4,84 @@
       "canonical" : "emit trigger.indexJobStale.fired with kind = \"keyword\", spec = \"index job stale\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8",
+      "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/a66e0d574f4d2ad59f88fccba2f71c0069d057e10311c6dbc458d4594a48dab0",
       "swift_line" : 667
     },
     {
       "canonical" : "wait for event indexJobStale.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f",
+      "stable_step_path" : "\/WhenIndexjobstaleFires\/root\/procedure\/c0254498234a55e527409063a36ff6a3595e883e5f39ca3e2c6ef0b7618306f1",
       "swift_line" : 667
     },
     {
       "canonical" : "emit trigger.rebuildLaggingIndexes.fired with kind = \"keyword\", spec = \"rebuild lagging indexes\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008",
+      "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/99e43c860dceb6f0482f416e32cd6228f7e9d5fb6f18c08de86063c32e7842d0",
       "swift_line" : 667
     },
     {
       "canonical" : "wait for event rebuildLaggingIndexes.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477",
+      "stable_step_path" : "\/WhenRebuildlaggingindexesFires\/root\/procedure\/fdf7ef0a8ff38e6116a31a123d1f4f7e895ea8df71b53d874e46303c88dd3dd8",
       "swift_line" : 667
     },
     {
       "canonical" : "bind indexJobs = invoke index.list with status = \"lagging\".",
       "meridian_line" : 16,
       "primitive" : "invoke",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157",
       "swift_line" : 467
     },
     {
       "canonical" : "assert any lagging index jobs.",
       "meridian_line" : 17,
       "primitive" : "assert",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/4807caf695281d75203dd2bcfabdc421bcd30bd3c438cda39bf5905fddc2279b",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/1c6a9ef15b16747557cfc889945cef93fc6beda0885fd4bf2780152f003d5a1e",
       "swift_line" : 481
     },
     {
       "canonical" : "assert at least 1 index jobs whose status equals \"lagging\".",
       "meridian_line" : 18,
       "primitive" : "assert",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/5b93735bb0951229e7c4b253a0ff714a3fd7802ca85c0e40ed58eeebc9935bbd",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/068759808a676516b6a5b3cf087e504a9119786f29dd660f76cbdf916b0ebd67",
       "swift_line" : 486
     },
     {
       "canonical" : "for each indexJob in indexjobs,\n  bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 19,
       "primitive" : "iterate",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/b203dfb54538a7fbcf067ac5aea663bf0c8c37556b0770e5ada2687173b3505b",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/d26fce0489bf2c9ef4f8ba2539cc0dd1fc4677d4e6cc306fe24e4c7bbb1252fb",
       "swift_line" : 490
     },
     {
       "canonical" : "bind job = invoke index.rebuild with index job = index job.",
       "meridian_line" : 20,
       "primitive" : "invoke",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/iterate.body\/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/iterate.body\/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e",
       "swift_line" : 499
     },
     {
       "canonical" : "emit procedure.report with message = \"lagging index jobs rebuilt\".",
       "meridian_line" : 21,
       "primitive" : "emit",
-      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/be3fc14dc027fff95db30e3a12f459d026d9b08f94e5d4e7cab08583fa88b244",
+      "stable_step_path" : "\/RebuildIndex\/procedure\/procedure\/51a15cb8d9c81ad6927c84e1a8d254b8e37b2c155aacd47bf7982c6bd5596048",
       "swift_line" : 518
     },
     {
       "canonical" : "assert all index jobs have a name.",
       "meridian_line" : 24,
       "primitive" : "assert",
-      "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/7c24eee529d3a212498be6e9e3830f4d27da9531dc6a12701da7999a14e6329e",
+      "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/9fd4e94eb8a09edb832f6f45dc98806b87748d1f198b9425192346bdbbd74aa8",
       "swift_line" : 457
     },
     {
       "canonical" : "assert no index jobs whose status equals \"failed\".",
       "meridian_line" : 25,
       "primitive" : "assert",
-      "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/29304f21d5aded8d37a7031930ed505633eb21ffb52801475f9cf13206fc09b2",
+      "stable_step_path" : "\/RebuildIndex\/assertions\/invariants\/75ed1caf0f578656ac20d285826bd3ac506726b52bee89075434863aecae211d",
       "swift_line" : 462
     }
   ],

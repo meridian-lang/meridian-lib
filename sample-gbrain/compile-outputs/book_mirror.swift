@@ -624,475 +624,475 @@ public struct BookMirrorInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "BookMirrorInput", parameters: [:])
 
-        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/a0d45bf20cd2a535a4b16bf108d7d947faab8e79322e0928231e3ecae299d036") {
+        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/58c2ceba4dcaf428c5b4b98cda514dab489d4bf1c3949b3b98cf7444da98985f") {
             // L92
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("ls path/to/book.epub"),
                 ],
-                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/a0d45bf20cd2a535a4b16bf108d7d947faab8e79322e0928231e3ecae299d036",
+                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/58c2ceba4dcaf428c5b4b98cda514dab489d4bf1c3949b3b98cf7444da98985f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/a0d45bf20cd2a535a4b16bf108d7d947faab8e79322e0928231e3ecae299d036", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/58c2ceba4dcaf428c5b4b98cda514dab489d4bf1c3949b3b98cf7444da98985f", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/eb0d80bba57088e83331a3c2fbcd782c632f2729f826615092e4017c5955b31f") {
+        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/cb6a7d35874ebe86451c8acbeea6b29cff79bbabfed9556be3cea4d072ce2006") {
             // L92
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("ls path/to/book.pdf"),
                 ],
-                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/eb0d80bba57088e83331a3c2fbcd782c632f2729f826615092e4017c5955b31f",
+                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/cb6a7d35874ebe86451c8acbeea6b29cff79bbabfed9556be3cea4d072ce2006",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/eb0d80bba57088e83331a3c2fbcd782c632f2729f826615092e4017c5955b31f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/cb6a7d35874ebe86451c8acbeea6b29cff79bbabfed9556be3cea4d072ce2006", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/a26b0c741409e04c7af9eade712e44cd7908e47b3bb44b3bc06a90394e1d8318") {
+        if __meridianShouldRun("/BookMirrorInput/1-acquiring-the-book-steps/procedure/58636283430217cf283ab0751c9e9ac99c20d7b9ee8c1a1c6f1bd8345e0123e9") {
             // L92
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("ls $BRAIN_DIR/media/books/"),
                 ],
-                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/a26b0c741409e04c7af9eade712e44cd7908e47b3bb44b3bc06a90394e1d8318",
+                step: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/58636283430217cf283ab0751c9e9ac99c20d7b9ee8c1a1c6f1bd8345e0123e9",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/a26b0c741409e04c7af9eade712e44cd7908e47b3bb44b3bc06a90394e1d8318", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/1-acquiring-the-book-steps/procedure/58636283430217cf283ab0751c9e9ac99c20d7b9ee8c1a1c6f1bd8345e0123e9", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/7dc6b1505c5f6cd148f5559509fe682be388d1530cb052d343ee732b91ab44ba") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/e09fd7c599dc2466ef0fd2281f1abb97bded8f9a893c5ca422b24ca31faee73b") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("SLUG=\"this-book\"                                # kebab-case"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/7dc6b1505c5f6cd148f5559509fe682be388d1530cb052d343ee732b91ab44ba",
+                step: "/BookMirrorInput/epub-steps/procedure/e09fd7c599dc2466ef0fd2281f1abb97bded8f9a893c5ca422b24ca31faee73b",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/7dc6b1505c5f6cd148f5559509fe682be388d1530cb052d343ee732b91ab44ba", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/e09fd7c599dc2466ef0fd2281f1abb97bded8f9a893c5ca422b24ca31faee73b", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/a9c0253c3b72d08fda5134036ad540f9e430be9e78727e9bc0ad09bfa5aa4b75") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/e936a3267fcb9df69924525ce8deb72c5455f2a89dc1f50f414539cdf8ca26af") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("WORK=\"$(mktemp -d)/$SLUG\""),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/a9c0253c3b72d08fda5134036ad540f9e430be9e78727e9bc0ad09bfa5aa4b75",
+                step: "/BookMirrorInput/epub-steps/procedure/e936a3267fcb9df69924525ce8deb72c5455f2a89dc1f50f414539cdf8ca26af",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/a9c0253c3b72d08fda5134036ad540f9e430be9e78727e9bc0ad09bfa5aa4b75", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/e936a3267fcb9df69924525ce8deb72c5455f2a89dc1f50f414539cdf8ca26af", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/be706fd8b7c5c56abe3160f8331637229271238e0c7f76daf987cdf255cc8c7f") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/0b1da520eeb2d4c798fbe5d42c637511090b13a0d0e788ebe26bdeadc5c1d6df") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("mkdir -p \"$WORK/chapters\""),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/be706fd8b7c5c56abe3160f8331637229271238e0c7f76daf987cdf255cc8c7f",
+                step: "/BookMirrorInput/epub-steps/procedure/0b1da520eeb2d4c798fbe5d42c637511090b13a0d0e788ebe26bdeadc5c1d6df",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/be706fd8b7c5c56abe3160f8331637229271238e0c7f76daf987cdf255cc8c7f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/0b1da520eeb2d4c798fbe5d42c637511090b13a0d0e788ebe26bdeadc5c1d6df", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/4215e70479736d41c577a30cca7c70a1f570fe725f451e5d458f756bf1e849fd") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/24a18294aad5b9b0b5e01da0111340a2a11735575310b70650336a9692a3a947") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("unzip -o path/to/book.epub -d \"$WORK/unpacked\""),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/4215e70479736d41c577a30cca7c70a1f570fe725f451e5d458f756bf1e849fd",
+                step: "/BookMirrorInput/epub-steps/procedure/24a18294aad5b9b0b5e01da0111340a2a11735575310b70650336a9692a3a947",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/4215e70479736d41c577a30cca7c70a1f570fe725f451e5d458f756bf1e849fd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/24a18294aad5b9b0b5e01da0111340a2a11735575310b70650336a9692a3a947", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/5076302a611c4fc9e220c133d55394512c5ee0c8b90a5619baa0531653adcc3c") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/266e800d23135c0a331f337951e49eeac4fb0cd027709cdaf183d01f128ab9a3") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("find \"$WORK/unpacked\" -name \"*.xhtml\" -o -name \"*.html\" | sort > \"$WORK/files.txt\""),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/5076302a611c4fc9e220c133d55394512c5ee0c8b90a5619baa0531653adcc3c",
+                step: "/BookMirrorInput/epub-steps/procedure/266e800d23135c0a331f337951e49eeac4fb0cd027709cdaf183d01f128ab9a3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/5076302a611c4fc9e220c133d55394512c5ee0c8b90a5619baa0531653adcc3c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/266e800d23135c0a331f337951e49eeac4fb0cd027709cdaf183d01f128ab9a3", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/912c0cc750a69d6e2f438ac9cd88819b5fcb1dfd8fa59e17a536cd9a940cf81c") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/efcd92cbb7e10b083beddcfc38d514dc4f359030c5b1328ef8b0a4aea5d9821c") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("python3 - <<'PY'"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/912c0cc750a69d6e2f438ac9cd88819b5fcb1dfd8fa59e17a536cd9a940cf81c",
+                step: "/BookMirrorInput/epub-steps/procedure/efcd92cbb7e10b083beddcfc38d514dc4f359030c5b1328ef8b0a4aea5d9821c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/912c0cc750a69d6e2f438ac9cd88819b5fcb1dfd8fa59e17a536cd9a940cf81c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/efcd92cbb7e10b083beddcfc38d514dc4f359030c5b1328ef8b0a4aea5d9821c", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/9c3722d97af0ab96a80b233f933acd8594d6fa010837898fa0e1c2d20781e2d7") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/4fa5d540f0adf48a8a0f13cdadca161ee3cb734ea4e3e57ac90ea35f648c6c25") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("from bs4 import BeautifulSoup"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/9c3722d97af0ab96a80b233f933acd8594d6fa010837898fa0e1c2d20781e2d7",
+                step: "/BookMirrorInput/epub-steps/procedure/4fa5d540f0adf48a8a0f13cdadca161ee3cb734ea4e3e57ac90ea35f648c6c25",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/9c3722d97af0ab96a80b233f933acd8594d6fa010837898fa0e1c2d20781e2d7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/4fa5d540f0adf48a8a0f13cdadca161ee3cb734ea4e3e57ac90ea35f648c6c25", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/c37ffc0ca02453b5ebc28e0809da72a1cb0affbc5093c01a27828aa4b0650a60") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/053ab7d6632f649e9467b331b21a3f1c50edc64145cc03d1ef8c3886bf7159f2") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("import os, sys"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/c37ffc0ca02453b5ebc28e0809da72a1cb0affbc5093c01a27828aa4b0650a60",
+                step: "/BookMirrorInput/epub-steps/procedure/053ab7d6632f649e9467b331b21a3f1c50edc64145cc03d1ef8c3886bf7159f2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/c37ffc0ca02453b5ebc28e0809da72a1cb0affbc5093c01a27828aa4b0650a60", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/053ab7d6632f649e9467b331b21a3f1c50edc64145cc03d1ef8c3886bf7159f2", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/d604204e4ef79efb9ffaee7499660d044e46de11a61b317fa8db3c853fa0e001") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/204f3c8034457ff8bd76ca12271dfb14e5825bf9bdfd60fe0bef5833de578c4c") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("work = os.environ['WORK']"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/d604204e4ef79efb9ffaee7499660d044e46de11a61b317fa8db3c853fa0e001",
+                step: "/BookMirrorInput/epub-steps/procedure/204f3c8034457ff8bd76ca12271dfb14e5825bf9bdfd60fe0bef5833de578c4c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/d604204e4ef79efb9ffaee7499660d044e46de11a61b317fa8db3c853fa0e001", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/204f3c8034457ff8bd76ca12271dfb14e5825bf9bdfd60fe0bef5833de578c4c", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/a9d2659241e945c7805781bef8db3118800d3eab9ca57d15f9b885a265abb89a") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/c39c17050ea3cfb929655f341113e835951b5d75d4c9bac6fe9262fc6f152eed") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("files = open(f'{{work}}/files.txt').read().splitlines()"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/a9d2659241e945c7805781bef8db3118800d3eab9ca57d15f9b885a265abb89a",
+                step: "/BookMirrorInput/epub-steps/procedure/c39c17050ea3cfb929655f341113e835951b5d75d4c9bac6fe9262fc6f152eed",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/a9d2659241e945c7805781bef8db3118800d3eab9ca57d15f9b885a265abb89a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/c39c17050ea3cfb929655f341113e835951b5d75d4c9bac6fe9262fc6f152eed", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/dca6572d30107e417bfd9d55fbf764637fba6280b7d75fdedba71cf84209dc53") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/eb5806f0c0091867d5ea2f0ffd260a5a09707c5cd1ee7f4ea94a4643bb75219d") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("for i, path in enumerate(files, 1):"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/dca6572d30107e417bfd9d55fbf764637fba6280b7d75fdedba71cf84209dc53",
+                step: "/BookMirrorInput/epub-steps/procedure/eb5806f0c0091867d5ea2f0ffd260a5a09707c5cd1ee7f4ea94a4643bb75219d",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/dca6572d30107e417bfd9d55fbf764637fba6280b7d75fdedba71cf84209dc53", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/eb5806f0c0091867d5ea2f0ffd260a5a09707c5cd1ee7f4ea94a4643bb75219d", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/9ae84d5edc74a2826bdf89685280df7570e071102d1be814b3456bdc70ac0015") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/3aae0a128dad72ae623147f1e21f3ee645a2f67ba55cd95fb0afc496e4968796") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("html = open(path, encoding='utf-8', errors='replace').read()"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/9ae84d5edc74a2826bdf89685280df7570e071102d1be814b3456bdc70ac0015",
+                step: "/BookMirrorInput/epub-steps/procedure/3aae0a128dad72ae623147f1e21f3ee645a2f67ba55cd95fb0afc496e4968796",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/9ae84d5edc74a2826bdf89685280df7570e071102d1be814b3456bdc70ac0015", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/3aae0a128dad72ae623147f1e21f3ee645a2f67ba55cd95fb0afc496e4968796", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/fd7fb1797fd9452792c301eacc5fb4f80b33bfd5d7aa5a597786fa5ceee36ab3") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/a4dfb108443eebfd8630d1f3c927ae01b07237cb661e15035484b79f96c51d75") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("text = BeautifulSoup(html, 'html.parser').get_text('\\n')"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/fd7fb1797fd9452792c301eacc5fb4f80b33bfd5d7aa5a597786fa5ceee36ab3",
+                step: "/BookMirrorInput/epub-steps/procedure/a4dfb108443eebfd8630d1f3c927ae01b07237cb661e15035484b79f96c51d75",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/fd7fb1797fd9452792c301eacc5fb4f80b33bfd5d7aa5a597786fa5ceee36ab3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/a4dfb108443eebfd8630d1f3c927ae01b07237cb661e15035484b79f96c51d75", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/5bd74489922cbc13654a709415a2fb1586188c9bb6284cacce5927e62462fbef") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/2b6c26191e17c58b5609b4fe924c91ac63883093f45ed9aee7e377156b88bf50") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("text = '\\n'.join(line.strip() for line in text.splitlines() if line.strip())"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/5bd74489922cbc13654a709415a2fb1586188c9bb6284cacce5927e62462fbef",
+                step: "/BookMirrorInput/epub-steps/procedure/2b6c26191e17c58b5609b4fe924c91ac63883093f45ed9aee7e377156b88bf50",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/5bd74489922cbc13654a709415a2fb1586188c9bb6284cacce5927e62462fbef", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/2b6c26191e17c58b5609b4fe924c91ac63883093f45ed9aee7e377156b88bf50", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/56faa5daa1d00e60e29c19dfe93d4d11e9525d78354c28f488b0fc684837956f") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/0a56aee53b23c04af5ab8944c0488bc8ba69f909c931e80ade8d9301a71daf8b") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("with open(f'{{work}}/chapters/{{i:02d}}.txt', 'w') as f:"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/56faa5daa1d00e60e29c19dfe93d4d11e9525d78354c28f488b0fc684837956f",
+                step: "/BookMirrorInput/epub-steps/procedure/0a56aee53b23c04af5ab8944c0488bc8ba69f909c931e80ade8d9301a71daf8b",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/56faa5daa1d00e60e29c19dfe93d4d11e9525d78354c28f488b0fc684837956f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/0a56aee53b23c04af5ab8944c0488bc8ba69f909c931e80ade8d9301a71daf8b", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/511321f422e02bfc3cf56825ccdda3948269545aa6d38867e8943a098b1196ad") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/5bc789d213dd83c2e8cb5494c4fba7415d7942d032c359fa3da10862c7cddefe") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("f.write(text)"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/511321f422e02bfc3cf56825ccdda3948269545aa6d38867e8943a098b1196ad",
+                step: "/BookMirrorInput/epub-steps/procedure/5bc789d213dd83c2e8cb5494c4fba7415d7942d032c359fa3da10862c7cddefe",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/511321f422e02bfc3cf56825ccdda3948269545aa6d38867e8943a098b1196ad", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/5bc789d213dd83c2e8cb5494c4fba7415d7942d032c359fa3da10862c7cddefe", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/751f7d0a023632f74475de9ac40b423c018c4921948c01f6831085964dcd84ef") {
+        if __meridianShouldRun("/BookMirrorInput/epub-steps/procedure/d8daf39a4bdbbae7012e1afb345dbd183194a6867ac17828d15c5c5eff635b6b") {
             // L117
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("PY"),
                 ],
-                step: "/BookMirrorInput/epub-steps/procedure/751f7d0a023632f74475de9ac40b423c018c4921948c01f6831085964dcd84ef",
+                step: "/BookMirrorInput/epub-steps/procedure/d8daf39a4bdbbae7012e1afb345dbd183194a6867ac17828d15c5c5eff635b6b",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/751f7d0a023632f74475de9ac40b423c018c4921948c01f6831085964dcd84ef", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/epub-steps/procedure/d8daf39a4bdbbae7012e1afb345dbd183194a6867ac17828d15c5c5eff635b6b", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/pdf-steps/procedure/12234325865414c311ac785f6ae90d8c204b660cb64f80e11176479ef110c694") {
+        if __meridianShouldRun("/BookMirrorInput/pdf-steps/procedure/edd4669111b75cf0d921c23ab632e915ccd586a730d949be4f752865f54dc4dd") {
             // L159
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("pdftotext -layout path/to/book.pdf \"$WORK/full.txt\""),
                 ],
-                step: "/BookMirrorInput/pdf-steps/procedure/12234325865414c311ac785f6ae90d8c204b660cb64f80e11176479ef110c694",
+                step: "/BookMirrorInput/pdf-steps/procedure/edd4669111b75cf0d921c23ab632e915ccd586a730d949be4f752865f54dc4dd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/pdf-steps/procedure/12234325865414c311ac785f6ae90d8c204b660cb64f80e11176479ef110c694", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/pdf-steps/procedure/edd4669111b75cf0d921c23ab632e915ccd586a730d949be4f752865f54dc4dd", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/708c900d382cd83935ea85d620d1085744ad27891a355d4bed432764170e155e") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/08e2ae6f659b4de714fc886d344883b20ed35a14d2d8ea88f1df5c56b8118d3b") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("CONTEXT=\"$WORK/context.md\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/708c900d382cd83935ea85d620d1085744ad27891a355d4bed432764170e155e",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/08e2ae6f659b4de714fc886d344883b20ed35a14d2d8ea88f1df5c56b8118d3b",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/708c900d382cd83935ea85d620d1085744ad27891a355d4bed432764170e155e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/08e2ae6f659b4de714fc886d344883b20ed35a14d2d8ea88f1df5c56b8118d3b", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/c99702f06870bf34ac11b6016e650c38db7933ed8a6862f2dc38193243fc495f") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/1eeca09b1b23bd200fc4508ca424b3bc3e3ca47aae96f80cb78e69b36e73e0f7") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("{"),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/c99702f06870bf34ac11b6016e650c38db7933ed8a6862f2dc38193243fc495f",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/1eeca09b1b23bd200fc4508ca424b3bc3e3ca47aae96f80cb78e69b36e73e0f7",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/c99702f06870bf34ac11b6016e650c38db7933ed8a6862f2dc38193243fc495f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/1eeca09b1b23bd200fc4508ca424b3bc3e3ca47aae96f80cb78e69b36e73e0f7", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/6f37f10abd811150e00fe722ec0cabcb2eb8fd47bca476731db178749bc5d334") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/40c6dfa697dc4f1fa4686c76a2b7f6ce218d489b635ae56f972d78887f43df00") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"## USER.md (if any)\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/6f37f10abd811150e00fe722ec0cabcb2eb8fd47bca476731db178749bc5d334",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/40c6dfa697dc4f1fa4686c76a2b7f6ce218d489b635ae56f972d78887f43df00",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/6f37f10abd811150e00fe722ec0cabcb2eb8fd47bca476731db178749bc5d334", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/40c6dfa697dc4f1fa4686c76a2b7f6ce218d489b635ae56f972d78887f43df00", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/908b34d37dc3a549f90977cfa72eb4194acbb5e5ba53af317c98629c48b1fb09") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/1b8b305112b32f5601ae03ab6a5694113f4845ff15ebecc9cd165cdbc4c82839") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("[ -f \"$BRAIN_DIR/USER.md\" ] && cat \"$BRAIN_DIR/USER.md\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/908b34d37dc3a549f90977cfa72eb4194acbb5e5ba53af317c98629c48b1fb09",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/1b8b305112b32f5601ae03ab6a5694113f4845ff15ebecc9cd165cdbc4c82839",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/908b34d37dc3a549f90977cfa72eb4194acbb5e5ba53af317c98629c48b1fb09", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/1b8b305112b32f5601ae03ab6a5694113f4845ff15ebecc9cd165cdbc4c82839", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo"),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/8bb5042bda3c8c062b8eb4f223231fc19addcfd0b7f3e1ae59ac5e9bcd8a6619") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/f6893395479d4a32431fa44cc356224849aec4061e2b9198944363f159d3b3ed") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"## SOUL.md (if any)\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8bb5042bda3c8c062b8eb4f223231fc19addcfd0b7f3e1ae59ac5e9bcd8a6619",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/f6893395479d4a32431fa44cc356224849aec4061e2b9198944363f159d3b3ed",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8bb5042bda3c8c062b8eb4f223231fc19addcfd0b7f3e1ae59ac5e9bcd8a6619", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/f6893395479d4a32431fa44cc356224849aec4061e2b9198944363f159d3b3ed", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/eb2cbd0af784519dd7eb0deeb97e0e40a15c04671b4e388c525182016213965b") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/572d4ba702985107b4ded0030029cdce8d125262982f665e138ab42ad31c2f0c") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("[ -f \"$BRAIN_DIR/SOUL.md\" ] && cat \"$BRAIN_DIR/SOUL.md\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/eb2cbd0af784519dd7eb0deeb97e0e40a15c04671b4e388c525182016213965b",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/572d4ba702985107b4ded0030029cdce8d125262982f665e138ab42ad31c2f0c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/eb2cbd0af784519dd7eb0deeb97e0e40a15c04671b4e388c525182016213965b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/572d4ba702985107b4ded0030029cdce8d125262982f665e138ab42ad31c2f0c", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~2") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~2") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo"),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~2",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~2", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/438386eff6af26c25a20022217ddbb02d8a20c7d4a794f4f7ddec4b2b9d611dd") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/a5d6cccca9535edeb0cd1fd7dc0cc93f3d803bd8f5594a4f01a7333b95a72f2d") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"## Recent reflections (last 14 days)\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/438386eff6af26c25a20022217ddbb02d8a20c7d4a794f4f7ddec4b2b9d611dd",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/a5d6cccca9535edeb0cd1fd7dc0cc93f3d803bd8f5594a4f01a7333b95a72f2d",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/438386eff6af26c25a20022217ddbb02d8a20c7d4a794f4f7ddec4b2b9d611dd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/a5d6cccca9535edeb0cd1fd7dc0cc93f3d803bd8f5594a4f01a7333b95a72f2d", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~3") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~3") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo"),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~3",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~3", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/7d201be1939cc1cc2f7d873633ca5404876098d911b31aa1d2047d24ab86fdfd") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/3113d366ef33e89b5f546028ff01a8d5d20d0eb8ad8593277a6bcfd1f32f0d18") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"## Topic-relevant brain pages\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/7d201be1939cc1cc2f7d873633ca5404876098d911b31aa1d2047d24ab86fdfd",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/3113d366ef33e89b5f546028ff01a8d5d20d0eb8ad8593277a6bcfd1f32f0d18",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/7d201be1939cc1cc2f7d873633ca5404876098d911b31aa1d2047d24ab86fdfd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/3113d366ef33e89b5f546028ff01a8d5d20d0eb8ad8593277a6bcfd1f32f0d18", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~4") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~4") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo"),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~4",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/de77aa34233637bd5f15bb5d757ddbcf24647ab6d958fd2aeb9c001d68fd1de5~4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/8837029c5cd62b33293b95e3660e9ca5b12a7e48ba27510ce7c4d15c8d862cc7~4", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/d237b230627e87e49530a0fb434ba43ea4f83555fea01fd0dfac76442dd07339") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/87239542d45906354cae572bcc6c5883d1c159c68a71b49f54600d8c1c8d3d48") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"## Themes & cruxes\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/d237b230627e87e49530a0fb434ba43ea4f83555fea01fd0dfac76442dd07339",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/87239542d45906354cae572bcc6c5883d1c159c68a71b49f54600d8c1c8d3d48",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/d237b230627e87e49530a0fb434ba43ea4f83555fea01fd0dfac76442dd07339", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/87239542d45906354cae572bcc6c5883d1c159c68a71b49f54600d8c1c8d3d48", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/a7fbcd49982d8bc7d5e1b29a2aa9d9a64456db34e84706e54388332795704bb4") {
+        if __meridianShouldRun("/BookMirrorInput/assemble-a-context-pack-steps/procedure/96c45ee99f8b10fe61459d7ad42187730c0f18cd5a8349a64ad27a180c057ac8") {
             // L218
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("} > \"$CONTEXT\""),
                 ],
-                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/a7fbcd49982d8bc7d5e1b29a2aa9d9a64456db34e84706e54388332795704bb4",
+                step: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/96c45ee99f8b10fe61459d7ad42187730c0f18cd5a8349a64ad27a180c057ac8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/a7fbcd49982d8bc7d5e1b29a2aa9d9a64456db34e84706e54388332795704bb4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/assemble-a-context-pack-steps/procedure/96c45ee99f8b10fe61459d7ad42187730c0f18cd5a8349a64ad27a180c057ac8", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/2c03fcb11fbcfbf6b7c2266edadb0bcd54da025d6f7b9108e4b023ab4c3bd9e3") {
+        if __meridianShouldRun("/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/e18636296f87f52360df6fd28e643a1c1de1f5dc7ed6647d6eec7a8f0867804d") {
             // L261
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain book-mirror --chapters-dir \"$WORK/chapters\" --context-file \"$CONTEXT\" --slug \"$SLUG\" --title \"Book Title Goes Here\" --author \"Author Name\" --model claude-opus-4-7"),
                 ],
-                step: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/2c03fcb11fbcfbf6b7c2266edadb0bcd54da025d6f7b9108e4b023ab4c3bd9e3",
+                step: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/e18636296f87f52360df6fd28e643a1c1de1f5dc7ed6647d6eec7a8f0867804d",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/2c03fcb11fbcfbf6b7c2266edadb0bcd54da025d6f7b9108e4b023ab4c3bd9e3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps/procedure/e18636296f87f52360df6fd28e643a1c1de1f5dc7ed6647d6eec7a8f0867804d", state: state.snapshot())
         }
-        if __meridianShouldRun("/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/6a45ec4fadd2b3c075b179a7418c47859bb32d8d627c403620dff6179c72bc50") {
+        if __meridianShouldRun("/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/32eb1e9d18e779282fd6e803099ba6c8bb20eea0fdbb752521ada081123857dd") {
             // L274
             // Reads each child's  (the markdown analysis text)
             _ = try await runtime.invoke(
@@ -1100,11 +1100,11 @@ public struct BookMirrorInput: MeridianWorkflow {
                 args: [
                     "command": .string("job.result"),
                 ],
-                step: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/6a45ec4fadd2b3c075b179a7418c47859bb32d8d627c403620dff6179c72bc50",
+                step: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/32eb1e9d18e779282fd6e803099ba6c8bb20eea0fdbb752521ada081123857dd",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/6a45ec4fadd2b3c075b179a7418c47859bb32d8d627c403620dff6179c72bc50", state: state.snapshot())
+            try await runtime.checkpoint(label: "/BookMirrorInput/4-analysis-invoke-gbrain-book-mirror-steps-2/procedure/32eb1e9d18e779282fd6e803099ba6c8bb20eea0fdbb752521ada081123857dd", state: state.snapshot())
         }
         // L286
         let __meridianProseResults_L286 = try await runtime.executeProsePlan(
@@ -1112,7 +1112,7 @@ public struct BookMirrorInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["assess.notability", "capture", "enrich", "health.get", "jobs.status", "jobs.submit", "link.add", "link.backlinks", "makePDF", "page.create", "page.get", "page.list", "page.search", "page.update", "publish", "recall", "research", "timeline.add", "verify"],
             outputKind: "record",
-            step: "/BookMirrorInput/model-opus-by-default-steps/procedure/0d9b49bfa5c1e9a1fc80117e24a9d8145dc2bc67553fc7d545260922f3e83593",
+            step: "/BookMirrorInput/model-opus-by-default-steps/procedure/1459e8f324c6da9d79ebd69f319d23e16c266e86980e83d372335f1809002249",
             guidance: "The default model is `claude-opus-4-7`. Sonnet works (use ``--model\nclaude-sonnet-4-6``) but the right-column quality drops noticeably — the\ntexture that makes the analysis read like a therapist who knows the user\nneeds Opus-grade reasoning\nThe CLI refuses to spend in a non-TTY context without `--yes`. CI / scripted\ninvocations must pass `--yes` explicitly. TTY users get a `[y/N]` prompt\nbefore submission\nAfter the brain page is written, render to PDF using `skills/brain-pdf`:\ncodeblock:bash:Z2JyYWluIHB1dF9wYWdlICAjIGFscmVhZHkgZG9uZSBieSB0aGUgQ0xJOyBub3RoaW5nIHRvIGFkZCBoZXJlCiMgVGhlbiBpbnZva2UgYnJhaW4tcGRmOgojIChzZWUgc2tpbGxzL2JyYWluLXBkZi9TS0lMTC5tZCBmb3IgdGhlIG1ha2UtcGRmIGludm9jYXRpb24p\nFor every person the right column references with a brain page, add a\nback-link from `people/<slug>` to the new `media/books/<slug>-personalized`\npage (per `conventions/quality.md` Iron Law)\n❌ Factual errors about the reader's life. Always fact-check after\nassembly\nuse judgment to follow the Anti-patterns (do not do these) — steps 2 guidance:\n❌ **Sycophancy or moralizing in the right column.** No \"you should…\",\nno \"consider…\", no \"perhaps it's time to…\"\nBook file exists locally (path known)\nChapter texts under `$WORK/chapters/*.txt` with sane word counts\nContext pack at `$WORK/context.md` is dense\n`gbrain book-mirror --chapters-dir … --context-file … --slug … --title …` returned exit 0\n`media/books/<slug>-personalized.md` exists in the brain\nFact-check pass complete (no errors against USER.md or other source-of-truth pages)\nCross-links added from referenced people/companies\nOptional: PDF rendered via brain-pdf and delivered\n`skills/brain-pdf/SKILL.md` — render the personalized page to PDF\n`skills/strategic-reading/SKILL.md` — read a book through a specific\nproblem-lens instead of personalizing to the whole reader\n`skills/article-enrichment/SKILL.md` — same shape applied to articles\nrather than books"
         )
         for (__key, __value) in __meridianProseResults_L286 {
@@ -1175,12 +1175,12 @@ public struct WhenPersonalizedversionthisbookFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPersonalizedversionthisbookFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/bd66ee5a73f96c8283fc37ac742de0087afe4c1b1c0286c9aded4ee88679c06f") {
+        if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/2590dcddc95b78923a0643e2f5da41b8e5251d866662d205bc62af3f34be17e7") {
             // L1
             try await runtime.wait(.event("personalizedVersionThisBook", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPersonalizedversionthisbookFires/root/procedure/bd66ee5a73f96c8283fc37ac742de0087afe4c1b1c0286c9aded4ee88679c06f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPersonalizedversionthisbookFires/root/procedure/2590dcddc95b78923a0643e2f5da41b8e5251d866662d205bc62af3f34be17e7", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/0423cbf2424f49184ddf1bf9d4427da23ed7fe173275f29bcaa3ba60e5c37cbf") {
+        if __meridianShouldRun("/WhenPersonalizedversionthisbookFires/root/procedure/7825938f5ccb699a87510b79fd03ea3a3f7830a99fdfc17bb08d8c834b78a40b") {
             // L1
             try await runtime.emit(
                 event: "trigger.personalizedVersionThisBook.fired",
@@ -1188,9 +1188,9 @@ public struct WhenPersonalizedversionthisbookFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("personalized version of this book"),
                 ],
-                step: "/WhenPersonalizedversionthisbookFires/root/procedure/0423cbf2424f49184ddf1bf9d4427da23ed7fe173275f29bcaa3ba60e5c37cbf"
+                step: "/WhenPersonalizedversionthisbookFires/root/procedure/7825938f5ccb699a87510b79fd03ea3a3f7830a99fdfc17bb08d8c834b78a40b"
             )
-            try await runtime.checkpoint(label: "/WhenPersonalizedversionthisbookFires/root/procedure/0423cbf2424f49184ddf1bf9d4427da23ed7fe173275f29bcaa3ba60e5c37cbf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPersonalizedversionthisbookFires/root/procedure/7825938f5ccb699a87510b79fd03ea3a3f7830a99fdfc17bb08d8c834b78a40b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPersonalizedversionthisbookFires.complete")
@@ -1249,12 +1249,12 @@ public struct WhenMirrorthisbookFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenMirrorthisbookFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/c4c824113d3cbeba77421598a4a06aa93327d2fa7a74f33164656a1af68c4f31") {
+        if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/7f6e32b2effd2f382086f25b14373dba66e5b5e24cd0664503bcbfb20ebe858a") {
             // L1
             try await runtime.wait(.event("mirrorThisBook", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMirrorthisbookFires/root/procedure/c4c824113d3cbeba77421598a4a06aa93327d2fa7a74f33164656a1af68c4f31", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMirrorthisbookFires/root/procedure/7f6e32b2effd2f382086f25b14373dba66e5b5e24cd0664503bcbfb20ebe858a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/f2810d9604f5d610bb42444fb535fec6324b332c38480e9bedcdcaacee1f6c1e") {
+        if __meridianShouldRun("/WhenMirrorthisbookFires/root/procedure/8b739dac880ad58504c34074d3181878da5f11f518cab1cb96fb92689dcd65a5") {
             // L1
             try await runtime.emit(
                 event: "trigger.mirrorThisBook.fired",
@@ -1262,9 +1262,9 @@ public struct WhenMirrorthisbookFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("mirror this book"),
                 ],
-                step: "/WhenMirrorthisbookFires/root/procedure/f2810d9604f5d610bb42444fb535fec6324b332c38480e9bedcdcaacee1f6c1e"
+                step: "/WhenMirrorthisbookFires/root/procedure/8b739dac880ad58504c34074d3181878da5f11f518cab1cb96fb92689dcd65a5"
             )
-            try await runtime.checkpoint(label: "/WhenMirrorthisbookFires/root/procedure/f2810d9604f5d610bb42444fb535fec6324b332c38480e9bedcdcaacee1f6c1e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMirrorthisbookFires/root/procedure/8b739dac880ad58504c34074d3181878da5f11f518cab1cb96fb92689dcd65a5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMirrorthisbookFires.complete")
@@ -1323,12 +1323,12 @@ public struct WhenTwocolumnbookanalysisFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenTwocolumnbookanalysisFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/f715d83b423feb1ede8d3c68af22f0c08d6a804e53c4d4d42c168492efba496a") {
+        if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/2f2adc7c3d70f33e138afac989552cf80094ede4d1d610c567e3ba4e442c2359") {
             // L1
             try await runtime.wait(.event("twoColumnBookAnalysis", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTwocolumnbookanalysisFires/root/procedure/f715d83b423feb1ede8d3c68af22f0c08d6a804e53c4d4d42c168492efba496a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTwocolumnbookanalysisFires/root/procedure/2f2adc7c3d70f33e138afac989552cf80094ede4d1d610c567e3ba4e442c2359", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/64f5e28ddf3aaef85cc3834109ea787026168bed44c9cd4a09ec3d82f7e6ddcc") {
+        if __meridianShouldRun("/WhenTwocolumnbookanalysisFires/root/procedure/4b7be198c309be6179cef3d9354ece79379549137b90c03f8a9f812be27dd989") {
             // L1
             try await runtime.emit(
                 event: "trigger.twoColumnBookAnalysis.fired",
@@ -1336,9 +1336,9 @@ public struct WhenTwocolumnbookanalysisFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("two-column book analysis"),
                 ],
-                step: "/WhenTwocolumnbookanalysisFires/root/procedure/64f5e28ddf3aaef85cc3834109ea787026168bed44c9cd4a09ec3d82f7e6ddcc"
+                step: "/WhenTwocolumnbookanalysisFires/root/procedure/4b7be198c309be6179cef3d9354ece79379549137b90c03f8a9f812be27dd989"
             )
-            try await runtime.checkpoint(label: "/WhenTwocolumnbookanalysisFires/root/procedure/64f5e28ddf3aaef85cc3834109ea787026168bed44c9cd4a09ec3d82f7e6ddcc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTwocolumnbookanalysisFires/root/procedure/4b7be198c309be6179cef3d9354ece79379549137b90c03f8a9f812be27dd989", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTwocolumnbookanalysisFires.complete")
@@ -1397,12 +1397,12 @@ public struct WhenApplythisbookmylifeFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenApplythisbookmylifeFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/28130284de8fd2a716105361351024d06c0122a1a247c1b58a4270c4347adbf5") {
+        if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/abe7eb2683d23cb816799232abbe29041dd7903d94a472b6fce49a5d2547889d") {
             // L1
             try await runtime.wait(.event("applyThisBookMyLife", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenApplythisbookmylifeFires/root/procedure/28130284de8fd2a716105361351024d06c0122a1a247c1b58a4270c4347adbf5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenApplythisbookmylifeFires/root/procedure/abe7eb2683d23cb816799232abbe29041dd7903d94a472b6fce49a5d2547889d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/1ef457558c489bfc3cf13b333f16c6ea1f4f52df9b028c26446000c5dc3e5e70") {
+        if __meridianShouldRun("/WhenApplythisbookmylifeFires/root/procedure/beeb83c19367e727a1954cfc9413d50cf8f70ef7a0e1166aa393aa8e6cbcd231") {
             // L1
             try await runtime.emit(
                 event: "trigger.applyThisBookMyLife.fired",
@@ -1410,9 +1410,9 @@ public struct WhenApplythisbookmylifeFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("apply this book to my life"),
                 ],
-                step: "/WhenApplythisbookmylifeFires/root/procedure/1ef457558c489bfc3cf13b333f16c6ea1f4f52df9b028c26446000c5dc3e5e70"
+                step: "/WhenApplythisbookmylifeFires/root/procedure/beeb83c19367e727a1954cfc9413d50cf8f70ef7a0e1166aa393aa8e6cbcd231"
             )
-            try await runtime.checkpoint(label: "/WhenApplythisbookmylifeFires/root/procedure/1ef457558c489bfc3cf13b333f16c6ea1f4f52df9b028c26446000c5dc3e5e70", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenApplythisbookmylifeFires/root/procedure/beeb83c19367e727a1954cfc9413d50cf8f70ef7a0e1166aa393aa8e6cbcd231", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenApplythisbookmylifeFires.complete")
@@ -1471,12 +1471,12 @@ public struct WhenHowdoesthisbookapplyFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenHowdoesthisbookapplyFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/b50bc53ad88d35b00098affc3b94a11a5b68d02b7b5ab406ca3ebe093ca61820") {
+        if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/d82f23f5ae595d5d07d076ec965c6a6f52de6d00703bfc0bfb33b2f3b86d7fea") {
             // L1
             try await runtime.wait(.event("howDoesThisBookApply", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenHowdoesthisbookapplyFires/root/procedure/b50bc53ad88d35b00098affc3b94a11a5b68d02b7b5ab406ca3ebe093ca61820", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHowdoesthisbookapplyFires/root/procedure/d82f23f5ae595d5d07d076ec965c6a6f52de6d00703bfc0bfb33b2f3b86d7fea", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/3df757dea7f3abfdef2871b51926e6c1ad46d951a4ca5b317eb756e44a007b31") {
+        if __meridianShouldRun("/WhenHowdoesthisbookapplyFires/root/procedure/9047dc11e3d81ffea5f7abe8380029b4d816a5a047f2e73004333cfcbcb399b9") {
             // L1
             try await runtime.emit(
                 event: "trigger.howDoesThisBookApply.fired",
@@ -1484,9 +1484,9 @@ public struct WhenHowdoesthisbookapplyFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("how does this book apply to me"),
                 ],
-                step: "/WhenHowdoesthisbookapplyFires/root/procedure/3df757dea7f3abfdef2871b51926e6c1ad46d951a4ca5b317eb756e44a007b31"
+                step: "/WhenHowdoesthisbookapplyFires/root/procedure/9047dc11e3d81ffea5f7abe8380029b4d816a5a047f2e73004333cfcbcb399b9"
             )
-            try await runtime.checkpoint(label: "/WhenHowdoesthisbookapplyFires/root/procedure/3df757dea7f3abfdef2871b51926e6c1ad46d951a4ca5b317eb756e44a007b31", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHowdoesthisbookapplyFires/root/procedure/9047dc11e3d81ffea5f7abe8380029b4d816a5a047f2e73004333cfcbcb399b9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenHowdoesthisbookapplyFires.complete")

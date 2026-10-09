@@ -418,77 +418,77 @@ public struct PostmortemRender: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PostmortemRender", parameters: [:])
 
-        if __meridianShouldRun("/PostmortemRender/guarantees/invariants/122eaa45954357ee4197fe709dfcf6d6902e5b229929c7556c8f3e3f597cb186") {
+        if __meridianShouldRun("/PostmortemRender/guarantees/invariants/62ebe9a18c160b89302aa1816d3738805e71edd9919a2465b4781262d669eef6") {
             // L60
             try await runtime.assert((((state.get("postmortemReport"))?.description ?? "")).contains(("postmortem-summary")), message: "Expected the postmortem report contains \"postmortem-summary\"")
-            try await runtime.checkpoint(label: "/PostmortemRender/guarantees/invariants/122eaa45954357ee4197fe709dfcf6d6902e5b229929c7556c8f3e3f597cb186", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PostmortemRender/guarantees/invariants/62ebe9a18c160b89302aa1816d3738805e71edd9919a2465b4781262d669eef6", state: state.snapshot())
         }
         // L26
         state.bind("tiers", Value.list([.record(["name": .string("high"), "floor": .number(Decimal(2))]), .record(["name": .string("low"), "floor": .number(Decimal(0))])]))
-        if __meridianShouldRun("/PostmortemRender/workflow-steps/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49") {
+        if __meridianShouldRun("/PostmortemRender/workflow-steps/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a") {
             // L41
             let incidents = try await runtime.invoke(
                 tool: "incident.list",
                 args: [
                     "status": .string("open"),
                 ],
-                step: "/PostmortemRender/workflow-steps/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+                step: "/PostmortemRender/workflow-steps/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "incident.list")
             )
             state.bind("incidents", incidents)
 
-            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a", state: state.snapshot())
         }
         // L42
         let __meridianColl_0_3 = (state.get("incidents")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"incidents\")", step: "/PostmortemRender/workflow-steps/procedure/19ba06d0b21885d7c45f346cb13834547968323fd1bb1d839726a19a5e7bc7aa")
+        try await runtime.recordIterateStart(over: "state.get(\"incidents\")", step: "/PostmortemRender/workflow-steps/procedure/01354cffb1d61c9613aebf7d63c2e6aff010f28283e7ad573f59c6286246fc97")
         for (__meridianLoopIndex_0_3, incident) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/PostmortemRender/workflow-steps/procedure/19ba06d0b21885d7c45f346cb13834547968323fd1bb1d839726a19a5e7bc7aa")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/PostmortemRender/workflow-steps/procedure/01354cffb1d61c9613aebf7d63c2e6aff010f28283e7ad573f59c6286246fc97")
             state.bind("incident", incident)
-                if __meridianShouldRun("/PostmortemRender/workflow-steps/procedure/iterate.body/ae339becd08c1ff53d64d8b111ba128fabcfd4971119e6528811355f7d56ca42") {
+                if __meridianShouldRun("/PostmortemRender/workflow-steps/procedure/iterate.body/7fc3270b2c6c266860f8f19bbd583edde48afba69e36a0bd4c4bb9ee30252fe0") {
                     // L43
                     let postmortem = try await runtime.invoke(
                         tool: "postmortem.publish",
                         args: [
                             "incident": state.get("incident") ?? .null,
                         ],
-                        step: "/PostmortemRender/workflow-steps/procedure/iterate.body/ae339becd08c1ff53d64d8b111ba128fabcfd4971119e6528811355f7d56ca42",
+                        step: "/PostmortemRender/workflow-steps/procedure/iterate.body/7fc3270b2c6c266860f8f19bbd583edde48afba69e36a0bd4c4bb9ee30252fe0",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "postmortem.publish")
                     )
                     state.bind("postmortem", postmortem)
 
-                    try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps/procedure/iterate.body/ae339becd08c1ff53d64d8b111ba128fabcfd4971119e6528811355f7d56ca42", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps/procedure/iterate.body/7fc3270b2c6c266860f8f19bbd583edde48afba69e36a0bd4c4bb9ee30252fe0", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"incidents\")", count: __meridianColl_0_3.count, step: "/PostmortemRender/workflow-steps/procedure/19ba06d0b21885d7c45f346cb13834547968323fd1bb1d839726a19a5e7bc7aa")
+        try await runtime.recordIterateEnd(over: "state.get(\"incidents\")", count: __meridianColl_0_3.count, step: "/PostmortemRender/workflow-steps/procedure/01354cffb1d61c9613aebf7d63c2e6aff010f28283e7ad573f59c6286246fc97")
 
         // L44
         state.bind("sev1Count", Decimal(((state.get("incidents"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("severity"), .string("sev1"))) }.count))
-        if __meridianShouldRun("/PostmortemRender/workflow-steps-2/procedure/923c576ff6c8cc3c64cd70b032362f45027c98c80a68a80de340fbcf9114ae00") {
+        if __meridianShouldRun("/PostmortemRender/workflow-steps-2/procedure/b526c5a89ff492765927bdef5a268ec35fadd7c4e2b2f5518195e38e3c7ce502") {
             // L48
             try await runtime.emit(
                 event: "incident.postmortem_report",
                 payload: [
                     "body": state.get("postmortemReport") ?? .null,
                 ],
-                step: "/PostmortemRender/workflow-steps-2/procedure/923c576ff6c8cc3c64cd70b032362f45027c98c80a68a80de340fbcf9114ae00"
+                step: "/PostmortemRender/workflow-steps-2/procedure/b526c5a89ff492765927bdef5a268ec35fadd7c4e2b2f5518195e38e3c7ce502"
             )
-            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps-2/procedure/923c576ff6c8cc3c64cd70b032362f45027c98c80a68a80de340fbcf9114ae00", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps-2/procedure/b526c5a89ff492765927bdef5a268ec35fadd7c4e2b2f5518195e38e3c7ce502", state: state.snapshot())
         }
-        if __meridianShouldRun("/PostmortemRender/workflow-steps-2/procedure/32551e2f487db2fc39e7cc990124b0af5e7e1ea30a80218ace23d1bc7610e8b0") {
+        if __meridianShouldRun("/PostmortemRender/workflow-steps-2/procedure/07201af884ab79286bbd3d8e21fc7cd8957120bfee420fe19b9423049261edf5") {
             // L49
             try await runtime.emit(
                 event: "incident.report",
                 payload: [
                     "message": .string("postmortem render pass complete"),
                 ],
-                step: "/PostmortemRender/workflow-steps-2/procedure/32551e2f487db2fc39e7cc990124b0af5e7e1ea30a80218ace23d1bc7610e8b0"
+                step: "/PostmortemRender/workflow-steps-2/procedure/07201af884ab79286bbd3d8e21fc7cd8957120bfee420fe19b9423049261edf5"
             )
-            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps-2/procedure/32551e2f487db2fc39e7cc990124b0af5e7e1ea30a80218ace23d1bc7610e8b0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PostmortemRender/workflow-steps-2/procedure/07201af884ab79286bbd3d8e21fc7cd8957120bfee420fe19b9423049261edf5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PostmortemRender.complete")
@@ -548,12 +548,12 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRenderpostmortemFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/3228d10ed1bf7522c418f729cbef647917a2021d948037613b8bc0b60fe5a138") {
+        if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/db4f710931865d22d594c2b68005e2242c449755d4a0a2258da116634bb82ee8") {
             // L1
             try await runtime.wait(.event("renderPostmortem", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRenderpostmortemFires/root/procedure/3228d10ed1bf7522c418f729cbef647917a2021d948037613b8bc0b60fe5a138", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderpostmortemFires/root/procedure/db4f710931865d22d594c2b68005e2242c449755d4a0a2258da116634bb82ee8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/c86054fb9aab2c72b3c867d091dbd38a998293a0fc771200d559115f6586ef61") {
+        if __meridianShouldRun("/WhenRenderpostmortemFires/root/procedure/9e44e31caf3cc4bbc01435b3dfce1cd003e541fcb37fca5360f0b2a912a8c862") {
             // L1
             try await runtime.emit(
                 event: "trigger.renderPostmortem.fired",
@@ -561,9 +561,9 @@ public struct WhenRenderpostmortemFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("render postmortem"),
                 ],
-                step: "/WhenRenderpostmortemFires/root/procedure/c86054fb9aab2c72b3c867d091dbd38a998293a0fc771200d559115f6586ef61"
+                step: "/WhenRenderpostmortemFires/root/procedure/9e44e31caf3cc4bbc01435b3dfce1cd003e541fcb37fca5360f0b2a912a8c862"
             )
-            try await runtime.checkpoint(label: "/WhenRenderpostmortemFires/root/procedure/c86054fb9aab2c72b3c867d091dbd38a998293a0fc771200d559115f6586ef61", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRenderpostmortemFires/root/procedure/9e44e31caf3cc4bbc01435b3dfce1cd003e541fcb37fca5360f0b2a912a8c862", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRenderpostmortemFires.complete")
@@ -623,12 +623,12 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenPublishincidentpostmortemFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/f344cc497427edc4a1e56f1e921493dba0f3eb45c780947aeba7da0a17967db8") {
+        if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/aeee5fa3285dd10719962d51334ab42c84634563b537ad688538ff439fa8a740") {
             // L1
             try await runtime.wait(.event("publishIncidentPostmortem", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPublishincidentpostmortemFires/root/procedure/f344cc497427edc4a1e56f1e921493dba0f3eb45c780947aeba7da0a17967db8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishincidentpostmortemFires/root/procedure/aeee5fa3285dd10719962d51334ab42c84634563b537ad688538ff439fa8a740", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/d23d5273233cdd6f1c067e5c3d6c791d61b6c7bfd6225eefd90ce58aa93c78c4") {
+        if __meridianShouldRun("/WhenPublishincidentpostmortemFires/root/procedure/ebdb29b686e41fcf36f2506af8d826f4fc1e4abc0b3189d57b70c978fcac972b") {
             // L1
             try await runtime.emit(
                 event: "trigger.publishIncidentPostmortem.fired",
@@ -636,9 +636,9 @@ public struct WhenPublishincidentpostmortemFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("publish incident postmortem"),
                 ],
-                step: "/WhenPublishincidentpostmortemFires/root/procedure/d23d5273233cdd6f1c067e5c3d6c791d61b6c7bfd6225eefd90ce58aa93c78c4"
+                step: "/WhenPublishincidentpostmortemFires/root/procedure/ebdb29b686e41fcf36f2506af8d826f4fc1e4abc0b3189d57b70c978fcac972b"
             )
-            try await runtime.checkpoint(label: "/WhenPublishincidentpostmortemFires/root/procedure/d23d5273233cdd6f1c067e5c3d6c791d61b6c7bfd6225eefd90ce58aa93c78c4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishincidentpostmortemFires/root/procedure/ebdb29b686e41fcf36f2506af8d826f4fc1e4abc0b3189d57b70c978fcac972b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPublishincidentpostmortemFires.complete")
@@ -698,12 +698,12 @@ public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunpostmortemrenderpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/c2545bc330a76769379c529702f6de381966f10652c67c9992cac26f80b0c996") {
+        if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/afdc955c5810897ed389ebe3aa5b6b1550ad58873b21f2bda09b6137fdf3803d") {
             // L1
             try await runtime.wait(.event("runPostmortemRenderPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunpostmortemrenderpassFires/root/procedure/c2545bc330a76769379c529702f6de381966f10652c67c9992cac26f80b0c996", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpostmortemrenderpassFires/root/procedure/afdc955c5810897ed389ebe3aa5b6b1550ad58873b21f2bda09b6137fdf3803d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/c6f30cd202a2a0cb159379aa78040e8c9d2dcb47111fb85c4edd79d7ff59a082") {
+        if __meridianShouldRun("/WhenRunpostmortemrenderpassFires/root/procedure/44ae0f123f4322b746dfdbe49ae64f94c390416eddf634226aa6bd807ca6d8f3") {
             // L1
             try await runtime.emit(
                 event: "trigger.runPostmortemRenderPass.fired",
@@ -711,9 +711,9 @@ public struct WhenRunpostmortemrenderpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the postmortem render pass"),
                 ],
-                step: "/WhenRunpostmortemrenderpassFires/root/procedure/c6f30cd202a2a0cb159379aa78040e8c9d2dcb47111fb85c4edd79d7ff59a082"
+                step: "/WhenRunpostmortemrenderpassFires/root/procedure/44ae0f123f4322b746dfdbe49ae64f94c390416eddf634226aa6bd807ca6d8f3"
             )
-            try await runtime.checkpoint(label: "/WhenRunpostmortemrenderpassFires/root/procedure/c6f30cd202a2a0cb159379aa78040e8c9d2dcb47111fb85c4edd79d7ff59a082", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpostmortemrenderpassFires/root/procedure/44ae0f123f4322b746dfdbe49ae64f94c390416eddf634226aa6bd807ca6d8f3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunpostmortemrenderpassFires.complete")

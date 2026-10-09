@@ -575,77 +575,77 @@ public struct Restock: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "Restock", parameters: [:])
 
-        if __meridianShouldRun("/Restock/guarantees/invariants/49ab3808be2ae450c22a7fd4326a8ff686962872e5ed48267cacdb37b2e48308") {
+        if __meridianShouldRun("/Restock/guarantees/invariants/721bdb0b8db79b5a1eabdfb1d856dedb0008a3294d0a1b5d3a26e2d2b9563b2e") {
             // L24
             try await runtime.assert(((state.get("products")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("sku")) }), message: "Expected all products have a sku")
-            try await runtime.checkpoint(label: "/Restock/guarantees/invariants/49ab3808be2ae450c22a7fd4326a8ff686962872e5ed48267cacdb37b2e48308", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/guarantees/invariants/721bdb0b8db79b5a1eabdfb1d856dedb0008a3294d0a1b5d3a26e2d2b9563b2e", state: state.snapshot())
         }
-        if __meridianShouldRun("/Restock/guarantees/invariants/1818a40b149394a20a5a04be622639fbea2e7254bf5a4087d5bd62f809ced4a9") {
+        if __meridianShouldRun("/Restock/guarantees/invariants/18abf659cb76a33fe48d52055a05c66cb3e0b2c31a681a84166b0f016d5a112a") {
             // L25
             try await runtime.assert(((state.get("purchaseOrders")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("pending"))) }.allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("number")) }), message: "Expected all purchase orders whose status is \"pending\" have a number")
-            try await runtime.checkpoint(label: "/Restock/guarantees/invariants/1818a40b149394a20a5a04be622639fbea2e7254bf5a4087d5bd62f809ced4a9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/guarantees/invariants/18abf659cb76a33fe48d52055a05c66cb3e0b2c31a681a84166b0f016d5a112a", state: state.snapshot())
         }
-        if __meridianShouldRun("/Restock/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043") {
+        if __meridianShouldRun("/Restock/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c") {
             // L16
             let products = try await runtime.invoke(
                 tool: "product.list",
                 args: [
                     "status": .string("short"),
                 ],
-                step: "/Restock/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043",
+                step: "/Restock/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "product.list")
             )
             state.bind("products", products)
 
-            try await runtime.checkpoint(label: "/Restock/workflow/procedure/ecf522e51bde7b4521241190e607495c5cf91604cc9d3374e533ffb0f0d9d043", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/workflow/procedure/8f46c938424803fc6670515835fde2bdcf6ae55b920ff3a81d533e31c72bdd7c", state: state.snapshot())
         }
-        if __meridianShouldRun("/Restock/workflow/procedure/16f9f56d57ce71c0d619488b3562d22b24f54e8a5af0ca1aa7b63cc1743b52cf") {
+        if __meridianShouldRun("/Restock/workflow/procedure/1457385c48eda2442115af6ff26b682f2c053b239da60c3427bc1199a6735f7a") {
             // L17
             try await runtime.assert((!((state.get("products")?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }).isEmpty), message: "Expected any short products")
-            try await runtime.checkpoint(label: "/Restock/workflow/procedure/16f9f56d57ce71c0d619488b3562d22b24f54e8a5af0ca1aa7b63cc1743b52cf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/workflow/procedure/1457385c48eda2442115af6ff26b682f2c053b239da60c3427bc1199a6735f7a", state: state.snapshot())
         }
-        if __meridianShouldRun("/Restock/workflow/procedure/197120462e955bad65d7211502c569776527b0b1a756b496ca88b267187e3088") {
+        if __meridianShouldRun("/Restock/workflow/procedure/be304d196a45126c0caee7424ffaa76404dd2632248157b15faf742442de36f2") {
             // L18
             try await runtime.assert((((state.get("products")?.asList ?? []).filter { __e in (meridianDef_Product_short(__e)) }).count <= 20), message: "Expected at most 20 short products")
-            try await runtime.checkpoint(label: "/Restock/workflow/procedure/197120462e955bad65d7211502c569776527b0b1a756b496ca88b267187e3088", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/workflow/procedure/be304d196a45126c0caee7424ffaa76404dd2632248157b15faf742442de36f2", state: state.snapshot())
         }
         // L19
         let __meridianColl_0_5 = (state.get("products")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"products\")", step: "/Restock/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+        try await runtime.recordIterateStart(over: "state.get(\"products\")", step: "/Restock/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
         for (__meridianLoopIndex_0_5, product) in __meridianColl_0_5.enumerated() {
             let __meridianLoopLabel_0_5 = "progress:0.5:iteration:\(__meridianLoopIndex_0_5)"
             if __meridianShouldRun(__meridianLoopLabel_0_5) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/Restock/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/Restock/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
             state.bind("product", product)
-                if __meridianShouldRun("/Restock/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d") {
+                if __meridianShouldRun("/Restock/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084") {
                     // L20
                     let purchaseOrder = try await runtime.invoke(
                         tool: "purchase_order.create",
                         args: [
                             "product": state.get("product") ?? .null,
                         ],
-                        step: "/Restock/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d",
+                        step: "/Restock/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "purchase_order.create")
                     )
                     state.bind("purchaseOrder", purchaseOrder)
 
-                    try await runtime.checkpoint(label: "/Restock/workflow/procedure/iterate.body/a58c0d6b813ab30e26cdde864c5159dca2a20b0ea88abc6a908d9a292828aa9d", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/Restock/workflow/procedure/iterate.body/ebd6e7770d1e6f9bda136e6ef85c811e7b0f73bb90ec033fdd368494ada1e084", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"products\")", count: __meridianColl_0_5.count, step: "/Restock/workflow/procedure/6d61e5394e7010314cf505ce1fedb7a2f1846a9377fa20fbd2160b33edc99c7c")
+        try await runtime.recordIterateEnd(over: "state.get(\"products\")", count: __meridianColl_0_5.count, step: "/Restock/workflow/procedure/0f3f161f768e93b613350cbc1a0c472e2ea0be1ec54435af52f9320e6355a887")
 
-        if __meridianShouldRun("/Restock/workflow/procedure/d98c305a8ca8aaa03603c72b8ae2ad5c9d7f4751ebc136aad7b71c42f2387ae0") {
+        if __meridianShouldRun("/Restock/workflow/procedure/9abd244466f7fd04ab906057341f41c46658af2ca4fc8808ba523a88f53fb2f1") {
             // L21
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("replenishment purchase orders raised"),
                 ],
-                step: "/Restock/workflow/procedure/d98c305a8ca8aaa03603c72b8ae2ad5c9d7f4751ebc136aad7b71c42f2387ae0"
+                step: "/Restock/workflow/procedure/9abd244466f7fd04ab906057341f41c46658af2ca4fc8808ba523a88f53fb2f1"
             )
-            try await runtime.checkpoint(label: "/Restock/workflow/procedure/d98c305a8ca8aaa03603c72b8ae2ad5c9d7f4751ebc136aad7b71c42f2387ae0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Restock/workflow/procedure/9abd244466f7fd04ab906057341f41c46658af2ca4fc8808ba523a88f53fb2f1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "Restock.complete")
@@ -705,12 +705,12 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRestockshortproductsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/02ff9f22af1969cc3ed7639df7a20ce24743313640092b472a514998ddfd8395") {
+        if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/8de819fc934802e963e82d8743502c27d892acee77ee717807571892c6297e1f") {
             // L1
             try await runtime.wait(.event("restockShortProducts", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRestockshortproductsFires/root/procedure/02ff9f22af1969cc3ed7639df7a20ce24743313640092b472a514998ddfd8395", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRestockshortproductsFires/root/procedure/8de819fc934802e963e82d8743502c27d892acee77ee717807571892c6297e1f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/e0d724a1f16d85e17f888ef0f230f29e0468443185beb2296a7229794477132e") {
+        if __meridianShouldRun("/WhenRestockshortproductsFires/root/procedure/9c04b76a70e9e053468db5cba06f18890f1ee8c6f89ec540c5af65f82db62328") {
             // L1
             try await runtime.emit(
                 event: "trigger.restockShortProducts.fired",
@@ -718,9 +718,9 @@ public struct WhenRestockshortproductsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("restock short products"),
                 ],
-                step: "/WhenRestockshortproductsFires/root/procedure/e0d724a1f16d85e17f888ef0f230f29e0468443185beb2296a7229794477132e"
+                step: "/WhenRestockshortproductsFires/root/procedure/9c04b76a70e9e053468db5cba06f18890f1ee8c6f89ec540c5af65f82db62328"
             )
-            try await runtime.checkpoint(label: "/WhenRestockshortproductsFires/root/procedure/e0d724a1f16d85e17f888ef0f230f29e0468443185beb2296a7229794477132e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRestockshortproductsFires/root/procedure/9c04b76a70e9e053468db5cba06f18890f1ee8c6f89ec540c5af65f82db62328", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRestockshortproductsFires.complete")
@@ -780,12 +780,12 @@ public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenInventorybelowreorderpointFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/813821437fbeaef0a527e9fd4867724b8706aec63c3f686372a4ff7fd486ffcd") {
+        if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/2850539b954ff3e5a4efa4ec0c67598962a4c40fc255a8ae70f6790c602ca3e9") {
             // L1
             try await runtime.wait(.event("inventoryBelowReorderPoint", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenInventorybelowreorderpointFires/root/procedure/813821437fbeaef0a527e9fd4867724b8706aec63c3f686372a4ff7fd486ffcd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenInventorybelowreorderpointFires/root/procedure/2850539b954ff3e5a4efa4ec0c67598962a4c40fc255a8ae70f6790c602ca3e9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/78842fbb941cffde905375c4332721956b1085cc8da84ed8315937e64417d9d6") {
+        if __meridianShouldRun("/WhenInventorybelowreorderpointFires/root/procedure/e3af24c503545855e65da91ce678eaf8741c1fb6fc8b0599094d2ac9a8381bb7") {
             // L1
             try await runtime.emit(
                 event: "trigger.inventoryBelowReorderPoint.fired",
@@ -793,9 +793,9 @@ public struct WhenInventorybelowreorderpointFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("inventory below reorder point"),
                 ],
-                step: "/WhenInventorybelowreorderpointFires/root/procedure/78842fbb941cffde905375c4332721956b1085cc8da84ed8315937e64417d9d6"
+                step: "/WhenInventorybelowreorderpointFires/root/procedure/e3af24c503545855e65da91ce678eaf8741c1fb6fc8b0599094d2ac9a8381bb7"
             )
-            try await runtime.checkpoint(label: "/WhenInventorybelowreorderpointFires/root/procedure/78842fbb941cffde905375c4332721956b1085cc8da84ed8315937e64417d9d6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenInventorybelowreorderpointFires/root/procedure/e3af24c503545855e65da91ce678eaf8741c1fb6fc8b0599094d2ac9a8381bb7", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenInventorybelowreorderpointFires.complete")

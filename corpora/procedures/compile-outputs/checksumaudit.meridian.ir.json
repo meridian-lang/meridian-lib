@@ -1,108 +1,108 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.auditRecordDrift.fired with kind = \"keyword\", spec = \"audit record drift\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenAuditrecorddriftFires\/root\/procedure\/635c05466cda45ab797722dacea515f3c14950882513f27685cfb5fbe656f5c7",
-      "swift_line" : 693
-    },
-    {
       "canonical" : "wait for event auditRecordDrift.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenAuditrecorddriftFires\/root\/procedure\/7ce0f7203de1f15c256a79ea42b11f7ddcba49164b007e4b2613bd3dba8f6e35",
+      "stable_step_path" : "\/WhenAuditrecorddriftFires\/root\/procedure\/5979eeda6c8a5e72439f3cdcd823ceea1bfb0564ce9a0dd3559c2b26f406017a",
+      "swift_line" : 693
+    },
+    {
+      "canonical" : "emit trigger.auditRecordDrift.fired with kind = \"keyword\", spec = \"audit record drift\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenAuditrecorddriftFires\/root\/procedure\/75f740f1b756a786f30104353df6f2630d1ccc5d506556f5f05bef23c1d4cd22",
       "swift_line" : 693
     },
     {
       "canonical" : "wait for event checksumAudit.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenChecksumauditFires\/root\/procedure\/c98fe355a8a86a36e10d6a18bb36e26c08527518250b2f1c3a17e2e6bf1cb831",
+      "stable_step_path" : "\/WhenChecksumauditFires\/root\/procedure\/6dfab24caa7dd15ca702196f68f54d8d7a12ba92a787de186b3c8f07c8a0b268",
       "swift_line" : 693
     },
     {
       "canonical" : "emit trigger.checksumAudit.fired with kind = \"keyword\", spec = \"checksum audit\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenChecksumauditFires\/root\/procedure\/f26d1dc1cc0e863054d6472db9419883643991e5b743eacca41cde6c8d18849e",
+      "stable_step_path" : "\/WhenChecksumauditFires\/root\/procedure\/875d7224abc8628742959c534876e1264b321c40ccd862b39fee52eb61bd02d5",
       "swift_line" : 693
     },
     {
       "canonical" : "bind records = invoke record.list with status = \"stale\".",
       "meridian_line" : 19,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465",
       "swift_line" : 462
     },
     {
       "canonical" : "assert at most 10 records whose status equals \"drifted\".",
       "meridian_line" : 20,
       "primitive" : "assert",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5",
       "swift_line" : 476
     },
     {
       "canonical" : "assert at least 0 records whose status equals \"duplicate\".",
       "meridian_line" : 21,
       "primitive" : "assert",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/bdf2a2c6e08d4691f737d6be209dad8b1c17c897a19702a9861ed26530c34a77",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/48db0a13661ae8982936ad646ba38d916a5ee4aa1e4cb418df4aa30a1193820a",
       "swift_line" : 481
     },
     {
       "canonical" : "assert exactly 1 records whose status equals \"canonical\".",
       "meridian_line" : 22,
       "primitive" : "assert",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/fe0600e2aff078b1ed51141a10bcf079e5667cfdc29ece8a82c52e550a8e5e16",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/ab82806919c432be000ad10e2b124a307375fae61053762b0e7d29a0fb6751ff",
       "swift_line" : 486
     },
     {
       "canonical" : "for each record in records,\n  bind checksum = invoke record.checksum with record = record.\n  if either record is drifted or record is duplicate,\n    emit procedure.note with message = \"record flagged for review\".\n  otherwise,\n    assert the record's status is not \"is-blocked\".",
       "meridian_line" : 23,
       "primitive" : "iterate",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/22e1f67b76475f635e302f6198239447ff4700b50398c8ae733696e40415a992",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/f20733f7242c42de3c9274111d3db1d73907456f8703acdbc4142ada7f1c6670",
       "swift_line" : 490
     },
     {
       "canonical" : "bind checksum = invoke record.checksum with record = record.",
       "meridian_line" : 24,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/iterate.body\/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/iterate.body\/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21",
       "swift_line" : 499
     },
     {
       "canonical" : "if either record is drifted or record is duplicate,\n  emit procedure.note with message = \"record flagged for review\".\notherwise,\n  assert the record's status is not \"is-blocked\".",
       "meridian_line" : 25,
       "primitive" : "branch",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/iterate.body\/35c7f52d96a8e6e2ed45d9d42d4c410662844d8874d7cfa3ac775ac4e69547e2",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/iterate.body\/589f6915d54b979024b594d56e37d83e70fb2a29ee9bc0a79b9f4f9f1ea72b1d",
       "swift_line" : 512
     },
     {
       "canonical" : "emit procedure.note with message = \"record flagged for review\".",
       "meridian_line" : 26,
       "primitive" : "emit",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/branch.then\/2ce0ebcf1ba1500309cdd4f507bf36cd9431d9ebbb03aea80a5daf2a171fb307",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/branch.then\/535e177e07aceb6401a80939efbea32c9cdd4b9a4c578b9993f6d696fe648ab0",
       "swift_line" : 516
     },
     {
       "canonical" : "assert the record's status is not \"is-blocked\".",
       "meridian_line" : 28,
       "primitive" : "assert",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/branch.else\/96aefe2f551abd1634ef8c884215eea2ba20fdbb016eda8ef5256f6ec2f799ed",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/branch.else\/b7c0198840399fe7fab81a6348521318b9d3e0f1b3f0ccaadcce01c8f9468d20",
       "swift_line" : 531
     },
     {
       "canonical" : "emit procedure.report with message = \"checksum audit pass complete\".",
       "meridian_line" : 29,
       "primitive" : "emit",
-      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/5fa8d6bf345a5f371348dd31d9f739d01a0b0d5fcb06a8f1a11e4848ccbe1851",
+      "stable_step_path" : "\/ChecksumAudit\/procedure-steps\/procedure\/5c0c7c3d1465210e79d63056de9db1c24e9bad2115f355110b9bdee65aa9d50f",
       "swift_line" : 544
     },
     {
       "canonical" : "assert at most 10 records whose status equals \"drifted\".",
       "meridian_line" : 32,
       "primitive" : "assert",
-      "stable_step_path" : "\/ChecksumAudit\/assertions\/invariants\/c1604c59f7d4164bccc06ecbaa66712b99cd93b3ccc258dd71f7eb06edee5142",
+      "stable_step_path" : "\/ChecksumAudit\/assertions\/invariants\/f88262299aabab1c3fdda4581424b8bff5e5b85af90e68bff4be92104f7e3ec5",
       "swift_line" : 457
     }
   ],

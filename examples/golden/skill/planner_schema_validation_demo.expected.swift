@@ -777,136 +777,136 @@ public struct PlannerSchemaValidationDemoPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PlannerSchemaValidationDemoPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/snapshot/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
         do {
             do {
                 do {
                     do {
                         do {
-                            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/e63a9b7dc9d04f44434dc71abba6129955fe3f54d967256847db4401953f2111") {
+                            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/b394f15a2eb68479c5983fe15d3d784d408d18d9103500e090fd38f326896a53") {
                                 _ = try await PlanCarefulRepair(runtime: runtime, pullRequest: pullRequest).run()
-                                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/e63a9b7dc9d04f44434dc71abba6129955fe3f54d967256847db4401953f2111", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/b394f15a2eb68479c5983fe15d3d784d408d18d9103500e090fd38f326896a53", state: state.snapshot())
                             }
                         } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.missing_tool_argument") {
-                            try await runtime.recordRecoverEngaged(pattern: "planning.missing_tool_argument", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/583734126c1d980c4fc325d3ad3b5392456b23c6e5ac32f954ad81db4423bd5a")
-                            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7432ab706b0decfc057b61ff7840a974da5fef91ac3e45f56b8db400a5c79ce2") {
+                            try await runtime.recordRecoverEngaged(pattern: "planning.missing_tool_argument", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/476a12bccf4698788aeb2ec9fc4a61326bfcea145ce6a6cd031ad42ece7b9845")
+                            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7eb839af1f35373b8ec60c88d5c90c3153cb8f957958ea9c8c59922029c5901f") {
                                 try await runtime.emit(
                                     event: "audit.note",
                                     payload: [
                                         "pr": state.get("pullRequest.number") ?? .null,
                                         "reason": .string("planner forgot a required argument"),
                                     ],
-                                    step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7432ab706b0decfc057b61ff7840a974da5fef91ac3e45f56b8db400a5c79ce2"
+                                    step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7eb839af1f35373b8ec60c88d5c90c3153cb8f957958ea9c8c59922029c5901f"
                                 )
-                                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7432ab706b0decfc057b61ff7840a974da5fef91ac3e45f56b8db400a5c79ce2", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7eb839af1f35373b8ec60c88d5c90c3153cb8f957958ea9c8c59922029c5901f", state: state.snapshot())
                             }
                         }
                     } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.unexpected_tool_argument") {
-                        try await runtime.recordRecoverEngaged(pattern: "planning.unexpected_tool_argument", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/63d7e299e3bfae5e9f167d8444b7e0dc4224b9233b47928ab2ecdcbfe77a5ae2")
-                        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/4b33c47dba4c372789fe8289b145906a5bae0bee465553b4436d38ce841fb0bf") {
+                        try await runtime.recordRecoverEngaged(pattern: "planning.unexpected_tool_argument", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/040c21930930b16b7568e7d6595bb16b9e46b78569275c4676530353e06a1b9b")
+                        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7649833d80cbb3e14fbed043ea123194b1c3cf40ceaca2e76ad8738e40f3ef55") {
                             try await runtime.emit(
                                 event: "audit.note",
                                 payload: [
                                     "pr": state.get("pullRequest.number") ?? .null,
                                     "reason": .string("planner sent an unexpected argument"),
                                 ],
-                                step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/4b33c47dba4c372789fe8289b145906a5bae0bee465553b4436d38ce841fb0bf"
+                                step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7649833d80cbb3e14fbed043ea123194b1c3cf40ceaca2e76ad8738e40f3ef55"
                             )
-                            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/4b33c47dba4c372789fe8289b145906a5bae0bee465553b4436d38ce841fb0bf", state: state.snapshot())
+                            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/7649833d80cbb3e14fbed043ea123194b1c3cf40ceaca2e76ad8738e40f3ef55", state: state.snapshot())
                         }
                     }
                 } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.invalid_tool_argument_type") {
-                    try await runtime.recordRecoverEngaged(pattern: "planning.invalid_tool_argument_type", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/a4ffb30962e3fcbae9a371633d3199fbed49e54a3d98429f3891f6a8f7fa29e7")
-                    if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/5ee8e170aa1dad7732c5847d37be278c6434dee48bc54757f28edc17c07fc78e") {
+                    try await runtime.recordRecoverEngaged(pattern: "planning.invalid_tool_argument_type", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/ccc3e6a4be258eb3090d24e83c3c5828d094ecb2990aafa2ee5ba33b43fc14ac")
+                    if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f86fda162cec31f26ddaa42dceb54f18e6c9337e08d99f34713c85562b1d0871") {
                         try await runtime.emit(
                             event: "audit.note",
                             payload: [
                                 "pr": state.get("pullRequest.number") ?? .null,
                                 "reason": .string("planner sent the wrong type for an argument"),
                             ],
-                            step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/5ee8e170aa1dad7732c5847d37be278c6434dee48bc54757f28edc17c07fc78e"
+                            step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f86fda162cec31f26ddaa42dceb54f18e6c9337e08d99f34713c85562b1d0871"
                         )
-                        try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/5ee8e170aa1dad7732c5847d37be278c6434dee48bc54757f28edc17c07fc78e", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f86fda162cec31f26ddaa42dceb54f18e6c9337e08d99f34713c85562b1d0871", state: state.snapshot())
                     }
                 }
             } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.tool_not_registered") {
-                try await runtime.recordRecoverEngaged(pattern: "planning.tool_not_registered", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/41b0c50d86680dc140371a4fe6eb7e4c55fe205c570c38b390370cc45d908bca")
-                if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/14cde2dfce5ecaf86e46097b2cb316fdbf8b5b91bb6b4918525d9431215adb0c") {
+                try await runtime.recordRecoverEngaged(pattern: "planning.tool_not_registered", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.body/ed683a5cd1ff8b4bf30203195a24b9e2603972fc407097763d8aa0074b43317d")
+                if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/97dc88814026b8d6faee22784576ba729c5690f519c9a721f07939fb144a3031") {
                     try await runtime.emit(
                         event: "audit.note",
                         payload: [
                             "pr": state.get("pullRequest.number") ?? .null,
                             "reason": .string("planner asked for an unknown tool"),
                         ],
-                        step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/14cde2dfce5ecaf86e46097b2cb316fdbf8b5b91bb6b4918525d9431215adb0c"
+                        step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/97dc88814026b8d6faee22784576ba729c5690f519c9a721f07939fb144a3031"
                     )
-                    try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/14cde2dfce5ecaf86e46097b2cb316fdbf8b5b91bb6b4918525d9431215adb0c", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/97dc88814026b8d6faee22784576ba729c5690f519c9a721f07939fb144a3031", state: state.snapshot())
                 }
             }
         } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.too_many_actions") {
-            try await runtime.recordRecoverEngaged(pattern: "planning.too_many_actions", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/a529b750b63a11df144ffdb07157c2d920fd075f7ab7bebff90b11d0e2a53b82")
-            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/a26ae68f18938be0fd7b5ac41e191891c8eec84405c30d7c1b2e247745bc6920") {
+            try await runtime.recordRecoverEngaged(pattern: "planning.too_many_actions", step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/3e873681089d2b86cb1fb5529e69af95d15a1ce4310bb15b1567f0af55669d73")
+            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f9ade5370a892f59d0e6953194219a14b440f0dfe92342ffa1c2167c9a6d793f") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("planner proposed too many actions in one step"),
                     ],
-                    step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/a26ae68f18938be0fd7b5ac41e191891c8eec84405c30d7c1b2e247745bc6920"
+                    step: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f9ade5370a892f59d0e6953194219a14b440f0dfe92342ffa1c2167c9a6d793f"
                 )
-                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/a26ae68f18938be0fd7b5ac41e191891c8eec84405c30d7c1b2e247745bc6920", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/plan-with-strict-argument-validation/procedure/recover.handler/f9ade5370a892f59d0e6953194219a14b440f0dfe92342ffa1c2167c9a6d793f", state: state.snapshot())
             }
         }
         do {
-            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.body/18f2866069ad14d9cc42df910d0e1278a871a9bd51bc17003002fa60a380adaa") {
+            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.body/a5981b622b7c73d192f1e46aaf8c1859c5fde91714be5d135eaa149124363aba") {
                 _ = try await AutonomouslyExecuteCarefulRepair(runtime: runtime, pullRequest: pullRequest).run()
-                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.body/18f2866069ad14d9cc42df910d0e1278a871a9bd51bc17003002fa60a380adaa", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.body/a5981b622b7c73d192f1e46aaf8c1859c5fde91714be5d135eaa149124363aba", state: state.snapshot())
             }
         } catch let _recoveredError where meridianMatches(_recoveredError, named: "planning.max_steps_exceeded") {
-            try await runtime.recordRecoverEngaged(pattern: "planning.max_steps_exceeded", step: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/95d3373a4a6ea85fad397405860c9926c17ababecde382a984998e1d435ff11e")
-            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/52efd56d322446da908d04ddc2f4f174334a9daebeebe9570af9362c816f5e05") {
+            try await runtime.recordRecoverEngaged(pattern: "planning.max_steps_exceeded", step: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/2755f38810243f2756f71d3429e72b5334db90b96ca7051700ec92f236ec771f")
+            if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/15f1e10cdc746f102f19dfc8db8a79f7c6c676845255d054162489ce56fbbc71") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("autonomy loop exhausted the step budget"),
                     ],
-                    step: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/52efd56d322446da908d04ddc2f4f174334a9daebeebe9570af9362c816f5e05"
+                    step: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/15f1e10cdc746f102f19dfc8db8a79f7c6c676845255d054162489ce56fbbc71"
                 )
-                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/52efd56d322446da908d04ddc2f4f174334a9daebeebe9570af9362c816f5e05", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/run-the-bounded-autonomy-loop-with-the-same-scoped-toolset/procedure/recover.handler/15f1e10cdc746f102f19dfc8db8a79f7c6c676845255d054162489ce56fbbc71", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlannerSchemaValidationDemoPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PlannerSchemaValidationDemoPullRequest.complete")
@@ -974,7 +974,7 @@ public struct PlanCarefulRepair: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanCarefulRepair/sub-workflows/procedure/4fc36d8ff00411700d28898b1e739801ef2f47be14fed96a77a8e3d9d8c39dde"
+            step: "/PlanCarefulRepair/sub-workflows/procedure/bca72c03dcf241594ee059783e16f2ffae0b9cbf4677cad6b636a5559cdd8953"
         )
         for (__key, __value) in __meridianProseResults_L42 {
             state.bind(__key, __value)
@@ -1047,7 +1047,7 @@ public struct AutonomouslyExecuteCarefulRepair: MeridianWorkflow {
             maxSteps: 5,
             replanAfterFailures: 2,
             outputKind: "record",
-            step: "/AutonomouslyExecuteCarefulRepair/sub-workflows/procedure/993f5667d3ed88f1a2765cb1d3396418c9af1cbafdb79a731c19d324cf2af89c",
+            step: "/AutonomouslyExecuteCarefulRepair/sub-workflows/procedure/7daffd4c7bb1b442f5ebdb8d4380b8a0e9061ae2cd1380b19ce602804085a8d4",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

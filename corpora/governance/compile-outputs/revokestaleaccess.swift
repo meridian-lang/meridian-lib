@@ -455,36 +455,36 @@ public struct RevokeStaleAccess: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "RevokeStaleAccess", parameters: [:])
 
-        if __meridianShouldRun("/RevokeStaleAccess/guarantees/invariants/b3616f5a1cb8e530223fba8caf43405aa0416682e3a0d405dca16411d804d364") {
+        if __meridianShouldRun("/RevokeStaleAccess/guarantees/invariants/c22bced5e1d7de28e570f033d79312e92467a9c2361da31819ddd305b78d3b28") {
             // L41
             try await runtime.assert(((((state.get("users")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("clearance"), .string("denied"))) }).isEmpty)) && (MeridianComparison.eq(state.get("whoseStatus"), .string("active"))), message: "Expected no users whose clearance is \"denied\" and whose status is \"active\"")
-            try await runtime.checkpoint(label: "/RevokeStaleAccess/guarantees/invariants/b3616f5a1cb8e530223fba8caf43405aa0416682e3a0d405dca16411d804d364", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RevokeStaleAccess/guarantees/invariants/c22bced5e1d7de28e570f033d79312e92467a9c2361da31819ddd305b78d3b28", state: state.snapshot())
         }
-        if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1") {
+        if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0") {
             // L26
             let accessRequests = try await runtime.invoke(
                 tool: "request.list",
                 args: [
                     "status": .string("pending"),
                 ],
-                step: "/RevokeStaleAccess/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1",
+                step: "/RevokeStaleAccess/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "request.list")
             )
             state.bind("accessRequests", accessRequests)
 
-            try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/ae678d3b1795623a37dcac0be04d4cb3f7afad24778f484601b226b9ea9438a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/1acc71fa316c66900d19c5786611d0527966cabafecfa4fe8889e3019d5716e0", state: state.snapshot())
         }
         // L27
         state.bind("revokedCount", Decimal(((state.get("accessRequests"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("granted"))) }.count))
         // L28
         let __meridianSrc_0_3 = ((state.get("accessrequests"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("granted"))) }
-        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/RevokeStaleAccess/workflow/procedure/0cd2fc4694e8bab486d54bb10bd74f17f5687771124e24ad6eac25951cdadf23")
+        try await runtime.recordIterateStart(over: "state.get(\"accessrequests\")", step: "/RevokeStaleAccess/workflow/procedure/33d4f7e3fbfeae7cf0f44817b5facb120fdf3581052f4021956cc277e47a99f2")
         for (__meridianLoopIndex_0_3, accessRequest) in __meridianSrc_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RevokeStaleAccess/workflow/procedure/0cd2fc4694e8bab486d54bb10bd74f17f5687771124e24ad6eac25951cdadf23")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RevokeStaleAccess/workflow/procedure/33d4f7e3fbfeae7cf0f44817b5facb120fdf3581052f4021956cc277e47a99f2")
             state.bind("accessRequest", accessRequest)
-                if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/iterate.body/553c9b3e4fb0edd0e750c4404407cd51e8a0e3a23e7229cef643158b976cde52") {
+                if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/iterate.body/2b320fc952ccbeb6fdc9aeba51c36ee31053777bc43969f9f96e4008e6217a99") {
                     // L29
                     let accessRequest = try await runtime.invoke(
                         tool: "access.revoke",
@@ -492,28 +492,28 @@ public struct RevokeStaleAccess: MeridianWorkflow {
                             "user": state.get("accessRequest.requestor") ?? .null,
                             "resource": state.get("accessRequest.resourceName") ?? .null,
                         ],
-                        step: "/RevokeStaleAccess/workflow/procedure/iterate.body/553c9b3e4fb0edd0e750c4404407cd51e8a0e3a23e7229cef643158b976cde52",
+                        step: "/RevokeStaleAccess/workflow/procedure/iterate.body/2b320fc952ccbeb6fdc9aeba51c36ee31053777bc43969f9f96e4008e6217a99",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "access.revoke")
                     )
                     state.bind("accessRequest", accessRequest)
 
-                    try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/iterate.body/553c9b3e4fb0edd0e750c4404407cd51e8a0e3a23e7229cef643158b976cde52", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/iterate.body/2b320fc952ccbeb6fdc9aeba51c36ee31053777bc43969f9f96e4008e6217a99", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianSrc_0_3.count, step: "/RevokeStaleAccess/workflow/procedure/0cd2fc4694e8bab486d54bb10bd74f17f5687771124e24ad6eac25951cdadf23")
+        try await runtime.recordIterateEnd(over: "state.get(\"accessrequests\")", count: __meridianSrc_0_3.count, step: "/RevokeStaleAccess/workflow/procedure/33d4f7e3fbfeae7cf0f44817b5facb120fdf3581052f4021956cc277e47a99f2")
 
-        if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/9246c4077599b4384050f27014618a5e3a3d6fc54c65cdfd07adf13561dd112d") {
+        if __meridianShouldRun("/RevokeStaleAccess/workflow/procedure/0d7881a7bb11b409ded07c3fdb8161cb150296f49276f262bfc9c84c37c4b83f") {
             // L30
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("revoke stale access pass complete"),
                 ],
-                step: "/RevokeStaleAccess/workflow/procedure/9246c4077599b4384050f27014618a5e3a3d6fc54c65cdfd07adf13561dd112d"
+                step: "/RevokeStaleAccess/workflow/procedure/0d7881a7bb11b409ded07c3fdb8161cb150296f49276f262bfc9c84c37c4b83f"
             )
-            try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/9246c4077599b4384050f27014618a5e3a3d6fc54c65cdfd07adf13561dd112d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RevokeStaleAccess/workflow/procedure/0d7881a7bb11b409ded07c3fdb8161cb150296f49276f262bfc9c84c37c4b83f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "RevokeStaleAccess.complete")
@@ -573,12 +573,12 @@ public struct WhenRevokestaleaccessFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRevokestaleaccessFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/737eb7ca44a17b97b66c4d676615376d28113ed8b85894048dab1d112c6219d2") {
+        if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/9961f5f72908a7a447e6ef772b4712971ebf93d0b241bab833e501d4896e5325") {
             // L1
             try await runtime.wait(.event("revokeStaleAccess", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRevokestaleaccessFires/root/procedure/737eb7ca44a17b97b66c4d676615376d28113ed8b85894048dab1d112c6219d2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRevokestaleaccessFires/root/procedure/9961f5f72908a7a447e6ef772b4712971ebf93d0b241bab833e501d4896e5325", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/11a30359dde81f3a35da975fe2ec0e09b9f572995d4a2a9f9b307aa1b77a4570") {
+        if __meridianShouldRun("/WhenRevokestaleaccessFires/root/procedure/772ae4c43925feca8e0982fc9de5df36f17b7caf0ff9fdd057c7932d060fa840") {
             // L1
             try await runtime.emit(
                 event: "trigger.revokeStaleAccess.fired",
@@ -586,9 +586,9 @@ public struct WhenRevokestaleaccessFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("revoke stale access"),
                 ],
-                step: "/WhenRevokestaleaccessFires/root/procedure/11a30359dde81f3a35da975fe2ec0e09b9f572995d4a2a9f9b307aa1b77a4570"
+                step: "/WhenRevokestaleaccessFires/root/procedure/772ae4c43925feca8e0982fc9de5df36f17b7caf0ff9fdd057c7932d060fa840"
             )
-            try await runtime.checkpoint(label: "/WhenRevokestaleaccessFires/root/procedure/11a30359dde81f3a35da975fe2ec0e09b9f572995d4a2a9f9b307aa1b77a4570", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRevokestaleaccessFires/root/procedure/772ae4c43925feca8e0982fc9de5df36f17b7caf0ff9fdd057c7932d060fa840", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRevokestaleaccessFires.complete")
@@ -648,12 +648,12 @@ public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSweepdeniedaccessFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/3e11a67e4a6f2f8b3e8e9819e60842f6b3ee8683b8c64c557b26f6e6c8bafa6f") {
+        if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/0c31c4ec190f6ca198abbe7dc0b4d67d4d2733a38d3bcd52ca18f4ea47988e95") {
             // L1
             try await runtime.wait(.event("sweepDeniedAccess", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSweepdeniedaccessFires/root/procedure/3e11a67e4a6f2f8b3e8e9819e60842f6b3ee8683b8c64c557b26f6e6c8bafa6f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSweepdeniedaccessFires/root/procedure/0c31c4ec190f6ca198abbe7dc0b4d67d4d2733a38d3bcd52ca18f4ea47988e95", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/4f7dc9828f8bac257990bac5223f5d993c219383781f43c04960735e551046aa") {
+        if __meridianShouldRun("/WhenSweepdeniedaccessFires/root/procedure/3fc08649da950be8b9ba5730d6833c8f190737f21b3c70058f466fe72ea14288") {
             // L1
             try await runtime.emit(
                 event: "trigger.sweepDeniedAccess.fired",
@@ -661,9 +661,9 @@ public struct WhenSweepdeniedaccessFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("sweep denied access"),
                 ],
-                step: "/WhenSweepdeniedaccessFires/root/procedure/4f7dc9828f8bac257990bac5223f5d993c219383781f43c04960735e551046aa"
+                step: "/WhenSweepdeniedaccessFires/root/procedure/3fc08649da950be8b9ba5730d6833c8f190737f21b3c70058f466fe72ea14288"
             )
-            try await runtime.checkpoint(label: "/WhenSweepdeniedaccessFires/root/procedure/4f7dc9828f8bac257990bac5223f5d993c219383781f43c04960735e551046aa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSweepdeniedaccessFires/root/procedure/3fc08649da950be8b9ba5730d6833c8f190737f21b3c70058f466fe72ea14288", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSweepdeniedaccessFires.complete")
@@ -723,12 +723,12 @@ public struct WhenRunaccessrevocationsweepFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunaccessrevocationsweepFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/c64904bdc5e91f9608f53d1984ec29b462507e01ed475d5c9d0d7ce59a89e2d0") {
+        if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/f0fdfd27239de205447ec379da7718912b0938b32d546ca40751b7ac82378cc4") {
             // L1
             try await runtime.wait(.event("runAccessRevocationSweep", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunaccessrevocationsweepFires/root/procedure/c64904bdc5e91f9608f53d1984ec29b462507e01ed475d5c9d0d7ce59a89e2d0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunaccessrevocationsweepFires/root/procedure/f0fdfd27239de205447ec379da7718912b0938b32d546ca40751b7ac82378cc4", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/c82e3ef9c2fa7ad908dbf337b2e0f1e03db1f3a95f6264baf13c98ceda8b6daf") {
+        if __meridianShouldRun("/WhenRunaccessrevocationsweepFires/root/procedure/66d8a76340c343843f7ab6cb671d708ca3a4ba8b8defada73f08aaa089f2ced0") {
             // L1
             try await runtime.emit(
                 event: "trigger.runAccessRevocationSweep.fired",
@@ -736,9 +736,9 @@ public struct WhenRunaccessrevocationsweepFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the access revocation sweep"),
                 ],
-                step: "/WhenRunaccessrevocationsweepFires/root/procedure/c82e3ef9c2fa7ad908dbf337b2e0f1e03db1f3a95f6264baf13c98ceda8b6daf"
+                step: "/WhenRunaccessrevocationsweepFires/root/procedure/66d8a76340c343843f7ab6cb671d708ca3a4ba8b8defada73f08aaa089f2ced0"
             )
-            try await runtime.checkpoint(label: "/WhenRunaccessrevocationsweepFires/root/procedure/c82e3ef9c2fa7ad908dbf337b2e0f1e03db1f3a95f6264baf13c98ceda8b6daf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunaccessrevocationsweepFires/root/procedure/66d8a76340c343843f7ab6cb671d708ca3a4ba8b8defada73f08aaa089f2ced0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunaccessrevocationsweepFires.complete")

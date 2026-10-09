@@ -453,116 +453,116 @@ public struct DedupeRecords: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DedupeRecords", parameters: [:])
 
-        if __meridianShouldRun("/DedupeRecords/postconditions/invariants/f915495cd6dd3177414e6ac45caceda8f966be3a73e7b07ec0c83b36db050ac1") {
+        if __meridianShouldRun("/DedupeRecords/postconditions/invariants/36292d4ad7602e2da9388c80032b9cfef28c4ebb33975bb8cd15d967a2529121") {
             // L31
             try await runtime.assert((((state.get("records")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).isEmpty), message: "Expected no records whose status is \"duplicate\"")
-            try await runtime.checkpoint(label: "/DedupeRecords/postconditions/invariants/f915495cd6dd3177414e6ac45caceda8f966be3a73e7b07ec0c83b36db050ac1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeRecords/postconditions/invariants/36292d4ad7602e2da9388c80032b9cfef28c4ebb33975bb8cd15d967a2529121", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/46c092e5dae7a860b5ec10bd57af9cbe4bcab59fb4943ed3bf1e86d45536ab36") {
+        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/63164434b7913bc3d96be469755a3e0f4ebf9b9cd7c34ca7decac8bc40580939") {
             // L19
             let records = try await runtime.invoke(
                 tool: "record.list",
                 args: [
                     "status": .string("duplicate"),
                 ],
-                step: "/DedupeRecords/procedure-steps/procedure/46c092e5dae7a860b5ec10bd57af9cbe4bcab59fb4943ed3bf1e86d45536ab36",
+                step: "/DedupeRecords/procedure-steps/procedure/63164434b7913bc3d96be469755a3e0f4ebf9b9cd7c34ca7decac8bc40580939",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.list")
             )
             state.bind("records", records)
 
-            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/46c092e5dae7a860b5ec10bd57af9cbe4bcab59fb4943ed3bf1e86d45536ab36", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/63164434b7913bc3d96be469755a3e0f4ebf9b9cd7c34ca7decac8bc40580939", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/245e1d0cd7ca988825adef2972469b26894f94b7efbab817bca26d24d819586b") {
+        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/cb63014bd08cb448c93f1005542c5d66c7714e79672394e1ea3238aa5f9e0c6f") {
             // L20
             try await runtime.assert((!((state.get("records")?.asList ?? []).filter { __e in (meridianDef_Record_duplicate(__e)) }).isEmpty), message: "Expected any duplicate records")
-            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/245e1d0cd7ca988825adef2972469b26894f94b7efbab817bca26d24d819586b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/cb63014bd08cb448c93f1005542c5d66c7714e79672394e1ea3238aa5f9e0c6f", state: state.snapshot())
         }
         // L21
         let __meridianSrc_0_3 = ((state.get("records"))?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }
-        try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/DedupeRecords/procedure-steps/procedure/2bb27dbee6ab5ccc4f903f595f86a9442473634dfee01838d7e6da8dd3e87848")
+        try await runtime.recordIterateStart(over: "state.get(\"records\")", step: "/DedupeRecords/procedure-steps/procedure/b8486908ea85f026981042b231ddddaf0cdf7e102c5a4808a6c18a427379eb77")
         for (__meridianLoopIndex_0_3, record) in __meridianSrc_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/DedupeRecords/procedure-steps/procedure/2bb27dbee6ab5ccc4f903f595f86a9442473634dfee01838d7e6da8dd3e87848")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/DedupeRecords/procedure-steps/procedure/b8486908ea85f026981042b231ddddaf0cdf7e102c5a4808a6c18a427379eb77")
             state.bind("record", record)
-                if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf") {
+                if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21") {
                     // L22
                     let checksum = try await runtime.invoke(
                         tool: "record.checksum",
                         args: [
                             "record": state.get("record") ?? .null,
                         ],
-                        step: "/DedupeRecords/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf",
+                        step: "/DedupeRecords/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.checksum")
                     )
                     state.bind("checksum", checksum)
 
-                    try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/iterate.body/3e1bb880864c9681b125ca58ddfe0769ca22057d9bd801f89bb8b75d138d4dbf", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/iterate.body/c46834122851762cb44589bab968216d3562d99c73a6f820555163ac64033e21", state: state.snapshot())
                 }
                 // L23
                 if (meridianDef_Record_duplicate(state.get("record"))) && ((meridianDef_Record_stale(state.get("record"))) || (meridianDef_Record_drifted(state.get("record")))) {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_duplicate(state.get(\"record\"))) && ((meridianDef_Record_stale(state.get(\"record\"))) || (meridianDef_Record_drifted(state.get(\"record\"))))", into: "then", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
-                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.then/7240b8445ad934ea3dbd75658aaf6dcd0764e9d49a6f8fbed3bbcb361a4fe982") {
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_duplicate(state.get(\"record\"))) && ((meridianDef_Record_stale(state.get(\"record\"))) || (meridianDef_Record_drifted(state.get(\"record\"))))", into: "then", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/a79a411fc9d5bb6e23ca2b9a77bfb2aadbf581b379229119996990eef392014b")
+                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.then/97349eddbe4fa9f7ff5e664e31bc694f1edb90782dbfc461c570ba702553958e") {
                         // L24
                         let recordCanonical = try await runtime.invoke(
                             tool: "record.mark_canonical",
                             args: [
                                 "record": state.get("record") ?? .null,
                             ],
-                            step: "/DedupeRecords/procedure-steps/procedure/branch.then/7240b8445ad934ea3dbd75658aaf6dcd0764e9d49a6f8fbed3bbcb361a4fe982",
+                            step: "/DedupeRecords/procedure-steps/procedure/branch.then/97349eddbe4fa9f7ff5e664e31bc694f1edb90782dbfc461c570ba702553958e",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.mark_canonical")
                         )
                         state.bind("recordCanonical", recordCanonical)
 
-                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.then/7240b8445ad934ea3dbd75658aaf6dcd0764e9d49a6f8fbed3bbcb361a4fe982", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.then/97349eddbe4fa9f7ff5e664e31bc694f1edb90782dbfc461c570ba702553958e", state: state.snapshot())
                     }
-                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.then/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd") {
+                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.then/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b") {
                         // L25
                         let record = try await runtime.invoke(
                             tool: "record.purge",
                             args: [
                                 "record": state.get("record") ?? .null,
                             ],
-                            step: "/DedupeRecords/procedure-steps/procedure/branch.then/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd",
+                            step: "/DedupeRecords/procedure-steps/procedure/branch.then/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.purge")
                         )
                         state.bind("record", record)
 
-                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.then/a5d2d47dd2b0c2590767c41820b3924d5907556d47636e498725796d604d38cd", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.then/3181fab60f0e2480ba5c30bca1600f0641bd16e7b89094a4779feeb1b85e4b7b", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
+                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/a79a411fc9d5bb6e23ca2b9a77bfb2aadbf581b379229119996990eef392014b")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_duplicate(state.get(\"record\"))) && ((meridianDef_Record_stale(state.get(\"record\"))) || (meridianDef_Record_drifted(state.get(\"record\"))))", into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Record_duplicate(state.get(\"record\"))) && ((meridianDef_Record_stale(state.get(\"record\"))) || (meridianDef_Record_drifted(state.get(\"record\"))))", into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/a79a411fc9d5bb6e23ca2b9a77bfb2aadbf581b379229119996990eef392014b")
 
-                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.else/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856") {
+                    if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/branch.else/10be5b92f701a0919d1db6340f458c245ae1cb7a2a2ed08f82b241804655ffd4") {
                         // L27
                         try await runtime.emit(
                             event: "procedure.note",
                             payload: [
                                 "message": .string("record retained pending manual review"),
                             ],
-                            step: "/DedupeRecords/procedure-steps/procedure/branch.else/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856"
+                            step: "/DedupeRecords/procedure-steps/procedure/branch.else/10be5b92f701a0919d1db6340f458c245ae1cb7a2a2ed08f82b241804655ffd4"
                         )
-                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.else/fd492109946450cb69f8b9949d8b9b638ccda5c6007492d6af900fbda3d83856", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/branch.else/10be5b92f701a0919d1db6340f458c245ae1cb7a2a2ed08f82b241804655ffd4", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/f815bc8c0fc19cb64fc514e1277eb52bb0dd949248b7d8129b7efbad05399db5")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeRecords/procedure-steps/procedure/iterate.body/a79a411fc9d5bb6e23ca2b9a77bfb2aadbf581b379229119996990eef392014b")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianSrc_0_3.count, step: "/DedupeRecords/procedure-steps/procedure/2bb27dbee6ab5ccc4f903f595f86a9442473634dfee01838d7e6da8dd3e87848")
+        try await runtime.recordIterateEnd(over: "state.get(\"records\")", count: __meridianSrc_0_3.count, step: "/DedupeRecords/procedure-steps/procedure/b8486908ea85f026981042b231ddddaf0cdf7e102c5a4808a6c18a427379eb77")
 
-        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/1613bab6af8b4d69e0477354ee9c939be5382a86016a00b2b5388736eafb01dd") {
+        if __meridianShouldRun("/DedupeRecords/procedure-steps/procedure/13c8597cff28ff9605de6c44a61180f9a0e081de59b85cf302e79b94ed494b6e") {
             // L28
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("duplicate record pass complete"),
                 ],
-                step: "/DedupeRecords/procedure-steps/procedure/1613bab6af8b4d69e0477354ee9c939be5382a86016a00b2b5388736eafb01dd"
+                step: "/DedupeRecords/procedure-steps/procedure/13c8597cff28ff9605de6c44a61180f9a0e081de59b85cf302e79b94ed494b6e"
             )
-            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/1613bab6af8b4d69e0477354ee9c939be5382a86016a00b2b5388736eafb01dd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeRecords/procedure-steps/procedure/13c8597cff28ff9605de6c44a61180f9a0e081de59b85cf302e79b94ed494b6e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DedupeRecords.complete")
@@ -622,12 +622,12 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenDeduperecordsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/539e1a804259f27d093c4c8e47db1871098d9ea8be52d9d82bb9b685bd777ca8") {
+        if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/78f687ca61535fcfc15e70fcad3143116477f9617737b5218c476c8e1c6e0bf8") {
             // L1
             try await runtime.wait(.event("dedupeRecords", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDeduperecordsFires/root/procedure/539e1a804259f27d093c4c8e47db1871098d9ea8be52d9d82bb9b685bd777ca8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDeduperecordsFires/root/procedure/78f687ca61535fcfc15e70fcad3143116477f9617737b5218c476c8e1c6e0bf8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/75888e77696bd57d70716a5c59a716723490e9421750855cb404dd875e0d3bf7") {
+        if __meridianShouldRun("/WhenDeduperecordsFires/root/procedure/e7c778d032cd6b34c3f401cebafdb2cfc532dc96d2c98e1cb7a01b943728fbc6") {
             // L1
             try await runtime.emit(
                 event: "trigger.dedupeRecords.fired",
@@ -635,9 +635,9 @@ public struct WhenDeduperecordsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("dedupe records"),
                 ],
-                step: "/WhenDeduperecordsFires/root/procedure/75888e77696bd57d70716a5c59a716723490e9421750855cb404dd875e0d3bf7"
+                step: "/WhenDeduperecordsFires/root/procedure/e7c778d032cd6b34c3f401cebafdb2cfc532dc96d2c98e1cb7a01b943728fbc6"
             )
-            try await runtime.checkpoint(label: "/WhenDeduperecordsFires/root/procedure/75888e77696bd57d70716a5c59a716723490e9421750855cb404dd875e0d3bf7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDeduperecordsFires/root/procedure/e7c778d032cd6b34c3f401cebafdb2cfc532dc96d2c98e1cb7a01b943728fbc6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDeduperecordsFires.complete")
@@ -697,12 +697,12 @@ public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenDuplicaterowsdetectedFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/a1b3bfb1a6e8ddde7b79c3b84ae17140a37a72a6294f38889aeed44f95e29fb7") {
+        if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/0c7f9e5789e23d2eec77e29c27dac6f818200243d87e41fa09d3313fca987135") {
             // L1
             try await runtime.wait(.event("duplicateRowsDetected", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDuplicaterowsdetectedFires/root/procedure/a1b3bfb1a6e8ddde7b79c3b84ae17140a37a72a6294f38889aeed44f95e29fb7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDuplicaterowsdetectedFires/root/procedure/0c7f9e5789e23d2eec77e29c27dac6f818200243d87e41fa09d3313fca987135", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/d0f5e23b21491f7286e74b0aa6afdab5ce5e92e0848d5f7db9efe455369d8a73") {
+        if __meridianShouldRun("/WhenDuplicaterowsdetectedFires/root/procedure/4a35e23b89466e0abcb48bba9562a9f0fe10c138d524165a738c78186e7fe9cd") {
             // L1
             try await runtime.emit(
                 event: "trigger.duplicateRowsDetected.fired",
@@ -710,9 +710,9 @@ public struct WhenDuplicaterowsdetectedFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("duplicate rows detected"),
                 ],
-                step: "/WhenDuplicaterowsdetectedFires/root/procedure/d0f5e23b21491f7286e74b0aa6afdab5ce5e92e0848d5f7db9efe455369d8a73"
+                step: "/WhenDuplicaterowsdetectedFires/root/procedure/4a35e23b89466e0abcb48bba9562a9f0fe10c138d524165a738c78186e7fe9cd"
             )
-            try await runtime.checkpoint(label: "/WhenDuplicaterowsdetectedFires/root/procedure/d0f5e23b21491f7286e74b0aa6afdab5ce5e92e0848d5f7db9efe455369d8a73", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDuplicaterowsdetectedFires/root/procedure/4a35e23b89466e0abcb48bba9562a9f0fe10c138d524165a738c78186e7fe9cd", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDuplicaterowsdetectedFires.complete")

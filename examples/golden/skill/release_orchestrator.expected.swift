@@ -213,22 +213,22 @@ public struct ReleaseOrchestratorPullRequest: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "ReleaseOrchestratorPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/ReleaseOrchestratorPullRequest/release-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/ReleaseOrchestratorPullRequest/release-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/ReleaseOrchestratorPullRequest/release-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/ReleaseOrchestratorPullRequest/release-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/ReleaseOrchestratorPullRequest/release-gate/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReleaseOrchestratorPullRequest/release-gate/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/ReleaseOrchestratorPullRequest/release-gate/procedure/e7783d9a104ca56d7377b52b8b176864db24cec67578d32e796f5b1afad96ee2") {
+        if __meridianShouldRun("/ReleaseOrchestratorPullRequest/release-gate/procedure/9d5592985d29ba9ec0b033fdb607b043d26568f0c61cc6accc32899ed7eae3e2") {
             _ = try await AutonomouslyStabilizePullRequest(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/ReleaseOrchestratorPullRequest/release-gate/procedure/e7783d9a104ca56d7377b52b8b176864db24cec67578d32e796f5b1afad96ee2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ReleaseOrchestratorPullRequest/release-gate/procedure/9d5592985d29ba9ec0b033fdb607b043d26568f0c61cc6accc32899ed7eae3e2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ReleaseOrchestratorPullRequest.complete")
@@ -296,7 +296,7 @@ public struct AutonomouslyStabilizePullRequest: MeridianWorkflow {
             maxSteps: 32,
             replanAfterFailures: 2,
             outputKind: "record",
-            step: "/AutonomouslyStabilizePullRequest/release-gate/procedure/87df8df8482b2a54670918d2853528bbf0d1ea5b0a79c5bf9dc1426871289779",
+            step: "/AutonomouslyStabilizePullRequest/release-gate/procedure/1ceffe98d11b83fece8fb6eaef68d9cf9a295831c168fffb14c42cf867cda030",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

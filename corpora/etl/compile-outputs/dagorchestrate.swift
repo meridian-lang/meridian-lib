@@ -382,65 +382,65 @@ public struct DagOrchestrate: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DagOrchestrate", parameters: [:])
 
-        if __meridianShouldRun("/DagOrchestrate/workflow/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/DagOrchestrate/workflow/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L27
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/DagOrchestrate/workflow/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/DagOrchestrate/workflow/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
         // L28
         let __meridianColl_0_1 = (state.get("datasets")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/DagOrchestrate/workflow/procedure/c3add5a7ddf90c1aeeb795d2293f870e50f46e6bf9fad30a82443ab08a237b5a")
+        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/DagOrchestrate/workflow/procedure/ce65a1762595773d01b7fecbe5a40e2e4ae8541811d35daca0c19cab76b935f0")
         for (__meridianLoopIndex_0_1, dataset) in __meridianColl_0_1.enumerated() {
             let __meridianLoopLabel_0_1 = "progress:0.1:iteration:\(__meridianLoopIndex_0_1)"
             if __meridianShouldRun(__meridianLoopLabel_0_1) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/DagOrchestrate/workflow/procedure/c3add5a7ddf90c1aeeb795d2293f870e50f46e6bf9fad30a82443ab08a237b5a")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_1, step: "/DagOrchestrate/workflow/procedure/ce65a1762595773d01b7fecbe5a40e2e4ae8541811d35daca0c19cab76b935f0")
             state.bind("dataset", dataset)
-                if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/e97d6d62915aa5a14e38fce37cc16ce331dfcf1f42eaf6b992e63bbc6a9eb947") {
+                if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/fc5480d3f313b4f9776c9f0a9a58bf77df38559da5b4bad08ead69691aaf5cdc") {
                     // L29
                     try await runtime.wait(.event("upstream.done", matching: { _event in MeridianComparison.eq(state.get("event.datasetName"), state.get("dataset.name")) }), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/e97d6d62915aa5a14e38fce37cc16ce331dfcf1f42eaf6b992e63bbc6a9eb947", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/fc5480d3f313b4f9776c9f0a9a58bf77df38559da5b4bad08ead69691aaf5cdc", state: state.snapshot())
                 }
-                if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/4d8bbad64f8a11541500b07b80756aad882b1e27d1090a78152c83bf8fd3970e") {
+                if __meridianShouldRun("/DagOrchestrate/workflow/procedure/iterate.body/931fdc082785e93691f145cb2f603cb3f4d2ae5fc8ec49816bde284b8d53e72a") {
                     // L30
                     try await runtime.wait(.signal("pipeline.ready"), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/4d8bbad64f8a11541500b07b80756aad882b1e27d1090a78152c83bf8fd3970e", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/iterate.body/931fdc082785e93691f145cb2f603cb3f4d2ae5fc8ec49816bde284b8d53e72a", state: state.snapshot())
                 }
                 // L31
                 try await withThrowingTaskGroup(of: Void.self) { group in
                     group.addTask {
                         var state = state
-                            if __meridianShouldRun("/DagOrchestrate/workflow/procedure/simultaneously.branch/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285") {
+                            if __meridianShouldRun("/DagOrchestrate/workflow/procedure/simultaneously.branch/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1") {
                                 // L32
                                 let dataset = try await runtime.invoke(
                                     tool: "extract",
                                     args: [
                                         "source": Value.from(instances.objectStoreSource),
                                     ],
-                                    step: "/DagOrchestrate/workflow/procedure/simultaneously.branch/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285",
+                                    step: "/DagOrchestrate/workflow/procedure/simultaneously.branch/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1",
                                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "extract")
                                 )
                                 state.bind("dataset", dataset)
 
-                                try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/simultaneously.branch/a8c0480b9d3729668ac69f3a6e53985f2019d30687b9322c459ad125b2268285", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/simultaneously.branch/5da6ed167a4e7dee46bd71aa6310cca13a088ece3c132c35e32cfa457fe1f9a1", state: state.snapshot())
                             }
                     }
                     group.addTask {
                         var state = state
-                            if __meridianShouldRun("/DagOrchestrate/workflow/procedure/simultaneously.branch/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a") {
+                            if __meridianShouldRun("/DagOrchestrate/workflow/procedure/simultaneously.branch/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255") {
                                 // L33
                                 let qualityCheck = try await runtime.invoke(
                                     tool: "quality.run",
                                     args: [
                                         "dataset": state.get("dataset") ?? .null,
                                     ],
-                                    step: "/DagOrchestrate/workflow/procedure/simultaneously.branch/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a",
+                                    step: "/DagOrchestrate/workflow/procedure/simultaneously.branch/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255",
                                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "quality.run")
                                 )
                                 state.bind("qualityCheck", qualityCheck)
 
-                                try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/simultaneously.branch/16725d6be14bf1606d4c8396d8276da152d084fa21839e471f9397c49f094b2a", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/simultaneously.branch/b8bdb3309582936f2e8aeaf68dbfdbfd40ec1ceebb73dc3dd65e8480a95c0255", state: state.snapshot())
                             }
                     }
                     try await group.waitForAll()
@@ -449,18 +449,18 @@ public struct DagOrchestrate: MeridianWorkflow {
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_1, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_1.count, step: "/DagOrchestrate/workflow/procedure/c3add5a7ddf90c1aeeb795d2293f870e50f46e6bf9fad30a82443ab08a237b5a")
+        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_1.count, step: "/DagOrchestrate/workflow/procedure/ce65a1762595773d01b7fecbe5a40e2e4ae8541811d35daca0c19cab76b935f0")
 
-        if __meridianShouldRun("/DagOrchestrate/workflow/procedure/cf442419782f6f7bf9c230cd514c9d5be05198235d8cdf4815975e9ec554f54b") {
+        if __meridianShouldRun("/DagOrchestrate/workflow/procedure/22a2fb8330a8aebce2165f49fbf4909a6998699ecaccb97e8ea190bbd4820325") {
             // L34
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("dag orchestration pass complete"),
                 ],
-                step: "/DagOrchestrate/workflow/procedure/cf442419782f6f7bf9c230cd514c9d5be05198235d8cdf4815975e9ec554f54b"
+                step: "/DagOrchestrate/workflow/procedure/22a2fb8330a8aebce2165f49fbf4909a6998699ecaccb97e8ea190bbd4820325"
             )
-            try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/cf442419782f6f7bf9c230cd514c9d5be05198235d8cdf4815975e9ec554f54b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DagOrchestrate/workflow/procedure/22a2fb8330a8aebce2165f49fbf4909a6998699ecaccb97e8ea190bbd4820325", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DagOrchestrate.complete")
@@ -520,12 +520,12 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenOrchestratepipelinedagFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/cfd7f5b729dd6e469931fa349173aa78bebc47acc40beb7697782bcd062f6b9b") {
+        if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/d04d5d487e04ede2c79e7c05bd708d063665c7500068db51a1fd194802da88ca") {
             // L1
             try await runtime.wait(.event("orchestratePipelineDag", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenOrchestratepipelinedagFires/root/procedure/cfd7f5b729dd6e469931fa349173aa78bebc47acc40beb7697782bcd062f6b9b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenOrchestratepipelinedagFires/root/procedure/d04d5d487e04ede2c79e7c05bd708d063665c7500068db51a1fd194802da88ca", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/c608c27563c2ff4b6c45ef36dd006b87a602a75d7cce8a700d3086c7624c525f") {
+        if __meridianShouldRun("/WhenOrchestratepipelinedagFires/root/procedure/54adb47afd637b30694f20431a5f60077d4e662c2824ed6d13041770de3cb808") {
             // L1
             try await runtime.emit(
                 event: "trigger.orchestratePipelineDag.fired",
@@ -533,9 +533,9 @@ public struct WhenOrchestratepipelinedagFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("orchestrate pipeline dag"),
                 ],
-                step: "/WhenOrchestratepipelinedagFires/root/procedure/c608c27563c2ff4b6c45ef36dd006b87a602a75d7cce8a700d3086c7624c525f"
+                step: "/WhenOrchestratepipelinedagFires/root/procedure/54adb47afd637b30694f20431a5f60077d4e662c2824ed6d13041770de3cb808"
             )
-            try await runtime.checkpoint(label: "/WhenOrchestratepipelinedagFires/root/procedure/c608c27563c2ff4b6c45ef36dd006b87a602a75d7cce8a700d3086c7624c525f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenOrchestratepipelinedagFires/root/procedure/54adb47afd637b30694f20431a5f60077d4e662c2824ed6d13041770de3cb808", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenOrchestratepipelinedagFires.complete")
@@ -595,12 +595,12 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRundagorchestrationFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/ec33e3d1c357d110ec5b13871e32ae286b9646f54c653e2bff5809ac16a2d2c8") {
+        if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/2b66a83e492d33444d700abdf53015d06f37217ee5a92ea78da8ad62a9a1ed6a") {
             // L1
             try await runtime.wait(.event("runDagOrchestration", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRundagorchestrationFires/root/procedure/ec33e3d1c357d110ec5b13871e32ae286b9646f54c653e2bff5809ac16a2d2c8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundagorchestrationFires/root/procedure/2b66a83e492d33444d700abdf53015d06f37217ee5a92ea78da8ad62a9a1ed6a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/db7cc172255699c896c0d9a9fce03bea205ea911fd9cc0f37845124087989a8b") {
+        if __meridianShouldRun("/WhenRundagorchestrationFires/root/procedure/96b76842fc066bb7f853422f66227d71b2962f4e926fe35eb416737e389a48f9") {
             // L1
             try await runtime.emit(
                 event: "trigger.runDagOrchestration.fired",
@@ -608,9 +608,9 @@ public struct WhenRundagorchestrationFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run dag orchestration"),
                 ],
-                step: "/WhenRundagorchestrationFires/root/procedure/db7cc172255699c896c0d9a9fce03bea205ea911fd9cc0f37845124087989a8b"
+                step: "/WhenRundagorchestrationFires/root/procedure/96b76842fc066bb7f853422f66227d71b2962f4e926fe35eb416737e389a48f9"
             )
-            try await runtime.checkpoint(label: "/WhenRundagorchestrationFires/root/procedure/db7cc172255699c896c0d9a9fce03bea205ea911fd9cc0f37845124087989a8b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundagorchestrationFires/root/procedure/96b76842fc066bb7f853422f66227d71b2962f4e926fe35eb416737e389a48f9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRundagorchestrationFires.complete")
@@ -670,12 +670,12 @@ public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRundagorchestrationpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/6f9f3f1b65e933afc53b29b46e941cd591e1669f10404b6ea31dca3b5947cc9a") {
+        if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/d691bb9ef1716c54771974fa0c90ebbfeec7ec03d1a64cc668a8d27fe014d9b9") {
             // L1
             try await runtime.wait(.event("runDagOrchestrationPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRundagorchestrationpassFires/root/procedure/6f9f3f1b65e933afc53b29b46e941cd591e1669f10404b6ea31dca3b5947cc9a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundagorchestrationpassFires/root/procedure/d691bb9ef1716c54771974fa0c90ebbfeec7ec03d1a64cc668a8d27fe014d9b9", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/a82ab44ed67f9c228679e9da80ada33997838fee523e264ffedf7f121bdded7b") {
+        if __meridianShouldRun("/WhenRundagorchestrationpassFires/root/procedure/d92858bf41021aab54c436835c88d21169c609e4045c64cbf329058199b4e2e3") {
             // L1
             try await runtime.emit(
                 event: "trigger.runDagOrchestrationPass.fired",
@@ -683,9 +683,9 @@ public struct WhenRundagorchestrationpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the dag orchestration pass"),
                 ],
-                step: "/WhenRundagorchestrationpassFires/root/procedure/a82ab44ed67f9c228679e9da80ada33997838fee523e264ffedf7f121bdded7b"
+                step: "/WhenRundagorchestrationpassFires/root/procedure/d92858bf41021aab54c436835c88d21169c609e4045c64cbf329058199b4e2e3"
             )
-            try await runtime.checkpoint(label: "/WhenRundagorchestrationpassFires/root/procedure/a82ab44ed67f9c228679e9da80ada33997838fee523e264ffedf7f121bdded7b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundagorchestrationpassFires/root/procedure/d92858bf41021aab54c436835c88d21169c609e4045c64cbf329058199b4e2e3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRundagorchestrationpassFires.complete")

@@ -623,51 +623,51 @@ public struct SkillpackCheckInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackCheckInput", parameters: [:])
 
-        if __meridianShouldRun("/SkillpackCheckInput/anti-patterns-steps/prohibitions/7a462a8a3a008436774cc9cb4dc20b802ae48a0e2220f880662b1ad4b9f8728d") {
+        if __meridianShouldRun("/SkillpackCheckInput/anti-patterns-steps/prohibitions/f41c5d815b09bf2c1747e3e1513be6772e8b9df633b73a444ec7cc6c1d27b578") {
             // L133
             try await runtime.assert(!(MeridianComparison.eq(state.get("(❌IgnoringExitCode2.ACrashedDoctor"), state.get("worseThanAFailingCheckBecauseYouDon'tEvenKnowWhat.wrong)"))), message: "Expected not (❌ Ignoring exit code 2. A crashed doctor is worse than a failing check because you don't even know what's wrong)")
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/anti-patterns-steps/prohibitions/7a462a8a3a008436774cc9cb4dc20b802ae48a0e2220f880662b1ad4b9f8728d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/anti-patterns-steps/prohibitions/f41c5d815b09bf2c1747e3e1513be6772e8b9df633b73a444ec7cc6c1d27b578", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/b54a9b778c7b2f73a242dc4abdb07d26c5d78b1c3888337bcd17fcede6c76e54") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/509e7f52f4466f522b00f81bee9158cc5a74bb15dbedc6376c113f2cdf9087fa") {
             // L72
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("for cmd in $(echo \"$REPORT\" | jq -r '.actions[]'); do"),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/b54a9b778c7b2f73a242dc4abdb07d26c5d78b1c3888337bcd17fcede6c76e54",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/509e7f52f4466f522b00f81bee9158cc5a74bb15dbedc6376c113f2cdf9087fa",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/b54a9b778c7b2f73a242dc4abdb07d26c5d78b1c3888337bcd17fcede6c76e54", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/509e7f52f4466f522b00f81bee9158cc5a74bb15dbedc6376c113f2cdf9087fa", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/5ada9ccb74f5f8ca518e743022e2c100ac4d3d0749a8cfa087fd41a3e70093ee") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/908c611962be83c0836164bfe8d9899f8ba58a184125a26047311a2ad3f70c4b") {
             // L72
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("eval \"$cmd\""),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/5ada9ccb74f5f8ca518e743022e2c100ac4d3d0749a8cfa087fd41a3e70093ee",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/908c611962be83c0836164bfe8d9899f8ba58a184125a26047311a2ad3f70c4b",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/5ada9ccb74f5f8ca518e743022e2c100ac4d3d0749a8cfa087fd41a3e70093ee", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/908c611962be83c0836164bfe8d9899f8ba58a184125a26047311a2ad3f70c4b", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3") {
             // L72
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("done"),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/44cff96c4778e2f6d78f7cc5616701713009363d7ea86aed44261890e89439d8") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/fffe28c03686c5c26a3be152f3eb1b269867d84284b3885b600d93b499fd1dff") {
             // L80
             // — A migration is pending or half-finished
             _ = try await runtime.invoke(
@@ -675,13 +675,13 @@ public struct SkillpackCheckInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain apply-migrations --yes"),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/44cff96c4778e2f6d78f7cc5616701713009363d7ea86aed44261890e89439d8",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/fffe28c03686c5c26a3be152f3eb1b269867d84284b3885b600d93b499fd1dff",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/44cff96c4778e2f6d78f7cc5616701713009363d7ea86aed44261890e89439d8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps/procedure/fffe28c03686c5c26a3be152f3eb1b269867d84284b3885b600d93b499fd1dff", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/4d2b87e5b11b6485adbd40a2232f8439cd03705976250593c0126cb15e92503d") {
             // L84
             // — Embeddings are stale
             _ = try await runtime.invoke(
@@ -689,13 +689,13 @@ public struct SkillpackCheckInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain embed --stale"),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/4d2b87e5b11b6485adbd40a2232f8439cd03705976250593c0126cb15e92503d",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/4d2b87e5b11b6485adbd40a2232f8439cd03705976250593c0126cb15e92503d", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/510a7e5579b7953fa61e1c82db9f3ed47f4300257a82b1b7e5d3b2d59e7e5d93") {
+        if __meridianShouldRun("/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/236160d61d7b0384c62f6ebd5a20941d40887894b06b4f9e8ead3cd041e27557") {
             // L85
             // — Dead links or missing back-links
             _ = try await runtime.invoke(
@@ -703,13 +703,13 @@ public struct SkillpackCheckInput: MeridianWorkflow {
                 args: [
                     "command": .string("gbrain check-backlinks --fix"),
                 ],
-                step: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/510a7e5579b7953fa61e1c82db9f3ed47f4300257a82b1b7e5d3b2d59e7e5d93",
+                step: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/236160d61d7b0384c62f6ebd5a20941d40887894b06b4f9e8ead3cd041e27557",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/510a7e5579b7953fa61e1c82db9f3ed47f4300257a82b1b7e5d3b2d59e7e5d93", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/action-needed-healthy-false-steps-2/procedure/236160d61d7b0384c62f6ebd5a20941d40887894b06b4f9e8ead3cd041e27557", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackCheckInput/related-steps-2/procedure/135dcde753691174465b2ab1206f4cc85480632149fbcc3d6b89806375608c4c") {
+        if __meridianShouldRun("/SkillpackCheckInput/related-steps-2/procedure/3675b23b1d9cb48b9dcb48adb5a2a5bf4ae94e6362b2cc973d4d0af436f4d8da") {
             // L153
             // — troubleshooting a half-migrated install
             _ = try await runtime.invoke(
@@ -717,11 +717,11 @@ public struct SkillpackCheckInput: MeridianWorkflow {
                 args: [
                     "command": .string("docs/guides/minions-fix.md"),
                 ],
-                step: "/SkillpackCheckInput/related-steps-2/procedure/135dcde753691174465b2ab1206f4cc85480632149fbcc3d6b89806375608c4c",
+                step: "/SkillpackCheckInput/related-steps-2/procedure/3675b23b1d9cb48b9dcb48adb5a2a5bf4ae94e6362b2cc973d4d0af436f4d8da",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackCheckInput/related-steps-2/procedure/135dcde753691174465b2ab1206f4cc85480632149fbcc3d6b89806375608c4c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackCheckInput/related-steps-2/procedure/3675b23b1d9cb48b9dcb48adb5a2a5bf4ae94e6362b2cc973d4d0af436f4d8da", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SkillpackCheckInput.complete")
@@ -780,12 +780,12 @@ public struct WhenSkillpackcheckFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSkillpackcheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/4af935c3cb65f2b3d8df7d6827af5084ae81fc2349e646a74693bf34c91c0192") {
+        if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/b5dd7cf382fefd2b31a7b3e29debe9c5f5d44e1891c125d2bec5330a47ea033d") {
             // L1
             try await runtime.wait(.event("skillpackCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSkillpackcheckFires/root/procedure/4af935c3cb65f2b3d8df7d6827af5084ae81fc2349e646a74693bf34c91c0192", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSkillpackcheckFires/root/procedure/b5dd7cf382fefd2b31a7b3e29debe9c5f5d44e1891c125d2bec5330a47ea033d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/5032906dc6438371d8c677935d9c989a977b6e292e5cdf5f12d2fbc9fbeaf5cc") {
+        if __meridianShouldRun("/WhenSkillpackcheckFires/root/procedure/2b6846931c60f0c398c42a8ef4e9c2a7931cfb51313d56eda0c1b887ae3102f6") {
             // L1
             try await runtime.emit(
                 event: "trigger.skillpackCheck.fired",
@@ -793,9 +793,9 @@ public struct WhenSkillpackcheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("skillpack check"),
                 ],
-                step: "/WhenSkillpackcheckFires/root/procedure/5032906dc6438371d8c677935d9c989a977b6e292e5cdf5f12d2fbc9fbeaf5cc"
+                step: "/WhenSkillpackcheckFires/root/procedure/2b6846931c60f0c398c42a8ef4e9c2a7931cfb51313d56eda0c1b887ae3102f6"
             )
-            try await runtime.checkpoint(label: "/WhenSkillpackcheckFires/root/procedure/5032906dc6438371d8c677935d9c989a977b6e292e5cdf5f12d2fbc9fbeaf5cc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSkillpackcheckFires/root/procedure/2b6846931c60f0c398c42a8ef4e9c2a7931cfb51313d56eda0c1b887ae3102f6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSkillpackcheckFires.complete")
@@ -854,12 +854,12 @@ public struct WhenIsgbrainhealthyFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIsgbrainhealthyFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/f6ae73e0ff40005460c4785216ed41c8f6a4f645cafcb095a8c3bde95324e063") {
+        if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/cba6d0f05be0ecd13d754d4338ae178ce238a03810147b4d8f9e5736427d7f61") {
             // L1
             try await runtime.wait(.event("isGbrainHealthy", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIsgbrainhealthyFires/root/procedure/f6ae73e0ff40005460c4785216ed41c8f6a4f645cafcb095a8c3bde95324e063", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsgbrainhealthyFires/root/procedure/cba6d0f05be0ecd13d754d4338ae178ce238a03810147b4d8f9e5736427d7f61", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/e9c4ed6f84c7bb19850d60a75d26118a5ef4d9405116a71e0abe9cd6d8dc0a36") {
+        if __meridianShouldRun("/WhenIsgbrainhealthyFires/root/procedure/fd1570f4a3b73ddc503820e9662d96553f738172b3c1d294b133cf78acde620f") {
             // L1
             try await runtime.emit(
                 event: "trigger.isGbrainHealthy.fired",
@@ -867,9 +867,9 @@ public struct WhenIsgbrainhealthyFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("is gbrain healthy"),
                 ],
-                step: "/WhenIsgbrainhealthyFires/root/procedure/e9c4ed6f84c7bb19850d60a75d26118a5ef4d9405116a71e0abe9cd6d8dc0a36"
+                step: "/WhenIsgbrainhealthyFires/root/procedure/fd1570f4a3b73ddc503820e9662d96553f738172b3c1d294b133cf78acde620f"
             )
-            try await runtime.checkpoint(label: "/WhenIsgbrainhealthyFires/root/procedure/e9c4ed6f84c7bb19850d60a75d26118a5ef4d9405116a71e0abe9cd6d8dc0a36", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsgbrainhealthyFires/root/procedure/fd1570f4a3b73ddc503820e9662d96553f738172b3c1d294b133cf78acde620f", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIsgbrainhealthyFires.complete")
@@ -928,12 +928,12 @@ public struct WhenGbrainhealthFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainhealthFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/793231dc5dfebe2ebafaf518492074305c4a231f46c8bfe9872f4b942796c5e0") {
+        if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/96cb6d9c8c4b73dbc2cfc07fa0e0525ec38348064dc0e10aa8bf305ae91ffa85") {
             // L1
             try await runtime.wait(.event("gbrainHealth", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainhealthFires/root/procedure/793231dc5dfebe2ebafaf518492074305c4a231f46c8bfe9872f4b942796c5e0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainhealthFires/root/procedure/96cb6d9c8c4b73dbc2cfc07fa0e0525ec38348064dc0e10aa8bf305ae91ffa85", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/833c5a3693cc9627d03c970d8b9ce7a7c94415d8f514b8e8a3dc70db356e8796") {
+        if __meridianShouldRun("/WhenGbrainhealthFires/root/procedure/83e71ae0cad2c3d5d67456fcaceeeda87f20b1dd80982542c9382db5e064ffb9") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainHealth.fired",
@@ -941,9 +941,9 @@ public struct WhenGbrainhealthFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain health"),
                 ],
-                step: "/WhenGbrainhealthFires/root/procedure/833c5a3693cc9627d03c970d8b9ce7a7c94415d8f514b8e8a3dc70db356e8796"
+                step: "/WhenGbrainhealthFires/root/procedure/83e71ae0cad2c3d5d67456fcaceeeda87f20b1dd80982542c9382db5e064ffb9"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainhealthFires/root/procedure/833c5a3693cc9627d03c970d8b9ce7a7c94415d8f514b8e8a3dc70db356e8796", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainhealthFires/root/procedure/83e71ae0cad2c3d5d67456fcaceeeda87f20b1dd80982542c9382db5e064ffb9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainhealthFires.complete")
@@ -1002,12 +1002,12 @@ public struct WhenCheckbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCheckbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/b0b91416f11b7d1e7afbc999df748c5c0b9aae78f8457a7a46548d7f59414607") {
+        if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/5c3d01d2a5f5f6c01fdb1098467df42b98098dad189712ee1838675cfd26b494") {
             // L1
             try await runtime.wait(.event("checkBrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckbrainFires/root/procedure/b0b91416f11b7d1e7afbc999df748c5c0b9aae78f8457a7a46548d7f59414607", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckbrainFires/root/procedure/5c3d01d2a5f5f6c01fdb1098467df42b98098dad189712ee1838675cfd26b494", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/49dc55826fcf44354d35981411444c3f5f0cdbfc29958eb0e4b8f934b5bff2d7") {
+        if __meridianShouldRun("/WhenCheckbrainFires/root/procedure/2381e8bac82c7301ec4e8d58c3f07142ee2a1a0d7cf4c7168d0990b368cdb254") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkBrain.fired",
@@ -1015,9 +1015,9 @@ public struct WhenCheckbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check the brain"),
                 ],
-                step: "/WhenCheckbrainFires/root/procedure/49dc55826fcf44354d35981411444c3f5f0cdbfc29958eb0e4b8f934b5bff2d7"
+                step: "/WhenCheckbrainFires/root/procedure/2381e8bac82c7301ec4e8d58c3f07142ee2a1a0d7cf4c7168d0990b368cdb254"
             )
-            try await runtime.checkpoint(label: "/WhenCheckbrainFires/root/procedure/49dc55826fcf44354d35981411444c3f5f0cdbfc29958eb0e4b8f934b5bff2d7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckbrainFires/root/procedure/2381e8bac82c7301ec4e8d58c3f07142ee2a1a0d7cf4c7168d0990b368cdb254", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckbrainFires.complete")
@@ -1076,12 +1076,12 @@ public struct WhenIsbrainworkingFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIsbrainworkingFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/667be2063fa5293cd32080912d1f12b323c69fc2256684d4c6693738bbb0bcae") {
+        if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/001ad5c9b567b2e37a050ca43bfa3d03888a4411c7ba67400a60c655cb357728") {
             // L1
             try await runtime.wait(.event("isBrainWorking", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIsbrainworkingFires/root/procedure/667be2063fa5293cd32080912d1f12b323c69fc2256684d4c6693738bbb0bcae", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsbrainworkingFires/root/procedure/001ad5c9b567b2e37a050ca43bfa3d03888a4411c7ba67400a60c655cb357728", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/fc01aeaea77cfde83c6d7bb7e71de760fa499b521df2ad4b08e660245f4c9938") {
+        if __meridianShouldRun("/WhenIsbrainworkingFires/root/procedure/82a5da36b36e219c39f439a04477add1b2db66a4a26465294413564c04692237") {
             // L1
             try await runtime.emit(
                 event: "trigger.isBrainWorking.fired",
@@ -1089,9 +1089,9 @@ public struct WhenIsbrainworkingFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("is the brain working"),
                 ],
-                step: "/WhenIsbrainworkingFires/root/procedure/fc01aeaea77cfde83c6d7bb7e71de760fa499b521df2ad4b08e660245f4c9938"
+                step: "/WhenIsbrainworkingFires/root/procedure/82a5da36b36e219c39f439a04477add1b2db66a4a26465294413564c04692237"
             )
-            try await runtime.checkpoint(label: "/WhenIsbrainworkingFires/root/procedure/fc01aeaea77cfde83c6d7bb7e71de760fa499b521df2ad4b08e660245f4c9938", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIsbrainworkingFires/root/procedure/82a5da36b36e219c39f439a04477add1b2db66a4a26465294413564c04692237", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIsbrainworkingFires.complete")

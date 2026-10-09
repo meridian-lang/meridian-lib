@@ -1,122 +1,122 @@
 {
   "entries" : [
     {
-      "canonical" : "wait for event reconcileLedger.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenReconcileledgerFires\/root\/procedure\/dcf74d2566263dfbd0ffe7a864497592b348558cebdf2e8045191d6589c1ff7b",
-      "swift_line" : 718
-    },
-    {
       "canonical" : "emit trigger.reconcileLedger.fired with kind = \"keyword\", spec = \"reconcile ledger\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenReconcileledgerFires\/root\/procedure\/ece0d38361b58228d42667cec0b4f6ab845f35a7004cf3f5023476644f81615e",
+      "stable_step_path" : "\/WhenReconcileledgerFires\/root\/procedure\/07d3bc72ddfe26ad3c8117b04fb0987de453c46efccab9e8664521216677007d",
       "swift_line" : 718
     },
     {
-      "canonical" : "emit trigger.settleLedgerBatches.fired with kind = \"keyword\", spec = \"settle ledger batches\".",
+      "canonical" : "wait for event reconcileLedger.",
       "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenSettleledgerbatchesFires\/root\/procedure\/87ab5c2ce4a8de558114e11cb4422bedd06aee23180263afba320eeb133a1693",
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenReconcileledgerFires\/root\/procedure\/33015d35c70e219bda90873794607f90f33f48b80128a4095d50f2e0d11c6716",
       "swift_line" : 718
     },
     {
       "canonical" : "wait for event settleLedgerBatches.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSettleledgerbatchesFires\/root\/procedure\/8e7415832252a95ef6f588e814875903e24e76195c5519f32fdaaee8c9d1216c",
+      "stable_step_path" : "\/WhenSettleledgerbatchesFires\/root\/procedure\/531995dfc10fa9a2815f9e8d2ba8886d654748ff9d8968789781c05575132e01",
+      "swift_line" : 718
+    },
+    {
+      "canonical" : "emit trigger.settleLedgerBatches.fired with kind = \"keyword\", spec = \"settle ledger batches\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenSettleledgerbatchesFires\/root\/procedure\/696485fdad40e2fdc8ff4fb239ae240e6174464cc6ec16ec8c4793aba45c2c90",
       "swift_line" : 718
     },
     {
       "canonical" : "`psql -c \"select id,status from ledger_batch where status='ready'\" --csv` -- snapshot ready batches.",
       "meridian_line" : 23,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/9d567202c342ba633f5ed316b2fac8af09d37d9308900bde2da933860ff7e1d6",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/9277d2b608f6a0b52510073c6eae9be4524b84d44f017dff733425dc8cf74dd9",
       "swift_line" : 467
     },
     {
       "canonical" : "bind batches = invoke batch.list with status = \"ready\".",
       "meridian_line" : 24,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0",
       "swift_line" : 481
     },
     {
       "canonical" : "assert all batches have a name.",
       "meridian_line" : 25,
       "primitive" : "assert",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/9fe9287b014a092fe14cde33ebc13ce387801ec64e1957bed7f2e36e4f8a75f5",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/fb0bb38bce06928a64025cdad2afd4552c7d5a8e0e6b4f2a7b28d9a340286d2b",
       "swift_line" : 495
     },
     {
       "canonical" : "assert at most 50 batches whose status equals \"ready\".",
       "meridian_line" : 26,
       "primitive" : "assert",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/8f8f7545df700dc2c1770624f0103b825e7a15660c2a650d2efc8de79bcbf9d1",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/cfdac6215009526d3024ee7a67ab7ad6c834b80639f6c5fb59c2a0cd9b362d18",
       "swift_line" : 500
     },
     {
       "canonical" : "for each batch in batches,\n  if batch is finalized,\n    emit procedure.note with message = \"batch already finalized, skipping settlement\".\n  otherwise,\n    bind settlement = invoke batch.settle with batch = batch.\n    recover from any:\n      emit procedure.note with message = \"settlement failed, deferring to next reconciliation pass\".",
       "meridian_line" : 27,
       "primitive" : "iterate",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/bfa959f8b1d40821b690ce780dcfda49fd42b61f26d99cabec0d725d5f20e1d3",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/9815a7e87d0fd34850ce70e0f8f90abb7601b802e9a900bf0a433ec5ecc03811",
       "swift_line" : 504
     },
     {
       "canonical" : "if batch is finalized,\n  emit procedure.note with message = \"batch already finalized, skipping settlement\".\notherwise,\n  bind settlement = invoke batch.settle with batch = batch.\n  recover from any:\n    emit procedure.note with message = \"settlement failed, deferring to next reconciliation pass\".",
       "meridian_line" : 28,
       "primitive" : "branch",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/iterate.body\/19bf62017e6fcc9d6383c4d08c7b67543cf8e66bb50a66217dcb963f90440a74",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/iterate.body\/c7e2c203748a8379929853194806afaba42889a4f77fde371ef1a147ea43938e",
       "swift_line" : 512
     },
     {
       "canonical" : "emit procedure.note with message = \"batch already finalized, skipping settlement\".",
       "meridian_line" : 29,
       "primitive" : "emit",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/branch.then\/1a7af9050ef9b98315bb27002c1b47e4f039a2b4fd2fe490528bdb2ab49aa315",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/branch.then\/d9edd3cbf58bfafaf00c3ceeec76fb204d4864225b16f536678d8ab7f1dd39ba",
       "swift_line" : 516
     },
     {
       "canonical" : "bind settlement = invoke batch.settle with batch = batch.",
       "meridian_line" : 31,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/recover.body\/4e9048b38d7ff142112ea3383493c85180b952c465c8f6a011e82c0ed2ce3180",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/recover.body\/c511db97618c541ced8d0444064f3c928dd12d58b8a79142585600229c768fe6",
       "swift_line" : 533
     },
     {
       "canonical" : "bind settlement = invoke batch.settle with batch = batch.\nrecover from any:\n  emit procedure.note with message = \"settlement failed, deferring to next reconciliation pass\".",
       "meridian_line" : 32,
       "primitive" : "recover",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/branch.else\/adbcc566d992c764ab5fd21d7366a463395aeb3e6326c83571904f5458dcc880",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/branch.else\/ce18b3de90319df18b821600d511fa81b14bd1b629d61e6190dd47b4e36e9e73",
       "swift_line" : 530
     },
     {
       "canonical" : "emit procedure.note with message = \"settlement failed, deferring to next reconciliation pass\".",
       "meridian_line" : 33,
       "primitive" : "emit",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/recover.handler\/05dcbfeb9c9728f8af02d890801a11c721a315b04608fea1597398d86e7e2607",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/recover.handler\/0f8361bec2018f4943950d3eeafbada2421fc322745426afafe35f1ca4da386b",
       "swift_line" : 549
     },
     {
       "canonical" : "emit procedure.report with message = \"ledger batches reconciled\".",
       "meridian_line" : 34,
       "primitive" : "emit",
-      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/861c51541a4851fb32c6352741fd93d1f4e6dc308a6a540c504c80cc142188db",
+      "stable_step_path" : "\/ReconcileLedger\/procedure-steps\/procedure\/1a1013d5961b7fe6fd7d8e08be61231baccd7649190fde82ac1abda2765827ca",
       "swift_line" : 569
     },
     {
       "canonical" : "assert no batches whose status equals \"failed\".",
       "meridian_line" : 37,
       "primitive" : "assert",
-      "stable_step_path" : "\/ReconcileLedger\/assertions\/invariants\/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd",
+      "stable_step_path" : "\/ReconcileLedger\/assertions\/invariants\/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3",
       "swift_line" : 457
     },
     {
       "canonical" : "assert all batches have a ledger id.",
       "meridian_line" : 38,
       "primitive" : "assert",
-      "stable_step_path" : "\/ReconcileLedger\/assertions\/invariants\/722daf3fa580060dbec5ba9850e264ac9d9f4ece540924ffb66b0813ef71b96b",
+      "stable_step_path" : "\/ReconcileLedger\/assertions\/invariants\/e8ca00f5da33173f902d900fc4752b76c54821a8faf5e7d5d6e37ffc712c1206",
       "swift_line" : 462
     }
   ],

@@ -455,24 +455,24 @@ public struct AgingReport: MeridianWorkflow {
 
         // L16
         state.bind("table", Value.list([.record(["bucket": .string("stale"), "action": .string("review")]), .record(["bucket": .string("duplicate"), "action": .string("merge")])]))
-        if __meridianShouldRun("/AgingReport/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57") {
+        if __meridianShouldRun("/AgingReport/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465") {
             // L33
             let records = try await runtime.invoke(
                 tool: "record.list",
                 args: [
                     "status": .string("stale"),
                 ],
-                step: "/AgingReport/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
+                step: "/AgingReport/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.list")
             )
             state.bind("records", records)
 
-            try await runtime.checkpoint(label: "/AgingReport/procedure-steps/procedure/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AgingReport/procedure-steps/procedure/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465", state: state.snapshot())
         }
-        if __meridianShouldRun("/AgingReport/procedure-steps/procedure/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0") {
+        if __meridianShouldRun("/AgingReport/procedure-steps/procedure/6d1236bbd051a151b92879e30394646cabe11edbcbf90b0391634e2e863976a7") {
             // L34
             try await runtime.assert((!((state.get("records")?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }).isEmpty), message: "Expected any stale records")
-            try await runtime.checkpoint(label: "/AgingReport/procedure-steps/procedure/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AgingReport/procedure-steps/procedure/6d1236bbd051a151b92879e30394646cabe11edbcbf90b0391634e2e863976a7", state: state.snapshot())
         }
         // L35
         state.bind("staleCount", Decimal(((state.get("records"))?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }.count))
@@ -480,16 +480,16 @@ public struct AgingReport: MeridianWorkflow {
         state.bind("oldestRecord", (((state.get("records"))?.asList ?? []).filter { __e in (meridianDef_Record_stale(__e)) }.sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("updatedAt"), __b.member("updatedAt"), ascending: true) }.first))
         // L37
         state.bind("selectedAction", try ({ () throws -> Value? in guard let __rows = state.get("table")?.asList else { throw ToolError.implementation(code: "table.lookup_miss", message: "table table is not bound", cause: nil) }; for __row in __rows { if MeridianComparison.eq(__row.member("bucket"), .string("stale")) { return __row.member("action") } }; throw ToolError.implementation(code: "table.lookup_miss", message: "no row in table where bucket matches", cause: nil) })())
-        if __meridianShouldRun("/AgingReport/procedure-steps-2/procedure/cccd322c4a37b271ed6c475550769ec101a7a5bcbdb4bf16c43aae84a7cb5638") {
+        if __meridianShouldRun("/AgingReport/procedure-steps-2/procedure/ca188ea199138c3c4b30e7f1caba796980e9e059c2e4c87898aeb2ec782f1755") {
             // L41
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": state.get("agingReport") ?? .null,
                 ],
-                step: "/AgingReport/procedure-steps-2/procedure/cccd322c4a37b271ed6c475550769ec101a7a5bcbdb4bf16c43aae84a7cb5638"
+                step: "/AgingReport/procedure-steps-2/procedure/ca188ea199138c3c4b30e7f1caba796980e9e059c2e4c87898aeb2ec782f1755"
             )
-            try await runtime.checkpoint(label: "/AgingReport/procedure-steps-2/procedure/cccd322c4a37b271ed6c475550769ec101a7a5bcbdb4bf16c43aae84a7cb5638", state: state.snapshot())
+            try await runtime.checkpoint(label: "/AgingReport/procedure-steps-2/procedure/ca188ea199138c3c4b30e7f1caba796980e9e059c2e4c87898aeb2ec782f1755", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "AgingReport.complete")
@@ -549,12 +549,12 @@ public struct WhenAgingreportFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenAgingreportFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAgingreportFires/root/procedure/dd28a1ec6f0d7f90a47a37386f5abd3dd1d14b1076ddfe70903f0fa9b3ae3ac4") {
+        if __meridianShouldRun("/WhenAgingreportFires/root/procedure/800ef80d2cd69901e0803c8b98a2d1ad8ccb2cbb184cc4c2c33724595db733f2") {
             // L1
             try await runtime.wait(.event("agingReport", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAgingreportFires/root/procedure/dd28a1ec6f0d7f90a47a37386f5abd3dd1d14b1076ddfe70903f0fa9b3ae3ac4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAgingreportFires/root/procedure/800ef80d2cd69901e0803c8b98a2d1ad8ccb2cbb184cc4c2c33724595db733f2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAgingreportFires/root/procedure/ece842f958f8ac8a2069393e59625946bedef50b7fc1c35739c5ba1921200d86") {
+        if __meridianShouldRun("/WhenAgingreportFires/root/procedure/182f794ec4ae49adacbe4cd96d9b6075544e04356168605c804a6baf3cd6afc5") {
             // L1
             try await runtime.emit(
                 event: "trigger.agingReport.fired",
@@ -562,9 +562,9 @@ public struct WhenAgingreportFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("aging report"),
                 ],
-                step: "/WhenAgingreportFires/root/procedure/ece842f958f8ac8a2069393e59625946bedef50b7fc1c35739c5ba1921200d86"
+                step: "/WhenAgingreportFires/root/procedure/182f794ec4ae49adacbe4cd96d9b6075544e04356168605c804a6baf3cd6afc5"
             )
-            try await runtime.checkpoint(label: "/WhenAgingreportFires/root/procedure/ece842f958f8ac8a2069393e59625946bedef50b7fc1c35739c5ba1921200d86", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAgingreportFires/root/procedure/182f794ec4ae49adacbe4cd96d9b6075544e04356168605c804a6baf3cd6afc5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAgingreportFires.complete")
@@ -624,12 +624,12 @@ public struct WhenStalerecordreportFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenStalerecordreportFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/b0b03b088fec7386591f1a1559fbc250e65da57e3246e62e242a2f7dea86aff9") {
+        if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/64277e23687e680c880030036e3f9126c8866c566c8b6108d91eb08fecaa8c86") {
             // L1
             try await runtime.wait(.event("staleRecordReport", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenStalerecordreportFires/root/procedure/b0b03b088fec7386591f1a1559fbc250e65da57e3246e62e242a2f7dea86aff9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenStalerecordreportFires/root/procedure/64277e23687e680c880030036e3f9126c8866c566c8b6108d91eb08fecaa8c86", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/715c5bcde93c66f1a260a86e153481a2c9cbf25273506833a04433c0e0099fa2") {
+        if __meridianShouldRun("/WhenStalerecordreportFires/root/procedure/2e14626ae7e76942a2f35a37ccc7b11b793d020105545a181729ae96be14f052") {
             // L1
             try await runtime.emit(
                 event: "trigger.staleRecordReport.fired",
@@ -637,9 +637,9 @@ public struct WhenStalerecordreportFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("stale record report"),
                 ],
-                step: "/WhenStalerecordreportFires/root/procedure/715c5bcde93c66f1a260a86e153481a2c9cbf25273506833a04433c0e0099fa2"
+                step: "/WhenStalerecordreportFires/root/procedure/2e14626ae7e76942a2f35a37ccc7b11b793d020105545a181729ae96be14f052"
             )
-            try await runtime.checkpoint(label: "/WhenStalerecordreportFires/root/procedure/715c5bcde93c66f1a260a86e153481a2c9cbf25273506833a04433c0e0099fa2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenStalerecordreportFires/root/procedure/2e14626ae7e76942a2f35a37ccc7b11b793d020105545a181729ae96be14f052", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenStalerecordreportFires.complete")

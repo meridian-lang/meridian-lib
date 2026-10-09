@@ -1,304 +1,304 @@
 {
   "entries" : [
     {
-      "canonical" : "wait for event gbrainSetup.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenGbrainsetupFires\/root\/procedure\/8982abfc5b0ff44b45efe1c53e2a47d1c9bfafcfd9d57361d359cca277210c51",
-      "swift_line" : 1330
-    },
-    {
       "canonical" : "emit trigger.gbrainSetup.fired with kind = \"keyword\", spec = \"gbrain setup\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenGbrainsetupFires\/root\/procedure\/947c9bae5c6ef47066256149d6edba465068bfefc9ff851bbf6626cf2e54a729",
+      "stable_step_path" : "\/WhenGbrainsetupFires\/root\/procedure\/9b6c671f92959a49d7631692552d1069cca54e3b81ea143abfc4a5421c298ddc",
+      "swift_line" : 1330
+    },
+    {
+      "canonical" : "wait for event gbrainSetup.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenGbrainsetupFires\/root\/procedure\/de4392ed92d218aab28fb4659e5a16c58ff839079a064c0cf474c8c68cbc44c0",
       "swift_line" : 1330
     },
     {
       "canonical" : "wait for event initializeBrain.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenInitializebrainFires\/root\/procedure\/12bd8370a085c77033d9b52d312b8365421a740604f8a42d909c7c37e7d6547b",
+      "stable_step_path" : "\/WhenInitializebrainFires\/root\/procedure\/5a496d946a119eb2922cf9e78c1a368132573657ef9d50ce6e6fc909a9fc3777",
       "swift_line" : 1330
     },
     {
       "canonical" : "emit trigger.initializeBrain.fired with kind = \"keyword\", spec = \"initialize brain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenInitializebrainFires\/root\/procedure\/34e892ccaae53963fc59921541b672c4fdcdb509210f085631beb8dba15567ee",
-      "swift_line" : 1330
-    },
-    {
-      "canonical" : "wait for event setUpGbrain.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenSetupgbrainFires\/root\/procedure\/9e40fe808595a3e59fec1c6091aa876ec04be63344b7c0cb5a31fd2680dc395f",
+      "stable_step_path" : "\/WhenInitializebrainFires\/root\/procedure\/d640f5f152b61f71976f1954902b6ae416f4e9c555dfec5b8e4b309e0627a103",
       "swift_line" : 1330
     },
     {
       "canonical" : "emit trigger.setUpGbrain.fired with kind = \"keyword\", spec = \"set up gbrain\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSetupgbrainFires\/root\/procedure\/f963a3eab79e9a46ccf9d79e7832e9b39e4f03cf1ed9d41751da74cecc71de24",
+      "stable_step_path" : "\/WhenSetupgbrainFires\/root\/procedure\/230243214e42460a5e3153ebb2273203967de12e16a0f33b1103eaba5d23f0fc",
+      "swift_line" : 1330
+    },
+    {
+      "canonical" : "wait for event setUpGbrain.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenSetupgbrainFires\/root\/procedure\/db732abd6bbaac1ac2a9ef1288f740912d33d7ed367c754c444b43fc1c1e0521",
       "swift_line" : 1330
     },
     {
       "canonical" : "`bun add github:garrytan\/gbrain`.",
       "meridian_line" : 30,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/install-if-not-already-installed\/procedure\/c9d0de353c9fdefffdd48b19f1c15fa29b7585c3f8b10a37f8336dbfafb82195",
+      "stable_step_path" : "\/SetupInput\/install-if-not-already-installed\/procedure\/28384cee5c90089ddd997ee06b6217455da736821e6e1d9b433a8cdcc7bc3aaa",
       "swift_line" : 626
     },
     {
       "canonical" : "`gbrain doctor --json` -- Verify.",
       "meridian_line" : 211,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-a-supabase-setup-recommended-steps\/procedure\/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+      "stable_step_path" : "\/SetupInput\/phase-a-supabase-setup-recommended-steps\/procedure\/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2",
       "swift_line" : 639
     },
     {
       "canonical" : "`gbrain init --non-interactive --url \"<connection_string>\"` -- Run.",
       "meridian_line" : 225,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-b-byo-postgres-alternative-steps\/procedure\/44f739675166fe4fd5201854635c45cc78ea1100042382f6fedccd341901ed10",
+      "stable_step_path" : "\/SetupInput\/phase-b-byo-postgres-alternative-steps\/procedure\/2608e27fab95282e04a64a455bddf02ec9e36b75adc86633acad7ef6e4795426",
       "swift_line" : 653
     },
     {
       "canonical" : "`gbrain doctor --json` -- Verify.",
       "meridian_line" : 226,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-b-byo-postgres-alternative-steps\/procedure\/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+      "stable_step_path" : "\/SetupInput\/phase-b-byo-postgres-alternative-steps\/procedure\/77201f1bb0ef20df728181229caa8f9af6db1d1bdadd55f0f6d3bde6f10ac0c2",
       "swift_line" : 667
     },
     {
-      "canonical" : "`for dir in \/data\/* ~\/git\/* ~\/Documents\/* 2>\/dev\/null; do`.",
+      "canonical" : "`if [ -d \"$dir\/.git\" ]; then`.",
       "meridian_line" : 254,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/01a114ece9994b18315da1f264651b9254079e1bed81f0d9fa0c68e0a69233c0",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`echo \"=== Discovery Complete ===\"`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/20cb1fcd223571f9acba80ea738dcbb60bd05e60eeb5a029c9bd9d4a9c6dd022",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`echo \"  $dir ($total_size, $md_count .md files)\"`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/2b43417af25b94545056b196b64fb702f66571c52592efcfa57d86919f34c277",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`total_size=$(du -sh \"$dir\" 2>\/dev\/null | cut -f1)`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/2fa52f125888cbae630fcd1dc74f513e1ce1a111e61abe5b7a01da2a43d56781",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`echo \"=== GBrain Environment Discovery ===\"`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/9c7ddb0c5820bcc4e267d528a888e767bfddb3e7ca0241ce03e4a67751c35338",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`if [ \"$md_count\" -gt 10 ]; then`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/b0d7d39ec192d953bd6fd68ac302ccbc5b9f2ede1e4410b102a3fc268761dd91",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`fi`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`fi`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f~2",
-      "swift_line" : 811
-    },
-    {
-      "canonical" : "`md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*\/node_modules\/*\" -not -path \"*\/.git\/*\" 2>\/dev\/null | wc -l | tr -d ' ')`.",
-      "meridian_line" : 254,
-      "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/d57a7d258d0a98ce512d3b160b5918f5131da316aa08206ad9d02d33626bdce9",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/28b251166e4a24d072afadc8dd22b5d37b509cfe19c083931c4c65285f34c97a",
       "swift_line" : 811
     },
     {
       "canonical" : "`done`.",
       "meridian_line" : 254,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3",
       "swift_line" : 811
     },
     {
-      "canonical" : "`if [ -d \"$dir\/.git\" ]; then`.",
+      "canonical" : "`echo \"=== GBrain Environment Discovery ===\"`.",
       "meridian_line" : 254,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/ff1bd1f3be2b4aa1fdd031b70d19c34024e7205f3d0043613234e11462834ec5",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/392d25791152ccbc7da15bb51f31f0e09ec1d00bf433ae9a6aa384b1a54bd836",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`echo \"=== Discovery Complete ===\"`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/495f541f4ad8adabda3ed798ded7ca1c6c7fd80e8da6080f77031380f8a3fe07",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`total_size=$(du -sh \"$dir\" 2>\/dev\/null | cut -f1)`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/680449542d34dff5d37d26197605476c1ec876e7d9343c61a6d9fe17c6acc9e4",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`fi`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`fi`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953~2",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`if [ \"$md_count\" -gt 10 ]; then`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/781000b69e9fa2ceef79da96180dc20e7d3681ca836435425d4b00189957952f",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`echo \"  $dir ($total_size, $md_count .md files)\"`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/91451549fc8dffc205811f478378ed615babb12342190c9c5e338277001d174e",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`for dir in \/data\/* ~\/git\/* ~\/Documents\/* 2>\/dev\/null; do`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/b0a134b1b6b0d3aeabc14ae3bac6fd764f3f488180462cfe1995fb3112e98a15",
+      "swift_line" : 811
+    },
+    {
+      "canonical" : "`md_count=$(find \"$dir\" -name \"*.md\" -not -path \"*\/node_modules\/*\" -not -path \"*\/.git\/*\" 2>\/dev\/null | wc -l | tr -d ' ')`.",
+      "meridian_line" : 254,
+      "primitive" : "invoke",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/e53b5910b9512c50035cdf180fe47b240611e1ef067d9a2d55daa12560163667",
       "swift_line" : 811
     },
     {
       "canonical" : "`nohup gbrain import <dir> --no-embed --workers 4 > \/tmp\/gbrain-import.log 2>&1 &`.",
       "meridian_line" : 270,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/552f522a8dcb7fb28320cdf1cec6d3772fae3652daab27146afd31ed930306a1",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/9555530e48f8f1a20de5345a040a06abb9dc7849a688749eed74b080713239b7",
       "swift_line" : 824
     },
     {
       "canonical" : "`tail -1 \/tmp\/gbrain-import.log` -- Then check progress.",
       "meridian_line" : 273,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/f33233743181a1cd8288d98229fbb83674eecb3b807336f59a829dfa94475025",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/1b8acc8ec7dcff3651e6ffe9ed9e2e7acecb67daa85e556db2bdf0a22f739634",
       "swift_line" : 837
     },
     {
       "canonical" : "`gbrain import <dir> --no-embed`.",
       "meridian_line" : 276,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/fd4b81c4fc69c61c2003afd9dd5a9af453b53f73ae5d319c5baf109db7015963",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/3006702646182694af8770efc8137dbf0ad6b802ed9ad0419e18e2f36133b3db",
       "swift_line" : 851
     },
     {
       "canonical" : "`gbrain search \"<topic from the imported data>\"`.",
       "meridian_line" : 281,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/79524e4a7312853d17a8e7ac3d02f6e6767f27db47bd9b7d4c491002a5686176",
+      "stable_step_path" : "\/SetupInput\/phase-c-first-import-steps\/procedure\/883f1345df5b12c02faa187fc215d8d908151420283dbca8608a2d43b004ccaf",
       "swift_line" : 864
     },
     {
       "canonical" : "`gbrain apply-migrations --yes       # applies any pending migrations; idempotent on healthy installs`.",
       "meridian_line" : 341,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/b32fb9d8467b863a1d028708d51dff6c3098b4ba7dec84e9d17c866370bb2507",
+      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/20ff3312ffa67d22127b404d70fbc1436647986e2215bb7a2224a52aa96f3769",
       "swift_line" : 890
     },
     {
       "canonical" : "`gbrain autopilot --install          # supervises itself + forks the Minions worker; env-aware`.",
       "meridian_line" : 341,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/f4bb6e90ca29ac8513f974277e658d30c349568d59e5f3b768594210098a33f3",
+      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/3367e3f4b20a83800b780c3cb6670ea3d2c6dd90475e30595a0c8a016476014c",
       "swift_line" : 890
     },
     {
       "canonical" : "`gbrain autopilot --install` -- What  does.",
       "meridian_line" : 346,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/5b9dd78367b6c698e762d830d98924d4ee3331fe4167515d94a1e6856b1731a7",
+      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/81475be66f6958bf6a7702b6865c75f3da394493641e020ad073410d7709763f",
       "swift_line" : 903
     },
     {
       "canonical" : "`~\/Library\/LaunchAgents\/com.gbrain.autopilot.plist` -- On macOS: writes a launchd plist at.",
       "meridian_line" : 348,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/63da4e7c7ffb0fa1fad5c61753969253524b3baa2b9d6c91fd4fde8fd8e94ac2",
+      "stable_step_path" : "\/SetupInput\/phase-c-5-one-step-autopilot-minions-install-v0-11-1-steps\/procedure\/1bdd815f812e5793a44e93971266e338a72b0f264721a0f613573d179ddb7fe8",
       "swift_line" : 917
     },
     {
       "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when Task is Find a person, Before (grep) is `grep -r \"Pedro\" brain\/`, `gbrain search \"Pedro\"`\n  when Task is Understand a topic, Before (grep) is `grep -rl \"deal\" brain\/ \\, head -5 && cat ...`\n  when Task is Read a known page, Before (grep) is `cat brain\/people\/pedro.md`, `gbrain get people\/pedro`\n  when Task is Find connections, Before (grep) is `grep -rl \"Brex\" brain\/ \\, xargs grep \"Pedro\"`",
       "meridian_line" : 373,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/SetupInput\/before-grep-vs-after-gbrain-steps\/procedure\/d5b7e8ff1cddcab94eed068681b48978943b565805f9bc1b56c0af8c233f35bd",
+      "stable_step_path" : "\/SetupInput\/before-grep-vs-after-gbrain-steps\/procedure\/f1b23454ce22788c73ed7677472851a9becceac9fa336357c5e1a29baa38c4f4",
       "swift_line" : 930
     },
     {
       "canonical" : "`gbrain search \"name\"` -- keyword match, fast, works without embeddings.",
       "meridian_line" : 389,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/73a4ca26799d21f8bc1cefb0729294a6e35087870fa24f411e0939516223dc2d",
+      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/c4d65edc4ccf35c833acd03a908b4905891e4316797a028071965d8d8d12379a",
       "swift_line" : 942
     },
     {
       "canonical" : "`gbrain query \"what do we know about name\"` -- hybrid search, needs embeddings.",
       "meridian_line" : 390,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/b1e39976ff9c9385adbd19e9cf9a46052cf0c7750b1260e6b8e973703651d629",
+      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/206044923b2fef6e497842ae2314de78198343ca448a4385b6c1fa5fdee1d04f",
       "swift_line" : 956
     },
     {
       "canonical" : "`gbrain get <slug>` -- direct page read when you know the slug from steps 1-2.",
       "meridian_line" : 391,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/de5c16eba0967da6b0587cbe5ff229124a1b0dee966983275e9423ee078023c8",
+      "stable_step_path" : "\/SetupInput\/lookup-sequence-mandatory-for-every-entity-question-steps\/procedure\/d97696cc98ef3c25009619afff76bc12d40f544bf66109b6ceb9516e1ca60c49",
       "swift_line" : 970
     },
     {
       "canonical" : "`gbrain sync --no-pull --no-embed`.",
       "meridian_line" : 401,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/sync-after-write-rule-steps\/procedure\/14e55c8caf8b584a3bb9ffb0cdf7aa84d85c0e886c05d900f8f653899d1ee559",
+      "stable_step_path" : "\/SetupInput\/sync-after-write-rule-steps\/procedure\/2a6db48b7ebfa14e40900e74d1839b6e631a41f30d3e6cf9be1b67f58e399430",
       "swift_line" : 984
     },
     {
       "canonical" : "`gbrain embed --stale` -- Embeddings can be refreshed later in batch ().",
       "meridian_line" : 408,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/sync-after-write-rule-steps-2\/procedure\/cf95c0d8fe3b1a2cb1288c38793ee9d2707c2b02d7da94735d62a7fe49805d1b",
+      "stable_step_path" : "\/SetupInput\/sync-after-write-rule-steps-2\/procedure\/5b2bd8f5f24805b17541fd5e3d085339de06a1d7e5a67315b97b47a399fa54ec",
       "swift_line" : 997
     },
     {
       "canonical" : "use judgment to Decide which case below applies and carry out its action:\n  when Layer is gbrain, What it stores is World knowledge: people, companies, deals, meetings, concepts, media, \"Who is Pedro?\", \"What happened at the board meeting?\"\n  when Layer is memory_search, What it stores is Agent operational state: preferences, decisions, session context, \"How does the user like formatting?\", \"What did we decide about X?\"",
       "meridian_line" : 419,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/SetupInput\/gbrain-vs-memory-search-steps\/procedure\/cc15b63d92e0a9d97b8b203188b6861d11c711f3a69a19f2e277187280dea5f3",
+      "stable_step_path" : "\/SetupInput\/gbrain-vs-memory-search-steps\/procedure\/92f331f431700edeeb840e60dda74a65cfff166f76bcc5239738b0d7ed02a63a",
       "swift_line" : 1010
     },
     {
       "canonical" : "`[Source: ...]` -- Source attribution (Section 7): every fact needs.",
       "meridian_line" : 473,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-e-load-the-production-agent-guide-steps-2\/procedure\/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+      "stable_step_path" : "\/SetupInput\/phase-e-load-the-production-agent-guide-steps-2\/procedure\/34f06ef71392e3c9bdb6ab5dc899d7afe137423e56ea09c809fafda4b9c15b52",
       "swift_line" : 1022
     },
     {
       "canonical" : "`gbrain doctor --json` -- Run  and report the results. Every check should be OK.",
       "meridian_line" : 483,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-f-health-check-steps\/procedure\/54fd43e360d59ae716a7227db002feeef52c21d1f44d89a15902238b37b5d393",
+      "stable_step_path" : "\/SetupInput\/phase-f-health-check-steps\/procedure\/4f8261c295b4726fce85bbfe631db44a1598f153e6e35e6364f13c7348d4522e",
       "swift_line" : 1036
     },
     {
       "canonical" : "`docs\/GBRAIN_SKILLPACK.md` -- Read  Section 18 for the full reference. Key points.",
       "meridian_line" : 546,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-h-live-sync-setup-must-add-steps\/procedure\/543ca489dbbd95b173bcaaca4bd241e6467f1b26371d8cf60ddfa6d7c44e0769",
+      "stable_step_path" : "\/SetupInput\/phase-h-live-sync-setup-must-add-steps\/procedure\/51dbba5cd91867fcb8584d80d7fad6992a18b1cc4c16edc64a76927cfa66dae4",
       "swift_line" : 1050
     },
     {
       "canonical" : "`docs\/GBRAIN_VERIFY.md` -- Read.",
       "meridian_line" : 588,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/phase-i-full-verification-steps\/procedure\/728286170200bdef80f82c9a071db30de024706860bb9a6b743c894ac552c957",
+      "stable_step_path" : "\/SetupInput\/phase-i-full-verification-steps\/procedure\/f303e40483302352ad296175560f6cbf87aec869bbd8bacb7b8f074ec70650ff",
       "swift_line" : 1064
     },
     {
       "canonical" : "`schema_choices.adopted` -- : directories the user created.",
       "meridian_line" : 642,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/668ade1e96bd1e787ec4b54f514a335c13ff452a0746f5c7595028a3621d4294",
+      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/90d03748b52abbc530f01ad04dd8e488515f682d90f30a517ce075216c074a53",
       "swift_line" : 1078
     },
     {
       "canonical" : "`schema_choices.declined` -- : directories the user explicitly skipped.",
       "meridian_line" : 643,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/e00c0f07f8211ffde3f2d7b7cf4680b996793a9a3c67767d868ea5ad39527084",
+      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/141afa849d982652d8333ddccc78cd0e31faac7084643af2a58b28262f1cb1e5",
       "swift_line" : 1092
     },
     {
       "canonical" : "`schema_choices.custom` -- : directories the user added that aren't in the recommended schema.",
       "meridian_line" : 644,
       "primitive" : "invoke",
-      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/ad2863807f1ae35445d42d678f567cee79fe1112019a192aed5421713bc6bdbc",
+      "stable_step_path" : "\/SetupInput\/schema-state-tracking-steps-2\/procedure\/1272145cdb8f3557bc8533e9a8e7ae8c674d0d88586420a8650c2f7542504b1e",
       "swift_line" : 1106
     }
   ],

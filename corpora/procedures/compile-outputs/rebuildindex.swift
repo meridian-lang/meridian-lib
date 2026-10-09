@@ -453,77 +453,77 @@ public struct RebuildIndex: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "RebuildIndex", parameters: [:])
 
-        if __meridianShouldRun("/RebuildIndex/assertions/invariants/7c24eee529d3a212498be6e9e3830f4d27da9531dc6a12701da7999a14e6329e") {
+        if __meridianShouldRun("/RebuildIndex/assertions/invariants/9fd4e94eb8a09edb832f6f45dc98806b87748d1f198b9425192346bdbbd74aa8") {
             // L24
             try await runtime.assert(((state.get("indexJobs")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all index jobs have a name")
-            try await runtime.checkpoint(label: "/RebuildIndex/assertions/invariants/7c24eee529d3a212498be6e9e3830f4d27da9531dc6a12701da7999a14e6329e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/assertions/invariants/9fd4e94eb8a09edb832f6f45dc98806b87748d1f198b9425192346bdbbd74aa8", state: state.snapshot())
         }
-        if __meridianShouldRun("/RebuildIndex/assertions/invariants/29304f21d5aded8d37a7031930ed505633eb21ffb52801475f9cf13206fc09b2") {
+        if __meridianShouldRun("/RebuildIndex/assertions/invariants/75ed1caf0f578656ac20d285826bd3ac506726b52bee89075434863aecae211d") {
             // L25
             try await runtime.assert((((state.get("indexJobs")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no index jobs whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/RebuildIndex/assertions/invariants/29304f21d5aded8d37a7031930ed505633eb21ffb52801475f9cf13206fc09b2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/assertions/invariants/75ed1caf0f578656ac20d285826bd3ac506726b52bee89075434863aecae211d", state: state.snapshot())
         }
-        if __meridianShouldRun("/RebuildIndex/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4") {
+        if __meridianShouldRun("/RebuildIndex/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157") {
             // L16
             let indexJobs = try await runtime.invoke(
                 tool: "index.list",
                 args: [
                     "status": .string("lagging"),
                 ],
-                step: "/RebuildIndex/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4",
+                step: "/RebuildIndex/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "index.list")
             )
             state.bind("indexJobs", indexJobs)
 
-            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/78a40ed02312138e0e57c56a6fd2e4bae5f0aa59a1cf1ca6aff45a13c7ba96b4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/873e974596cd58ffaa3f9716a97729fcb99e8af29c99c7fa35d6608db5e94157", state: state.snapshot())
         }
-        if __meridianShouldRun("/RebuildIndex/procedure/procedure/4807caf695281d75203dd2bcfabdc421bcd30bd3c438cda39bf5905fddc2279b") {
+        if __meridianShouldRun("/RebuildIndex/procedure/procedure/1c6a9ef15b16747557cfc889945cef93fc6beda0885fd4bf2780152f003d5a1e") {
             // L17
             try await runtime.assert((!((state.get("indexJobs")?.asList ?? []).filter { __e in (meridianDef_IndexJob_lagging(__e)) }).isEmpty), message: "Expected any lagging index jobs")
-            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/4807caf695281d75203dd2bcfabdc421bcd30bd3c438cda39bf5905fddc2279b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/1c6a9ef15b16747557cfc889945cef93fc6beda0885fd4bf2780152f003d5a1e", state: state.snapshot())
         }
-        if __meridianShouldRun("/RebuildIndex/procedure/procedure/5b93735bb0951229e7c4b253a0ff714a3fd7802ca85c0e40ed58eeebc9935bbd") {
+        if __meridianShouldRun("/RebuildIndex/procedure/procedure/068759808a676516b6a5b3cf087e504a9119786f29dd660f76cbdf916b0ebd67") {
             // L18
             try await runtime.assert((((state.get("indexJobs")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("lagging"))) }).count >= 1), message: "Expected at least 1 index job whose status is \"lagging\"")
-            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/5b93735bb0951229e7c4b253a0ff714a3fd7802ca85c0e40ed58eeebc9935bbd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/068759808a676516b6a5b3cf087e504a9119786f29dd660f76cbdf916b0ebd67", state: state.snapshot())
         }
         // L19
         let __meridianColl_0_5 = (state.get("indexjobs")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"indexjobs\")", step: "/RebuildIndex/procedure/procedure/b203dfb54538a7fbcf067ac5aea663bf0c8c37556b0770e5ada2687173b3505b")
+        try await runtime.recordIterateStart(over: "state.get(\"indexjobs\")", step: "/RebuildIndex/procedure/procedure/d26fce0489bf2c9ef4f8ba2539cc0dd1fc4677d4e6cc306fe24e4c7bbb1252fb")
         for (__meridianLoopIndex_0_5, indexJob) in __meridianColl_0_5.enumerated() {
             let __meridianLoopLabel_0_5 = "progress:0.5:iteration:\(__meridianLoopIndex_0_5)"
             if __meridianShouldRun(__meridianLoopLabel_0_5) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/RebuildIndex/procedure/procedure/b203dfb54538a7fbcf067ac5aea663bf0c8c37556b0770e5ada2687173b3505b")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/RebuildIndex/procedure/procedure/d26fce0489bf2c9ef4f8ba2539cc0dd1fc4677d4e6cc306fe24e4c7bbb1252fb")
             state.bind("indexJob", indexJob)
-                if __meridianShouldRun("/RebuildIndex/procedure/procedure/iterate.body/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c") {
+                if __meridianShouldRun("/RebuildIndex/procedure/procedure/iterate.body/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e") {
                     // L20
                     let job = try await runtime.invoke(
                         tool: "index.rebuild",
                         args: [
                             "index job": state.get("indexJob") ?? .null,
                         ],
-                        step: "/RebuildIndex/procedure/procedure/iterate.body/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c",
+                        step: "/RebuildIndex/procedure/procedure/iterate.body/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "index.rebuild")
                     )
                     state.bind("job", job)
 
-                    try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/iterate.body/1678ce92cac57b3273e8c748f52ef465e3ea8e2b8fe9335609dd27f1cdd9e11c", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/iterate.body/6a7856483a72e55777a62848696286579830be4bff0a62375addead50ef32d8e", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"indexjobs\")", count: __meridianColl_0_5.count, step: "/RebuildIndex/procedure/procedure/b203dfb54538a7fbcf067ac5aea663bf0c8c37556b0770e5ada2687173b3505b")
+        try await runtime.recordIterateEnd(over: "state.get(\"indexjobs\")", count: __meridianColl_0_5.count, step: "/RebuildIndex/procedure/procedure/d26fce0489bf2c9ef4f8ba2539cc0dd1fc4677d4e6cc306fe24e4c7bbb1252fb")
 
-        if __meridianShouldRun("/RebuildIndex/procedure/procedure/be3fc14dc027fff95db30e3a12f459d026d9b08f94e5d4e7cab08583fa88b244") {
+        if __meridianShouldRun("/RebuildIndex/procedure/procedure/51a15cb8d9c81ad6927c84e1a8d254b8e37b2c155aacd47bf7982c6bd5596048") {
             // L21
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("lagging index jobs rebuilt"),
                 ],
-                step: "/RebuildIndex/procedure/procedure/be3fc14dc027fff95db30e3a12f459d026d9b08f94e5d4e7cab08583fa88b244"
+                step: "/RebuildIndex/procedure/procedure/51a15cb8d9c81ad6927c84e1a8d254b8e37b2c155aacd47bf7982c6bd5596048"
             )
-            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/be3fc14dc027fff95db30e3a12f459d026d9b08f94e5d4e7cab08583fa88b244", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RebuildIndex/procedure/procedure/51a15cb8d9c81ad6927c84e1a8d254b8e37b2c155aacd47bf7982c6bd5596048", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "RebuildIndex.complete")
@@ -583,12 +583,12 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRebuildlaggingindexesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477") {
+        if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/fdf7ef0a8ff38e6116a31a123d1f4f7e895ea8df71b53d874e46303c88dd3dd8") {
             // L1
             try await runtime.wait(.event("rebuildLaggingIndexes", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRebuildlaggingindexesFires/root/procedure/2d182818b9fe17ca9b2e00f7b062fa3213884b4cf909cbcbde233e18fde22477", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRebuildlaggingindexesFires/root/procedure/fdf7ef0a8ff38e6116a31a123d1f4f7e895ea8df71b53d874e46303c88dd3dd8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008") {
+        if __meridianShouldRun("/WhenRebuildlaggingindexesFires/root/procedure/99e43c860dceb6f0482f416e32cd6228f7e9d5fb6f18c08de86063c32e7842d0") {
             // L1
             try await runtime.emit(
                 event: "trigger.rebuildLaggingIndexes.fired",
@@ -596,9 +596,9 @@ public struct WhenRebuildlaggingindexesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("rebuild lagging indexes"),
                 ],
-                step: "/WhenRebuildlaggingindexesFires/root/procedure/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008"
+                step: "/WhenRebuildlaggingindexesFires/root/procedure/99e43c860dceb6f0482f416e32cd6228f7e9d5fb6f18c08de86063c32e7842d0"
             )
-            try await runtime.checkpoint(label: "/WhenRebuildlaggingindexesFires/root/procedure/0d679d69afc2b65e27dc2d6c4411abfa7805cee515e2508a85caad1484aff008", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRebuildlaggingindexesFires/root/procedure/99e43c860dceb6f0482f416e32cd6228f7e9d5fb6f18c08de86063c32e7842d0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRebuildlaggingindexesFires.complete")
@@ -658,12 +658,12 @@ public struct WhenIndexjobstaleFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenIndexjobstaleFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f") {
+        if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/c0254498234a55e527409063a36ff6a3595e883e5f39ca3e2c6ef0b7618306f1") {
             // L1
             try await runtime.wait(.event("indexJobStale", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIndexjobstaleFires/root/procedure/d047a0748fafec7c85a2c6fab8692104375785f722db5f614065435d368baa3f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIndexjobstaleFires/root/procedure/c0254498234a55e527409063a36ff6a3595e883e5f39ca3e2c6ef0b7618306f1", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8") {
+        if __meridianShouldRun("/WhenIndexjobstaleFires/root/procedure/a66e0d574f4d2ad59f88fccba2f71c0069d057e10311c6dbc458d4594a48dab0") {
             // L1
             try await runtime.emit(
                 event: "trigger.indexJobStale.fired",
@@ -671,9 +671,9 @@ public struct WhenIndexjobstaleFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("index job stale"),
                 ],
-                step: "/WhenIndexjobstaleFires/root/procedure/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8"
+                step: "/WhenIndexjobstaleFires/root/procedure/a66e0d574f4d2ad59f88fccba2f71c0069d057e10311c6dbc458d4594a48dab0"
             )
-            try await runtime.checkpoint(label: "/WhenIndexjobstaleFires/root/procedure/026fb6c479a01b740bce218fb47f4fdfa8e3d17ea3e2cf8a7a416a168fe98ec8", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIndexjobstaleFires/root/procedure/a66e0d574f4d2ad59f88fccba2f71c0069d057e10311c6dbc458d4594a48dab0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIndexjobstaleFires.complete")

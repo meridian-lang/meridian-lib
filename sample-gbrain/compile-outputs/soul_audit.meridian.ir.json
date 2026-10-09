@@ -4,70 +4,70 @@
       "canonical" : "wait for event changeMyAgentSPersonality.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenChangemyagentspersonalityFires\/root\/procedure\/1935350058064d2788c1b090af9bff5e650b050385189b7d63df86bc68781ce2",
+      "stable_step_path" : "\/WhenChangemyagentspersonalityFires\/root\/procedure\/1d2b31b527a135edb8e0560903b1ba03a575f4c71176b472d9cba87520084dc9",
       "swift_line" : 985
     },
     {
       "canonical" : "emit trigger.changeMyAgentSPersonality.fired with kind = \"keyword\", spec = \"change my agent's personality\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenChangemyagentspersonalityFires\/root\/procedure\/b450ff17df9b54b19b8d3437bd364fa68a1484a070ecb5d1796e056a1d07f2ab",
+      "stable_step_path" : "\/WhenChangemyagentspersonalityFires\/root\/procedure\/d0af84c81dbe438bd120cd5516cb1b85242ff24f0d23a7ee12a33d5e723f6b7d",
       "swift_line" : 985
     },
     {
       "canonical" : "emit trigger.customizeAgent.fired with kind = \"keyword\", spec = \"customize agent\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCustomizeagentFires\/root\/procedure\/6086a61801f4a544b05e1690520d906dde19d308d7b6b5115ba416858bd8e3f0",
+      "stable_step_path" : "\/WhenCustomizeagentFires\/root\/procedure\/63952d148a64f5c6157d1406886629fac75ac230ddbcba8568f130d734a4d6b5",
       "swift_line" : 985
     },
     {
       "canonical" : "wait for event customizeAgent.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCustomizeagentFires\/root\/procedure\/772fc19d9960aeee9c4be7e56ba33529f53d5d4c7527824969a229176c9f256c",
+      "stable_step_path" : "\/WhenCustomizeagentFires\/root\/procedure\/870e1e226881dca8748444da4f9d9af5c7f9cb3da9fc763c3035921303b678da",
       "swift_line" : 985
     },
     {
       "canonical" : "wait for event setUpIdentity.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSetupidentityFires\/root\/procedure\/a54e5337b4099a5c184b9ebb0f54f5e59f94c378ce895a0d6e8ab46de7fcd9fe",
+      "stable_step_path" : "\/WhenSetupidentityFires\/root\/procedure\/168832ccc5c45ec0f2ba79e5635d1851881504e00020b1557d383ef95e715d6a",
       "swift_line" : 985
     },
     {
       "canonical" : "emit trigger.setUpIdentity.fired with kind = \"keyword\", spec = \"set up identity\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSetupidentityFires\/root\/procedure\/c5a311d2820de7bf3455b5f4f34e945e6765e57aa9b0c4e2081aceafbe5cd1ac",
+      "stable_step_path" : "\/WhenSetupidentityFires\/root\/procedure\/51538b57717e8053407ce615fac4ccb691f412a7250d569479f428a8f620b040",
       "swift_line" : 985
     },
     {
       "canonical" : "wait for event soulAudit.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSoulauditFires\/root\/procedure\/4345b33e774478f3827a56c40263b45063c1f510fb377b614cfdc4337edcb8f7",
+      "stable_step_path" : "\/WhenSoulauditFires\/root\/procedure\/67ff6de6014e48fcddfc8c5b9b04fa2886fe42fa9eb865c69810eb864cd63533",
       "swift_line" : 985
     },
     {
       "canonical" : "emit trigger.soulAudit.fired with kind = \"keyword\", spec = \"soul audit\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSoulauditFires\/root\/procedure\/ad9f264e3c9f27519c5f939172ed3ec9fba3ae4d4f7b8a5332d5730e0939ad4a",
-      "swift_line" : 985
-    },
-    {
-      "canonical" : "wait for event whoAmI.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenWhoamiFires\/root\/procedure\/1dab983e308d3ab6aac807d24b25bdf8027c06b4c0dc10c0c94e3f945e2ec6be",
+      "stable_step_path" : "\/WhenSoulauditFires\/root\/procedure\/9c9e1264fd88eb7a56d6eb05f9220baf7fd9107c86136de14cd696a797317dd4",
       "swift_line" : 985
     },
     {
       "canonical" : "emit trigger.whoAmI.fired with kind = \"keyword\", spec = \"who am I\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenWhoamiFires\/root\/procedure\/4708994f14b1598db68dc3585b5127b2cf175e2587e89d5aa92e02debf1519cd",
+      "stable_step_path" : "\/WhenWhoamiFires\/root\/procedure\/85883ea73b6546a061aa0657d8d94895a1090db9c50dd8086d37d92d17fec682",
+      "swift_line" : 985
+    },
+    {
+      "canonical" : "wait for event whoAmI.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenWhoamiFires\/root\/procedure\/af9c0ba01a99b5023cc2cc28e23c19689fcd6c97145956dbcebeb09d17d4b963",
       "swift_line" : 985
     }
   ],

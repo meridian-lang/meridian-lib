@@ -624,12 +624,12 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "SkillpackHarvestInput", parameters: [:])
 
-        if __meridianShouldRun("/SkillpackHarvestInput/contract-steps/invariants/5d9b9ca152519be04d75504a84cab973dff00ee3bfaf36b9a0361f5edf8f15f1") {
+        if __meridianShouldRun("/SkillpackHarvestInput/contract-steps/invariants/03b5cb5f0283b08e6dfd97ec50b951c2b483e996e33d5fc5f82a8a8afd259218") {
             // L58
             try await runtime.assert(MeridianComparison.neq(state.get("ifAnyOfTheseIsIncomplete,TheSkill"), state.get("yetHarvested—TheFilesMaySitInGbrain.workingTree,ButThey'reNotLanded")), message: "Expected If any of these is incomplete, the skill is NOT yet harvested — the files may sit in gbrain's working tree, but they're not landed")
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/contract-steps/invariants/5d9b9ca152519be04d75504a84cab973dff00ee3bfaf36b9a0361f5edf8f15f1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/contract-steps/invariants/03b5cb5f0283b08e6dfd97ec50b951c2b483e996e33d5fc5f82a8a8afd259218", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackHarvestInput/anti-patterns-steps/prohibitions/b7114f587114bb1644b97ec9d391a931f33185ecb8b49bc2651a67088be68f33") {
+        if __meridianShouldRun("/SkillpackHarvestInput/anti-patterns-steps/prohibitions/10aae186b535b64719f95df1fee159bea5b6da43b3a9284c0af44105f5243bed") {
             // L89
             // make sure not (Skipping the dry-run. Always preview first. Files land in gbrain's working tree; cleanup is a  away, but you shouldn't need to)
             _ = try await runtime.invoke(
@@ -637,22 +637,22 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
                 args: [
                     "command": .string("git checkout"),
                 ],
-                step: "/SkillpackHarvestInput/anti-patterns-steps/prohibitions/b7114f587114bb1644b97ec9d391a931f33185ecb8b49bc2651a67088be68f33",
+                step: "/SkillpackHarvestInput/anti-patterns-steps/prohibitions/10aae186b535b64719f95df1fee159bea5b6da43b3a9284c0af44105f5243bed",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/anti-patterns-steps/prohibitions/b7114f587114bb1644b97ec9d391a931f33185ecb8b49bc2651a67088be68f33", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/anti-patterns-steps/prohibitions/10aae186b535b64719f95df1fee159bea5b6da43b3a9284c0af44105f5243bed", state: state.snapshot())
         }
         // L129
         if !(MeridianComparison.ge(state.get("skillIsMature.Recent`routingEval.jsonl`CasesPass;TheSkillHasBeenUsedInProduction"), state.get("fewTimes"))) {
-            try await runtime.recordBranchTaken(condition: "!(MeridianComparison.ge(state.get(\"skillIsMature.Recent`routingEval.jsonl`CasesPass;TheSkillHasBeenUsedInProduction\"), state.get(\"fewTimes\")))", into: "then", step: "/SkillpackHarvestInput/preconditions-steps/applicability/42408dd237297bcd426d5eb08cf5804fc560d1039a92faf02d8215fe5a02bdc5")
+            try await runtime.recordBranchTaken(condition: "!(MeridianComparison.ge(state.get(\"skillIsMature.Recent`routingEval.jsonl`CasesPass;TheSkillHasBeenUsedInProduction\"), state.get(\"fewTimes\")))", into: "then", step: "/SkillpackHarvestInput/preconditions-steps/applicability/e965166abf9903f12af1ddaa6c66272e63365c848dd4756fb0e7bcab2bcdaa57")
             // L129
-            await runtime.complete(reason: nil, step: "/SkillpackHarvestInput/preconditions-steps/applicability/branch.then/eac501c9b84fa38e2a4452dc195c89d7fae81d854f25c0c5b3094ccd42eb1de1")
+            await runtime.complete(reason: nil, step: "/SkillpackHarvestInput/preconditions-steps/applicability/branch.then/6a6dcde53a3aa6d99391d0785a5e2a23eeddfb93f68ef0cba2091567ee6ec34e")
             return WorkflowResult(reason: nil, durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/SkillpackHarvestInput/preconditions-steps/applicability/42408dd237297bcd426d5eb08cf5804fc560d1039a92faf02d8215fe5a02bdc5")
+            try await runtime.recordBranchEnded(into: "then", step: "/SkillpackHarvestInput/preconditions-steps/applicability/e965166abf9903f12af1ddaa6c66272e63365c848dd4756fb0e7bcab2bcdaa57")
         }
 
-        if __meridianShouldRun("/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/404352ea2c18277050837b214607e0334c0d8c5f3e39dd07a5fa728acf7fa1cf") {
+        if __meridianShouldRun("/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/7a1a71dca1216620ed21572fbaaa5dd1ffb1f69aba653f092dff394f956f9884") {
             // L162
             // Run the CLI with
             _ = try await runtime.invoke(
@@ -660,39 +660,39 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
                 args: [
                     "command": .string("--dry-run"),
                 ],
-                step: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/404352ea2c18277050837b214607e0334c0d8c5f3e39dd07a5fa728acf7fa1cf",
+                step: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/7a1a71dca1216620ed21572fbaaa5dd1ffb1f69aba653f092dff394f956f9884",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/404352ea2c18277050837b214607e0334c0d8c5f3e39dd07a5fa728acf7fa1cf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/7a1a71dca1216620ed21572fbaaa5dd1ffb1f69aba653f092dff394f956f9884", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/e0a4bdb5fff0aa75f19ece8562e243f04dc126d1d8ddc075b0025183829189e4") {
+        if __meridianShouldRun("/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/ad469082ca82369c4746c017e39ff23b346627eac43840f9173d333f421f7a07") {
             // L164
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain skillpack harvest <slug> --from <host-repo-root> --dry-run"),
                 ],
-                step: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/e0a4bdb5fff0aa75f19ece8562e243f04dc126d1d8ddc075b0025183829189e4",
+                step: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/ad469082ca82369c4746c017e39ff23b346627eac43840f9173d333f421f7a07",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/e0a4bdb5fff0aa75f19ece8562e243f04dc126d1d8ddc075b0025183829189e4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-2-dry-run-privacy-lint-preview-steps/procedure/ad469082ca82369c4746c017e39ff23b346627eac43840f9173d333f421f7a07", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/3b44e8c8bb407297523adbd04b9faced3ade279c2e1471e88d251d0ee3d8593a") {
+        if __meridianShouldRun("/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/1ef86d6a6e70ab7beb0cc6e1b124f91d5e229f5802ad4d6103840524f522a7a2") {
             // L237
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain skillpack harvest <slug> --from <host-repo-root>"),
                 ],
-                step: "/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/3b44e8c8bb407297523adbd04b9faced3ade279c2e1471e88d251d0ee3d8593a",
+                step: "/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/1ef86d6a6e70ab7beb0cc6e1b124f91d5e229f5802ad4d6103840524f522a7a2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/3b44e8c8bb407297523adbd04b9faced3ade279c2e1471e88d251d0ee3d8593a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-4-real-harvest-steps/procedure/1ef86d6a6e70ab7beb0cc6e1b124f91d5e229f5802ad4d6103840524f522a7a2", state: state.snapshot())
         }
-        if __meridianShouldRun("/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/504913915f3906651a6c8194d15a00710c1527b1f47827c73546e4fec6c8acb4") {
+        if __meridianShouldRun("/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/170c8ac839eef1c59a558cd9442d1fb95af2c97824ff2ffeb2f5b8c459c54692") {
             // L244
             // updated to add the slug, sorted
             _ = try await runtime.invoke(
@@ -700,11 +700,11 @@ public struct SkillpackHarvestInput: MeridianWorkflow {
                 args: [
                     "command": .string("openclaw.plugin.json"),
                 ],
-                step: "/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/504913915f3906651a6c8194d15a00710c1527b1f47827c73546e4fec6c8acb4",
+                step: "/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/170c8ac839eef1c59a558cd9442d1fb95af2c97824ff2ffeb2f5b8c459c54692",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/504913915f3906651a6c8194d15a00710c1527b1f47827c73546e4fec6c8acb4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SkillpackHarvestInput/phase-4-real-harvest-steps-2/procedure/170c8ac839eef1c59a558cd9442d1fb95af2c97824ff2ffeb2f5b8c459c54692", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SkillpackHarvestInput.complete")
@@ -763,12 +763,12 @@ public struct WhenHarvestthisskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenHarvestthisskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/6d51d575b70c2e965c95b54562d19846b70ed412a9e6ede298f0238f369f1f2c") {
+        if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/b1ee6ba1c7e93d9022bb9d04535e961ab84bcd27524074bad8b6ea2cae24457c") {
             // L1
             try await runtime.wait(.event("harvestThisSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenHarvestthisskillFires/root/procedure/6d51d575b70c2e965c95b54562d19846b70ed412a9e6ede298f0238f369f1f2c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHarvestthisskillFires/root/procedure/b1ee6ba1c7e93d9022bb9d04535e961ab84bcd27524074bad8b6ea2cae24457c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/79539538224b189141220b1f09169ba47bb7235326bc90bcc8e4cd49aa189fc3") {
+        if __meridianShouldRun("/WhenHarvestthisskillFires/root/procedure/7476a992d451c67ca492cf7b675a33d9f796eea111ad1dc5cd2b2503c4b44959") {
             // L1
             try await runtime.emit(
                 event: "trigger.harvestThisSkill.fired",
@@ -776,9 +776,9 @@ public struct WhenHarvestthisskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("harvest this skill"),
                 ],
-                step: "/WhenHarvestthisskillFires/root/procedure/79539538224b189141220b1f09169ba47bb7235326bc90bcc8e4cd49aa189fc3"
+                step: "/WhenHarvestthisskillFires/root/procedure/7476a992d451c67ca492cf7b675a33d9f796eea111ad1dc5cd2b2503c4b44959"
             )
-            try await runtime.checkpoint(label: "/WhenHarvestthisskillFires/root/procedure/79539538224b189141220b1f09169ba47bb7235326bc90bcc8e4cd49aa189fc3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHarvestthisskillFires/root/procedure/7476a992d451c67ca492cf7b675a33d9f796eea111ad1dc5cd2b2503c4b44959", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenHarvestthisskillFires.complete")
@@ -837,12 +837,12 @@ public struct WhenHarvestmyskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenHarvestmyskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/3d0ff4ba22fd90c220c61f90423d8576d9aa1d652e4da91aaeef904c8ca87417") {
+        if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/35b14cb8144af067a4e8754ec52a97bcb139a8dea5dc8faf44156af22341b1d7") {
             // L1
             try await runtime.wait(.event("harvestMySkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenHarvestmyskillFires/root/procedure/3d0ff4ba22fd90c220c61f90423d8576d9aa1d652e4da91aaeef904c8ca87417", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHarvestmyskillFires/root/procedure/35b14cb8144af067a4e8754ec52a97bcb139a8dea5dc8faf44156af22341b1d7", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/bdd868af85a4b111617e753eb14ced1f4c05d2fdf89dac99c51816462913dc03") {
+        if __meridianShouldRun("/WhenHarvestmyskillFires/root/procedure/ed5c53ea22ad56a7b91b50527d277a684b3772c46d1ccd1378b0606cc61a0d70") {
             // L1
             try await runtime.emit(
                 event: "trigger.harvestMySkill.fired",
@@ -850,9 +850,9 @@ public struct WhenHarvestmyskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("harvest my skill"),
                 ],
-                step: "/WhenHarvestmyskillFires/root/procedure/bdd868af85a4b111617e753eb14ced1f4c05d2fdf89dac99c51816462913dc03"
+                step: "/WhenHarvestmyskillFires/root/procedure/ed5c53ea22ad56a7b91b50527d277a684b3772c46d1ccd1378b0606cc61a0d70"
             )
-            try await runtime.checkpoint(label: "/WhenHarvestmyskillFires/root/procedure/bdd868af85a4b111617e753eb14ced1f4c05d2fdf89dac99c51816462913dc03", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenHarvestmyskillFires/root/procedure/ed5c53ea22ad56a7b91b50527d277a684b3772c46d1ccd1378b0606cc61a0d70", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenHarvestmyskillFires.complete")
@@ -911,12 +911,12 @@ public struct WhenPublishthisskillgbrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPublishthisskillgbrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/453f537b6a267cf6783f93067a12d88ece7dc0dc70b99fb4739dcbd768000d44") {
+        if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/df4ac02db285269e4db111d6a4076820461fbf07183442538415e63d8a71b278") {
             // L1
             try await runtime.wait(.event("publishThisSkillGbrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPublishthisskillgbrainFires/root/procedure/453f537b6a267cf6783f93067a12d88ece7dc0dc70b99fb4739dcbd768000d44", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishthisskillgbrainFires/root/procedure/df4ac02db285269e4db111d6a4076820461fbf07183442538415e63d8a71b278", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/97daa6fd8f015c84406d44a1728537477072fb7fd6d6e2724f74a1ca5b748802") {
+        if __meridianShouldRun("/WhenPublishthisskillgbrainFires/root/procedure/43e47b3eaeaa25459bbe2806345872ececca4c9a44db43e89adb2f64e00e6529") {
             // L1
             try await runtime.emit(
                 event: "trigger.publishThisSkillGbrain.fired",
@@ -924,9 +924,9 @@ public struct WhenPublishthisskillgbrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("publish this skill to gbrain"),
                 ],
-                step: "/WhenPublishthisskillgbrainFires/root/procedure/97daa6fd8f015c84406d44a1728537477072fb7fd6d6e2724f74a1ca5b748802"
+                step: "/WhenPublishthisskillgbrainFires/root/procedure/43e47b3eaeaa25459bbe2806345872ececca4c9a44db43e89adb2f64e00e6529"
             )
-            try await runtime.checkpoint(label: "/WhenPublishthisskillgbrainFires/root/procedure/97daa6fd8f015c84406d44a1728537477072fb7fd6d6e2724f74a1ca5b748802", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPublishthisskillgbrainFires/root/procedure/43e47b3eaeaa25459bbe2806345872ececca4c9a44db43e89adb2f64e00e6529", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPublishthisskillgbrainFires.complete")
@@ -985,12 +985,12 @@ public struct WhenLiftthisskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenLiftthisskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/5f4338015eb02e53d07bd4803d375c5990c41f147bf19b96f23db2d63032ad9f") {
+        if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/02ed679c1dc065883826ba43eadb97e93763eb36df0e0d8b0ffe1552a5419052") {
             // L1
             try await runtime.wait(.event("liftThisSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenLiftthisskillFires/root/procedure/5f4338015eb02e53d07bd4803d375c5990c41f147bf19b96f23db2d63032ad9f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenLiftthisskillFires/root/procedure/02ed679c1dc065883826ba43eadb97e93763eb36df0e0d8b0ffe1552a5419052", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/e71c77f3fb240b935a0965c3daedd2356f93920f72b6fe7cbde057320af07eb6") {
+        if __meridianShouldRun("/WhenLiftthisskillFires/root/procedure/2b448a33039d1e9665d1f368da3242cd28650cc528893d41468ac832e3446072") {
             // L1
             try await runtime.emit(
                 event: "trigger.liftThisSkill.fired",
@@ -998,9 +998,9 @@ public struct WhenLiftthisskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("lift this skill"),
                 ],
-                step: "/WhenLiftthisskillFires/root/procedure/e71c77f3fb240b935a0965c3daedd2356f93920f72b6fe7cbde057320af07eb6"
+                step: "/WhenLiftthisskillFires/root/procedure/2b448a33039d1e9665d1f368da3242cd28650cc528893d41468ac832e3446072"
             )
-            try await runtime.checkpoint(label: "/WhenLiftthisskillFires/root/procedure/e71c77f3fb240b935a0965c3daedd2356f93920f72b6fe7cbde057320af07eb6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenLiftthisskillFires/root/procedure/2b448a33039d1e9665d1f368da3242cd28650cc528893d41468ac832e3446072", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenLiftthisskillFires.complete")
@@ -1059,12 +1059,12 @@ public struct WhenSharethisskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSharethisskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/527b17190a8c926953a7a2e17ceed355c48642ff97d724c345a473c85636aa14") {
+        if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/2911cb7e8a4218f2c8c74c0cd0b14764a311edb179b1125ab5b7a3d8b3475a5d") {
             // L1
             try await runtime.wait(.event("shareThisSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSharethisskillFires/root/procedure/527b17190a8c926953a7a2e17ceed355c48642ff97d724c345a473c85636aa14", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSharethisskillFires/root/procedure/2911cb7e8a4218f2c8c74c0cd0b14764a311edb179b1125ab5b7a3d8b3475a5d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/cbafc55f35c130348e3930dbd651098f8ea8c69a00bd4c076f7c81482db92e88") {
+        if __meridianShouldRun("/WhenSharethisskillFires/root/procedure/cd169e38a3bb4638bd91f1c4d6b421815a4e5d74967e19bae7d0d6df020b2e81") {
             // L1
             try await runtime.emit(
                 event: "trigger.shareThisSkill.fired",
@@ -1072,9 +1072,9 @@ public struct WhenSharethisskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("share this skill"),
                 ],
-                step: "/WhenSharethisskillFires/root/procedure/cbafc55f35c130348e3930dbd651098f8ea8c69a00bd4c076f7c81482db92e88"
+                step: "/WhenSharethisskillFires/root/procedure/cd169e38a3bb4638bd91f1c4d6b421815a4e5d74967e19bae7d0d6df020b2e81"
             )
-            try await runtime.checkpoint(label: "/WhenSharethisskillFires/root/procedure/cbafc55f35c130348e3930dbd651098f8ea8c69a00bd4c076f7c81482db92e88", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSharethisskillFires/root/procedure/cd169e38a3bb4638bd91f1c4d6b421815a4e5d74967e19bae7d0d6df020b2e81", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSharethisskillFires.complete")
@@ -1133,12 +1133,12 @@ public struct WhenPromotethisskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPromotethisskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/33cc994566ecf6fafe110639863c897832a8346b7d2446bbffe3379af605008e") {
+        if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/9f54ddd7be2403d6c282decbe817913554c194f328edcaac6468d492a6ff097d") {
             // L1
             try await runtime.wait(.event("promoteThisSkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPromotethisskillFires/root/procedure/33cc994566ecf6fafe110639863c897832a8346b7d2446bbffe3379af605008e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPromotethisskillFires/root/procedure/9f54ddd7be2403d6c282decbe817913554c194f328edcaac6468d492a6ff097d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/f60e072d07279914bd4c52fa91c1f2be747f3354cea28fc2bb85f7baa5be46a1") {
+        if __meridianShouldRun("/WhenPromotethisskillFires/root/procedure/d06f76cc867ec6f965f3a886db7acd64a43744bc34c2cb6f9d3f31d1199830f9") {
             // L1
             try await runtime.emit(
                 event: "trigger.promoteThisSkill.fired",
@@ -1146,9 +1146,9 @@ public struct WhenPromotethisskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("promote this skill"),
                 ],
-                step: "/WhenPromotethisskillFires/root/procedure/f60e072d07279914bd4c52fa91c1f2be747f3354cea28fc2bb85f7baa5be46a1"
+                step: "/WhenPromotethisskillFires/root/procedure/d06f76cc867ec6f965f3a886db7acd64a43744bc34c2cb6f9d3f31d1199830f9"
             )
-            try await runtime.checkpoint(label: "/WhenPromotethisskillFires/root/procedure/f60e072d07279914bd4c52fa91c1f2be747f3354cea28fc2bb85f7baa5be46a1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPromotethisskillFires/root/procedure/d06f76cc867ec6f965f3a886db7acd64a43744bc34c2cb6f9d3f31d1199830f9", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPromotethisskillFires.complete")
@@ -1207,12 +1207,12 @@ public struct WhenPromotemyskillFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenPromotemyskillFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/38a84bd5ae84dccb2f5390600dff804ac6687299885be212402ceb38c1a863e9") {
+        if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/6ea32ba990c7e2e52a6ba8441dd027774eb90f209d8e60667b1a850699003bb6") {
             // L1
             try await runtime.wait(.event("promoteMySkill", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPromotemyskillFires/root/procedure/38a84bd5ae84dccb2f5390600dff804ac6687299885be212402ceb38c1a863e9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPromotemyskillFires/root/procedure/6ea32ba990c7e2e52a6ba8441dd027774eb90f209d8e60667b1a850699003bb6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/810afed61d9495ba02d7bc32b6daf7b9ee3789c252d58644ae6922eeaead8d7d") {
+        if __meridianShouldRun("/WhenPromotemyskillFires/root/procedure/0c0f326354b9387154fb68152f2ff3025bf52d2e645e25e4189f2cd3d54ab932") {
             // L1
             try await runtime.emit(
                 event: "trigger.promoteMySkill.fired",
@@ -1220,9 +1220,9 @@ public struct WhenPromotemyskillFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("promote my skill"),
                 ],
-                step: "/WhenPromotemyskillFires/root/procedure/810afed61d9495ba02d7bc32b6daf7b9ee3789c252d58644ae6922eeaead8d7d"
+                step: "/WhenPromotemyskillFires/root/procedure/0c0f326354b9387154fb68152f2ff3025bf52d2e645e25e4189f2cd3d54ab932"
             )
-            try await runtime.checkpoint(label: "/WhenPromotemyskillFires/root/procedure/810afed61d9495ba02d7bc32b6daf7b9ee3789c252d58644ae6922eeaead8d7d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPromotemyskillFires/root/procedure/0c0f326354b9387154fb68152f2ff3025bf52d2e645e25e4189f2cd3d54ab932", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPromotemyskillFires.complete")
@@ -1281,12 +1281,12 @@ public struct WhenSkillupstreamFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSkillupstreamFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/7348b6f7045b600bd83e8cfd3287536fd4e23a1295fef1a5614c235df8e2d4a0") {
+        if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/3cbcf433cb6f5ed7192c248db4b20ceebef107dcda57a4b14f9f431713f340bd") {
             // L1
             try await runtime.wait(.event("skillUpstream", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSkillupstreamFires/root/procedure/7348b6f7045b600bd83e8cfd3287536fd4e23a1295fef1a5614c235df8e2d4a0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSkillupstreamFires/root/procedure/3cbcf433cb6f5ed7192c248db4b20ceebef107dcda57a4b14f9f431713f340bd", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/927fc57900ca325980953d4e6f74372f1edef4f5420e586a8f331f320f5d121a") {
+        if __meridianShouldRun("/WhenSkillupstreamFires/root/procedure/adc957a334ccd772456e794cead2338a1bd4c3413f4d6d5b31432bc1048eea84") {
             // L1
             try await runtime.emit(
                 event: "trigger.skillUpstream.fired",
@@ -1294,9 +1294,9 @@ public struct WhenSkillupstreamFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("skill upstream"),
                 ],
-                step: "/WhenSkillupstreamFires/root/procedure/927fc57900ca325980953d4e6f74372f1edef4f5420e586a8f331f320f5d121a"
+                step: "/WhenSkillupstreamFires/root/procedure/adc957a334ccd772456e794cead2338a1bd4c3413f4d6d5b31432bc1048eea84"
             )
-            try await runtime.checkpoint(label: "/WhenSkillupstreamFires/root/procedure/927fc57900ca325980953d4e6f74372f1edef4f5420e586a8f331f320f5d121a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSkillupstreamFires/root/procedure/adc957a334ccd772456e794cead2338a1bd4c3413f4d6d5b31432bc1048eea84", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSkillupstreamFires.complete")
@@ -1355,12 +1355,12 @@ public struct WhenGbraincoreFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbraincoreFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/2d0ed4a9bb33dfc72609df492304381c80e38bc901d7afee7239476bff393b34") {
+        if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/a1b6c0706741e397b7640754f835e7867b6ebf08f2d90c4ab885ad3e471c7713") {
             // L1
             try await runtime.wait(.event("gbrainCore", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbraincoreFires/root/procedure/2d0ed4a9bb33dfc72609df492304381c80e38bc901d7afee7239476bff393b34", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbraincoreFires/root/procedure/a1b6c0706741e397b7640754f835e7867b6ebf08f2d90c4ab885ad3e471c7713", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/f1ca0d4f7b47929b69127290c7f8e0600cf1f6556d1d658a556a074f8b4d7a87") {
+        if __meridianShouldRun("/WhenGbraincoreFires/root/procedure/9c049154c3b979a1de0990b45351f5071283bcba6e28086b4b1c1ee9d24d4d42") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainCore.fired",
@@ -1368,9 +1368,9 @@ public struct WhenGbraincoreFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("into the gbrain core"),
                 ],
-                step: "/WhenGbraincoreFires/root/procedure/f1ca0d4f7b47929b69127290c7f8e0600cf1f6556d1d658a556a074f8b4d7a87"
+                step: "/WhenGbraincoreFires/root/procedure/9c049154c3b979a1de0990b45351f5071283bcba6e28086b4b1c1ee9d24d4d42"
             )
-            try await runtime.checkpoint(label: "/WhenGbraincoreFires/root/procedure/f1ca0d4f7b47929b69127290c7f8e0600cf1f6556d1d658a556a074f8b4d7a87", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbraincoreFires/root/procedure/9c049154c3b979a1de0990b45351f5071283bcba6e28086b4b1c1ee9d24d4d42", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbraincoreFires.complete")
@@ -1429,12 +1429,12 @@ public struct WhenGbrainbundleFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGbrainbundleFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/2007f69b2fd0c1f01f7cec6929ef579b27a1a6a66eff7551e35786bc25774b3f") {
+        if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/b9bcf540825c9d18b604fc640894e910ac741c0613dd690be183b4e501e6f665") {
             // L1
             try await runtime.wait(.event("gbrainBundle", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGbrainbundleFires/root/procedure/2007f69b2fd0c1f01f7cec6929ef579b27a1a6a66eff7551e35786bc25774b3f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainbundleFires/root/procedure/b9bcf540825c9d18b604fc640894e910ac741c0613dd690be183b4e501e6f665", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/3b28a60eec9e161c136c75422f0d2786614d85dd269e9692bc3b5b53d5b64d09") {
+        if __meridianShouldRun("/WhenGbrainbundleFires/root/procedure/ac6c495b8670afe824f630ff19b2140bf99f8a185d0fe91953659e7625d89cd3") {
             // L1
             try await runtime.emit(
                 event: "trigger.gbrainBundle.fired",
@@ -1442,9 +1442,9 @@ public struct WhenGbrainbundleFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("gbrain bundle"),
                 ],
-                step: "/WhenGbrainbundleFires/root/procedure/3b28a60eec9e161c136c75422f0d2786614d85dd269e9692bc3b5b53d5b64d09"
+                step: "/WhenGbrainbundleFires/root/procedure/ac6c495b8670afe824f630ff19b2140bf99f8a185d0fe91953659e7625d89cd3"
             )
-            try await runtime.checkpoint(label: "/WhenGbrainbundleFires/root/procedure/3b28a60eec9e161c136c75422f0d2786614d85dd269e9692bc3b5b53d5b64d09", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGbrainbundleFires/root/procedure/ac6c495b8670afe824f630ff19b2140bf99f8a185d0fe91953659e7625d89cd3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGbrainbundleFires.complete")

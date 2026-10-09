@@ -944,8 +944,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "minion-orchestrator a input",
       "step_paths" : [
-        "\/MinionOrchestratorInput\/route-the-request-shell-job-vs-subagent-steps\/procedure\/a9bdb95c38fa78e7d4539345c2f01c8acbd97969515f436d01f7104ed677b80f",
-        "\/MinionOrchestratorInput\/shell-jobs-deterministic-scripts-steps\/procedure\/5bd8387a5814b44e311fd909779e7863b89268df16c770c914d193c0fd7d0062"
+        "\/MinionOrchestratorInput\/route-the-request-shell-job-vs-subagent-steps\/procedure\/69a36ae37abfa7e5a1e2332c81b7a118fa3f77d2aafb350d1a2671a7681a906e",
+        "\/MinionOrchestratorInput\/shell-jobs-deterministic-scripts-steps\/procedure\/4ef98cbd8f7030dc2d68d2a459de076ca294e1dd53af25c1f22e9409de96aa55"
       ],
       "swift_struct" : "MinionOrchestratorInput"
     },
@@ -958,8 +958,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when gbrainJobsSubmit fires",
       "step_paths" : [
-        "\/WhenGbrainjobssubmitFires\/root\/procedure\/2741f46626192c41928957d1f5ebabc4855fd4043a72274f51796f5966b2df3c",
-        "\/WhenGbrainjobssubmitFires\/root\/procedure\/d149fcd2a513983fdaf648192890657846dfbaa54e97c846887a09dd812f2a65"
+        "\/WhenGbrainjobssubmitFires\/root\/procedure\/3f1c0cbacdac849f42c92f31c6859d1a08877ae86bba7ba22d79ae0ea63da32e",
+        "\/WhenGbrainjobssubmitFires\/root\/procedure\/a609b90cc3ea80a92c73154de3716098a41f9efa134f40873e3e43fdddb9a8df"
       ],
       "swift_struct" : "WhenGbrainjobssubmitFires"
     },
@@ -972,8 +972,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when submitGbrainJob fires",
       "step_paths" : [
-        "\/WhenSubmitgbrainjobFires\/root\/procedure\/783545aad02ce848f3cb46f6d6657361f75bf29c0dbf368d32a6a6b54cf0e86d",
-        "\/WhenSubmitgbrainjobFires\/root\/procedure\/96aaf26191fa7c247635162d970972ab77f633c21fdbcf230bb089b8e40a5483"
+        "\/WhenSubmitgbrainjobFires\/root\/procedure\/415324a558733e64067388c43a53a48f9a157183fe5d452c458a0c20b5517066",
+        "\/WhenSubmitgbrainjobFires\/root\/procedure\/7b8dbbf3c893a9b539b9edaeaa42cc14419784e890bdc9f48545260dc3217c9e"
       ],
       "swift_struct" : "WhenSubmitgbrainjobFires"
     },
@@ -986,8 +986,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when submitShellJob fires",
       "step_paths" : [
-        "\/WhenSubmitshelljobFires\/root\/procedure\/28b136c34b00db27288bf92480900182b8dcf3487fefd05e680487e927031e3c",
-        "\/WhenSubmitshelljobFires\/root\/procedure\/9973b9510097f258c4198558ac2e552070c255c7e5bdf952ea75c6eec77de92e"
+        "\/WhenSubmitshelljobFires\/root\/procedure\/db7e5f354730a81cb14ebbe257c39af9c1504c72307cd1c621704e748a983143",
+        "\/WhenSubmitshelljobFires\/root\/procedure\/ead12a2a24fd5992e7e19afcebf91230e2de2485fd07e9bf133ab21ca5651a5f"
       ],
       "swift_struct" : "WhenSubmitshelljobFires"
     },
@@ -1000,8 +1000,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when shellJob fires",
       "step_paths" : [
-        "\/WhenShelljobFires\/root\/procedure\/8f17929ee28eb35551efb4ff5ca7eb54c31690a8070e9597ac73a8c07d2fd28e",
-        "\/WhenShelljobFires\/root\/procedure\/9270d505d04f125a4f07d64a6fce38275b871889a08b48e36bf898e96da0f36e"
+        "\/WhenShelljobFires\/root\/procedure\/1a152f7237fa9ddb61805e17496c27e95b7e5f4ec6dba0aceb84a2d9664ebf73",
+        "\/WhenShelljobFires\/root\/procedure\/3ea92fdcb6b4a683b5c9c21a7b6271428289e0813a70c51f45a7e3800d9bbe1a"
       ],
       "swift_struct" : "WhenShelljobFires"
     },
@@ -1014,8 +1014,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when runShellCommandInBackground fires",
       "step_paths" : [
-        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/50682c4bcfddcc46b3a131044cb5a6cd827dca75b685f0a9b76d32714717bcb8",
-        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/58e13601545c6e1cfd540c01dc7a073427d4ae689cfdb89d726e60b3cc40bca6"
+        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/466b481eaaf3f4e1b13fa5c01be115a23ce8ff346d87be9ba1388fb54a79351e",
+        "\/WhenRunshellcommandinbackgroundFires\/root\/procedure\/c752e6bd7a7e0dd19641ee5b18cfccc06727a17ed453dc4fc03a6b57b2272a5a"
       ],
       "swift_struct" : "WhenRunshellcommandinbackgroundFires"
     },
@@ -1028,8 +1028,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when deterministicBackgroundTask fires",
       "step_paths" : [
-        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/4aa65c81a7b9041e3639320b8bb0fd53903bcc6f5e3a7144b7d207c1cff20251",
-        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/57522fb7c9ced55e95ece77014cfba8c8fc7e71fbf23d74983e6c69a640c2c5e"
+        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/8284ccd15f75b8112651c31901e8fdd51e9d3ad46bb4c1e161aeb53aafdd48dd",
+        "\/WhenDeterministicbackgroundtaskFires\/root\/procedure\/befde292d7c694fcfe96c51d169da1b584a2220a5bdc3ba29cd6524c8e32bc6c"
       ],
       "swift_struct" : "WhenDeterministicbackgroundtaskFires"
     },
@@ -1042,8 +1042,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when spawnAgent fires",
       "step_paths" : [
-        "\/WhenSpawnagentFires\/root\/procedure\/e8fa1dd205ed88cdad7655223ee27af59a0d99dedb836ca70759bba39b4c2020",
-        "\/WhenSpawnagentFires\/root\/procedure\/f7454a1842175a8825b3ded978919adeb9a6b31d958524ed4060f8f3e51d6288"
+        "\/WhenSpawnagentFires\/root\/procedure\/3d784e13d735905b97cdd3b78a4c1f036a088b5f7fd5007a5953aae78eab539c",
+        "\/WhenSpawnagentFires\/root\/procedure\/71b850543e09b30a1fac1af8ce0889331bfd7d84a217d36722560b223e7063f3"
       ],
       "swift_struct" : "WhenSpawnagentFires"
     },
@@ -1056,8 +1056,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when backgroundTask fires",
       "step_paths" : [
-        "\/WhenBackgroundtaskFires\/root\/procedure\/2653a4bcf6ccebcf5cb9f0db5cc673bab097eb1bcc74894c4bb612ede6830ddf",
-        "\/WhenBackgroundtaskFires\/root\/procedure\/bc030d51576c9713bb7f6f8555ccabcb7f606a9b549f742b1507e1430a058b3b"
+        "\/WhenBackgroundtaskFires\/root\/procedure\/9b92cf8ed1af4b0b23a6b33e0aae2fbe456b4e41da42ace5fb26002c5b71cf38",
+        "\/WhenBackgroundtaskFires\/root\/procedure\/de3013566099a77aab3d350be7c4f78c47bc9857ec572f0327ec8ce4b5880d1b"
       ],
       "swift_struct" : "WhenBackgroundtaskFires"
     },
@@ -1070,8 +1070,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when runInBackground fires",
       "step_paths" : [
-        "\/WhenRuninbackgroundFires\/root\/procedure\/8e7dcdcb2bb7e817d6ac67f0ba9e845dc3fe88c3c28d7c33f5ad41609aacf0c8",
-        "\/WhenRuninbackgroundFires\/root\/procedure\/9a83f29d4f0063ad2631210cd1f6407c63c4067920f8cc92b1bd271eb0ed8ee9"
+        "\/WhenRuninbackgroundFires\/root\/procedure\/8ab647de7c12b59e58ee7c283d59b833880a6c7ace05c5cd2a40b087e7c40ee6",
+        "\/WhenRuninbackgroundFires\/root\/procedure\/e0d8135d96ee4e5afd74a7259ab1030bd4781620597376e72f8023a0189b1597"
       ],
       "swift_struct" : "WhenRuninbackgroundFires"
     },
@@ -1084,8 +1084,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when checkAgent fires",
       "step_paths" : [
-        "\/WhenCheckagentFires\/root\/procedure\/1d1b68e09ec721a5b89dc51d1da8d1c12296845d1937827cc0f91776adf42041",
-        "\/WhenCheckagentFires\/root\/procedure\/4346cf9b287a791028e21e1c42fda00a06a6fb5f1f14063aa20293a5278edae7"
+        "\/WhenCheckagentFires\/root\/procedure\/20c64252dd61677b3b2b8efd1fd5c13f091284543403677a6f13636d223dbe19",
+        "\/WhenCheckagentFires\/root\/procedure\/6000bb1f61a14c9d921dd79724d371fe6c9e222b67a1664b5b3a01c1fc146422"
       ],
       "swift_struct" : "WhenCheckagentFires"
     },
@@ -1098,8 +1098,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when agentProgress fires",
       "step_paths" : [
-        "\/WhenAgentprogressFires\/root\/procedure\/2efddc99b42b700a730d322f72e6cb30483da62b2230c6d2cdf95f2882830186",
-        "\/WhenAgentprogressFires\/root\/procedure\/61280381285bdda0215e74f3989ce9ac8aaa11925007db4f1338e252d80bb166"
+        "\/WhenAgentprogressFires\/root\/procedure\/a2de55a904d1cd8649e4cd691aaa70205b545fffd3208f24c140081937665654",
+        "\/WhenAgentprogressFires\/root\/procedure\/dcc5e61f29953e7252ca9771e4c5e8bfb34a65ced8df60488f0c0944eda38bf1"
       ],
       "swift_struct" : "WhenAgentprogressFires"
     },
@@ -1112,8 +1112,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when whatSRunning fires",
       "step_paths" : [
-        "\/WhenWhatsrunningFires\/root\/procedure\/1c3c5982b7bbf87b65a30126f8e6cffd09aa6f7633491f74a1d2858608de0bc2",
-        "\/WhenWhatsrunningFires\/root\/procedure\/960872616c06d2668e5c62c2257ce0b131f10843a0e018b71b01b43c2e5b37ee"
+        "\/WhenWhatsrunningFires\/root\/procedure\/18d29bc6b0e801cbe1e7df10e4e02c6aef37269c7a3a7c0cf55aed6a05dd8383",
+        "\/WhenWhatsrunningFires\/root\/procedure\/7dae24900ef9e696a1ac42bba661e90c57f520c103fccaae69a9435cbbbd5c69"
       ],
       "swift_struct" : "WhenWhatsrunningFires"
     },
@@ -1126,8 +1126,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when steerAgent fires",
       "step_paths" : [
-        "\/WhenSteeragentFires\/root\/procedure\/03657004a3c9b95157efb1d6fcd166746ea5021eb07870447e9370938dd88b03",
-        "\/WhenSteeragentFires\/root\/procedure\/3a3c421cb549fb22970c41dfacfcec123cd01c42bee04679f07ad4045dd0afec"
+        "\/WhenSteeragentFires\/root\/procedure\/b47673e10410ceb86b94b888c32a79c73423ea4d748a1ad3be7959457e76aed4",
+        "\/WhenSteeragentFires\/root\/procedure\/eea2a60c80b01a86c200a44869cf18bc07ebe1bf8523840b831c5f9c4a1fbf69"
       ],
       "swift_struct" : "WhenSteeragentFires"
     },
@@ -1140,8 +1140,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when changeDirection fires",
       "step_paths" : [
-        "\/WhenChangedirectionFires\/root\/procedure\/45a80f6fea50a23c3bbfc93f7088a3fb1ab259024a47e03dd20d57531ca12c8a",
-        "\/WhenChangedirectionFires\/root\/procedure\/97260ba28ee3dccb9e1de0a72a1066417ee433ce8930b2629ac70efc34522d3b"
+        "\/WhenChangedirectionFires\/root\/procedure\/1900a0e64fc8ec54228d3a6d5c7ee0d7d631b21c016a2d14ac63f449aa3029c6",
+        "\/WhenChangedirectionFires\/root\/procedure\/fb23560c780ad2f3b5334a509b5cb899ed40fcd40129565e2a6bcdda89d537ad"
       ],
       "swift_struct" : "WhenChangedirectionFires"
     },
@@ -1154,8 +1154,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when tellAgent fires",
       "step_paths" : [
-        "\/WhenTellagentFires\/root\/procedure\/316bfeb0a23cf7f64d9d7305348462bacbed1d254b458dcd17a7533b9c21b36a",
-        "\/WhenTellagentFires\/root\/procedure\/35f588a2b9c1f59a1c1711ae8a18fb456838a00748b4c58dd5a6659b7a8cbddd"
+        "\/WhenTellagentFires\/root\/procedure\/04715c4f52f74ef2b3432b15b291e21dd4afa8740f74bb22b35c213b7d01c14b",
+        "\/WhenTellagentFires\/root\/procedure\/3a8f643eeb778edf0261b7d72ab152c9ea16cd59b9b17c71089205663aab3818"
       ],
       "swift_struct" : "WhenTellagentFires"
     },
@@ -1168,8 +1168,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when pauseAgent fires",
       "step_paths" : [
-        "\/WhenPauseagentFires\/root\/procedure\/327932bb16a4f4d7780364c453776297249bab57e1f0f1ead113bb551ebbdafc",
-        "\/WhenPauseagentFires\/root\/procedure\/830dc6f3e1dd0e5c27a304009adaa13da8bc4bfcc13a51465d08896add10a6b6"
+        "\/WhenPauseagentFires\/root\/procedure\/5a6e1f3b99393d382b0cc14b7eba1e4d097485c5611b0740ef491d4b3326b9fc",
+        "\/WhenPauseagentFires\/root\/procedure\/eb00252cc953c2500976cde6b0b7c10d779ebb8d40434292782b32da7eec4837"
       ],
       "swift_struct" : "WhenPauseagentFires"
     },
@@ -1182,8 +1182,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when stopAgent fires",
       "step_paths" : [
-        "\/WhenStopagentFires\/root\/procedure\/19093ff0134c8169ab01d24058a11eba6d3f87e19d2b1d9586cf165632bc5293",
-        "\/WhenStopagentFires\/root\/procedure\/332d15e06c158af24271f3e5bbcebaf558a1d0b054206331cce81ab0554091c2"
+        "\/WhenStopagentFires\/root\/procedure\/5fad69710b88642550c89060c18b829a63083031b17397733ab899b540976381",
+        "\/WhenStopagentFires\/root\/procedure\/be1cdbee4010c644e79d3ecc7ded9fc3c5a4d2b84436ef09bf272fe83ea359dc"
       ],
       "swift_struct" : "WhenStopagentFires"
     },
@@ -1196,8 +1196,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when resumeAgent fires",
       "step_paths" : [
-        "\/WhenResumeagentFires\/root\/procedure\/85dfa47492406bced785e2ef58843ead716928958002260bc777276cb8a09f9d",
-        "\/WhenResumeagentFires\/root\/procedure\/da25b1004c81ed47692d73a09b33fe96513d5ee97f00aeefaed3a62ca4908070"
+        "\/WhenResumeagentFires\/root\/procedure\/777bf73b13ae9659580065104c03baed861482983c091a71170e8f1ed2c9bd51",
+        "\/WhenResumeagentFires\/root\/procedure\/b629bb9e5a45c1fca7c3c35c90f620588cf6edf6bed82b3336e9d32b375650c8"
       ],
       "swift_struct" : "WhenResumeagentFires"
     },
@@ -1210,8 +1210,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when parallelTasks fires",
       "step_paths" : [
-        "\/WhenParalleltasksFires\/root\/procedure\/da21d628d22566826db6094100c402556d97de7a51d0c5b4e73d5ae39d49f11a",
-        "\/WhenParalleltasksFires\/root\/procedure\/de93c3546fd5f64410b7ec0850f4ff8e370844d8a9362ae008e486581a3afff0"
+        "\/WhenParalleltasksFires\/root\/procedure\/883b482ca34d6ea140fd5fe1ff9576c4e4139dbcc5468c85e60255d8abf7b33e",
+        "\/WhenParalleltasksFires\/root\/procedure\/e5796e3ce3fa12ce3a73780ba9b9962ee73de6cc7d57456a5af2725fc797b4b0"
       ],
       "swift_struct" : "WhenParalleltasksFires"
     },
@@ -1224,8 +1224,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when fanOut fires",
       "step_paths" : [
-        "\/WhenFanoutFires\/root\/procedure\/082c90d7a2121fc8d66058d76578d496d8732ccf4bc419d5ec1d6e569a92968c",
-        "\/WhenFanoutFires\/root\/procedure\/df6bc9329124d15fa50047c4ef3ab55dcfd190d5aa7002c66a71ca2d70c153a9"
+        "\/WhenFanoutFires\/root\/procedure\/a2ccd8c0e068e0a34e5687180b3ff66b22de622a463f138c1399b0abc06992d5",
+        "\/WhenFanoutFires\/root\/procedure\/e0d05c3ca31deec4cad166d2d2fea43c773b5c05a4fda46fc4c5a0edc67feb9c"
       ],
       "swift_struct" : "WhenFanoutFires"
     },
@@ -1238,8 +1238,8 @@
       "skill_version_hash" : "e086ba26fa4e2044067938338e1995870cb08583902fb374a442995ef504bbab",
       "source_name" : "when doTheseInParallel fires",
       "step_paths" : [
-        "\/WhenDotheseinparallelFires\/root\/procedure\/1c8e947b98153e94f092584995c0b282bab4dfe68722bec2e80a7d72eda7b397",
-        "\/WhenDotheseinparallelFires\/root\/procedure\/ebf97b2e0bf92585fc9a5b94d176b2e485eb786377db5e0c7ffdb43083ad25da"
+        "\/WhenDotheseinparallelFires\/root\/procedure\/5027638eeee53b1a97140648aabf471b35b4e8f582df6f21001160be04f6b313",
+        "\/WhenDotheseinparallelFires\/root\/procedure\/7f8e83dfcc801e742b8f2e6a7ebcc22c79dd304e99baf3360dbbc3e50cdc7041"
       ],
       "swift_struct" : "WhenDotheseinparallelFires"
     }

@@ -575,7 +575,7 @@ public struct PlaceOrder: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PlaceOrder", parameters: [:])
 
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/45da9e9c5548d01a8e7cd89d3f08147cb6b11d59d470a442752d801c9935e163") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/307709b2631ac1a26bcd04b96807ba3a5c31fe60a40d443dab2cf4a99ad0cfed") {
             // L23
             // snapshot the open order queue
             _ = try await runtime.invoke(
@@ -583,161 +583,161 @@ public struct PlaceOrder: MeridianWorkflow {
                 args: [
                     "command": .string("ofbiz order-check --queue open --json"),
                 ],
-                step: "/PlaceOrder/workflow-steps/procedure/45da9e9c5548d01a8e7cd89d3f08147cb6b11d59d470a442752d801c9935e163",
+                step: "/PlaceOrder/workflow-steps/procedure/307709b2631ac1a26bcd04b96807ba3a5c31fe60a40d443dab2cf4a99ad0cfed",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/45da9e9c5548d01a8e7cd89d3f08147cb6b11d59d470a442752d801c9935e163", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/307709b2631ac1a26bcd04b96807ba3a5c31fe60a40d443dab2cf4a99ad0cfed", state: state.snapshot())
         }
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71") {
             // L24
             let orders = try await runtime.invoke(
                 tool: "order.list",
                 args: [
                     "status": .string("open"),
                 ],
-                step: "/PlaceOrder/workflow-steps/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28",
+                step: "/PlaceOrder/workflow-steps/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "order.list")
             )
             state.bind("orders", orders)
 
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/51d58e47b0fea27d252362e31fe18dc842a2dc9b5723fbe478678445ca7dbb28", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/c9b2bef0187bab32c5bc831adc6943a96c2c71a676f1f80f7b16eb5d525e8b71", state: state.snapshot())
         }
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/7a9db8cbb8a8e8fe7e4d0600d8e3ffa8ad6efb4573d843fd2e2c7831491c9722") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/7f76fc2719e502d945487f0225aa35b850be4242d011345cf5cc6ffb73be2b09") {
             // L25
             try await runtime.assert(((state.get("orders")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("number")) }), message: "Expected all orders have a number")
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/7a9db8cbb8a8e8fe7e4d0600d8e3ffa8ad6efb4573d843fd2e2c7831491c9722", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/7f76fc2719e502d945487f0225aa35b850be4242d011345cf5cc6ffb73be2b09", state: state.snapshot())
         }
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/48fa7dfe60066eaad89b4d3abcc37118992693f6d08a76f87c250da456957e09") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/ad9cb65e9702a8a2792d32ceaf4328a5f0921ce90bb1191a1715eca91f0f38c9") {
             // L26
             try await runtime.assert((((state.get("orders")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("blocked"))) }).isEmpty), message: "Expected no orders whose status is \"blocked\"")
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/48fa7dfe60066eaad89b4d3abcc37118992693f6d08a76f87c250da456957e09", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/ad9cb65e9702a8a2792d32ceaf4328a5f0921ce90bb1191a1715eca91f0f38c9", state: state.snapshot())
         }
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/fa51af58cca4e85f76feaae2fb8260d3b9093ae96dc00dda6254a6c594020e56") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/732092d90d05995c572ecfaefa8fc80dcbde1c9ce312c6bf16226e8be95f4627") {
             // L27
             try await runtime.assert((((state.get("orders")?.asList ?? []).filter { __e in (MeridianComparison.gt(__e.member("totalAmount"), Value.from(constants.highValueThreshold))) }).count <= 5), message: "Expected at most 5 orders whose total amount exceeds the high value threshold")
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/fa51af58cca4e85f76feaae2fb8260d3b9093ae96dc00dda6254a6c594020e56", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/732092d90d05995c572ecfaefa8fc80dcbde1c9ce312c6bf16226e8be95f4627", state: state.snapshot())
         }
         // L28
         state.bind("top", Value.list(Array(((state.get("orders"))?.asList ?? []).sorted { __a, __b in MeridianComparison.orderedBefore(__a.member("totalAmount"), __b.member("totalAmount"), ascending: false) }.prefix(3))))
         // L29
         let __meridianColl_0_6 = (state.get("orders")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"orders\")", step: "/PlaceOrder/workflow-steps/procedure/d5e5377c9ce9fa0f94d58a79bdd45e625601b645e08a3e9604d787371c839215")
+        try await runtime.recordIterateStart(over: "state.get(\"orders\")", step: "/PlaceOrder/workflow-steps/procedure/7757b71edfddb4c82794a20807d82cc9fb26159856c81b7a48b0748c2c536a54")
         for (__meridianLoopIndex_0_6, order) in __meridianColl_0_6.enumerated() {
             let __meridianLoopLabel_0_6 = "progress:0.6:iteration:\(__meridianLoopIndex_0_6)"
             if __meridianShouldRun(__meridianLoopLabel_0_6) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_6, step: "/PlaceOrder/workflow-steps/procedure/d5e5377c9ce9fa0f94d58a79bdd45e625601b645e08a3e9604d787371c839215")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_6, step: "/PlaceOrder/workflow-steps/procedure/7757b71edfddb4c82794a20807d82cc9fb26159856c81b7a48b0748c2c536a54")
             state.bind("order", order)
-                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/1680adb79bc9e4ee837f4b97376c396edb5bece099b1320ac60aff895bac9523") {
+                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/3dd3d1787bb7886c674673c53c0effe4998f65e8068fec19f22aaf06f449ae7a") {
                     // L30
                     let inventory = try await runtime.invoke(
                         tool: "inventory.reserve",
                         args: [
                             "order": state.get("order") ?? .null,
                         ],
-                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/1680adb79bc9e4ee837f4b97376c396edb5bece099b1320ac60aff895bac9523",
+                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/3dd3d1787bb7886c674673c53c0effe4998f65e8068fec19f22aaf06f449ae7a",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "inventory.reserve")
                     )
                     state.bind("inventory", inventory)
 
-                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/1680adb79bc9e4ee837f4b97376c396edb5bece099b1320ac60aff895bac9523", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/3dd3d1787bb7886c674673c53c0effe4998f65e8068fec19f22aaf06f449ae7a", state: state.snapshot())
                 }
-                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/19d6a9f3ce6c07cd11b6761da4fb8aa91a7ee64ff104faf5d68265d32ab9eeb2") {
+                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/d96a1f2492a9968d87f5795780893aef780373f499105d0a2e9f48ba39f59051") {
                     // L31
                     let invoice = try await runtime.invoke(
                         tool: "invoice.create",
                         args: [
                             "order": state.get("order") ?? .null,
                         ],
-                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/19d6a9f3ce6c07cd11b6761da4fb8aa91a7ee64ff104faf5d68265d32ab9eeb2",
+                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/d96a1f2492a9968d87f5795780893aef780373f499105d0a2e9f48ba39f59051",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "invoice.create")
                     )
                     state.bind("invoice", invoice)
 
-                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/19d6a9f3ce6c07cd11b6761da4fb8aa91a7ee64ff104faf5d68265d32ab9eeb2", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/d96a1f2492a9968d87f5795780893aef780373f499105d0a2e9f48ba39f59051", state: state.snapshot())
                 }
                 // L32
                 if MeridianComparison.gt(state.get("order.totalAmount"), Value.from(constants.highValueThreshold)) {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "then", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
-                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/branch.then/57d55a046e2b470f97587818317268a47c6843a16ee3756a3715e364b459f553") {
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "then", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/a2e0410221864cfd88330850102cfd6891c697c23f618e400a6f9a33aecef3da")
+                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/branch.then/bfcb1a6467528d00b7ddab2497514e0bd4c800c029d7504b366823248ff28c1f") {
                         // L33
                         try await runtime.assert(MeridianComparison.neq(state.get("order.customerId"), state.get("empty,")), message: "Expected the order's customer id is not empty,")
-                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.then/57d55a046e2b470f97587818317268a47c6843a16ee3756a3715e364b459f553", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.then/bfcb1a6467528d00b7ddab2497514e0bd4c800c029d7504b366823248ff28c1f", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
+                    try await runtime.recordBranchEnded(into: "then", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/a2e0410221864cfd88330850102cfd6891c697c23f618e400a6f9a33aecef3da")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
+                    try await runtime.recordBranchTaken(condition: "MeridianComparison.gt(state.get(\"order.totalAmount\"), Value.from(constants.highValueThreshold))", into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/a2e0410221864cfd88330850102cfd6891c697c23f618e400a6f9a33aecef3da")
 
-                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100") {
+                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/branch.else/34e27409ef20596fcaec3a36602b77e0c436496a59b74056fadec5fc61c65588") {
                         // L35
                         try await runtime.assert(MeridianComparison.gt(state.get("order.totalAmount"), .number(Decimal(0))), message: "Expected the order's total amount is more than 0")
-                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.else/2f3d741ca52f76c0c808d51aed98967a0820fb2d82f246ce4d54d0ac7497a100", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/branch.else/34e27409ef20596fcaec3a36602b77e0c436496a59b74056fadec5fc61c65588", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/262a46c3ba6c3f889edc69875bc89ce4e66d27d41785a9f67dfaf43858464aec")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/a2e0410221864cfd88330850102cfd6891c697c23f618e400a6f9a33aecef3da")
                 }
 
                 // L37
                 do {
-                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/recover.body/29ed913d7208ea0cc0cdbe3bcad2a5c364d9f014b1803f4a83c0ae1ae56abb1c") {
+                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/recover.body/f20113376d8718c3c2275eaa6e70b4f0dd7662e0b8e1c7cbabaae9154167006e") {
                         // L36
                         let payment = try await runtime.invoke(
                             tool: "payment.collect",
                             args: [
                                 "invoice": state.get("invoice") ?? .null,
                             ],
-                            step: "/PlaceOrder/workflow-steps/procedure/recover.body/29ed913d7208ea0cc0cdbe3bcad2a5c364d9f014b1803f4a83c0ae1ae56abb1c",
+                            step: "/PlaceOrder/workflow-steps/procedure/recover.body/f20113376d8718c3c2275eaa6e70b4f0dd7662e0b8e1c7cbabaae9154167006e",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "payment.collect")
                         )
                         state.bind("payment", payment)
 
-                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/recover.body/29ed913d7208ea0cc0cdbe3bcad2a5c364d9f014b1803f4a83c0ae1ae56abb1c", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/recover.body/f20113376d8718c3c2275eaa6e70b4f0dd7662e0b8e1c7cbabaae9154167006e", state: state.snapshot())
                     }
                 } catch let _recoveredError where meridianMatches(_recoveredError, named: "payment.declined") {
-                    try await runtime.recordRecoverEngaged(pattern: "payment.declined", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/f0c170a5c0daa02cba82c3ec6cf09c9c3304deda772e51cfa5a0085cca4d80c2")
-                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/recover.handler/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5") {
+                    try await runtime.recordRecoverEngaged(pattern: "payment.declined", step: "/PlaceOrder/workflow-steps/procedure/iterate.body/56d148b58560236c13d9335b4ef4b5deb1390ef3425e0d2608660b548fe2c09d")
+                    if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/recover.handler/9abef6bff53750d18f438ff4eb6032dad968c9f4ed3b76e642774318c44b2f6b") {
                         // L38
                         let dunningNotice = try await runtime.invoke(
                             tool: "dunning.notify",
                             args: [
                                 "invoice": state.get("invoice") ?? .null,
                             ],
-                            step: "/PlaceOrder/workflow-steps/procedure/recover.handler/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5",
+                            step: "/PlaceOrder/workflow-steps/procedure/recover.handler/9abef6bff53750d18f438ff4eb6032dad968c9f4ed3b76e642774318c44b2f6b",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dunning.notify")
                         )
                         state.bind("dunningNotice", dunningNotice)
 
-                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/recover.handler/d80f4eea2430e0a12bc80a9ee1aeff4897a49ba46109c6867cabc76bfdd2a7d5", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/recover.handler/9abef6bff53750d18f438ff4eb6032dad968c9f4ed3b76e642774318c44b2f6b", state: state.snapshot())
                     }
                 }
-                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1") {
+                if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/iterate.body/1e273a83118fc755cafe08d5fc4979a2d081d04ca6ffa52e635394a9943b456c") {
                     // L39
                     let shipment = try await runtime.invoke(
                         tool: "shipment.create",
                         args: [
                             "order": state.get("order") ?? .null,
                         ],
-                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1",
+                        step: "/PlaceOrder/workflow-steps/procedure/iterate.body/1e273a83118fc755cafe08d5fc4979a2d081d04ca6ffa52e635394a9943b456c",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shipment.create")
                     )
                     state.bind("shipment", shipment)
 
-                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/f5fd9e6e25a83f24a88de2b7985087cfdec2c937b9813fb6af8dfc6f608d2ba1", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/iterate.body/1e273a83118fc755cafe08d5fc4979a2d081d04ca6ffa52e635394a9943b456c", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_6, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"orders\")", count: __meridianColl_0_6.count, step: "/PlaceOrder/workflow-steps/procedure/d5e5377c9ce9fa0f94d58a79bdd45e625601b645e08a3e9604d787371c839215")
+        try await runtime.recordIterateEnd(over: "state.get(\"orders\")", count: __meridianColl_0_6.count, step: "/PlaceOrder/workflow-steps/procedure/7757b71edfddb4c82794a20807d82cc9fb26159856c81b7a48b0748c2c536a54")
 
-        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/20ac44ee0680ab58bcda673df427ea873d0247a60f15228f69bd914aacb25dc4") {
+        if __meridianShouldRun("/PlaceOrder/workflow-steps/procedure/2a1e7481d49578de36fabc94a547db681051b509540966bac3efcb62e07eec55") {
             // L40
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("open order queue processed"),
                 ],
-                step: "/PlaceOrder/workflow-steps/procedure/20ac44ee0680ab58bcda673df427ea873d0247a60f15228f69bd914aacb25dc4"
+                step: "/PlaceOrder/workflow-steps/procedure/2a1e7481d49578de36fabc94a547db681051b509540966bac3efcb62e07eec55"
             )
-            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/20ac44ee0680ab58bcda673df427ea873d0247a60f15228f69bd914aacb25dc4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PlaceOrder/workflow-steps/procedure/2a1e7481d49578de36fabc94a547db681051b509540966bac3efcb62e07eec55", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PlaceOrder.complete")
@@ -797,12 +797,12 @@ public struct WhenProcessopenordersFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenProcessopenordersFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/3cb0c43208d5e459ac2322620dba00c957be4f17ec2c4363be189ff7b6f2ee30") {
+        if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/d238a839d11f4fe8b6002ef723b9fc661cd559975f66723ea10b85344230bb5e") {
             // L1
             try await runtime.wait(.event("processOpenOrders", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenProcessopenordersFires/root/procedure/3cb0c43208d5e459ac2322620dba00c957be4f17ec2c4363be189ff7b6f2ee30", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenProcessopenordersFires/root/procedure/d238a839d11f4fe8b6002ef723b9fc661cd559975f66723ea10b85344230bb5e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/997a6896e33363c05150dd6af8ac9f9da2c31ca7c0a5a2db660a6dff463186ea") {
+        if __meridianShouldRun("/WhenProcessopenordersFires/root/procedure/f0f925b5295dd3baac67af0efb519de23dc33835d5cf52333959a8e4c64afe5c") {
             // L1
             try await runtime.emit(
                 event: "trigger.processOpenOrders.fired",
@@ -810,9 +810,9 @@ public struct WhenProcessopenordersFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("process open orders"),
                 ],
-                step: "/WhenProcessopenordersFires/root/procedure/997a6896e33363c05150dd6af8ac9f9da2c31ca7c0a5a2db660a6dff463186ea"
+                step: "/WhenProcessopenordersFires/root/procedure/f0f925b5295dd3baac67af0efb519de23dc33835d5cf52333959a8e4c64afe5c"
             )
-            try await runtime.checkpoint(label: "/WhenProcessopenordersFires/root/procedure/997a6896e33363c05150dd6af8ac9f9da2c31ca7c0a5a2db660a6dff463186ea", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenProcessopenordersFires/root/procedure/f0f925b5295dd3baac67af0efb519de23dc33835d5cf52333959a8e4c64afe5c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenProcessopenordersFires.complete")
@@ -872,12 +872,12 @@ public struct WhenPlacecustomerordersFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenPlacecustomerordersFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/fbb2ab5ca2677c42682fb1c688721a054abdb13448bd6a8c5124b841141acd54") {
+        if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/cff7650e5f09807c6d85ce7c71a30adbacb4085f929659c745f814ec470caf7d") {
             // L1
             try await runtime.wait(.event("placeCustomerOrders", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenPlacecustomerordersFires/root/procedure/fbb2ab5ca2677c42682fb1c688721a054abdb13448bd6a8c5124b841141acd54", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPlacecustomerordersFires/root/procedure/cff7650e5f09807c6d85ce7c71a30adbacb4085f929659c745f814ec470caf7d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/ce32957ea4c7274b760c3e3a15ce43fc251a91b8b0d39bb9da26a65ab02dfe2d") {
+        if __meridianShouldRun("/WhenPlacecustomerordersFires/root/procedure/560697807ed2685af96c4f11061f34b848d2e49236febf34a1e5f8c4a04d0409") {
             // L1
             try await runtime.emit(
                 event: "trigger.placeCustomerOrders.fired",
@@ -885,9 +885,9 @@ public struct WhenPlacecustomerordersFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("place customer orders"),
                 ],
-                step: "/WhenPlacecustomerordersFires/root/procedure/ce32957ea4c7274b760c3e3a15ce43fc251a91b8b0d39bb9da26a65ab02dfe2d"
+                step: "/WhenPlacecustomerordersFires/root/procedure/560697807ed2685af96c4f11061f34b848d2e49236febf34a1e5f8c4a04d0409"
             )
-            try await runtime.checkpoint(label: "/WhenPlacecustomerordersFires/root/procedure/ce32957ea4c7274b760c3e3a15ce43fc251a91b8b0d39bb9da26a65ab02dfe2d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenPlacecustomerordersFires/root/procedure/560697807ed2685af96c4f11061f34b848d2e49236febf34a1e5f8c4a04d0409", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenPlacecustomerordersFires.complete")

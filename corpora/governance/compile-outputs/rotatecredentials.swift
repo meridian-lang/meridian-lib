@@ -455,85 +455,85 @@ public struct RotateCredentials: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "RotateCredentials", parameters: [:])
 
-        if __meridianShouldRun("/RotateCredentials/guarantees/invariants/b15a2bca51ba950caf592d231e1a7e08d855a07e3bd0824483223f732e5b2771") {
+        if __meridianShouldRun("/RotateCredentials/guarantees/invariants/60c3074dca6dfb4943fa632c30f05d880108e084231d3928023189a3043b6029") {
             // L47
             try await runtime.assert(((((state.get("credentials")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("active"))) }).isEmpty)) && (MeridianComparison.gt(state.get("whoseUseCount"), state.get("itsUseLimit"))), message: "Expected no credentials whose status is \"active\" and whose use count is more than its use limit")
-            try await runtime.checkpoint(label: "/RotateCredentials/guarantees/invariants/b15a2bca51ba950caf592d231e1a7e08d855a07e3bd0824483223f732e5b2771", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RotateCredentials/guarantees/invariants/60c3074dca6dfb4943fa632c30f05d880108e084231d3928023189a3043b6029", state: state.snapshot())
         }
-        if __meridianShouldRun("/RotateCredentials/workflow/procedure/dda63b5d569bfbed90ef44658a23f3d0a008576b16b44d6785e4eeac17e87bfb") {
+        if __meridianShouldRun("/RotateCredentials/workflow/procedure/66d36eeb69ed6b6cbde54ac0b4a72d03e019d60819e964cb1e751603591e6527") {
             // L30
             let credentials = try await runtime.invoke(
                 tool: "request.list",
                 args: [
                     "status": .string("active"),
                 ],
-                step: "/RotateCredentials/workflow/procedure/dda63b5d569bfbed90ef44658a23f3d0a008576b16b44d6785e4eeac17e87bfb",
+                step: "/RotateCredentials/workflow/procedure/66d36eeb69ed6b6cbde54ac0b4a72d03e019d60819e964cb1e751603591e6527",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "request.list")
             )
             state.bind("credentials", credentials)
 
-            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/dda63b5d569bfbed90ef44658a23f3d0a008576b16b44d6785e4eeac17e87bfb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/66d36eeb69ed6b6cbde54ac0b4a72d03e019d60819e964cb1e751603591e6527", state: state.snapshot())
         }
-        if __meridianShouldRun("/RotateCredentials/workflow/procedure/1cd31dd1d4ecb3f808db28d9f4f76806af618b611317244669da211cc98c1d4b") {
+        if __meridianShouldRun("/RotateCredentials/workflow/procedure/699061e7d58895cd084e868463434c1b07fc6168949fc16f02e380b4bc239428") {
             // L31
             try await runtime.assert((!((state.get("credentials")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("active"))) }).isEmpty), message: "Expected any credentials whose status is \"active\"")
-            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/1cd31dd1d4ecb3f808db28d9f4f76806af618b611317244669da211cc98c1d4b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/699061e7d58895cd084e868463434c1b07fc6168949fc16f02e380b4bc239428", state: state.snapshot())
         }
         // L32
         let __meridianColl_0_3 = (state.get("credentials")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"credentials\")", step: "/RotateCredentials/workflow/procedure/f50a967fe7003f11c76a2733b26876a4f0db397ec040886c53a332e1a566583b")
+        try await runtime.recordIterateStart(over: "state.get(\"credentials\")", step: "/RotateCredentials/workflow/procedure/d812f47cb50dcbc255548f987b8837b3d373db9e81e748345134ea211b0f1eb6")
         for (__meridianLoopIndex_0_3, credential) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RotateCredentials/workflow/procedure/f50a967fe7003f11c76a2733b26876a4f0db397ec040886c53a332e1a566583b")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/RotateCredentials/workflow/procedure/d812f47cb50dcbc255548f987b8837b3d373db9e81e748345134ea211b0f1eb6")
             state.bind("credential", credential)
-                if __meridianShouldRun("/RotateCredentials/workflow/procedure/iterate.body/cc99b9f4f9325b4074540677fbbec4d1e8ca98546fe7a7ff1ccf63f0d3709fec") {
+                if __meridianShouldRun("/RotateCredentials/workflow/procedure/iterate.body/419d71116999b12abcb71333c58472746d49b8bcbce2e5c20f41b34978f9482e") {
                     // L33
                     try await runtime.wait(.duration(.seconds(300)), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/iterate.body/cc99b9f4f9325b4074540677fbbec4d1e8ca98546fe7a7ff1ccf63f0d3709fec", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/iterate.body/419d71116999b12abcb71333c58472746d49b8bcbce2e5c20f41b34978f9482e", state: state.snapshot())
                 }
                 // L34
                 var __meridianLoopIndex_0_3_body_1 = 0
-                try await runtime.recordIterateStart(over: "until meridianDef_Credential_fresh(state.get(\"credential\"))", step: "/RotateCredentials/workflow/procedure/iterate.body/0f9c6dfbbc01844a7f104baaaa93ba0e770ba5fab9599cda615e5ef55d339c93")
+                try await runtime.recordIterateStart(over: "until meridianDef_Credential_fresh(state.get(\"credential\"))", step: "/RotateCredentials/workflow/procedure/iterate.body/d654f717ea051528b618f01d626cb9792b734b445eb2fcddd6fc92b56e8d7c89")
                 while !(meridianDef_Credential_fresh(state.get("credential"))) {
                     let __meridianLoopLabel_0_3_body_1 = "progress:0.3.body.1:iteration:\(__meridianLoopIndex_0_3_body_1)"
                     __meridianLoopIndex_0_3_body_1 += 1
                     if __meridianShouldRun(__meridianLoopLabel_0_3_body_1) {
-                        try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_body_1 - 1, step: "/RotateCredentials/workflow/procedure/iterate.body/0f9c6dfbbc01844a7f104baaaa93ba0e770ba5fab9599cda615e5ef55d339c93")
-                        if __meridianShouldRun("/RotateCredentials/workflow/procedure/iterate.body/6de91cd9cf0e2661db643da6e8413549f2a50287c50a38980f80fbc745ddafcf") {
+                        try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3_body_1 - 1, step: "/RotateCredentials/workflow/procedure/iterate.body/d654f717ea051528b618f01d626cb9792b734b445eb2fcddd6fc92b56e8d7c89")
+                        if __meridianShouldRun("/RotateCredentials/workflow/procedure/iterate.body/0e45587c4d524aa5d7bd8e578a3f9b8afa24fa8f0bc756d5c10472ac33ccf1ce") {
                             // L35
                             let credential = try await runtime.invoke(
                                 tool: "credential.rotate",
                                 args: [
                                     "credential": state.get("credential") ?? .null,
                                 ],
-                                step: "/RotateCredentials/workflow/procedure/iterate.body/6de91cd9cf0e2661db643da6e8413549f2a50287c50a38980f80fbc745ddafcf",
+                                step: "/RotateCredentials/workflow/procedure/iterate.body/0e45587c4d524aa5d7bd8e578a3f9b8afa24fa8f0bc756d5c10472ac33ccf1ce",
                                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "credential.rotate")
                             )
                             state.bind("credential", credential)
 
-                            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/iterate.body/6de91cd9cf0e2661db643da6e8413549f2a50287c50a38980f80fbc745ddafcf", state: state.snapshot())
+                            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/iterate.body/0e45587c4d524aa5d7bd8e578a3f9b8afa24fa8f0bc756d5c10472ac33ccf1ce", state: state.snapshot())
                         }
                         try await runtime.checkpoint(label: __meridianLoopLabel_0_3_body_1, state: state.snapshot())
                     }
                 }
-                try await runtime.recordIterateEnd(over: "until meridianDef_Credential_fresh(state.get(\"credential\"))", count: __meridianLoopIndex_0_3_body_1, step: "/RotateCredentials/workflow/procedure/iterate.body/0f9c6dfbbc01844a7f104baaaa93ba0e770ba5fab9599cda615e5ef55d339c93")
+                try await runtime.recordIterateEnd(over: "until meridianDef_Credential_fresh(state.get(\"credential\"))", count: __meridianLoopIndex_0_3_body_1, step: "/RotateCredentials/workflow/procedure/iterate.body/d654f717ea051528b618f01d626cb9792b734b445eb2fcddd6fc92b56e8d7c89")
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"credentials\")", count: __meridianColl_0_3.count, step: "/RotateCredentials/workflow/procedure/f50a967fe7003f11c76a2733b26876a4f0db397ec040886c53a332e1a566583b")
+        try await runtime.recordIterateEnd(over: "state.get(\"credentials\")", count: __meridianColl_0_3.count, step: "/RotateCredentials/workflow/procedure/d812f47cb50dcbc255548f987b8837b3d373db9e81e748345134ea211b0f1eb6")
 
-        if __meridianShouldRun("/RotateCredentials/workflow/procedure/54c73d8686f5a138d6aac78371067afecaa3413fc98d6130c2886666124abd73") {
+        if __meridianShouldRun("/RotateCredentials/workflow/procedure/47c71838d9b1def109b8386e1b06cfeba0369b5e6fcb93824406addebf3136d8") {
             // L36
             try await runtime.emit(
                 event: "governance.report",
                 payload: [
                     "message": .string("credential rotation pass complete"),
                 ],
-                step: "/RotateCredentials/workflow/procedure/54c73d8686f5a138d6aac78371067afecaa3413fc98d6130c2886666124abd73"
+                step: "/RotateCredentials/workflow/procedure/47c71838d9b1def109b8386e1b06cfeba0369b5e6fcb93824406addebf3136d8"
             )
-            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/54c73d8686f5a138d6aac78371067afecaa3413fc98d6130c2886666124abd73", state: state.snapshot())
+            try await runtime.checkpoint(label: "/RotateCredentials/workflow/procedure/47c71838d9b1def109b8386e1b06cfeba0369b5e6fcb93824406addebf3136d8", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "RotateCredentials.complete")
@@ -593,12 +593,12 @@ public struct WhenRotatecredentialsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRotatecredentialsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/e3fbcb3119880244332e942b657fe69d7fed007ff0e0b6599ebd846fec3f2ba6") {
+        if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/b501d14ffd68b2c60dd6e951b8deb999b15625f44b209ddcd00d1a1c201e58b8") {
             // L1
             try await runtime.wait(.event("rotateCredentials", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRotatecredentialsFires/root/procedure/e3fbcb3119880244332e942b657fe69d7fed007ff0e0b6599ebd846fec3f2ba6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRotatecredentialsFires/root/procedure/b501d14ffd68b2c60dd6e951b8deb999b15625f44b209ddcd00d1a1c201e58b8", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/58aab05edf2d655bd3f0ffd460a63e5233e034b9c266e3c3c4364a314f42101f") {
+        if __meridianShouldRun("/WhenRotatecredentialsFires/root/procedure/5ddffd51c81293cf73d3a81db68d6f017fde953116f98acd205dc7d447b0f0a5") {
             // L1
             try await runtime.emit(
                 event: "trigger.rotateCredentials.fired",
@@ -606,9 +606,9 @@ public struct WhenRotatecredentialsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("rotate credentials"),
                 ],
-                step: "/WhenRotatecredentialsFires/root/procedure/58aab05edf2d655bd3f0ffd460a63e5233e034b9c266e3c3c4364a314f42101f"
+                step: "/WhenRotatecredentialsFires/root/procedure/5ddffd51c81293cf73d3a81db68d6f017fde953116f98acd205dc7d447b0f0a5"
             )
-            try await runtime.checkpoint(label: "/WhenRotatecredentialsFires/root/procedure/58aab05edf2d655bd3f0ffd460a63e5233e034b9c266e3c3c4364a314f42101f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRotatecredentialsFires/root/procedure/5ddffd51c81293cf73d3a81db68d6f017fde953116f98acd205dc7d447b0f0a5", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRotatecredentialsFires.complete")
@@ -668,12 +668,12 @@ public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRotatestalecredentialsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/bebb7d761a9ea7a5b798651a7f17f886b37c9f8938f25fc921b66db8a970ca1b") {
+        if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/3b4857d27ea18c787169df2d500d8c055d4ed2d542db5adbe2de3519b98e8961") {
             // L1
             try await runtime.wait(.event("rotateStaleCredentials", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRotatestalecredentialsFires/root/procedure/bebb7d761a9ea7a5b798651a7f17f886b37c9f8938f25fc921b66db8a970ca1b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRotatestalecredentialsFires/root/procedure/3b4857d27ea18c787169df2d500d8c055d4ed2d542db5adbe2de3519b98e8961", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/8aaff499eaaccd71409184d4c5caad2af40d70cd5a1e65b24e468d26cd0802c9") {
+        if __meridianShouldRun("/WhenRotatestalecredentialsFires/root/procedure/1c6010d0102d7ca068a33de4f828f8d2aa6031329b927b7123c6e24c9c075f53") {
             // L1
             try await runtime.emit(
                 event: "trigger.rotateStaleCredentials.fired",
@@ -681,9 +681,9 @@ public struct WhenRotatestalecredentialsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("rotate stale credentials"),
                 ],
-                step: "/WhenRotatestalecredentialsFires/root/procedure/8aaff499eaaccd71409184d4c5caad2af40d70cd5a1e65b24e468d26cd0802c9"
+                step: "/WhenRotatestalecredentialsFires/root/procedure/1c6010d0102d7ca068a33de4f828f8d2aa6031329b927b7123c6e24c9c075f53"
             )
-            try await runtime.checkpoint(label: "/WhenRotatestalecredentialsFires/root/procedure/8aaff499eaaccd71409184d4c5caad2af40d70cd5a1e65b24e468d26cd0802c9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRotatestalecredentialsFires/root/procedure/1c6010d0102d7ca068a33de4f828f8d2aa6031329b927b7123c6e24c9c075f53", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRotatestalecredentialsFires.complete")
@@ -743,12 +743,12 @@ public struct WhenRuncredentialrotationpassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRuncredentialrotationpassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/aaffccb9a97cc1b06895ad30730b01cb1bc724b4e830fe3ac6c7e7fe3ea520b3") {
+        if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/90cf686bf7bb54796f4a83a48462489b231fdafb55923c06b8128a133b9eafc6") {
             // L1
             try await runtime.wait(.event("runCredentialRotationPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRuncredentialrotationpassFires/root/procedure/aaffccb9a97cc1b06895ad30730b01cb1bc724b4e830fe3ac6c7e7fe3ea520b3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuncredentialrotationpassFires/root/procedure/90cf686bf7bb54796f4a83a48462489b231fdafb55923c06b8128a133b9eafc6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/8f454b283514b8843428d06595bf35b184c49d6169decae3aa790ae45499d079") {
+        if __meridianShouldRun("/WhenRuncredentialrotationpassFires/root/procedure/8792d6797960ea7e77a078698362b731dd64332e860461156a07ae12d2a66531") {
             // L1
             try await runtime.emit(
                 event: "trigger.runCredentialRotationPass.fired",
@@ -756,9 +756,9 @@ public struct WhenRuncredentialrotationpassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the credential rotation pass"),
                 ],
-                step: "/WhenRuncredentialrotationpassFires/root/procedure/8f454b283514b8843428d06595bf35b184c49d6169decae3aa790ae45499d079"
+                step: "/WhenRuncredentialrotationpassFires/root/procedure/8792d6797960ea7e77a078698362b731dd64332e860461156a07ae12d2a66531"
             )
-            try await runtime.checkpoint(label: "/WhenRuncredentialrotationpassFires/root/procedure/8f454b283514b8843428d06595bf35b184c49d6169decae3aa790ae45499d079", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRuncredentialrotationpassFires/root/procedure/8792d6797960ea7e77a078698362b731dd64332e860461156a07ae12d2a66531", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRuncredentialrotationpassFires.complete")

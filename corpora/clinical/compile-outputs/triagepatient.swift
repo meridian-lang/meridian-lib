@@ -438,66 +438,66 @@ public struct TriagePatientPatient: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "TriagePatientPatient", parameters: [:])
 
-        if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3") {
+        if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e") {
             // L31
             let vitalSigns = try await runtime.invoke(
                 tool: "vitals.read",
                 args: [
                     "patient": state.get("patient") ?? .null,
                 ],
-                step: "/TriagePatientPatient/workflow/procedure/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3",
+                step: "/TriagePatientPatient/workflow/procedure/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "vitals.read")
             )
             state.bind("vitalSigns", vitalSigns)
 
-            try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/d967e2d2497aa063819207ee7573d648fe1c5246d0db193506ef0553ca906ab3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/b22ce8246f1a96e61cfdf659a03ed5f71dddfe8d9d9f5c91f4ba4fb30d1f9a4e", state: state.snapshot())
         }
         // L32
         if (!((state.get("vitalSigns")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty) {
-            try await runtime.recordBranchTaken(condition: "(!((state.get(\"vitalSigns\")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty)", into: "then", step: "/TriagePatientPatient/workflow/procedure/3338ed164c43cdfbe0ddfd6f77a704b8604992bc2cc8eaa7ebf0838d11b8c298")
-            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d") {
+            try await runtime.recordBranchTaken(condition: "(!((state.get(\"vitalSigns\")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty)", into: "then", step: "/TriagePatientPatient/workflow/procedure/d864159d3d20289425a68d2fa96cf22415e74e420f6c9f136bf98f54b08c0dd8")
+            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222") {
                 // L33
                 let patient = try await runtime.invoke(
                     tool: "patient.escalate",
                     args: [
                         "patient": state.get("patient") ?? .null,
                     ],
-                    step: "/TriagePatientPatient/workflow/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d",
+                    step: "/TriagePatientPatient/workflow/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "patient.escalate")
                 )
                 state.bind("patient", patient)
 
-                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/cc0471927009f4ae44a6fbc9bb853d84c62b04969caae6fbbac7110a1661ed5d", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/94a78732b8650b6d321757b95a83df44ceeef39186493d0ab814585fe2de8222", state: state.snapshot())
             }
-            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19") {
+            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/fa9d6ca6072caba5c56e234f57b00c17bf9ce6dd8362bbc4ee01540955428f22") {
                 // L34
                 try await runtime.emit(
                     event: "clinical.report",
                     payload: [
                         "message": .string("triage patient escalated"),
                     ],
-                    step: "/TriagePatientPatient/workflow/procedure/branch.then/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19"
+                    step: "/TriagePatientPatient/workflow/procedure/branch.then/fa9d6ca6072caba5c56e234f57b00c17bf9ce6dd8362bbc4ee01540955428f22"
                 )
-                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/2bf559024fafda20366f0240d625a5845314922e147d7f6da806d6a7c62dfb19", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/fa9d6ca6072caba5c56e234f57b00c17bf9ce6dd8362bbc4ee01540955428f22", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/3338ed164c43cdfbe0ddfd6f77a704b8604992bc2cc8eaa7ebf0838d11b8c298")
+            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/d864159d3d20289425a68d2fa96cf22415e74e420f6c9f136bf98f54b08c0dd8")
         }
 
         // L35
         if !((!((state.get("vitalSigns")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty)) {
-            try await runtime.recordBranchTaken(condition: "!((!((state.get(\"vitalSigns\")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty))", into: "then", step: "/TriagePatientPatient/workflow/procedure/59e53558c7ea84daf93361c86a19bdd003c114d7ce06601adb40e47e2dcf9478")
+            try await runtime.recordBranchTaken(condition: "!((!((state.get(\"vitalSigns\")?.asList ?? []).filter { __e in meridianDef_VitalSign_critical(__e) }).isEmpty))", into: "then", step: "/TriagePatientPatient/workflow/procedure/ecd4305eda0f4eb3bf68f3f0f65780b273f4444ea781929aa3ac9fbb1e5d64a9")
             // L36
             let __meridianProseResults_L36 = try await runtime.executeProsePlan(
                 prose: "weigh every vital sign against its own ceiling and recommend a triage level",
                 snapshot: state.snapshot(),
                 scopedTools: ["allergy.check", "audit.log", "consent.record", "medication.administer", "order.list", "order.override", "patient.escalate", "patient.list", "protocol.lookup", "vitals.read"],
                 outputKind: "record",
-                step: "/TriagePatientPatient/workflow/procedure/branch.then/4d875d50cd7bfd5f789ab9a60512dbfcd08315de4a3fcaf9f08cb1df7d2fd45b"
+                step: "/TriagePatientPatient/workflow/procedure/branch.then/99839ea13e9a3463a11592acdadb2c1300d702669f9e7392d424b4ba63aa8f45"
             )
             for (__key, __value) in __meridianProseResults_L36 {
                 state.bind(__key, __value)
             }
-            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/f756c4e13ffaa3990759ead03ce69a95f37035fd294ebadb4145217fd17102de") {
+            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/1b2ffd685719b572f144f2657690d47d7fb1a710676deba2bcd6a2ca0278b0cc") {
                 // L37
                 try await runtime.emit(
                     event: "ask.choice",
@@ -505,29 +505,29 @@ public struct TriagePatientPatient: MeridianWorkflow {
                         "prompt": .string("ask the user to choose between \"admit\", \"observe\", \"discharge\""),
                         "options": .string("admit, observe, discharge"),
                     ],
-                    step: "/TriagePatientPatient/workflow/procedure/branch.then/f756c4e13ffaa3990759ead03ce69a95f37035fd294ebadb4145217fd17102de"
+                    step: "/TriagePatientPatient/workflow/procedure/branch.then/1b2ffd685719b572f144f2657690d47d7fb1a710676deba2bcd6a2ca0278b0cc"
                 )
-                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/f756c4e13ffaa3990759ead03ce69a95f37035fd294ebadb4145217fd17102de", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/1b2ffd685719b572f144f2657690d47d7fb1a710676deba2bcd6a2ca0278b0cc", state: state.snapshot())
             }
-            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394") {
+            if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/branch.then/ddbf297849678c144d23e2c7841ab8f9fb66fff7a656d6bc18fcc3795a544680") {
                 // L37
                 try await runtime.wait(.choice(prompt: "ask the user to choose between \"admit\", \"observe\", \"discharge\"", options: ["admit", "observe", "discharge"]), sourceRange: nil)
                 state.bind("choice", .string(await runtime.consumeChoiceSelection()))
-                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/162c19a881b2cdd73d08f0daab1a2df2fb3f5a87eb27732b43d6b782a8c0e394", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/branch.then/ddbf297849678c144d23e2c7841ab8f9fb66fff7a656d6bc18fcc3795a544680", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/59e53558c7ea84daf93361c86a19bdd003c114d7ce06601adb40e47e2dcf9478")
+            try await runtime.recordBranchEnded(into: "then", step: "/TriagePatientPatient/workflow/procedure/ecd4305eda0f4eb3bf68f3f0f65780b273f4444ea781929aa3ac9fbb1e5d64a9")
         }
 
-        if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122") {
+        if __meridianShouldRun("/TriagePatientPatient/workflow/procedure/e16c73590257c510bc972ef6d91c7b23ecafe4e72db449e94fc7471b0c3ded50") {
             // L38
             try await runtime.emit(
                 event: "clinical.report",
                 payload: [
                     "message": .string("triage patient pass complete"),
                 ],
-                step: "/TriagePatientPatient/workflow/procedure/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122"
+                step: "/TriagePatientPatient/workflow/procedure/e16c73590257c510bc972ef6d91c7b23ecafe4e72db449e94fc7471b0c3ded50"
             )
-            try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/733769206e596a91d2d08089174a169b6b0fd592f23a142f64574c340a80f122", state: state.snapshot())
+            try await runtime.checkpoint(label: "/TriagePatientPatient/workflow/procedure/e16c73590257c510bc972ef6d91c7b23ecafe4e72db449e94fc7471b0c3ded50", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "TriagePatientPatient.complete")
@@ -587,12 +587,12 @@ public struct WhenTriagepatientFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenTriagepatientFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b") {
+        if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/af5d8e0e1a586a81fab06a3560483d7b14c0ed8d5c473c8e1c366ce3131a3089") {
             // L1
             try await runtime.wait(.event("triagePatient", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenTriagepatientFires/root/procedure/10f18ed4ec39f1b46c5fc19c2cf4b331bea66eaea30f060624f7d41113d9263b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagepatientFires/root/procedure/af5d8e0e1a586a81fab06a3560483d7b14c0ed8d5c473c8e1c366ce3131a3089", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e") {
+        if __meridianShouldRun("/WhenTriagepatientFires/root/procedure/27aef6b322b8fc77774c12573d1a8828b6fde41978124f3a880a45920e713e03") {
             // L1
             try await runtime.emit(
                 event: "trigger.triagePatient.fired",
@@ -600,9 +600,9 @@ public struct WhenTriagepatientFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("triage patient"),
                 ],
-                step: "/WhenTriagepatientFires/root/procedure/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e"
+                step: "/WhenTriagepatientFires/root/procedure/27aef6b322b8fc77774c12573d1a8828b6fde41978124f3a880a45920e713e03"
             )
-            try await runtime.checkpoint(label: "/WhenTriagepatientFires/root/procedure/d72a0df11aafcbd95a4d19eca1cf10379cd759f824564abbb391b5781cbbf87e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenTriagepatientFires/root/procedure/27aef6b322b8fc77774c12573d1a8828b6fde41978124f3a880a45920e713e03", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenTriagepatientFires.complete")
@@ -662,12 +662,12 @@ public struct WhenRunpatienttriageFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunpatienttriageFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1") {
+        if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/75d565f24929f55afd526ca19c143f63a256abbd124315ccaa60a3acd25ba1ca") {
             // L1
             try await runtime.wait(.event("runPatientTriage", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunpatienttriageFires/root/procedure/ee641cd90abce10f02e69f093a6e3d146ce2cb4dd9c0e574be85570f481a3ca1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpatienttriageFires/root/procedure/75d565f24929f55afd526ca19c143f63a256abbd124315ccaa60a3acd25ba1ca", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b") {
+        if __meridianShouldRun("/WhenRunpatienttriageFires/root/procedure/f6d7d7c353db5e38ce9def031af35c7afbc109535a916cbe1a08c2598f7e445e") {
             // L1
             try await runtime.emit(
                 event: "trigger.runPatientTriage.fired",
@@ -675,9 +675,9 @@ public struct WhenRunpatienttriageFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run patient triage"),
                 ],
-                step: "/WhenRunpatienttriageFires/root/procedure/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b"
+                step: "/WhenRunpatienttriageFires/root/procedure/f6d7d7c353db5e38ce9def031af35c7afbc109535a916cbe1a08c2598f7e445e"
             )
-            try await runtime.checkpoint(label: "/WhenRunpatienttriageFires/root/procedure/2cfc3f6d0b0250d539c4bc53acab02dc5a86cc530c978da5ffd7ddcb56595e9b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpatienttriageFires/root/procedure/f6d7d7c353db5e38ce9def031af35c7afbc109535a916cbe1a08c2598f7e445e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunpatienttriageFires.complete")

@@ -1,59 +1,59 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.cron.fired with kind = \"schedule\", spec = \"cron\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/105edb16e9443dd9765aa545627db230d5e102c4d3472cdac4fa1d24e3b14eea",
-      "swift_line" : 911
-    },
-    {
       "canonical" : "wait for event cron.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/63f185774800a248696f0940d16b8c8dcf56c5a115de9a4d06d746be29484e6e",
+      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/aa08b03ff08f449c75d8a06242bd76045618540970b3e245e4e081a5ab71ba30",
       "swift_line" : 911
     },
     {
-      "canonical" : "emit trigger.quietHours.fired with kind = \"keyword\", spec = \"quiet hours\".",
+      "canonical" : "emit trigger.cron.fired with kind = \"schedule\", spec = \"cron\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/570457738fecf9c901786e5b5a804631bf9cdeb45d1c5f743829518b11a4988d",
+      "stable_step_path" : "\/WhenCronFires\/root\/procedure\/e00109856ccce5dbe739f04f154fb8a4a182fec8ae80ad0cb4181b65b16da318",
       "swift_line" : 911
     },
     {
       "canonical" : "wait for event quietHours.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/de70e112340efee5acbb8e8506528ac88635709b59751dca58c9ecda9bcecf64",
+      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/bd2d252c3e33281e18287d00ad47a59098acecae73e213b2829f6243996cd838",
       "swift_line" : 911
     },
     {
-      "canonical" : "emit trigger.scheduleJob.fired with kind = \"schedule\", spec = \"schedule a job\".",
+      "canonical" : "emit trigger.quietHours.fired with kind = \"keyword\", spec = \"quiet hours\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/3156d4dcf80b7cdf828dd6397dd2fd813096ca46f7530c7c651de85f481eb4a4",
+      "stable_step_path" : "\/WhenQuiethoursFires\/root\/procedure\/f5b122b74a0e85e59452cf2abccf4906b8fd68cd79da7b6a41358ea2ea150be4",
       "swift_line" : 911
     },
     {
       "canonical" : "wait for event scheduleJob.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/c44523024f748b35f5a286105b3c529d1071bf032f32cc66c5d0a21dfad40424",
+      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/2c17c074912d50e890a24ebd08df21df3079f20b2b3f5e71a05432d5e0c6681e",
       "swift_line" : 911
     },
     {
-      "canonical" : "emit trigger.whatJobsAreRunning.fired with kind = \"keyword\", spec = \"what jobs are running\".",
+      "canonical" : "emit trigger.scheduleJob.fired with kind = \"schedule\", spec = \"schedule a job\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/db93b869f3b512d3f6571d76bee75b0c20a86e3cc2f122d8628829fb354a7f8b",
+      "stable_step_path" : "\/WhenSchedulejobFires\/root\/procedure\/3050716f6e9dd4469d1d2135532989a400c0f955825fa8ed6e5706d9a36a5803",
       "swift_line" : 911
     },
     {
       "canonical" : "wait for event whatJobsAreRunning.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/f790344aee08b158e0209386a5b6096188af8375a8c1bfebbee2b7b2d1349226",
+      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/0afeeff53a5b2b3e998cdb414e202667e23b3b7aab65212a6981c7c70281338a",
+      "swift_line" : 911
+    },
+    {
+      "canonical" : "emit trigger.whatJobsAreRunning.fired with kind = \"keyword\", spec = \"what jobs are running\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenWhatjobsarerunningFires\/root\/procedure\/0e6a76d2f6fd6127f66d9c8f2908b90a06150aa0ed63b42343d054b005c3219f",
       "swift_line" : 911
     }
   ],

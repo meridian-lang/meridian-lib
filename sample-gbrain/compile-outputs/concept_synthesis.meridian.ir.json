@@ -1,115 +1,115 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.buildMyIntellectualMap.fired with kind = \"keyword\", spec = \"build my intellectual map\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenBuildmyintellectualmapFires\/root\/procedure\/176a9e721a386ec6cfb502c1c570d73916fe5695bf22822ec90509267ab7eb0b",
-      "swift_line" : 1116
-    },
-    {
       "canonical" : "wait for event buildMyIntellectualMap.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenBuildmyintellectualmapFires\/root\/procedure\/dc647d02dd5eaa62ec74023900db076c7452d390e5e2c17d000d165d29e49d06",
+      "stable_step_path" : "\/WhenBuildmyintellectualmapFires\/root\/procedure\/3ea302d8a8d3231f8c1a2e8e7e85fa0a52f59393011b8682579f472ab0cd73db",
+      "swift_line" : 1116
+    },
+    {
+      "canonical" : "emit trigger.buildMyIntellectualMap.fired with kind = \"keyword\", spec = \"build my intellectual map\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenBuildmyintellectualmapFires\/root\/procedure\/686bab594f0073d5cbfaf7972373131f3853d5742413a16d13b790bf4fc1da51",
       "swift_line" : 1116
     },
     {
       "canonical" : "emit trigger.canonVsRiff.fired with kind = \"keyword\", spec = \"canon vs riff\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCanonvsriffFires\/root\/procedure\/3453cb99f697a8ac56c910cb97cf76ae3c689a4e2d9904bf4fd861a023c1403f",
+      "stable_step_path" : "\/WhenCanonvsriffFires\/root\/procedure\/6659e405cbbfad0e5325f2befc91b0bcc1358b3c74b043dd672b88c9919b6da9",
       "swift_line" : 1116
     },
     {
       "canonical" : "wait for event canonVsRiff.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCanonvsriffFires\/root\/procedure\/3dc22e7208956149c504ea83612386c266ef37934b81ed5c4aa339eaf06e5f29",
+      "stable_step_path" : "\/WhenCanonvsriffFires\/root\/procedure\/7b0e193bffb69cdd75f056d56b919291992998662b7dabd267654788a1d98a58",
       "swift_line" : 1116
     },
     {
       "canonical" : "wait for event conceptSynthesis.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenConceptsynthesisFires\/root\/procedure\/d0ab66bc5eca0bcf719bfab67195278223875f9b3c8a849d5ccbec719f27a9da",
+      "stable_step_path" : "\/WhenConceptsynthesisFires\/root\/procedure\/2fd0f540abe4c8f566c9cafbb3142d3657478071343b8a213ad1907f25d1ef98",
       "swift_line" : 1116
     },
     {
       "canonical" : "emit trigger.conceptSynthesis.fired with kind = \"keyword\", spec = \"concept synthesis\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenConceptsynthesisFires\/root\/procedure\/ed13b86144c3107a1de9be7a54e3aeb26bd7fc923d2dc3e92dba500891161784",
+      "stable_step_path" : "\/WhenConceptsynthesisFires\/root\/procedure\/88e59375c90aaf3587f80397b59229afbe2ab3285ecbad504c72d3c2cd10476a",
       "swift_line" : 1116
     },
     {
       "canonical" : "wait for event findPatternsAcrossMyNotes.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/82754de2e2240f027dfe50b380668d86968051671bd9a5c7d3102487eaa407e1",
+      "stable_step_path" : "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/451b2cf6c9798726bb1ca75e7da98c0001dd3027eb14e3c50f044bbe8a2d627d",
       "swift_line" : 1116
     },
     {
       "canonical" : "emit trigger.findPatternsAcrossMyNotes.fired with kind = \"keyword\", spec = \"find patterns across my notes\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/ad7182e50a0b13a7d5f00756749586d0776ff7d5e04f65f65d4fd6920d8a8491",
-      "swift_line" : 1116
-    },
-    {
-      "canonical" : "wait for event synthesizeMyConcepts.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenSynthesizemyconceptsFires\/root\/procedure\/6b33e624b23f20491232f3b054c85a0763bb3467f4996d071ba22778f11a187a",
+      "stable_step_path" : "\/WhenFindpatternsacrossmynotesFires\/root\/procedure\/f9eac38c556da3c4148ccf939cff9df4adbde195e9a1f7a3fec2d07ce9164e7d",
       "swift_line" : 1116
     },
     {
       "canonical" : "emit trigger.synthesizeMyConcepts.fired with kind = \"keyword\", spec = \"synthesize my concepts\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSynthesizemyconceptsFires\/root\/procedure\/f58583cec5ba8bb4a8d3b28158bf9c7179e2dc9606c737d8b2c275f51062339e",
+      "stable_step_path" : "\/WhenSynthesizemyconceptsFires\/root\/procedure\/4197cdab0f210f5a6b4390b4db70ae081035e21b3d2b8dd2a201fafef81beb1e",
       "swift_line" : 1116
     },
     {
-      "canonical" : "wait for event traceIdeaEvolution.",
+      "canonical" : "wait for event synthesizeMyConcepts.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenTraceideaevolutionFires\/root\/procedure\/4a38ac615ae49a3780424a1d65eead98357217072a1ef1d53131f4c9273d1b17",
+      "stable_step_path" : "\/WhenSynthesizemyconceptsFires\/root\/procedure\/ff6b0d2c321d118bbe2dd7bf6e3ae938a163d55fca1af3d0e3d22ea16d6cbb0d",
       "swift_line" : 1116
     },
     {
       "canonical" : "emit trigger.traceIdeaEvolution.fired with kind = \"keyword\", spec = \"trace idea evolution\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenTraceideaevolutionFires\/root\/procedure\/c3cdeb89578efd06931bcf971f69ab51440a7855965a3d83082ca1b8fd3440b8",
+      "stable_step_path" : "\/WhenTraceideaevolutionFires\/root\/procedure\/06a7e45d50d77bf212c3134a15b2f06b7b9e14ab72211dd8e24090f82dfc6179",
+      "swift_line" : 1116
+    },
+    {
+      "canonical" : "wait for event traceIdeaEvolution.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenTraceideaevolutionFires\/root\/procedure\/c6cc6540a95e144603e41f6b7418c8158b4a8d658411d55ddab5bbabbd464c89",
       "swift_line" : 1116
     },
     {
       "canonical" : "bind links = invoke link.backlinks with slug = links to related concepts(markdown links, not wiki links).",
       "meridian_line" : 219,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ConceptSynthesisInput\/synthesis-quality-steps\/procedure\/b2de1a1231fb42295b081a2f0eee31d7f146af2f5e07a5dc462d20b07125fc03",
+      "stable_step_path" : "\/ConceptSynthesisInput\/synthesis-quality-steps\/procedure\/4dad932c024e0c4d384677126b7cdd7fc93366874f06b178e8b13c5ed6ed0ecc",
       "swift_line" : 628
     },
     {
       "canonical" : "`skills\/signal-detector\/SKILL.md` -- — creates raw concept stubs from text channels.",
       "meridian_line" : 248,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/342ef698f8e27728894fea857c50546b0ba259194b55a2933e180ea94a0b8be4",
+      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/eefe5f6263c34321f3061a2cd6494f478dfec491f327033bd638d6ae1bad1611",
       "swift_line" : 642
     },
     {
       "canonical" : "`skills\/voice-note-ingest\/SKILL.md` -- — same for audio channels.",
       "meridian_line" : 249,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/60dd6244958273bd65d1062885dfbbb45d2119194905fb911aebe979b6b7f0aa",
+      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/9d879d9ab88bb83dec6b0d667c60db5a84d208608ffc9a7d1999daaebc139ea7",
       "swift_line" : 656
     },
     {
       "canonical" : "`skills\/idea-ingest\/SKILL.md` -- — same for links \/ articles.",
       "meridian_line" : 250,
       "primitive" : "invoke",
-      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/9610b9b2f6e27f4f48f2b0eecd165be9043a6a62398edd246df0b4b6cfb4d3fa",
+      "stable_step_path" : "\/ConceptSynthesisInput\/related-skills\/procedure\/7527c0a0a823534d03fc8e4941f59c81eb269981e6046db366e3a46d56828bec",
       "swift_line" : 670
     }
   ],

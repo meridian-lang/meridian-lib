@@ -23,7 +23,7 @@ struct VerbalizerTotalityTests {
             collection: .identifierRef(name: "pages"),
             elementVar: "page",
             filters: [.comparison(.propertyAccess(.identifierRef(name: "page"), propertyName: "summary"), .isNotEmpty, .literal(.boolean(true)))],
-            sort: (path: "createdAt", ascending: true),
+            sort: IRSortSpec(path: "createdAt", ascending: true),
             take: 2
         )
         let quantifier = QuantifierIR(
@@ -98,7 +98,7 @@ struct VerbalizerTotalityTests {
             .iterate(IterateIR(
                 mode: .overCollection(parameter: "page", kind: KindRef("Page"), collection: .identifierRef(name: "pages")),
                 body: block,
-                source: IRIterationRefinement(filters: [condition], sort: (path: "createdAt", ascending: false), take: 2)
+                source: IRIterationRefinement(filters: [condition], sort: IRSortSpec(path: "createdAt", ascending: false), take: 2)
             )),
             .assert(AssertIR(condition: condition, message: "Expected score is at least 1", otherwiseAction: block)),
             .emit(EmitIR(eventID: "demo.event", payload: [EmitField("score", .identifierRef(name: "score"))], strict: true)),

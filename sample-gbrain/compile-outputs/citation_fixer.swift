@@ -625,32 +625,32 @@ public struct CitationFixerInput: MeridianWorkflow {
 
         // L57
         let __meridianColl_0_0 = (state.get("ones")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"ones\")", step: "/CitationFixerInput/phases-steps/procedure/230b65cf4ad1ad52c8759e2cc152f776c46259d8f25f5644c87e3edb14d8428a")
+        try await runtime.recordIterateStart(over: "state.get(\"ones\")", step: "/CitationFixerInput/phases-steps/procedure/5cf568479a9ceb777ee18a6f97770a3158020c8e17526f759019930e309845e3")
         for (__meridianLoopIndex_0_0, one) in __meridianColl_0_0.enumerated() {
             let __meridianLoopLabel_0_0 = "progress:0.0:iteration:\(__meridianLoopIndex_0_0)"
             if __meridianShouldRun(__meridianLoopLabel_0_0) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_0, step: "/CitationFixerInput/phases-steps/procedure/230b65cf4ad1ad52c8759e2cc152f776c46259d8f25f5644c87e3edb14d8428a")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_0, step: "/CitationFixerInput/phases-steps/procedure/5cf568479a9ceb777ee18a6f97770a3158020c8e17526f759019930e309845e3")
             state.bind("one", one)
-                if __meridianShouldRun("/CitationFixerInput/phases-steps/procedure/iterate.body/3c00fa3b45f9a23e8a3e27f8a5d2317adcb40d776f18b78f124a48c9286cb445") {
+                if __meridianShouldRun("/CitationFixerInput/phases-steps/procedure/iterate.body/cd84e6a7d8cc7f3c119a44022c3dbf78025916af72a5b2b07984dc4ae3494afa") {
                     // L57
                     let pages = try await runtime.invoke(
                         tool: "page.list",
                         args: [
                             "filter": state.get("andReadTheOne") ?? .null,
                         ],
-                        step: "/CitationFixerInput/phases-steps/procedure/iterate.body/3c00fa3b45f9a23e8a3e27f8a5d2317adcb40d776f18b78f124a48c9286cb445",
+                        step: "/CitationFixerInput/phases-steps/procedure/iterate.body/cd84e6a7d8cc7f3c119a44022c3dbf78025916af72a5b2b07984dc4ae3494afa",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "page.list")
                     )
                     state.bind("pages", pages)
 
-                    try await runtime.checkpoint(label: "/CitationFixerInput/phases-steps/procedure/iterate.body/3c00fa3b45f9a23e8a3e27f8a5d2317adcb40d776f18b78f124a48c9286cb445", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/CitationFixerInput/phases-steps/procedure/iterate.body/cd84e6a7d8cc7f3c119a44022c3dbf78025916af72a5b2b07984dc4ae3494afa", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_0, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"ones\")", count: __meridianColl_0_0.count, step: "/CitationFixerInput/phases-steps/procedure/230b65cf4ad1ad52c8759e2cc152f776c46259d8f25f5644c87e3edb14d8428a")
+        try await runtime.recordIterateEnd(over: "state.get(\"ones\")", count: __meridianColl_0_0.count, step: "/CitationFixerInput/phases-steps/procedure/5cf568479a9ceb777ee18a6f97770a3158020c8e17526f759019930e309845e3")
 
-        if __meridianShouldRun("/CitationFixerInput/phases-steps/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf") {
+        if __meridianShouldRun("/CitationFixerInput/phases-steps/procedure/d484fbba7c9e6f3459781afd7d9cbf1a0eb21407467303aeaf68bf33b507b77f") {
             // L58
             // citations
             _ = try await runtime.invoke(
@@ -658,13 +658,13 @@ public struct CitationFixerInput: MeridianWorkflow {
                 args: [
                     "command": .string("[Source: ...]"),
                 ],
-                step: "/CitationFixerInput/phases-steps/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf",
+                step: "/CitationFixerInput/phases-steps/procedure/d484fbba7c9e6f3459781afd7d9cbf1a0eb21407467303aeaf68bf33b507b77f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/phases-steps/procedure/4e05de5dd92fcb5dd15dd29165a7df25e59a2a6c5aa75a882107c23bcd7428bf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/phases-steps/procedure/d484fbba7c9e6f3459781afd7d9cbf1a0eb21407467303aeaf68bf33b507b77f", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/0cd0e6fc08c332b69b9d28b49fec9fbd28e6b8cda68e57620092cc7221881556") {
+        if __meridianShouldRun("/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/59c24ebbd75b74ff48643becf8fde36dfc04fd82447e293932ba40e6826bd871") {
             // L119
             // Construct the URL
             _ = try await runtime.invoke(
@@ -672,102 +672,102 @@ public struct CitationFixerInput: MeridianWorkflow {
                 args: [
                     "command": .string("https://x.com/<handle>/status/<tweet_id>"),
                 ],
-                step: "/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/0cd0e6fc08c332b69b9d28b49fec9fbd28e6b8cda68e57620092cc7221881556",
+                step: "/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/59c24ebbd75b74ff48643becf8fde36dfc04fd82447e293932ba40e6826bd871",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/0cd0e6fc08c332b69b9d28b49fec9fbd28e6b8cda68e57620092cc7221881556", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/step-4-verify-and-extract-metadata-steps/procedure/59c24ebbd75b74ff48643becf8fde36dfc04fd82447e293932ba40e6826bd871", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/d59c98f9a8b33138a04f620c3c873ec6d67220f8ac6bd27b28ca98e705ca3c64") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/5fcb5ab2211a4a932d3eb801ed03fe42370dd205b37c98f38c9992cbf632e749") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("for f in $(find . -name \"*.md\" -not -path \"./node_modules/*\"); do"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/d59c98f9a8b33138a04f620c3c873ec6d67220f8ac6bd27b28ca98e705ca3c64",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/5fcb5ab2211a4a932d3eb801ed03fe42370dd205b37c98f38c9992cbf632e749",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/d59c98f9a8b33138a04f620c3c873ec6d67220f8ac6bd27b28ca98e705ca3c64", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/5fcb5ab2211a4a932d3eb801ed03fe42370dd205b37c98f38c9992cbf632e749", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/8b47abb4c6c4a0e65f403fe77453e5f3de98d2256a6e07b9a5446ab69332093a") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/b242bc44a590ed195537657ff0d47c77134344d399ee972aa5158faf3ced1ca9") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("refs=$(grep -ci \"tweet\\|posted\\|x post\\|RT\\|retweet\\|said on X\" \"$f\")"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/8b47abb4c6c4a0e65f403fe77453e5f3de98d2256a6e07b9a5446ab69332093a",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/b242bc44a590ed195537657ff0d47c77134344d399ee972aa5158faf3ced1ca9",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/8b47abb4c6c4a0e65f403fe77453e5f3de98d2256a6e07b9a5446ab69332093a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/b242bc44a590ed195537657ff0d47c77134344d399ee972aa5158faf3ced1ca9", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/93adc6a3d212c3ccd00aed8cb20b8088ef6447478651be33b29e4f0599287493") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/2340dc7d35939e1bf7f935ddfcafab0c104f07bc4816c2f99d1ef2e5d961b80a") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("links=$(grep -c \"x.com/.*/status/\" \"$f\")"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/93adc6a3d212c3ccd00aed8cb20b8088ef6447478651be33b29e4f0599287493",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/2340dc7d35939e1bf7f935ddfcafab0c104f07bc4816c2f99d1ef2e5d961b80a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/93adc6a3d212c3ccd00aed8cb20b8088ef6447478651be33b29e4f0599287493", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/2340dc7d35939e1bf7f935ddfcafab0c104f07bc4816c2f99d1ef2e5d961b80a", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/74a938d4a95d16076ab4f0e4cbd1a0f93e32a28ae71ab7f71e559dc3c093c987") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/ffdd40342e06607442b597f92576e1db546cf7df3295103f8f42228df87c7f2e") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("if [ \"$refs\" -gt 2 ] && [ \"$links\" -eq 0 ]; then"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/74a938d4a95d16076ab4f0e4cbd1a0f93e32a28ae71ab7f71e559dc3c093c987",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/ffdd40342e06607442b597f92576e1db546cf7df3295103f8f42228df87c7f2e",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/74a938d4a95d16076ab4f0e4cbd1a0f93e32a28ae71ab7f71e559dc3c093c987", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/ffdd40342e06607442b597f92576e1db546cf7df3295103f8f42228df87c7f2e", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/df29fde1c09b3f50778511c97562b352c8329f263bce39a9398efc601555af50") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/247b7b464615578bea179dbc5957fda489fabae512fb5d90e34a50c4843127ca") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"$f\""),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/df29fde1c09b3f50778511c97562b352c8329f263bce39a9398efc601555af50",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/247b7b464615578bea179dbc5957fda489fabae512fb5d90e34a50c4843127ca",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/df29fde1c09b3f50778511c97562b352c8329f263bce39a9398efc601555af50", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/247b7b464615578bea179dbc5957fda489fabae512fb5d90e34a50c4843127ca", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("fi"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/c9b34df3944b02662c90961d0f2f99c721d14d8eec657ea0f1eb6e8e382ec43f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/7542e78fbb78019d8477d953c7a65943dec6c7e8b5388469f17b5daed649f953", state: state.snapshot())
         }
-        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06") {
+        if __meridianShouldRun("/CitationFixerInput/find-candidate-pages/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3") {
             // L144
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("done"),
                 ],
-                step: "/CitationFixerInput/find-candidate-pages/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06",
+                step: "/CitationFixerInput/find-candidate-pages/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/febbeabf328cf0917eb2f87b753fa32cc74c26cf3a18c9a3e237817543066c06", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CitationFixerInput/find-candidate-pages/procedure/2b0ceeb4a0d235d7947497b45d3510ab2c84873bd833ba838e9c771cc3ef81b3", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "CitationFixerInput.complete")
@@ -826,12 +826,12 @@ public struct WhenFixcitationsFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenFixcitationsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f") {
+        if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/5fd54b3c4e95ae584786adeed68c3ac9c1dbc10b2506c72bb00ac8672ac3e83f") {
             // L1
             try await runtime.wait(.event("fixCitations", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenFixcitationsFires/root/procedure/38ca3bc049df8e707accaff30d5e1b218bee6655e889f7aa6f8f99af3a8bbd9f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFixcitationsFires/root/procedure/5fd54b3c4e95ae584786adeed68c3ac9c1dbc10b2506c72bb00ac8672ac3e83f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80") {
+        if __meridianShouldRun("/WhenFixcitationsFires/root/procedure/9f54996d8c3c49deeb7e9d0767740556247552d9f6e007cd117e84c9fa128d98") {
             // L1
             try await runtime.emit(
                 event: "trigger.fixCitations.fired",
@@ -839,9 +839,9 @@ public struct WhenFixcitationsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("fix citations"),
                 ],
-                step: "/WhenFixcitationsFires/root/procedure/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80"
+                step: "/WhenFixcitationsFires/root/procedure/9f54996d8c3c49deeb7e9d0767740556247552d9f6e007cd117e84c9fa128d98"
             )
-            try await runtime.checkpoint(label: "/WhenFixcitationsFires/root/procedure/def44a4bf6a095dcf373591d4ce974b49b39af54e804d78f81ca837e36562a80", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFixcitationsFires/root/procedure/9f54996d8c3c49deeb7e9d0767740556247552d9f6e007cd117e84c9fa128d98", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenFixcitationsFires.complete")
@@ -900,12 +900,12 @@ public struct WhenFixbrokencitationsFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenFixbrokencitationsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f") {
+        if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/cb8e672ca8b1c19c48c5232de5ad1c2c0440b075f4a286d1e9bbf8003b982012") {
             // L1
             try await runtime.wait(.event("fixBrokenCitations", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenFixbrokencitationsFires/root/procedure/17c0f5c62c80e1d9f426aa146d190b28b0c313079282be470869a52f5d2ea47f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFixbrokencitationsFires/root/procedure/cb8e672ca8b1c19c48c5232de5ad1c2c0440b075f4a286d1e9bbf8003b982012", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6") {
+        if __meridianShouldRun("/WhenFixbrokencitationsFires/root/procedure/f81c66754d658c3b14b24cff01cf74966e7ae3f6f2276be5b499e85264954c8c") {
             // L1
             try await runtime.emit(
                 event: "trigger.fixBrokenCitations.fired",
@@ -913,9 +913,9 @@ public struct WhenFixbrokencitationsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("fix broken citations"),
                 ],
-                step: "/WhenFixbrokencitationsFires/root/procedure/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6"
+                step: "/WhenFixbrokencitationsFires/root/procedure/f81c66754d658c3b14b24cff01cf74966e7ae3f6f2276be5b499e85264954c8c"
             )
-            try await runtime.checkpoint(label: "/WhenFixbrokencitationsFires/root/procedure/db48d49a463e541ed1ce645caa9e8d5f0c488e9a6568ed81da5caf83381ed2b6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenFixbrokencitationsFires/root/procedure/f81c66754d658c3b14b24cff01cf74966e7ae3f6f2276be5b499e85264954c8c", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenFixbrokencitationsFires.complete")
@@ -974,12 +974,12 @@ public struct WhenCitationauditFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCitationauditFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCitationauditFires/root/procedure/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412") {
+        if __meridianShouldRun("/WhenCitationauditFires/root/procedure/c0ca569ff2aa668159ef1c2864aa25c6e9228a924ef4cb15556ef46773e2474f") {
             // L1
             try await runtime.wait(.event("citationAudit", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCitationauditFires/root/procedure/4594f5491431404a7f4eeadacb85dc2d58dc3834cacf597baae6e02e324a8412", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCitationauditFires/root/procedure/c0ca569ff2aa668159ef1c2864aa25c6e9228a924ef4cb15556ef46773e2474f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCitationauditFires/root/procedure/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0") {
+        if __meridianShouldRun("/WhenCitationauditFires/root/procedure/04133f14aabfe3117698d45f5537f78ae54d9a78cb0d29a70c4c6c1bd0d4c10b") {
             // L1
             try await runtime.emit(
                 event: "trigger.citationAudit.fired",
@@ -987,9 +987,9 @@ public struct WhenCitationauditFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("citation audit"),
                 ],
-                step: "/WhenCitationauditFires/root/procedure/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0"
+                step: "/WhenCitationauditFires/root/procedure/04133f14aabfe3117698d45f5537f78ae54d9a78cb0d29a70c4c6c1bd0d4c10b"
             )
-            try await runtime.checkpoint(label: "/WhenCitationauditFires/root/procedure/e88c96b3d4eaa11bd4a7f9c238cafe3ec971298d0887458caf77abc13d87d1e0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCitationauditFires/root/procedure/04133f14aabfe3117698d45f5537f78ae54d9a78cb0d29a70c4c6c1bd0d4c10b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCitationauditFires.complete")
@@ -1048,12 +1048,12 @@ public struct WhenCheckcitationsFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCheckcitationsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21") {
+        if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/f28fa6932d2b87e5741f3e9459b8618c94963d02e52b64722c97e2b459c7b21f") {
             // L1
             try await runtime.wait(.event("checkCitations", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckcitationsFires/root/procedure/06d357ca5391fd85c2e55f2bd7a3ffc5fbd9f6d8579bdc113bdf72851ddeeb21", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckcitationsFires/root/procedure/f28fa6932d2b87e5741f3e9459b8618c94963d02e52b64722c97e2b459c7b21f", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16") {
+        if __meridianShouldRun("/WhenCheckcitationsFires/root/procedure/46048cff1996adcb099e6031809f2db5c643c0c6d2aef3ec0d5bbc5ddfb46498") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkCitations.fired",
@@ -1061,9 +1061,9 @@ public struct WhenCheckcitationsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check citations"),
                 ],
-                step: "/WhenCheckcitationsFires/root/procedure/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16"
+                step: "/WhenCheckcitationsFires/root/procedure/46048cff1996adcb099e6031809f2db5c643c0c6d2aef3ec0d5bbc5ddfb46498"
             )
-            try await runtime.checkpoint(label: "/WhenCheckcitationsFires/root/procedure/3e0f024a8c7b0cc1fb07a1e572aff47c0c8c0f5bcef1fe32eff001488aacdd16", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckcitationsFires/root/procedure/46048cff1996adcb099e6031809f2db5c643c0c6d2aef3ec0d5bbc5ddfb46498", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckcitationsFires.complete")
@@ -1122,12 +1122,12 @@ public struct WhenCitationfixerFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCitationfixerFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b") {
+        if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/748934ebe6e95b3120da167b1d35e7a16af6c9856d78afedc3b2a179387c35b2") {
             // L1
             try await runtime.wait(.event("citationFixer", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCitationfixerFires/root/procedure/7bc4a469560562996532be88d612d4fb73a6bc29aa23b2b10061650b54bc4a0b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCitationfixerFires/root/procedure/748934ebe6e95b3120da167b1d35e7a16af6c9856d78afedc3b2a179387c35b2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d") {
+        if __meridianShouldRun("/WhenCitationfixerFires/root/procedure/04ff74ac8d0b7bf090bbbb0dab1c9f65b861781f0e5d359557e867052f7b8a50") {
             // L1
             try await runtime.emit(
                 event: "trigger.citationFixer.fired",
@@ -1135,9 +1135,9 @@ public struct WhenCitationfixerFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("citation fixer"),
                 ],
-                step: "/WhenCitationfixerFires/root/procedure/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d"
+                step: "/WhenCitationfixerFires/root/procedure/04ff74ac8d0b7bf090bbbb0dab1c9f65b861781f0e5d359557e867052f7b8a50"
             )
-            try await runtime.checkpoint(label: "/WhenCitationfixerFires/root/procedure/023e04533552095dd434946fc87737ec1fcb0c6e124f25e281b5eb271e10b91d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCitationfixerFires/root/procedure/04ff74ac8d0b7bf090bbbb0dab1c9f65b861781f0e5d359557e867052f7b8a50", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCitationfixerFires.complete")

@@ -3111,3 +3111,47 @@ rather than as one `swift test` invocation (environment kills, not code);
 
 **STATUS:** Phase 1 DONE — awaiting user sign-off before Phase 2 (IR
 serialization/equality).
+
+## 2026-10-07 — Simplification Phase 2: one IR serialization and one IR equality
+
+**Shipped:** `IR/IRFingerprint.swift` (new, 38 lines) replaces
+`TraceIdentityPlanner`'s ~430-line private `Value` serializer;
+`IR/IRNormalizer.swift` (new, 558 lines) replaces `IREquality`'s 700-line
+hand-written comparison; `IREquality.swift` is now a 194-line facade whose
+overloads are `IRNormalizer.normalized(a) == IRNormalizer.normalized(b)`.
+`TraceIdentityPlanner` is down from 808 to 375 lines.
+`DescriptionIR.sort` / `IRIterationRefinement.sort` became `IRSortSpec`
+(synthesized `Codable`/`Equatable` need a real type), and every IR type in
+`IRTypes.swift` is now `Equatable, Codable` (synthesized — no custom
+encoders). `IRSidecarEmitter` was NOT touched: it emits verbalized canonical
+text, not IR serialization, so there was no duplication to remove there.
+
+**Fingerprint semantics — beyond the approved "values change once":** the new
+fingerprint hashes the whole primitive minus `sourceRange`/`sourceFile`/
+`stableStepPath`, so it now also covers fields the hand-written serializer
+omitted — `branch.unknownBlock`/`unknownPolicy`/`authoredForm`/`deonticGuard`,
+`assert.normID`/`violationDisposition`, `invoke.comment` — and no longer
+whitespace-collapses AI prose (`normalizeText`) nor sorts `scopedTools`/
+`snapshotKeys`. Direction of the change is *stricter* identity (more fields
+distinguish steps); all step paths are regenerated consistently, so runtime
+monitors, drift and the manifest stay internally consistent.
+
+**Normalizer fidelity:** `IRNormalizer` was written against `IREquality` as
+the spec; spot-checked field-by-field for `assert` (message not compared,
+normID/violationDisposition compared), `invoke` (comment not compared),
+`branch` (unknownBlock/unknownPolicy/authoredForm/deonticGuard compared),
+`aiJudgment` (prose line-normalized, tool/key lists plain-compared, outputKind
+not compared) and `norm` (id/originalText plain, scope/condition normalized).
+The verbalizer round-trip suites (the real oracle) pass unchanged.
+
+**Regenerated:** `examples/golden/order_processing_expected.swift` + 19
+`examples/golden/skill/*`, all seven corpora `compile-outputs/`, and the
+committed demo (byte-identical to the golden).
+
+**Validation:** fast suite 2728 tests / 349 suites, 0 failures;
+`GeneratedSwiftTypecheckSlowTests` green; `scripts/coverage.swift --gate`
+green after re-basing `IREquality.swift` (facade, observed 46.67% → floor
+45.50) and adding a floor for the new `IRNormalizer.swift` (observed 94.77% →
+93.50).
+
+**STATUS:** Phase 2 DONE — Phase 3 (one compiler pipeline) next.

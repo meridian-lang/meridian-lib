@@ -382,85 +382,85 @@ public struct DedupeUpsert: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "DedupeUpsert", parameters: [:])
 
-        if __meridianShouldRun("/DedupeUpsert/assertions/invariants/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547") {
+        if __meridianShouldRun("/DedupeUpsert/assertions/invariants/824a7f939e9dc2004f04bb9855d20e915df4857494bb8356f5532324d0d9f8a0") {
             // L48
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).count <= 5), message: "Expected at most 5 datasets whose status is \"duplicate\"")
-            try await runtime.checkpoint(label: "/DedupeUpsert/assertions/invariants/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/assertions/invariants/824a7f939e9dc2004f04bb9855d20e915df4857494bb8356f5532324d0d9f8a0", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L29
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/DedupeUpsert/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/DedupeUpsert/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547") {
+        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/824a7f939e9dc2004f04bb9855d20e915df4857494bb8356f5532324d0d9f8a0") {
             // L30
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("duplicate"))) }).count <= 5), message: "Expected at most 5 datasets whose status is \"duplicate\"")
-            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/f00e7e6dd5bc2dfface110d8213895e20821826d843af856c0274c7916893547", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/824a7f939e9dc2004f04bb9855d20e915df4857494bb8356f5532324d0d9f8a0", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/e0b94431076ae76606a926f60c571d34811e0f04c9cc3b3b2049917b544489c6") {
+        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/aa8088c943f5baa81883b151b4d71e07495427b0f7e5542946bc76c953c77144") {
             // L31
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("stale"))) }).count >= 0), message: "Expected at least 0 datasets whose status is \"stale\"")
-            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/e0b94431076ae76606a926f60c571d34811e0f04c9cc3b3b2049917b544489c6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/aa8088c943f5baa81883b151b4d71e07495427b0f7e5542946bc76c953c77144", state: state.snapshot())
         }
-        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/b3c62bc2077c7ef880887237078befdadd3724e6d1819637d32ddcd43dd69b9c") {
+        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/021f17ddbc8c2206a8f6f5f946a996a58da30c6d3ccfc3caf81a2772b6150e29") {
             // L32
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("canonical"))) }).count == 1), message: "Expected exactly 1 dataset whose status is \"canonical\"")
-            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/b3c62bc2077c7ef880887237078befdadd3724e6d1819637d32ddcd43dd69b9c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/021f17ddbc8c2206a8f6f5f946a996a58da30c6d3ccfc3caf81a2772b6150e29", state: state.snapshot())
         }
         // L33
         let __meridianColl_0_5 = (state.get("datasets")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/DedupeUpsert/workflow-steps/procedure/d70548218835de3faeb203c7cb9053766f540e4cb3cbe8a48864cc6b25c1a857")
+        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/DedupeUpsert/workflow-steps/procedure/eb1f6e88b9a17833457fcc87fb332d816eedae6e9982f63e455bb7fd97a1d050")
         for (__meridianLoopIndex_0_5, dataset) in __meridianColl_0_5.enumerated() {
             let __meridianLoopLabel_0_5 = "progress:0.5:iteration:\(__meridianLoopIndex_0_5)"
             if __meridianShouldRun(__meridianLoopLabel_0_5) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/DedupeUpsert/workflow-steps/procedure/d70548218835de3faeb203c7cb9053766f540e4cb3cbe8a48864cc6b25c1a857")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_5, step: "/DedupeUpsert/workflow-steps/procedure/eb1f6e88b9a17833457fcc87fb332d816eedae6e9982f63e455bb7fd97a1d050")
             state.bind("dataset", dataset)
                 // L34
                 if (meridianDef_Dataset_stale(state.get("dataset"))) || (MeridianComparison.eq(state.get("dataset.status"), .string("duplicate"))) {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Dataset_stale(state.get(\"dataset\"))) || (MeridianComparison.eq(state.get(\"dataset.status\"), .string(\"duplicate\")))", into: "then", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
-                    if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/branch.then/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9") {
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Dataset_stale(state.get(\"dataset\"))) || (MeridianComparison.eq(state.get(\"dataset.status\"), .string(\"duplicate\")))", into: "then", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/adb684d50bdab236dd25ef6a0e2a503f0080027d3b8c7b5d3484c892fcac708a")
+                    if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/branch.then/9dfdcc5973174a7b5d330b2e0223b509a6126cb6835e278329d3a810c19371bc") {
                         // L35
                         let recordsInDataset = try await runtime.invoke(
                             tool: "record.dedupe",
                             args: [
                                 "dataset": state.get("dataset") ?? .null,
                             ],
-                            step: "/DedupeUpsert/workflow-steps/procedure/branch.then/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9",
+                            step: "/DedupeUpsert/workflow-steps/procedure/branch.then/9dfdcc5973174a7b5d330b2e0223b509a6126cb6835e278329d3a810c19371bc",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "record.dedupe")
                         )
                         state.bind("recordsInDataset", recordsInDataset)
 
-                        try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.then/fd075b40343c4b03a603b2f32b33f4f59068e3923ab82ac29ac48ed74a6b86d9", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.then/9dfdcc5973174a7b5d330b2e0223b509a6126cb6835e278329d3a810c19371bc", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
+                    try await runtime.recordBranchEnded(into: "then", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/adb684d50bdab236dd25ef6a0e2a503f0080027d3b8c7b5d3484c892fcac708a")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "(meridianDef_Dataset_stale(state.get(\"dataset\"))) || (MeridianComparison.eq(state.get(\"dataset.status\"), .string(\"duplicate\")))", into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
+                    try await runtime.recordBranchTaken(condition: "(meridianDef_Dataset_stale(state.get(\"dataset\"))) || (MeridianComparison.eq(state.get(\"dataset.status\"), .string(\"duplicate\")))", into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/adb684d50bdab236dd25ef6a0e2a503f0080027d3b8c7b5d3484c892fcac708a")
 
-                    if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/branch.else/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509") {
+                    if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/branch.else/07ba1a7829c0db691e55553127df3ec72a5d6caf2469ed5f43ca3ae579a23035") {
                         // L37
                         try await runtime.assert(MeridianComparison.neq(state.get("dataset.status"), .string("is-blocked")), message: "Expected the dataset's status is not \"is-blocked\"")
-                        try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.else/7e9dbb5429eafd2bfa587a0c490c8db33a9df2a67b2da6bf74b1e64463d44509", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/branch.else/07ba1a7829c0db691e55553127df3ec72a5d6caf2469ed5f43ca3ae579a23035", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/5f6817c537cb28256e86c4ed6e1b549f3f7424208cc4b7f8dfcbc3baec55dd03")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/DedupeUpsert/workflow-steps/procedure/iterate.body/adb684d50bdab236dd25ef6a0e2a503f0080027d3b8c7b5d3484c892fcac708a")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_5, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_5.count, step: "/DedupeUpsert/workflow-steps/procedure/d70548218835de3faeb203c7cb9053766f540e4cb3cbe8a48864cc6b25c1a857")
+        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_5.count, step: "/DedupeUpsert/workflow-steps/procedure/eb1f6e88b9a17833457fcc87fb332d816eedae6e9982f63e455bb7fd97a1d050")
 
-        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/bc812a60faef22f7ebff65124d02aa6e4142c8f91bb95b6d77532f211d474e4e") {
+        if __meridianShouldRun("/DedupeUpsert/workflow-steps/procedure/9a6829a4cfd030b4a0ed9bde89bf38791dca7e52916e9b57760b2069622446a0") {
             // L38
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("dedupe upsert pass complete"),
                 ],
-                step: "/DedupeUpsert/workflow-steps/procedure/bc812a60faef22f7ebff65124d02aa6e4142c8f91bb95b6d77532f211d474e4e"
+                step: "/DedupeUpsert/workflow-steps/procedure/9a6829a4cfd030b4a0ed9bde89bf38791dca7e52916e9b57760b2069622446a0"
             )
-            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/bc812a60faef22f7ebff65124d02aa6e4142c8f91bb95b6d77532f211d474e4e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/DedupeUpsert/workflow-steps/procedure/9a6829a4cfd030b4a0ed9bde89bf38791dca7e52916e9b57760b2069622446a0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "DedupeUpsert.complete")
@@ -520,12 +520,12 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenDedupedatasetsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936") {
+        if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/3fdaee809a3300cbe2a172475457475b1a50412cf94883f54b2478197ec4931d") {
             // L1
             try await runtime.wait(.event("dedupeDatasets", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDedupedatasetsFires/root/procedure/f54160f92d9f24d73f18f40b944a3e93bc27a9109a63d26ad7ae53502109d936", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDedupedatasetsFires/root/procedure/3fdaee809a3300cbe2a172475457475b1a50412cf94883f54b2478197ec4931d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1") {
+        if __meridianShouldRun("/WhenDedupedatasetsFires/root/procedure/165a5edab035203aaef33af5f06438d38bf6708ffd806d6b8c50b45299fa5795") {
             // L1
             try await runtime.emit(
                 event: "trigger.dedupeDatasets.fired",
@@ -533,9 +533,9 @@ public struct WhenDedupedatasetsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("dedupe datasets"),
                 ],
-                step: "/WhenDedupedatasetsFires/root/procedure/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1"
+                step: "/WhenDedupedatasetsFires/root/procedure/165a5edab035203aaef33af5f06438d38bf6708ffd806d6b8c50b45299fa5795"
             )
-            try await runtime.checkpoint(label: "/WhenDedupedatasetsFires/root/procedure/64349ec79c1b0a7c9ab93df712662e2af2df480ea7e692b6a9f1c093148976d1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDedupedatasetsFires/root/procedure/165a5edab035203aaef33af5f06438d38bf6708ffd806d6b8c50b45299fa5795", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDedupedatasetsFires.complete")
@@ -595,12 +595,12 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRundedupeupsertFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd") {
+        if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/205a080538ebddac1009f5e05284a100727096842e50a08bd91a6c9bea16e82d") {
             // L1
             try await runtime.wait(.event("runDedupeUpsert", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRundedupeupsertFires/root/procedure/8ad899ad51b18275a3d5aacad3459425f57a1adedf89727f7b46ae83916821dd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundedupeupsertFires/root/procedure/205a080538ebddac1009f5e05284a100727096842e50a08bd91a6c9bea16e82d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32") {
+        if __meridianShouldRun("/WhenRundedupeupsertFires/root/procedure/90362ff2dd12e13d2114f911c7d96aac2d72905168c4df5e04b0cfd51050ef8a") {
             // L1
             try await runtime.emit(
                 event: "trigger.runDedupeUpsert.fired",
@@ -608,9 +608,9 @@ public struct WhenRundedupeupsertFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run dedupe upsert"),
                 ],
-                step: "/WhenRundedupeupsertFires/root/procedure/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32"
+                step: "/WhenRundedupeupsertFires/root/procedure/90362ff2dd12e13d2114f911c7d96aac2d72905168c4df5e04b0cfd51050ef8a"
             )
-            try await runtime.checkpoint(label: "/WhenRundedupeupsertFires/root/procedure/c6c96610de47b472fc5e87b1a4201cd7773a0b1098fdab3fd087383cfe7f7e32", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRundedupeupsertFires/root/procedure/90362ff2dd12e13d2114f911c7d96aac2d72905168c4df5e04b0cfd51050ef8a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRundedupeupsertFires.complete")
@@ -670,12 +670,12 @@ public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCollapseduplicatedatasetsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe") {
+        if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/836f43139d2910501a39800147a8268806ee289fe64f7ce8cdec0e1cbceeb74e") {
             // L1
             try await runtime.wait(.event("collapseDuplicateDatasets", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCollapseduplicatedatasetsFires/root/procedure/70351fd132ec3f72039992c37b2e444baadb027cac2db7775e1ff7510cdaacfe", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCollapseduplicatedatasetsFires/root/procedure/836f43139d2910501a39800147a8268806ee289fe64f7ce8cdec0e1cbceeb74e", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b") {
+        if __meridianShouldRun("/WhenCollapseduplicatedatasetsFires/root/procedure/4ed23d17451f58846f69892fd3db4508d569906e6d91e23d67c515069ac607b4") {
             // L1
             try await runtime.emit(
                 event: "trigger.collapseDuplicateDatasets.fired",
@@ -683,9 +683,9 @@ public struct WhenCollapseduplicatedatasetsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("collapse duplicate datasets"),
                 ],
-                step: "/WhenCollapseduplicatedatasetsFires/root/procedure/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b"
+                step: "/WhenCollapseduplicatedatasetsFires/root/procedure/4ed23d17451f58846f69892fd3db4508d569906e6d91e23d67c515069ac607b4"
             )
-            try await runtime.checkpoint(label: "/WhenCollapseduplicatedatasetsFires/root/procedure/f989a57d1e974bd3ba990ad96270115528506da7585ad3842bd4e110a2710c4b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCollapseduplicatedatasetsFires/root/procedure/4ed23d17451f58846f69892fd3db4508d569906e6d91e23d67c515069ac607b4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCollapseduplicatedatasetsFires.complete")

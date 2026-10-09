@@ -1,108 +1,108 @@
 {
   "entries" : [
     {
-      "canonical" : "emit trigger.adversarialReview.fired with kind = \"keyword\", spec = \"adversarial review\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenAdversarialreviewFires\/root\/procedure\/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3",
-      "swift_line" : 1090
-    },
-    {
       "canonical" : "wait for event adversarialReview.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenAdversarialreviewFires\/root\/procedure\/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06",
+      "stable_step_path" : "\/WhenAdversarialreviewFires\/root\/procedure\/643beeef252b35752c0535f93e0536381e2d8627073e03886d1410d54487b8d3",
       "swift_line" : 1090
     },
     {
-      "canonical" : "emit trigger.challengeThisCode.fired with kind = \"keyword\", spec = \"challenge this code\".",
+      "canonical" : "emit trigger.adversarialReview.fired with kind = \"keyword\", spec = \"adversarial review\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenChallengethiscodeFires\/root\/procedure\/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd",
+      "stable_step_path" : "\/WhenAdversarialreviewFires\/root\/procedure\/73ce699ed6b03b1f735914995d019ec7f43db10ef85baabe55c44c23050a241d",
       "swift_line" : 1090
     },
     {
       "canonical" : "wait for event challengeThisCode.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenChallengethiscodeFires\/root\/procedure\/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873",
+      "stable_step_path" : "\/WhenChallengethiscodeFires\/root\/procedure\/48ff3e22a31472250489fa430ef55329779493115402faabb915a056e5254017",
+      "swift_line" : 1090
+    },
+    {
+      "canonical" : "emit trigger.challengeThisCode.fired with kind = \"keyword\", spec = \"challenge this code\".",
+      "meridian_line" : 1,
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenChallengethiscodeFires\/root\/procedure\/f65fef474cc980a843cbf50160ba0823841585d8682be772501f4e7cf5571e57",
       "swift_line" : 1090
     },
     {
       "canonical" : "wait for event crossModalReview.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenCrossmodalreviewFires\/root\/procedure\/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a",
+      "stable_step_path" : "\/WhenCrossmodalreviewFires\/root\/procedure\/9ec987db3ab5df661d1ff1e46a41d45aa9064513e1574a4987389eeac1ff8c99",
       "swift_line" : 1090
     },
     {
       "canonical" : "emit trigger.crossModalReview.fired with kind = \"keyword\", spec = \"cross-modal review\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenCrossmodalreviewFires\/root\/procedure\/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080",
+      "stable_step_path" : "\/WhenCrossmodalreviewFires\/root\/procedure\/c2b169ac6bc3daae8c893a570944c6c2badb8d9926e213a402c7801116fe26fa",
       "swift_line" : 1090
     },
     {
       "canonical" : "emit trigger.doubleCheckThis.fired with kind = \"keyword\", spec = \"double check this\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenDoublecheckthisFires\/root\/procedure\/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064",
+      "stable_step_path" : "\/WhenDoublecheckthisFires\/root\/procedure\/31b7ab11d169768ae6313845457464667a1c10ac1ac37c83c65dbb116e688a5d",
       "swift_line" : 1090
     },
     {
       "canonical" : "wait for event doubleCheckThis.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenDoublecheckthisFires\/root\/procedure\/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf",
-      "swift_line" : 1090
-    },
-    {
-      "canonical" : "wait for event getAnotherPerspective.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenGetanotherperspectiveFires\/root\/procedure\/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3",
+      "stable_step_path" : "\/WhenDoublecheckthisFires\/root\/procedure\/dd8a25d9f89390fc09f8ebb07e8f928a3f46bb19ecafb8c8272d6a53eb997bec",
       "swift_line" : 1090
     },
     {
       "canonical" : "emit trigger.getAnotherPerspective.fired with kind = \"keyword\", spec = \"get another perspective\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenGetanotherperspectiveFires\/root\/procedure\/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04",
+      "stable_step_path" : "\/WhenGetanotherperspectiveFires\/root\/procedure\/1bc2b89c99221f59239d0471043ebf5ef3f1a53f81084919c5eae636e51e0128",
+      "swift_line" : 1090
+    },
+    {
+      "canonical" : "wait for event getAnotherPerspective.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenGetanotherperspectiveFires\/root\/procedure\/69cd7de6f6cb069deb6f40dadc95533d4d0ff23a3ad39ad5462afabc22b41080",
       "swift_line" : 1090
     },
     {
       "canonical" : "emit trigger.secondOpinion.fired with kind = \"keyword\", spec = \"second opinion\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenSecondopinionFires\/root\/procedure\/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2",
+      "stable_step_path" : "\/WhenSecondopinionFires\/root\/procedure\/0ee8282b229359985842c24b0aca4c0196a77ccbbb6832f38e416e62ab6b5642",
       "swift_line" : 1090
     },
     {
       "canonical" : "wait for event secondOpinion.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenSecondopinionFires\/root\/procedure\/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71",
+      "stable_step_path" : "\/WhenSecondopinionFires\/root\/procedure\/4d752d83e1876cacd1c4b0edc7076f516f9cc8e11b67412db34f9b11fd63dd94",
       "swift_line" : 1090
     },
     {
       "canonical" : "assert review equals the graded against the originating skill's Contract section (what was promised), not vibes.",
       "meridian_line" : 47,
       "primitive" : "assert",
-      "stable_step_path" : "\/CrossModalReviewInput\/contract-steps\/invariants\/eeb9bc7894100c33d995435f15c54c15f14f6eed25b91bb5964b4922f96cfcdc",
+      "stable_step_path" : "\/CrossModalReviewInput\/contract-steps\/invariants\/cbe61a1ccaa12cf463f93eb09fedf881a24ee23fd0b464bdc2c3cf55dd743d5f",
       "swift_line" : 627
     },
     {
       "canonical" : "bind results = invoke page.search with query = the originating skill's Contract.",
       "meridian_line" : 77,
       "primitive" : "invoke",
-      "stable_step_path" : "\/CrossModalReviewInput\/when-to-invoke-v0-25-1-gating-steps\/procedure\/533b6c8ae2652bf7456eda76c1d096d7055ff89b419891fba7e7d2be11ca3d24",
+      "stable_step_path" : "\/CrossModalReviewInput\/when-to-invoke-v0-25-1-gating-steps\/procedure\/370e65a212f03a07406c7bdf38f74092ef095c37e2fdb052903fcf7c125cca82",
       "swift_line" : 632
     },
     {
       "canonical" : "use judgment to follow the Phases — steps guidance:\n  **Grade.** Model evaluates: did the output follow the Contract?\n  Present agreement \/ disagreement to the user. Never\n  auto-apply the reviewer's suggestions\n  For diff review specifically, gstack ships a `\/codex` skill that wraps\n  the OpenAI Codex CLI. Two modes:\n  When to recommend `\/codex review`:\n  use judgment to follow the Codex Review — steps 2 guidance:\n  User decides what to act on. Cross-model agreement is signal, not\n  permission\n  If the primary review model refuses:\n  Switch silently to the next model in the chain (see\n  `conventions\/cross-modal.yaml`)\n  If ALL models in the chain refuse, escalate to the user\n  gstack `\/codex` — the actual Codex CLI wrapper this skill hands off\n  to for diff-review mode. Cross-modal-review knows WHEN to invoke;\n  \/codex knows HOW\n  `skills\/testing\/SKILL.md` — runs the project test suite; complementary\n  signal for \"is this commit safe to land\"\n  `skills\/conventions\/cross-modal.yaml` — review pairs + refusal routing",
       "meridian_line" : 93,
       "primitive" : "aiJudgment",
-      "stable_step_path" : "\/CrossModalReviewInput\/phases-steps\/procedure\/718bd5ef4dc0fc623315f10ac82bc5fd91b941e28d2980924b0622fbc87dacac",
+      "stable_step_path" : "\/CrossModalReviewInput\/phases-steps\/procedure\/a8f0365eede39e899343593c9d8c2075f26f2b969132df89e124cabcc4eeb77f",
       "swift_line" : 645
     }
   ],

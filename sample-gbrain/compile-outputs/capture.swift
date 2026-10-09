@@ -621,103 +621,103 @@ public struct CaptureInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CaptureInput", parameters: [:])
 
-        if __meridianShouldRun("/CaptureInput/anti-patterns-steps/prohibitions/42404dec768f372b8e35382f6adb7989a200f3dc80aff6a3a88c72d22fa3a745") {
+        if __meridianShouldRun("/CaptureInput/anti-patterns-steps/prohibitions/cd5e42f4f68b91849a07cacd0237ed9a66d5351d69c1c9a80bdd264e58a485ef") {
             // L97
             try await runtime.assert(!(MeridianComparison.eq(state.get("(don'tTryToBulkImportDozensOfFilesByLoopingOver`gbrainCapture`.That.what`gbrainSync`(or`gbrainImport`)"), state.get("for.CaptureIsForSingleThoughts,SingleNotes,SingleTranscripts)"))), message: "Expected not (Don't try to bulk-import dozens of files by looping over `gbrain capture`. That's what `gbrain sync` (or `gbrain import`) is for. Capture is for single thoughts, single notes, single transcripts)")
-            try await runtime.checkpoint(label: "/CaptureInput/anti-patterns-steps/prohibitions/42404dec768f372b8e35382f6adb7989a200f3dc80aff6a3a88c72d22fa3a745", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/anti-patterns-steps/prohibitions/cd5e42f4f68b91849a07cacd0237ed9a66d5351d69c1c9a80bdd264e58a485ef", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/2fbc06055a6c3e7d886757e26bd411c249147c8d37cd915327d0284d165da63a") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/187dc1d9f2093c32722162a2eb1d1b2408c110b61368af3079e3c447174d9528") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture \"the thought I want to remember\""),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/2fbc06055a6c3e7d886757e26bd411c249147c8d37cd915327d0284d165da63a",
+                step: "/CaptureInput/how-to-use/procedure/187dc1d9f2093c32722162a2eb1d1b2408c110b61368af3079e3c447174d9528",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/2fbc06055a6c3e7d886757e26bd411c249147c8d37cd915327d0284d165da63a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/187dc1d9f2093c32722162a2eb1d1b2408c110b61368af3079e3c447174d9528", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/a59086d0a238b003d305ff0af776ba4a4a586356675b924015687b0a6ad721bb") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/9190e1151357f3784b59b88f3d7d3a39634c609380c5b270868afa06db5a5598") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture --file ./notes/today.md"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/a59086d0a238b003d305ff0af776ba4a4a586356675b924015687b0a6ad721bb",
+                step: "/CaptureInput/how-to-use/procedure/9190e1151357f3784b59b88f3d7d3a39634c609380c5b270868afa06db5a5598",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/a59086d0a238b003d305ff0af776ba4a4a586356675b924015687b0a6ad721bb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/9190e1151357f3784b59b88f3d7d3a39634c609380c5b270868afa06db5a5598", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/ce7d687dd55e36246e89bf54ff37127f1c7efaccf0e5f12da72264bd1cfa9892") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/07cf360b342bcd26ddd2e9b7183f1e6725bf31ff564e6621f4e8051f6e30afe4") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("echo \"from a pipe\" | gbrain capture --stdin"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/ce7d687dd55e36246e89bf54ff37127f1c7efaccf0e5f12da72264bd1cfa9892",
+                step: "/CaptureInput/how-to-use/procedure/07cf360b342bcd26ddd2e9b7183f1e6725bf31ff564e6621f4e8051f6e30afe4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/ce7d687dd55e36246e89bf54ff37127f1c7efaccf0e5f12da72264bd1cfa9892", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/07cf360b342bcd26ddd2e9b7183f1e6725bf31ff564e6621f4e8051f6e30afe4", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/67aa203386b250f5e67e936f2b83a3bdb0169338718173a00ee90d91e674b2f1") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/7056f3cef4c6c9c28d33a1786ec98f7daf64d8b39d7283d1967f0fde8dc35e85") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture \"...\" --slug daily/2026-05-21"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/67aa203386b250f5e67e936f2b83a3bdb0169338718173a00ee90d91e674b2f1",
+                step: "/CaptureInput/how-to-use/procedure/7056f3cef4c6c9c28d33a1786ec98f7daf64d8b39d7283d1967f0fde8dc35e85",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/67aa203386b250f5e67e936f2b83a3bdb0169338718173a00ee90d91e674b2f1", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/7056f3cef4c6c9c28d33a1786ec98f7daf64d8b39d7283d1967f0fde8dc35e85", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/7b4758c66a23f8c936e096bef97423bef41db3d1302154bc3728b31d52233e35") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/954144af0860f75c6f982510ec0c4baddf0689af87b076866593ef69720cd92f") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture \"...\" --type idea --source voice-whisper"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/7b4758c66a23f8c936e096bef97423bef41db3d1302154bc3728b31d52233e35",
+                step: "/CaptureInput/how-to-use/procedure/954144af0860f75c6f982510ec0c4baddf0689af87b076866593ef69720cd92f",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/7b4758c66a23f8c936e096bef97423bef41db3d1302154bc3728b31d52233e35", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/954144af0860f75c6f982510ec0c4baddf0689af87b076866593ef69720cd92f", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/98862db9187a2b4ae6c5a4a8f583f312dfa130c497aa3ce3611a89961be14b4d") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/85274fdf30e6b8033ff58ee3e282ab76f45e52f023ec87f5544734d4b34fe45c") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture \"...\" --quiet          # script-friendly: prints just the slug"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/98862db9187a2b4ae6c5a4a8f583f312dfa130c497aa3ce3611a89961be14b4d",
+                step: "/CaptureInput/how-to-use/procedure/85274fdf30e6b8033ff58ee3e282ab76f45e52f023ec87f5544734d4b34fe45c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/98862db9187a2b4ae6c5a4a8f583f312dfa130c497aa3ce3611a89961be14b4d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/85274fdf30e6b8033ff58ee3e282ab76f45e52f023ec87f5544734d4b34fe45c", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/ee36b4526b53370671f183caaec13008d9ba1602fec6cf8d9eef01beb2c7e6e0") {
+        if __meridianShouldRun("/CaptureInput/how-to-use/procedure/f5637467c743d88252371c44de99d91828ba5a5e4196ff2b5711ef57ce1d04fc") {
             // L50
             _ = try await runtime.invoke(
                 tool: "shell.run",
                 args: [
                     "command": .string("gbrain capture \"...\" --json           # structured output for agents"),
                 ],
-                step: "/CaptureInput/how-to-use/procedure/ee36b4526b53370671f183caaec13008d9ba1602fec6cf8d9eef01beb2c7e6e0",
+                step: "/CaptureInput/how-to-use/procedure/f5637467c743d88252371c44de99d91828ba5a5e4196ff2b5711ef57ce1d04fc",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/ee36b4526b53370671f183caaec13008d9ba1602fec6cf8d9eef01beb2c7e6e0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/how-to-use/procedure/f5637467c743d88252371c44de99d91828ba5a5e4196ff2b5711ef57ce1d04fc", state: state.snapshot())
         }
-        if __meridianShouldRun("/CaptureInput/when-not-to-use-this-skill-steps/procedure/e82e7ccd8c8d2211b20d84043e946de94d40d685e88c0f90276dd78e5eab12fa") {
+        if __meridianShouldRun("/CaptureInput/when-not-to-use-this-skill-steps/procedure/c95d4e71ec2c3193f173d16063d5a6ab66fa1de7234d4b38f4a9d322aee44383") {
             // L112
             // Meeting transcripts →  (attendee enrichment)
             _ = try await runtime.invoke(
@@ -725,11 +725,11 @@ public struct CaptureInput: MeridianWorkflow {
                 args: [
                     "command": .string("skills/meeting-ingestion/SKILL.md"),
                 ],
-                step: "/CaptureInput/when-not-to-use-this-skill-steps/procedure/e82e7ccd8c8d2211b20d84043e946de94d40d685e88c0f90276dd78e5eab12fa",
+                step: "/CaptureInput/when-not-to-use-this-skill-steps/procedure/c95d4e71ec2c3193f173d16063d5a6ab66fa1de7234d4b38f4a9d322aee44383",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "shell.run")
             )
 
-            try await runtime.checkpoint(label: "/CaptureInput/when-not-to-use-this-skill-steps/procedure/e82e7ccd8c8d2211b20d84043e946de94d40d685e88c0f90276dd78e5eab12fa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CaptureInput/when-not-to-use-this-skill-steps/procedure/c95d4e71ec2c3193f173d16063d5a6ab66fa1de7234d4b38f4a9d322aee44383", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "CaptureInput.complete")
@@ -788,12 +788,12 @@ public struct WhenCapturethisFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCapturethisFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCapturethisFires/root/procedure/49a74f7a6d6f45a428abb0b576bd3c347af24f4e79e00731fa36ffd82cb7ac60") {
+        if __meridianShouldRun("/WhenCapturethisFires/root/procedure/f7e35a3aee2667a7da19e299b0ef0ef5655e459812160dd5c26fb5479750e718") {
             // L1
             try await runtime.wait(.event("captureThis", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCapturethisFires/root/procedure/49a74f7a6d6f45a428abb0b576bd3c347af24f4e79e00731fa36ffd82cb7ac60", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCapturethisFires/root/procedure/f7e35a3aee2667a7da19e299b0ef0ef5655e459812160dd5c26fb5479750e718", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCapturethisFires/root/procedure/42725775ea1e6bb90eb2fdc12888dcb0b2fa236d591a501f1c1dbbfd63ba3a0f") {
+        if __meridianShouldRun("/WhenCapturethisFires/root/procedure/e622a4a7a0eb82a8c471a2365e9384f17ecd20008e5952928806785801ead966") {
             // L1
             try await runtime.emit(
                 event: "trigger.captureThis.fired",
@@ -801,9 +801,9 @@ public struct WhenCapturethisFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("capture this"),
                 ],
-                step: "/WhenCapturethisFires/root/procedure/42725775ea1e6bb90eb2fdc12888dcb0b2fa236d591a501f1c1dbbfd63ba3a0f"
+                step: "/WhenCapturethisFires/root/procedure/e622a4a7a0eb82a8c471a2365e9384f17ecd20008e5952928806785801ead966"
             )
-            try await runtime.checkpoint(label: "/WhenCapturethisFires/root/procedure/42725775ea1e6bb90eb2fdc12888dcb0b2fa236d591a501f1c1dbbfd63ba3a0f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCapturethisFires/root/procedure/e622a4a7a0eb82a8c471a2365e9384f17ecd20008e5952928806785801ead966", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCapturethisFires.complete")
@@ -862,12 +862,12 @@ public struct WhenSavethisthoughtFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSavethisthoughtFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSavethisthoughtFires/root/procedure/36aa57236423faa942748f32bb9528120cf01df275c5ad72c34e63a9b2bda679") {
+        if __meridianShouldRun("/WhenSavethisthoughtFires/root/procedure/2dc1ebd7af7baac52803fb672976a0c262b39cf665802da65bcd09e36912a066") {
             // L1
             try await runtime.wait(.event("saveThisThought", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSavethisthoughtFires/root/procedure/36aa57236423faa942748f32bb9528120cf01df275c5ad72c34e63a9b2bda679", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavethisthoughtFires/root/procedure/2dc1ebd7af7baac52803fb672976a0c262b39cf665802da65bcd09e36912a066", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSavethisthoughtFires/root/procedure/794f8e46bd24039a551e487a5402c0055c89d82b9416599616c97321a2a4f7a4") {
+        if __meridianShouldRun("/WhenSavethisthoughtFires/root/procedure/632b42ce65faa6cfd4dc7f52df0276872107c9d4f1f2bb4e91db1dc3435ab4a4") {
             // L1
             try await runtime.emit(
                 event: "trigger.saveThisThought.fired",
@@ -875,9 +875,9 @@ public struct WhenSavethisthoughtFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("save this thought"),
                 ],
-                step: "/WhenSavethisthoughtFires/root/procedure/794f8e46bd24039a551e487a5402c0055c89d82b9416599616c97321a2a4f7a4"
+                step: "/WhenSavethisthoughtFires/root/procedure/632b42ce65faa6cfd4dc7f52df0276872107c9d4f1f2bb4e91db1dc3435ab4a4"
             )
-            try await runtime.checkpoint(label: "/WhenSavethisthoughtFires/root/procedure/794f8e46bd24039a551e487a5402c0055c89d82b9416599616c97321a2a4f7a4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavethisthoughtFires/root/procedure/632b42ce65faa6cfd4dc7f52df0276872107c9d4f1f2bb4e91db1dc3435ab4a4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSavethisthoughtFires.complete")
@@ -936,12 +936,12 @@ public struct WhenRememberthisFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenRememberthisFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRememberthisFires/root/procedure/edd15a893d4025e47c891472af35cd05d0a19b098bc95a265f190c4cbf8bfa80") {
+        if __meridianShouldRun("/WhenRememberthisFires/root/procedure/f303241dbefae0973eecf8fa22716058856a1db34a250cee5495152427f2941a") {
             // L1
             try await runtime.wait(.event("rememberThis", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRememberthisFires/root/procedure/edd15a893d4025e47c891472af35cd05d0a19b098bc95a265f190c4cbf8bfa80", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRememberthisFires/root/procedure/f303241dbefae0973eecf8fa22716058856a1db34a250cee5495152427f2941a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRememberthisFires/root/procedure/ffa2d669dd6718a1d25e46e2d6cd35848b5c249592a4141c54c27ead1862056d") {
+        if __meridianShouldRun("/WhenRememberthisFires/root/procedure/00fa00cd39e447155f43440a92804276272c0c4a67b26560b88b55268ffa4743") {
             // L1
             try await runtime.emit(
                 event: "trigger.rememberThis.fired",
@@ -949,9 +949,9 @@ public struct WhenRememberthisFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("remember this"),
                 ],
-                step: "/WhenRememberthisFires/root/procedure/ffa2d669dd6718a1d25e46e2d6cd35848b5c249592a4141c54c27ead1862056d"
+                step: "/WhenRememberthisFires/root/procedure/00fa00cd39e447155f43440a92804276272c0c4a67b26560b88b55268ffa4743"
             )
-            try await runtime.checkpoint(label: "/WhenRememberthisFires/root/procedure/ffa2d669dd6718a1d25e46e2d6cd35848b5c249592a4141c54c27ead1862056d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRememberthisFires/root/procedure/00fa00cd39e447155f43440a92804276272c0c4a67b26560b88b55268ffa4743", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRememberthisFires.complete")
@@ -1010,12 +1010,12 @@ public struct WhenIngestthismybrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenIngestthismybrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenIngestthismybrainFires/root/procedure/3340fdeefd99dd8a7b7b363489140681e093f0df4cb59a9e77b2d94750b28167") {
+        if __meridianShouldRun("/WhenIngestthismybrainFires/root/procedure/def08de5c1a20f073224603d14914370280978c94e9e3a6843f630113114af1b") {
             // L1
             try await runtime.wait(.event("ingestThisMyBrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenIngestthismybrainFires/root/procedure/3340fdeefd99dd8a7b7b363489140681e093f0df4cb59a9e77b2d94750b28167", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIngestthismybrainFires/root/procedure/def08de5c1a20f073224603d14914370280978c94e9e3a6843f630113114af1b", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenIngestthismybrainFires/root/procedure/36026a777504d920f6880d2963293442ac72527b5c77bcfffe85c579451ee952") {
+        if __meridianShouldRun("/WhenIngestthismybrainFires/root/procedure/18ed1755379cffb53603f8a18168724125e45a9599154e1595a9a48ffbd207b6") {
             // L1
             try await runtime.emit(
                 event: "trigger.ingestThisMyBrain.fired",
@@ -1023,9 +1023,9 @@ public struct WhenIngestthismybrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("ingest this into my brain"),
                 ],
-                step: "/WhenIngestthismybrainFires/root/procedure/36026a777504d920f6880d2963293442ac72527b5c77bcfffe85c579451ee952"
+                step: "/WhenIngestthismybrainFires/root/procedure/18ed1755379cffb53603f8a18168724125e45a9599154e1595a9a48ffbd207b6"
             )
-            try await runtime.checkpoint(label: "/WhenIngestthismybrainFires/root/procedure/36026a777504d920f6880d2963293442ac72527b5c77bcfffe85c579451ee952", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenIngestthismybrainFires/root/procedure/18ed1755379cffb53603f8a18168724125e45a9599154e1595a9a48ffbd207b6", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenIngestthismybrainFires.complete")
@@ -1084,12 +1084,12 @@ public struct WhenDropthisininboxFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDropthisininboxFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDropthisininboxFires/root/procedure/13d9caad6d1946be8eeddf5ee511dd5c0c0b94fa6e370cb2d908f15fdf082254") {
+        if __meridianShouldRun("/WhenDropthisininboxFires/root/procedure/3a61c7d37179b9b466184eb29e63a917ebf5caa438ea81ef8a0723375caa30b6") {
             // L1
             try await runtime.wait(.event("dropThisInInbox", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDropthisininboxFires/root/procedure/13d9caad6d1946be8eeddf5ee511dd5c0c0b94fa6e370cb2d908f15fdf082254", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDropthisininboxFires/root/procedure/3a61c7d37179b9b466184eb29e63a917ebf5caa438ea81ef8a0723375caa30b6", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDropthisininboxFires/root/procedure/6725479209a0b0354c8eb62a8ca896dc118b7896ceafe45f8c451878d0af4c09") {
+        if __meridianShouldRun("/WhenDropthisininboxFires/root/procedure/ffabab4226192160389a356e5ff9dc30c210b93eafe1dd8c61cd0390ade9ff6b") {
             // L1
             try await runtime.emit(
                 event: "trigger.dropThisInInbox.fired",
@@ -1097,9 +1097,9 @@ public struct WhenDropthisininboxFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("drop this in the inbox"),
                 ],
-                step: "/WhenDropthisininboxFires/root/procedure/6725479209a0b0354c8eb62a8ca896dc118b7896ceafe45f8c451878d0af4c09"
+                step: "/WhenDropthisininboxFires/root/procedure/ffabab4226192160389a356e5ff9dc30c210b93eafe1dd8c61cd0390ade9ff6b"
             )
-            try await runtime.checkpoint(label: "/WhenDropthisininboxFires/root/procedure/6725479209a0b0354c8eb62a8ca896dc118b7896ceafe45f8c451878d0af4c09", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDropthisininboxFires/root/procedure/ffabab4226192160389a356e5ff9dc30c210b93eafe1dd8c61cd0390ade9ff6b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDropthisininboxFires.complete")
@@ -1158,12 +1158,12 @@ public struct WhenSavebrainFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSavebrainFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSavebrainFires/root/procedure/2d6caa924b5fa268dc0c4d9103feb1b3494758369e37c2c47d7b56d1833f09ef") {
+        if __meridianShouldRun("/WhenSavebrainFires/root/procedure/5ed25b8317ece162eeaeb2aa39380c1e525d18831bfa30ca264a0bd3564823bc") {
             // L1
             try await runtime.wait(.event("saveBrain", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSavebrainFires/root/procedure/2d6caa924b5fa268dc0c4d9103feb1b3494758369e37c2c47d7b56d1833f09ef", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavebrainFires/root/procedure/5ed25b8317ece162eeaeb2aa39380c1e525d18831bfa30ca264a0bd3564823bc", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSavebrainFires/root/procedure/3747f3d09181caa443945f1c342c2e35ff38e122658a998eacfacfc6b2852240") {
+        if __meridianShouldRun("/WhenSavebrainFires/root/procedure/0a3982e797ccb6d4026df96d4c919064c7f8848098bd730c5aa4c7e68fd0189b") {
             // L1
             try await runtime.emit(
                 event: "trigger.saveBrain.fired",
@@ -1171,9 +1171,9 @@ public struct WhenSavebrainFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("save to brain"),
                 ],
-                step: "/WhenSavebrainFires/root/procedure/3747f3d09181caa443945f1c342c2e35ff38e122658a998eacfacfc6b2852240"
+                step: "/WhenSavebrainFires/root/procedure/0a3982e797ccb6d4026df96d4c919064c7f8848098bd730c5aa4c7e68fd0189b"
             )
-            try await runtime.checkpoint(label: "/WhenSavebrainFires/root/procedure/3747f3d09181caa443945f1c342c2e35ff38e122658a998eacfacfc6b2852240", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSavebrainFires/root/procedure/0a3982e797ccb6d4026df96d4c919064c7f8848098bd730c5aa4c7e68fd0189b", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSavebrainFires.complete")

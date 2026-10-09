@@ -777,80 +777,80 @@ public struct SecurityReviewTriagePullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "SecurityReviewTriagePullRequest", parameters: [:])
 
-        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
-        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57") {
+        if __meridianShouldRun("/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0") {
             let mergeStatus = try await runtime.invoke(
                 tool: "getMergeStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57",
+                step: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getMergeStatus")
             )
             state.bind("mergeStatus", mergeStatus)
 
-            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/3da6cd761f86f21b6c63646346dae522dec8d74867d8e3fb022f0796d9cd0c57", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/open-the-audit-trail/procedure/fc2cd7b4620ca4f906cee0c4aeb4030e4b9e39b954998b578e3e6d76c41525f0", state: state.snapshot())
         }
-        if __meridianShouldRun("/SecurityReviewTriagePullRequest/inspect-comments/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e") {
+        if __meridianShouldRun("/SecurityReviewTriagePullRequest/inspect-comments/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c") {
             let comments = try await runtime.invoke(
                 tool: "listPullRequestComments",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/SecurityReviewTriagePullRequest/inspect-comments/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e",
+                step: "/SecurityReviewTriagePullRequest/inspect-comments/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "listPullRequestComments")
             )
             state.bind("comments", comments)
 
-            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/inspect-comments/procedure/7012cd50579c1e1de8b6cedc4082087265e3f1f99d5828d61530211e6f8d645e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/inspect-comments/procedure/8198e9848ca737771ac8845e867b0accb0febe1f7154c3e1dc9b7ce9c25cbe3c", state: state.snapshot())
         }
         let __meridianColl_0_4 = (state.get("comments")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/61a51e2b0702450ca0ea594ef7fb69d1394c034cc6484a6c9ab0dd23d7a4581a")
+        try await runtime.recordIterateStart(over: "state.get(\"comments\")", step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/5f1d5bca115d3951ecd3545cef4e6a4bf2d581f4062329f7420d43f756d39811")
         for (__meridianLoopIndex_0_4, comment) in __meridianColl_0_4.enumerated() {
             let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
             if __meridianShouldRun(__meridianLoopLabel_0_4) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/61a51e2b0702450ca0ea594ef7fb69d1394c034cc6484a6c9ab0dd23d7a4581a")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/5f1d5bca115d3951ecd3545cef4e6a4bf2d581f4062329f7420d43f756d39811")
             state.bind("comment", comment)
-                if __meridianShouldRun("/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/iterate.body/11ba15798aff55d54bc73b417baefc1e362580e7b554dea257dbbc0a87e5cd56") {
+                if __meridianShouldRun("/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/iterate.body/4f0f58b64eb30244bd2dfc2870dffca801ab8b69ee3fd5e176934dd1373b849c") {
                     _ = try await TriageComment(runtime: runtime, comment: (try Value.from(comment).coerce(to: Value.self))).run()
-                    try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/iterate.body/11ba15798aff55d54bc73b417baefc1e362580e7b554dea257dbbc0a87e5cd56", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/iterate.body/4f0f58b64eb30244bd2dfc2870dffca801ab8b69ee3fd5e176934dd1373b849c", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_4.count, step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/61a51e2b0702450ca0ea594ef7fb69d1394c034cc6484a6c9ab0dd23d7a4581a")
+        try await runtime.recordIterateEnd(over: "state.get(\"comments\")", count: __meridianColl_0_4.count, step: "/SecurityReviewTriagePullRequest/resolve-already-addressed-comments/procedure/5f1d5bca115d3951ecd3545cef4e6a4bf2d581f4062329f7420d43f756d39811")
 
-        if __meridianShouldRun("/SecurityReviewTriagePullRequest/close-audit-trail/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/SecurityReviewTriagePullRequest/close-audit-trail/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/SecurityReviewTriagePullRequest/close-audit-trail/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/SecurityReviewTriagePullRequest/close-audit-trail/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/close-audit-trail/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SecurityReviewTriagePullRequest/close-audit-trail/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SecurityReviewTriagePullRequest.complete")
@@ -914,36 +914,36 @@ public struct TriageComment: MeridianWorkflow {
         await runtime.workflowStarted(workflowName: "TriageComment", parameters: [:])
 
         if try await runtime.discretion.decide(DiscretionContext(question: "the comment still applies", snapshot: state.snapshot())) {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment still applies\", snapshot: state.snapshot()))", into: "then", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
-            if __meridianShouldRun("/TriageComment/resolve-already-addressed-comments/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7") {
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment still applies\", snapshot: state.snapshot()))", into: "then", step: "/TriageComment/resolve-already-addressed-comments/procedure/7bccd5bdd6d7540c441b9da757677a406e1a63de1de938ddb2f89abc80ecbd33")
+            if __meridianShouldRun("/TriageComment/resolve-already-addressed-comments/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b") {
                 let comment = try await runtime.invoke(
                     tool: "resolveComment",
                     args: [
                         "commentId": state.get("comment.id") ?? .null,
                     ],
-                    step: "/TriageComment/resolve-already-addressed-comments/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7",
+                    step: "/TriageComment/resolve-already-addressed-comments/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "resolveComment")
                 )
                 state.bind("comment", comment)
 
-                try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.then/7d324b443e3d1cfb4916c01bf0460cf7b949fa8a9516d7337845e00d3a0ba5f7", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.then/f230cd36f34a9cc4c8feed43448835e331c48d445f5dab11fef2c9679f0a4a1b", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
+            try await runtime.recordBranchEnded(into: "then", step: "/TriageComment/resolve-already-addressed-comments/procedure/7bccd5bdd6d7540c441b9da757677a406e1a63de1de938ddb2f89abc80ecbd33")
         } else {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment still applies\", snapshot: state.snapshot()))", into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the comment still applies\", snapshot: state.snapshot()))", into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/7bccd5bdd6d7540c441b9da757677a406e1a63de1de938ddb2f89abc80ecbd33")
 
-            if __meridianShouldRun("/TriageComment/resolve-already-addressed-comments/procedure/branch.else/5cf69e74da5ace045752a2a9d6afc6be400a1f1574392d421e5f8c22671208e2") {
+            if __meridianShouldRun("/TriageComment/resolve-already-addressed-comments/procedure/branch.else/ce11e9b9aa5ce9de252c801c68cea979cd858aa8947417ddbe67fdeec9dbfca0") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("comment auto-resolved by triage"),
                     ],
-                    step: "/TriageComment/resolve-already-addressed-comments/procedure/branch.else/5cf69e74da5ace045752a2a9d6afc6be400a1f1574392d421e5f8c22671208e2"
+                    step: "/TriageComment/resolve-already-addressed-comments/procedure/branch.else/ce11e9b9aa5ce9de252c801c68cea979cd858aa8947417ddbe67fdeec9dbfca0"
                 )
-                try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.else/5cf69e74da5ace045752a2a9d6afc6be400a1f1574392d421e5f8c22671208e2", state: state.snapshot())
+                try await runtime.checkpoint(label: "/TriageComment/resolve-already-addressed-comments/procedure/branch.else/ce11e9b9aa5ce9de252c801c68cea979cd858aa8947417ddbe67fdeec9dbfca0", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/fdf2735b837825bccb4498142bebc4adc558aa9d84b23f5d71c88ce9c51ca6b8")
+            try await runtime.recordBranchEnded(into: "otherwise", step: "/TriageComment/resolve-already-addressed-comments/procedure/7bccd5bdd6d7540c441b9da757677a406e1a63de1de938ddb2f89abc80ecbd33")
         }
 
 
@@ -1012,7 +1012,7 @@ public struct PlanSecurityRemediation: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/df1eb5a222a168e92b307659750802080165c9749cd564cdcdb18924a3ef603f"
+            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/d7d39463d971decabf3b7e41a6c56c3d7acb5761980c560fca91cc3e2e9434ae"
         )
         for (__key, __value) in __meridianProseResults_L31 {
             state.bind(__key, __value)
@@ -1022,7 +1022,7 @@ public struct PlanSecurityRemediation: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/5e558c861904eaf53e86c49117edd237b07dbe8892cb57895619d3f011355d54"
+            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/2b6bc4dfe8bd37b8e708df8946f9fdef90425525ad2cb05536bbf7c9cf1ddc23"
         )
         for (__key, __value) in __meridianProseResults_L32 {
             state.bind(__key, __value)
@@ -1032,7 +1032,7 @@ public struct PlanSecurityRemediation: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/d3e041706dd95f0bc0d16f7558c97a24fd885a4d434445778b71ae5402b16084"
+            step: "/PlanSecurityRemediation/plan-risky-remediation-under-discretion/procedure/612399b1e8b0636a9329331d699f8272520816e20e8f4839b9a35d077b756e34"
         )
         for (__key, __value) in __meridianProseResults_L33 {
             state.bind(__key, __value)

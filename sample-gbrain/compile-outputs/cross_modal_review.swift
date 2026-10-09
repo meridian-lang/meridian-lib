@@ -623,24 +623,24 @@ public struct CrossModalReviewInput: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "CrossModalReviewInput", parameters: [:])
 
-        if __meridianShouldRun("/CrossModalReviewInput/contract-steps/invariants/eeb9bc7894100c33d995435f15c54c15f14f6eed25b91bb5964b4922f96cfcdc") {
+        if __meridianShouldRun("/CrossModalReviewInput/contract-steps/invariants/cbe61a1ccaa12cf463f93eb09fedf881a24ee23fd0b464bdc2c3cf55dd743d5f") {
             // L47
             try await runtime.assert(MeridianComparison.eq(state.get("review"), state.get("gradedAgainstTheOriginatingSkill.ContractSection(whatWasPromised),NotVibes")), message: "Expected The review is graded against the originating skill's Contract section (what was promised), not vibes")
-            try await runtime.checkpoint(label: "/CrossModalReviewInput/contract-steps/invariants/eeb9bc7894100c33d995435f15c54c15f14f6eed25b91bb5964b4922f96cfcdc", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CrossModalReviewInput/contract-steps/invariants/cbe61a1ccaa12cf463f93eb09fedf881a24ee23fd0b464bdc2c3cf55dd743d5f", state: state.snapshot())
         }
-        if __meridianShouldRun("/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/533b6c8ae2652bf7456eda76c1d096d7055ff89b419891fba7e7d2be11ca3d24") {
+        if __meridianShouldRun("/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/370e65a212f03a07406c7bdf38f74092ef095c37e2fdb052903fcf7c125cca82") {
             // L77
             let results = try await runtime.invoke(
                 tool: "page.search",
                 args: [
                     "query": state.get("originatingSkill.Contract") ?? .null,
                 ],
-                step: "/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/533b6c8ae2652bf7456eda76c1d096d7055ff89b419891fba7e7d2be11ca3d24",
+                step: "/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/370e65a212f03a07406c7bdf38f74092ef095c37e2fdb052903fcf7c125cca82",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "page.search")
             )
             state.bind("results", results)
 
-            try await runtime.checkpoint(label: "/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/533b6c8ae2652bf7456eda76c1d096d7055ff89b419891fba7e7d2be11ca3d24", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CrossModalReviewInput/when-to-invoke-v0-25-1-gating-steps/procedure/370e65a212f03a07406c7bdf38f74092ef095c37e2fdb052903fcf7c125cca82", state: state.snapshot())
         }
         // L93
         let __meridianProseResults_L93 = try await runtime.executeProsePlan(
@@ -648,7 +648,7 @@ public struct CrossModalReviewInput: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["get_page", "page.get", "page.search", "query", "search", "shell.run"],
             outputKind: "record",
-            step: "/CrossModalReviewInput/phases-steps/procedure/718bd5ef4dc0fc623315f10ac82bc5fd91b941e28d2980924b0622fbc87dacac",
+            step: "/CrossModalReviewInput/phases-steps/procedure/a8f0365eede39e899343593c9d8c2075f26f2b969132df89e124cabcc4eeb77f",
             guidance: "**Grade.** Model evaluates: did the output follow the Contract?\nPresent agreement / disagreement to the user. Never\nauto-apply the reviewer's suggestions\nFor diff review specifically, gstack ships a `/codex` skill that wraps\nthe OpenAI Codex CLI. Two modes:\nWhen to recommend `/codex review`:\nuse judgment to follow the Codex Review — steps 2 guidance:\nUser decides what to act on. Cross-model agreement is signal, not\npermission\nIf the primary review model refuses:\nSwitch silently to the next model in the chain (see\n`conventions/cross-modal.yaml`)\nIf ALL models in the chain refuse, escalate to the user\ngstack `/codex` — the actual Codex CLI wrapper this skill hands off\nto for diff-review mode. Cross-modal-review knows WHEN to invoke;\n/codex knows HOW\n`skills/testing/SKILL.md` — runs the project test suite; complementary\nsignal for \"is this commit safe to land\"\n`skills/conventions/cross-modal.yaml` — review pairs + refusal routing"
         )
         for (__key, __value) in __meridianProseResults_L93 {
@@ -711,12 +711,12 @@ public struct WhenSecondopinionFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenSecondopinionFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71") {
+        if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/4d752d83e1876cacd1c4b0edc7076f516f9cc8e11b67412db34f9b11fd63dd94") {
             // L1
             try await runtime.wait(.event("secondOpinion", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSecondopinionFires/root/procedure/7899395a1edb7c67db53ac479ff05f09fa295e5b9f5a6e5f0fa0cb13ce8c5f71", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSecondopinionFires/root/procedure/4d752d83e1876cacd1c4b0edc7076f516f9cc8e11b67412db34f9b11fd63dd94", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2") {
+        if __meridianShouldRun("/WhenSecondopinionFires/root/procedure/0ee8282b229359985842c24b0aca4c0196a77ccbbb6832f38e416e62ab6b5642") {
             // L1
             try await runtime.emit(
                 event: "trigger.secondOpinion.fired",
@@ -724,9 +724,9 @@ public struct WhenSecondopinionFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("second opinion"),
                 ],
-                step: "/WhenSecondopinionFires/root/procedure/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2"
+                step: "/WhenSecondopinionFires/root/procedure/0ee8282b229359985842c24b0aca4c0196a77ccbbb6832f38e416e62ab6b5642"
             )
-            try await runtime.checkpoint(label: "/WhenSecondopinionFires/root/procedure/5259ce58c90f46e1026cd2760610dae8fa9021d432c10401c677c1dad4141bb2", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSecondopinionFires/root/procedure/0ee8282b229359985842c24b0aca4c0196a77ccbbb6832f38e416e62ab6b5642", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSecondopinionFires.complete")
@@ -785,12 +785,12 @@ public struct WhenCrossmodalreviewFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenCrossmodalreviewFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a") {
+        if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/9ec987db3ab5df661d1ff1e46a41d45aa9064513e1574a4987389eeac1ff8c99") {
             // L1
             try await runtime.wait(.event("crossModalReview", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCrossmodalreviewFires/root/procedure/b805175c5cdaf20422941dec181d546341b14ba100cea779fd0478155868692a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCrossmodalreviewFires/root/procedure/9ec987db3ab5df661d1ff1e46a41d45aa9064513e1574a4987389eeac1ff8c99", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080") {
+        if __meridianShouldRun("/WhenCrossmodalreviewFires/root/procedure/c2b169ac6bc3daae8c893a570944c6c2badb8d9926e213a402c7801116fe26fa") {
             // L1
             try await runtime.emit(
                 event: "trigger.crossModalReview.fired",
@@ -798,9 +798,9 @@ public struct WhenCrossmodalreviewFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("cross-modal review"),
                 ],
-                step: "/WhenCrossmodalreviewFires/root/procedure/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080"
+                step: "/WhenCrossmodalreviewFires/root/procedure/c2b169ac6bc3daae8c893a570944c6c2badb8d9926e213a402c7801116fe26fa"
             )
-            try await runtime.checkpoint(label: "/WhenCrossmodalreviewFires/root/procedure/ba8d55c57602691a4a624d7d4587c728eff24975e16c9568feba2e323c927080", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCrossmodalreviewFires/root/procedure/c2b169ac6bc3daae8c893a570944c6c2badb8d9926e213a402c7801116fe26fa", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCrossmodalreviewFires.complete")
@@ -859,12 +859,12 @@ public struct WhenDoublecheckthisFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenDoublecheckthisFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf") {
+        if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/dd8a25d9f89390fc09f8ebb07e8f928a3f46bb19ecafb8c8272d6a53eb997bec") {
             // L1
             try await runtime.wait(.event("doubleCheckThis", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenDoublecheckthisFires/root/procedure/a52d5f608a37c8f5976c6c46c03de526d1d68ce7d7a35d93cee8b5f283721faf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDoublecheckthisFires/root/procedure/dd8a25d9f89390fc09f8ebb07e8f928a3f46bb19ecafb8c8272d6a53eb997bec", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064") {
+        if __meridianShouldRun("/WhenDoublecheckthisFires/root/procedure/31b7ab11d169768ae6313845457464667a1c10ac1ac37c83c65dbb116e688a5d") {
             // L1
             try await runtime.emit(
                 event: "trigger.doubleCheckThis.fired",
@@ -872,9 +872,9 @@ public struct WhenDoublecheckthisFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("double check this"),
                 ],
-                step: "/WhenDoublecheckthisFires/root/procedure/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064"
+                step: "/WhenDoublecheckthisFires/root/procedure/31b7ab11d169768ae6313845457464667a1c10ac1ac37c83c65dbb116e688a5d"
             )
-            try await runtime.checkpoint(label: "/WhenDoublecheckthisFires/root/procedure/6ba67fff14e3365c7793d7abe06d8956a573a1e2fdbed00a651781882e9d0064", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenDoublecheckthisFires/root/procedure/31b7ab11d169768ae6313845457464667a1c10ac1ac37c83c65dbb116e688a5d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenDoublecheckthisFires.complete")
@@ -933,12 +933,12 @@ public struct WhenGetanotherperspectiveFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenGetanotherperspectiveFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3") {
+        if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/69cd7de6f6cb069deb6f40dadc95533d4d0ff23a3ad39ad5462afabc22b41080") {
             // L1
             try await runtime.wait(.event("getAnotherPerspective", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenGetanotherperspectiveFires/root/procedure/13f5e4a75518537a0da1d1a43721949296a443f3b983986877a379393ef9b9a3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGetanotherperspectiveFires/root/procedure/69cd7de6f6cb069deb6f40dadc95533d4d0ff23a3ad39ad5462afabc22b41080", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04") {
+        if __meridianShouldRun("/WhenGetanotherperspectiveFires/root/procedure/1bc2b89c99221f59239d0471043ebf5ef3f1a53f81084919c5eae636e51e0128") {
             // L1
             try await runtime.emit(
                 event: "trigger.getAnotherPerspective.fired",
@@ -946,9 +946,9 @@ public struct WhenGetanotherperspectiveFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("get another perspective"),
                 ],
-                step: "/WhenGetanotherperspectiveFires/root/procedure/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04"
+                step: "/WhenGetanotherperspectiveFires/root/procedure/1bc2b89c99221f59239d0471043ebf5ef3f1a53f81084919c5eae636e51e0128"
             )
-            try await runtime.checkpoint(label: "/WhenGetanotherperspectiveFires/root/procedure/14390e25d6c7e2e458f140f7e52beb3e5bda14f7fc4323de9fa356cea1017b04", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenGetanotherperspectiveFires/root/procedure/1bc2b89c99221f59239d0471043ebf5ef3f1a53f81084919c5eae636e51e0128", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenGetanotherperspectiveFires.complete")
@@ -1007,12 +1007,12 @@ public struct WhenChallengethiscodeFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenChallengethiscodeFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873") {
+        if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/48ff3e22a31472250489fa430ef55329779493115402faabb915a056e5254017") {
             // L1
             try await runtime.wait(.event("challengeThisCode", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenChallengethiscodeFires/root/procedure/9473d05641a1d4bb1ccac3376977864ff503daf1c63ff3c905b101dff0be3873", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChallengethiscodeFires/root/procedure/48ff3e22a31472250489fa430ef55329779493115402faabb915a056e5254017", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd") {
+        if __meridianShouldRun("/WhenChallengethiscodeFires/root/procedure/f65fef474cc980a843cbf50160ba0823841585d8682be772501f4e7cf5571e57") {
             // L1
             try await runtime.emit(
                 event: "trigger.challengeThisCode.fired",
@@ -1020,9 +1020,9 @@ public struct WhenChallengethiscodeFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("challenge this code"),
                 ],
-                step: "/WhenChallengethiscodeFires/root/procedure/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd"
+                step: "/WhenChallengethiscodeFires/root/procedure/f65fef474cc980a843cbf50160ba0823841585d8682be772501f4e7cf5571e57"
             )
-            try await runtime.checkpoint(label: "/WhenChallengethiscodeFires/root/procedure/7413d29703355f24b3886e75120007b61474eb36552252a38aff8146d9b86dcd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenChallengethiscodeFires/root/procedure/f65fef474cc980a843cbf50160ba0823841585d8682be772501f4e7cf5571e57", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenChallengethiscodeFires.complete")
@@ -1081,12 +1081,12 @@ public struct WhenAdversarialreviewFires: MeridianWorkflow {
         let constants = Constants()
         await runtime.workflowStarted(workflowName: "WhenAdversarialreviewFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06") {
+        if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/643beeef252b35752c0535f93e0536381e2d8627073e03886d1410d54487b8d3") {
             // L1
             try await runtime.wait(.event("adversarialReview", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenAdversarialreviewFires/root/procedure/f538aee96f5e049a622e73ac9853dac21f5e312ea2cce77cb8d9ab2124b07f06", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAdversarialreviewFires/root/procedure/643beeef252b35752c0535f93e0536381e2d8627073e03886d1410d54487b8d3", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3") {
+        if __meridianShouldRun("/WhenAdversarialreviewFires/root/procedure/73ce699ed6b03b1f735914995d019ec7f43db10ef85baabe55c44c23050a241d") {
             // L1
             try await runtime.emit(
                 event: "trigger.adversarialReview.fired",
@@ -1094,9 +1094,9 @@ public struct WhenAdversarialreviewFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("adversarial review"),
                 ],
-                step: "/WhenAdversarialreviewFires/root/procedure/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3"
+                step: "/WhenAdversarialreviewFires/root/procedure/73ce699ed6b03b1f735914995d019ec7f43db10ef85baabe55c44c23050a241d"
             )
-            try await runtime.checkpoint(label: "/WhenAdversarialreviewFires/root/procedure/5801b79a305a819a2113cbd157d1cb1dc6d8108e6ade736a104117c22408c5b3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenAdversarialreviewFires/root/procedure/73ce699ed6b03b1f735914995d019ec7f43db10ef85baabe55c44c23050a241d", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenAdversarialreviewFires.complete")

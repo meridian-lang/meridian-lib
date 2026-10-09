@@ -418,29 +418,29 @@ public struct HealthcheckSweep: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "HealthcheckSweep", parameters: [:])
 
-        if __meridianShouldRun("/HealthcheckSweep/guarantees/invariants/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314") {
+        if __meridianShouldRun("/HealthcheckSweep/guarantees/invariants/1b083529f307fc37fa5897f767c9d5ed0614121fa3d618a435cc4a1eaf5aff8d") {
             // L46
             try await runtime.assert(((state.get("services")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all services have a name")
-            try await runtime.checkpoint(label: "/HealthcheckSweep/guarantees/invariants/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/guarantees/invariants/1b083529f307fc37fa5897f767c9d5ed0614121fa3d618a435cc4a1eaf5aff8d", state: state.snapshot())
         }
-        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/ee1ee1accec16396e44d966527d9de4d19dc246d1c7fac410b4cfe6c4ee0e74a") {
+        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/15d1b4995e8b00ba822619d77de10de869c0e7003eb594d50e9bfff9257f792b") {
             // L26
-            let services = try await runtime.invoke(tool: "service.list", args: [:], step: "/HealthcheckSweep/workflow/procedure/ee1ee1accec16396e44d966527d9de4d19dc246d1c7fac410b4cfe6c4ee0e74a", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "service.list"))
+            let services = try await runtime.invoke(tool: "service.list", args: [:], step: "/HealthcheckSweep/workflow/procedure/15d1b4995e8b00ba822619d77de10de869c0e7003eb594d50e9bfff9257f792b", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "service.list"))
             state.bind("services", services)
 
-            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/ee1ee1accec16396e44d966527d9de4d19dc246d1c7fac410b4cfe6c4ee0e74a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/15d1b4995e8b00ba822619d77de10de869c0e7003eb594d50e9bfff9257f792b", state: state.snapshot())
         }
-        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/c41e5ab229e2bf44c6fc29e0c59143321081162961cfceaef724782997462f15") {
+        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/7938619b06ac4853f1f09673ef52e5129157092e62adf5b006704ceca1e1ffec") {
             // L27
-            let runbooks = try await runtime.invoke(tool: "runbook.list", args: [:], step: "/HealthcheckSweep/workflow/procedure/c41e5ab229e2bf44c6fc29e0c59143321081162961cfceaef724782997462f15", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "runbook.list"))
+            let runbooks = try await runtime.invoke(tool: "runbook.list", args: [:], step: "/HealthcheckSweep/workflow/procedure/7938619b06ac4853f1f09673ef52e5129157092e62adf5b006704ceca1e1ffec", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "runbook.list"))
             state.bind("runbooks", runbooks)
 
-            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/c41e5ab229e2bf44c6fc29e0c59143321081162961cfceaef724782997462f15", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/7938619b06ac4853f1f09673ef52e5129157092e62adf5b006704ceca1e1ffec", state: state.snapshot())
         }
-        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314") {
+        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/1b083529f307fc37fa5897f767c9d5ed0614121fa3d618a435cc4a1eaf5aff8d") {
             // L28
             try await runtime.assert(((state.get("services")?.asList ?? []).allSatisfy { __e in MeridianComparison.isNotEmpty(__e.member("name")) }), message: "Expected all services have a name")
-            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/0b13c381a975284711838ac0913b40c0e0d38bfbd9aeaeabe9c3b6ea51e06314", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/1b083529f307fc37fa5897f767c9d5ed0614121fa3d618a435cc4a1eaf5aff8d", state: state.snapshot())
         }
         // L29
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -448,85 +448,85 @@ public struct HealthcheckSweep: MeridianWorkflow {
                 var state = state
                     // L30
                     let __meridianColl_0_4_branch0_0 = (state.get("services")?.asList ?? [])
-                    try await runtime.recordIterateStart(over: "state.get(\"services\")", step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/0f272423851ad39b6ee2555b6faebec9ecb27be32aaa3c94537a6ae8a937894c")
+                    try await runtime.recordIterateStart(over: "state.get(\"services\")", step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/a46b18b3d4021ad59533e1ff03a15f680e2568b93fd92d83eea2a1ea9bbce4f5")
                     for (__meridianLoopIndex_0_4_branch0_0, service) in __meridianColl_0_4_branch0_0.enumerated() {
                         let __meridianLoopLabel_0_4_branch0_0 = "progress:0.4.branch0.0:iteration:\(__meridianLoopIndex_0_4_branch0_0)"
                         if __meridianShouldRun(__meridianLoopLabel_0_4_branch0_0) {
-                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4_branch0_0, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/0f272423851ad39b6ee2555b6faebec9ecb27be32aaa3c94537a6ae8a937894c")
+                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4_branch0_0, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/a46b18b3d4021ad59533e1ff03a15f680e2568b93fd92d83eea2a1ea9bbce4f5")
                         state.bind("service", service)
-                            if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/iterate.body/1beca3f9365e26c7834feed2e9fbbb7c1c7c1093b11a268a3784be71a0945389") {
+                            if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/iterate.body/76d4368c6650449fd1333d158aa77f4f5a06131addd447bb4817b65b794206ab") {
                                 // L31
                                 let health = try await runtime.invoke(
                                     tool: "service.healthcheck",
                                     args: [
                                         "service": state.get("service") ?? .null,
                                     ],
-                                    step: "/HealthcheckSweep/workflow/procedure/iterate.body/1beca3f9365e26c7834feed2e9fbbb7c1c7c1093b11a268a3784be71a0945389",
+                                    step: "/HealthcheckSweep/workflow/procedure/iterate.body/76d4368c6650449fd1333d158aa77f4f5a06131addd447bb4817b65b794206ab",
                                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "service.healthcheck")
                                 )
                                 state.bind("health", health)
 
-                                try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/iterate.body/1beca3f9365e26c7834feed2e9fbbb7c1c7c1093b11a268a3784be71a0945389", state: state.snapshot())
+                                try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/iterate.body/76d4368c6650449fd1333d158aa77f4f5a06131addd447bb4817b65b794206ab", state: state.snapshot())
                             }
                             try await runtime.checkpoint(label: __meridianLoopLabel_0_4_branch0_0, state: state.snapshot())
                         }
                     }
-                    try await runtime.recordIterateEnd(over: "state.get(\"services\")", count: __meridianColl_0_4_branch0_0.count, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/0f272423851ad39b6ee2555b6faebec9ecb27be32aaa3c94537a6ae8a937894c")
+                    try await runtime.recordIterateEnd(over: "state.get(\"services\")", count: __meridianColl_0_4_branch0_0.count, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/a46b18b3d4021ad59533e1ff03a15f680e2568b93fd92d83eea2a1ea9bbce4f5")
 
             }
             group.addTask {
                 var state = state
                     // L32
                     let __meridianColl_0_4_branch1_0 = (state.get("runbooks")?.asList ?? [])
-                    try await runtime.recordIterateStart(over: "state.get(\"runbooks\")", step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/34e8854ddd315c98f8382165f8528f80d6c5a2900c9c3e63f0476d75573cb310")
+                    try await runtime.recordIterateStart(over: "state.get(\"runbooks\")", step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/fbff23ecb32f0994df8253fb2232af126e0eba3a58b7d863515e5457bfcb813e")
                     for (__meridianLoopIndex_0_4_branch1_0, runbook) in __meridianColl_0_4_branch1_0.enumerated() {
                         let __meridianLoopLabel_0_4_branch1_0 = "progress:0.4.branch1.0:iteration:\(__meridianLoopIndex_0_4_branch1_0)"
                         if __meridianShouldRun(__meridianLoopLabel_0_4_branch1_0) {
-                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4_branch1_0, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/34e8854ddd315c98f8382165f8528f80d6c5a2900c9c3e63f0476d75573cb310")
+                            try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4_branch1_0, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/fbff23ecb32f0994df8253fb2232af126e0eba3a58b7d863515e5457bfcb813e")
                         state.bind("runbook", runbook)
                             // L33
                             Task {
                                 var state = state
-                                if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/simultaneously.branch/1492b7360a4e7958a89015407e044155d9fb4cdfebf85f227275123404f34e82") {
+                                if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/simultaneously.branch/3e4a5f47d5c90d30b72b92b1915b149a136b66c9405d471340c25bb112a5ac42") {
                                     // L33
                                     let runbook = try await runtime.invoke(
                                         tool: "runbook.lookup",
                                         args: [
                                             "service": Value.from(instances.pagerdutyService),
                                         ],
-                                        step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/1492b7360a4e7958a89015407e044155d9fb4cdfebf85f227275123404f34e82",
+                                        step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/3e4a5f47d5c90d30b72b92b1915b149a136b66c9405d471340c25bb112a5ac42",
                                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "runbook.lookup")
                                     )
                                     state.bind("runbook", runbook)
 
-                                    try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/1492b7360a4e7958a89015407e044155d9fb4cdfebf85f227275123404f34e82", state: state.snapshot())
+                                    try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/3e4a5f47d5c90d30b72b92b1915b149a136b66c9405d471340c25bb112a5ac42", state: state.snapshot())
                                 }
                             }
 
                             try await runtime.checkpoint(label: __meridianLoopLabel_0_4_branch1_0, state: state.snapshot())
                         }
                     }
-                    try await runtime.recordIterateEnd(over: "state.get(\"runbooks\")", count: __meridianColl_0_4_branch1_0.count, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/34e8854ddd315c98f8382165f8528f80d6c5a2900c9c3e63f0476d75573cb310")
+                    try await runtime.recordIterateEnd(over: "state.get(\"runbooks\")", count: __meridianColl_0_4_branch1_0.count, step: "/HealthcheckSweep/workflow/procedure/simultaneously.branch/fbff23ecb32f0994df8253fb2232af126e0eba3a58b7d863515e5457bfcb813e")
 
             }
             try await group.waitForAll()
         }
 
-        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/43ce739515f391b54c9db263ac4e1434058edd99ed51dd508426fa99c41efe5f") {
+        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/baacb413f2635fa0cd2c311a6c347dce88c252777b3634cbfe6656298f49d852") {
             // L34
             try await runtime.assert((((state.get("services")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("degraded"))) }).isEmpty), message: "Expected no services whose status is \"degraded\"")
-            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/43ce739515f391b54c9db263ac4e1434058edd99ed51dd508426fa99c41efe5f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/baacb413f2635fa0cd2c311a6c347dce88c252777b3634cbfe6656298f49d852", state: state.snapshot())
         }
-        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/a1b3a611b8616e45b3065edbd19b029ef93e534204c56784455e2e63e6737e98") {
+        if __meridianShouldRun("/HealthcheckSweep/workflow/procedure/e9adf5c0e2e88b6ce63b8c691ed778a3befe47f5a1deb2c7aa25cd8501585da2") {
             // L35
             try await runtime.emit(
                 event: "incident.report",
                 payload: [
                     "message": .string("healthcheck sweep complete"),
                 ],
-                step: "/HealthcheckSweep/workflow/procedure/a1b3a611b8616e45b3065edbd19b029ef93e534204c56784455e2e63e6737e98"
+                step: "/HealthcheckSweep/workflow/procedure/e9adf5c0e2e88b6ce63b8c691ed778a3befe47f5a1deb2c7aa25cd8501585da2"
             )
-            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/a1b3a611b8616e45b3065edbd19b029ef93e534204c56784455e2e63e6737e98", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HealthcheckSweep/workflow/procedure/e9adf5c0e2e88b6ce63b8c691ed778a3befe47f5a1deb2c7aa25cd8501585da2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "HealthcheckSweep.complete")
@@ -586,12 +586,12 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenSweepservicehealthFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/1a37b06a701016d1fd15272964bed16a0d9e0a468c287c116ffef05d79c46bf5") {
+        if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/b444e2175e168cb453cfb754de23810a91f5afda185f46f46c98102184549b10") {
             // L1
             try await runtime.wait(.event("sweepServiceHealth", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenSweepservicehealthFires/root/procedure/1a37b06a701016d1fd15272964bed16a0d9e0a468c287c116ffef05d79c46bf5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSweepservicehealthFires/root/procedure/b444e2175e168cb453cfb754de23810a91f5afda185f46f46c98102184549b10", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/023baa0fcd8b674691a9164b50ddfd70a0346a425ac4420b312d47de78e185e4") {
+        if __meridianShouldRun("/WhenSweepservicehealthFires/root/procedure/f25bdce85afa687be8b9b1022e474710035e5b0672d553372dcab3dd55b666a4") {
             // L1
             try await runtime.emit(
                 event: "trigger.sweepServiceHealth.fired",
@@ -599,9 +599,9 @@ public struct WhenSweepservicehealthFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("sweep service health"),
                 ],
-                step: "/WhenSweepservicehealthFires/root/procedure/023baa0fcd8b674691a9164b50ddfd70a0346a425ac4420b312d47de78e185e4"
+                step: "/WhenSweepservicehealthFires/root/procedure/f25bdce85afa687be8b9b1022e474710035e5b0672d553372dcab3dd55b666a4"
             )
-            try await runtime.checkpoint(label: "/WhenSweepservicehealthFires/root/procedure/023baa0fcd8b674691a9164b50ddfd70a0346a425ac4420b312d47de78e185e4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenSweepservicehealthFires/root/procedure/f25bdce85afa687be8b9b1022e474710035e5b0672d553372dcab3dd55b666a4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenSweepservicehealthFires.complete")
@@ -661,12 +661,12 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunhealthchecksweepFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/27e56a5c712fa7aa35c1f1f5191ee9e375ad51fa279591f39d7d62543f72da7e") {
+        if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/3f26eb9f5673ff9eaadeabe807818325960959a0f671bbd973ad7f6a5cbcbb23") {
             // L1
             try await runtime.wait(.event("runHealthcheckSweep", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunhealthchecksweepFires/root/procedure/27e56a5c712fa7aa35c1f1f5191ee9e375ad51fa279591f39d7d62543f72da7e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhealthchecksweepFires/root/procedure/3f26eb9f5673ff9eaadeabe807818325960959a0f671bbd973ad7f6a5cbcbb23", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/860b65f11f44306fc9586ecdb55e289f710d1dba26bd3df2abeadff8cd5a2920") {
+        if __meridianShouldRun("/WhenRunhealthchecksweepFires/root/procedure/67be45b7ddb6e27b91463ea9cb8c8f5a499efc17d210db3af75275021b2f34b4") {
             // L1
             try await runtime.emit(
                 event: "trigger.runHealthcheckSweep.fired",
@@ -674,9 +674,9 @@ public struct WhenRunhealthchecksweepFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run healthcheck sweep"),
                 ],
-                step: "/WhenRunhealthchecksweepFires/root/procedure/860b65f11f44306fc9586ecdb55e289f710d1dba26bd3df2abeadff8cd5a2920"
+                step: "/WhenRunhealthchecksweepFires/root/procedure/67be45b7ddb6e27b91463ea9cb8c8f5a499efc17d210db3af75275021b2f34b4"
             )
-            try await runtime.checkpoint(label: "/WhenRunhealthchecksweepFires/root/procedure/860b65f11f44306fc9586ecdb55e289f710d1dba26bd3df2abeadff8cd5a2920", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhealthchecksweepFires/root/procedure/67be45b7ddb6e27b91463ea9cb8c8f5a499efc17d210db3af75275021b2f34b4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunhealthchecksweepFires.complete")
@@ -736,12 +736,12 @@ public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunhealthsweeppassFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/89e22be6e97a001acff385491f4d0f7cf041af0004fb5ddcf225b6513a32d089") {
+        if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/31217bac71507bee2726abab86e00c614c2d3a01494834763c139387d78e25dd") {
             // L1
             try await runtime.wait(.event("runHealthSweepPass", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunhealthsweeppassFires/root/procedure/89e22be6e97a001acff385491f4d0f7cf041af0004fb5ddcf225b6513a32d089", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhealthsweeppassFires/root/procedure/31217bac71507bee2726abab86e00c614c2d3a01494834763c139387d78e25dd", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/b84be00764782bf63b7de3cfa8372c731b9fea9f892ba852bc9ccd20c539a520") {
+        if __meridianShouldRun("/WhenRunhealthsweeppassFires/root/procedure/786bd9e5d8efba30468d32185aa9fba1293016cdb7b4d5c17d2943b4b0d60d72") {
             // L1
             try await runtime.emit(
                 event: "trigger.runHealthSweepPass.fired",
@@ -749,9 +749,9 @@ public struct WhenRunhealthsweeppassFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run the health sweep pass"),
                 ],
-                step: "/WhenRunhealthsweeppassFires/root/procedure/b84be00764782bf63b7de3cfa8372c731b9fea9f892ba852bc9ccd20c539a520"
+                step: "/WhenRunhealthsweeppassFires/root/procedure/786bd9e5d8efba30468d32185aa9fba1293016cdb7b4d5c17d2943b4b0d60d72"
             )
-            try await runtime.checkpoint(label: "/WhenRunhealthsweeppassFires/root/procedure/b84be00764782bf63b7de3cfa8372c731b9fea9f892ba852bc9ccd20c539a520", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunhealthsweeppassFires/root/procedure/786bd9e5d8efba30468d32185aa9fba1293016cdb7b4d5c17d2943b4b0d60d72", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunhealthsweeppassFires.complete")

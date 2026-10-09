@@ -453,67 +453,67 @@ public struct Retry: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "Retry", parameters: [:])
 
-        if __meridianShouldRun("/Retry/postconditions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd") {
+        if __meridianShouldRun("/Retry/postconditions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3") {
             // L37
             try await runtime.assert((((state.get("batches")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected no batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/Retry/postconditions/invariants/d691b0841a0fb9b14cda3f443f6a2ba65fee168d68028c7a6e00f1deb7510bfd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Retry/postconditions/invariants/e214b5525b6e2676cbd9334d95531986c25a45f6971786ebd858ed797ec9b5e3", state: state.snapshot())
         }
-        if __meridianShouldRun("/Retry/procedure-steps/procedure/0621b17d73615609e8a7580015f5ba4d4a10433fe7d4d51460f86a8afbf41eda") {
+        if __meridianShouldRun("/Retry/procedure-steps/procedure/658604c5a569ddc556cf00190824248d86e5a6a9fc04f12d2b8fb0c6be00b78a") {
             // L24
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
                     "status": .string("failed"),
                 ],
-                step: "/Retry/procedure-steps/procedure/0621b17d73615609e8a7580015f5ba4d4a10433fe7d4d51460f86a8afbf41eda",
+                step: "/Retry/procedure-steps/procedure/658604c5a569ddc556cf00190824248d86e5a6a9fc04f12d2b8fb0c6be00b78a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "batch.list")
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "/Retry/procedure-steps/procedure/0621b17d73615609e8a7580015f5ba4d4a10433fe7d4d51460f86a8afbf41eda", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Retry/procedure-steps/procedure/658604c5a569ddc556cf00190824248d86e5a6a9fc04f12d2b8fb0c6be00b78a", state: state.snapshot())
         }
-        if __meridianShouldRun("/Retry/procedure-steps/procedure/1683771f34ba506a2cc652195f89418ad5ff4e6305fb9a9c4c6940ab89ac4d72") {
+        if __meridianShouldRun("/Retry/procedure-steps/procedure/00366417ae1da1bae1c5a2f9cef9bb1f23c64f974422dc8952a91188f44ea91f") {
             // L25
             try await runtime.assert((!((state.get("batches")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("failed"))) }).isEmpty), message: "Expected any batches whose status is \"failed\"")
-            try await runtime.checkpoint(label: "/Retry/procedure-steps/procedure/1683771f34ba506a2cc652195f89418ad5ff4e6305fb9a9c4c6940ab89ac4d72", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Retry/procedure-steps/procedure/00366417ae1da1bae1c5a2f9cef9bb1f23c64f974422dc8952a91188f44ea91f", state: state.snapshot())
         }
-        if __meridianShouldRun("/Retry/procedure-steps-2/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487") {
+        if __meridianShouldRun("/Retry/procedure-steps-2/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0") {
             // L29
             let batches = try await runtime.invoke(
                 tool: "batch.list",
                 args: [
                     "status": .string("ready"),
                 ],
-                step: "/Retry/procedure-steps-2/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487",
+                step: "/Retry/procedure-steps-2/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "batch.list")
             )
             state.bind("batches", batches)
 
-            try await runtime.checkpoint(label: "/Retry/procedure-steps-2/procedure/f13fb043db1a305d5a7b3af4f58e74ed2098ce7bf3286f41b8aa1e90432c1487", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Retry/procedure-steps-2/procedure/fc698c188d750817847f08e71a117e091119c51bd17951c4b5e8810c22ebb9c0", state: state.snapshot())
         }
         // L30
         let __meridianColl_0_4 = (state.get("batches")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/Retry/procedure-steps-2/procedure/d01d00ee7b730e5596dc64dcc30696948287d70e59c187312332ef786a810779")
+        try await runtime.recordIterateStart(over: "state.get(\"batches\")", step: "/Retry/procedure-steps-2/procedure/2d29b0b1320fc046d3b8ccc6dbb7f938f18a3dc9e5e1b892605dd7183c402782")
         for (__meridianLoopIndex_0_4, batch) in __meridianColl_0_4.enumerated() {
             let __meridianLoopLabel_0_4 = "progress:0.4:iteration:\(__meridianLoopIndex_0_4)"
             if __meridianShouldRun(__meridianLoopLabel_0_4) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/Retry/procedure-steps-2/procedure/d01d00ee7b730e5596dc64dcc30696948287d70e59c187312332ef786a810779")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_4, step: "/Retry/procedure-steps-2/procedure/2d29b0b1320fc046d3b8ccc6dbb7f938f18a3dc9e5e1b892605dd7183c402782")
             state.bind("batch", batch)
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_4, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_4.count, step: "/Retry/procedure-steps-2/procedure/d01d00ee7b730e5596dc64dcc30696948287d70e59c187312332ef786a810779")
+        try await runtime.recordIterateEnd(over: "state.get(\"batches\")", count: __meridianColl_0_4.count, step: "/Retry/procedure-steps-2/procedure/2d29b0b1320fc046d3b8ccc6dbb7f938f18a3dc9e5e1b892605dd7183c402782")
 
-        if __meridianShouldRun("/Retry/procedure-steps-3/procedure/c6b0dbce3c96a80b3b210e7b72a1cc5cbccc946342d20de704659a170bf25358") {
+        if __meridianShouldRun("/Retry/procedure-steps-3/procedure/b1985846d7f28dd44a47b92d1db11970ed284838a44a5da476cd13712adabbcd") {
             // L34
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("failed batch retry pass complete"),
                 ],
-                step: "/Retry/procedure-steps-3/procedure/c6b0dbce3c96a80b3b210e7b72a1cc5cbccc946342d20de704659a170bf25358"
+                step: "/Retry/procedure-steps-3/procedure/b1985846d7f28dd44a47b92d1db11970ed284838a44a5da476cd13712adabbcd"
             )
-            try await runtime.checkpoint(label: "/Retry/procedure-steps-3/procedure/c6b0dbce3c96a80b3b210e7b72a1cc5cbccc946342d20de704659a170bf25358", state: state.snapshot())
+            try await runtime.checkpoint(label: "/Retry/procedure-steps-3/procedure/b1985846d7f28dd44a47b92d1db11970ed284838a44a5da476cd13712adabbcd", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "Retry.complete")
@@ -573,12 +573,12 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRetryfailedbatchesFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/10326fbb630d26a3974562ac739a829854c70f5c564a887efdce3e875772a87c") {
+        if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/b93a852cc3b35649ef5149c1c5990fd6ef4420e4b6f07fde28fa15eb3bf4ca61") {
             // L1
             try await runtime.wait(.event("retryFailedBatches", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRetryfailedbatchesFires/root/procedure/10326fbb630d26a3974562ac739a829854c70f5c564a887efdce3e875772a87c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetryfailedbatchesFires/root/procedure/b93a852cc3b35649ef5149c1c5990fd6ef4420e4b6f07fde28fa15eb3bf4ca61", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/1caabc23c181c074a15ab9b2ee1c6296a848fd723abc9ddb9a47cc8523b2a4a4") {
+        if __meridianShouldRun("/WhenRetryfailedbatchesFires/root/procedure/f40e7816b1a7e0b8a447820528e121b2f9e6123fdf96d956cce3d8df6ef8e84e") {
             // L1
             try await runtime.emit(
                 event: "trigger.retryFailedBatches.fired",
@@ -586,9 +586,9 @@ public struct WhenRetryfailedbatchesFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("retry failed batches"),
                 ],
-                step: "/WhenRetryfailedbatchesFires/root/procedure/1caabc23c181c074a15ab9b2ee1c6296a848fd723abc9ddb9a47cc8523b2a4a4"
+                step: "/WhenRetryfailedbatchesFires/root/procedure/f40e7816b1a7e0b8a447820528e121b2f9e6123fdf96d956cce3d8df6ef8e84e"
             )
-            try await runtime.checkpoint(label: "/WhenRetryfailedbatchesFires/root/procedure/1caabc23c181c074a15ab9b2ee1c6296a848fd723abc9ddb9a47cc8523b2a4a4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRetryfailedbatchesFires/root/procedure/f40e7816b1a7e0b8a447820528e121b2f9e6123fdf96d956cce3d8df6ef8e84e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRetryfailedbatchesFires.complete")
@@ -648,12 +648,12 @@ public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenReattemptbatchsettlementFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/88a6b983eb54a5f00bce0e8fbade85c860efd0f1b6453816f3e2bc06d5b4f332") {
+        if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/851a4d8fdfa4492f490d77060056fb6f2389a0fcd30613cda6e87aadd25c5628") {
             // L1
             try await runtime.wait(.event("reattemptBatchSettlement", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenReattemptbatchsettlementFires/root/procedure/88a6b983eb54a5f00bce0e8fbade85c860efd0f1b6453816f3e2bc06d5b4f332", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReattemptbatchsettlementFires/root/procedure/851a4d8fdfa4492f490d77060056fb6f2389a0fcd30613cda6e87aadd25c5628", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/f54fcc5d24dd16756288c884c52ce23169372e30e81547c9e14816326754f048") {
+        if __meridianShouldRun("/WhenReattemptbatchsettlementFires/root/procedure/8613ff7b789381ab16b133d1556a7a2625c7924b6debe19501a19a18373c7c1e") {
             // L1
             try await runtime.emit(
                 event: "trigger.reattemptBatchSettlement.fired",
@@ -661,9 +661,9 @@ public struct WhenReattemptbatchsettlementFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("reattempt batch settlement"),
                 ],
-                step: "/WhenReattemptbatchsettlementFires/root/procedure/f54fcc5d24dd16756288c884c52ce23169372e30e81547c9e14816326754f048"
+                step: "/WhenReattemptbatchsettlementFires/root/procedure/8613ff7b789381ab16b133d1556a7a2625c7924b6debe19501a19a18373c7c1e"
             )
-            try await runtime.checkpoint(label: "/WhenReattemptbatchsettlementFires/root/procedure/f54fcc5d24dd16756288c884c52ce23169372e30e81547c9e14816326754f048", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenReattemptbatchsettlementFires/root/procedure/8613ff7b789381ab16b133d1556a7a2625c7924b6debe19501a19a18373c7c1e", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenReattemptbatchsettlementFires.complete")

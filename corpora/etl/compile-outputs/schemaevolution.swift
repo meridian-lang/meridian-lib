@@ -382,44 +382,44 @@ public struct SchemaEvolution: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "SchemaEvolution", parameters: [:])
 
-        if __meridianShouldRun("/SchemaEvolution/guarantees/invariants/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf") {
+        if __meridianShouldRun("/SchemaEvolution/guarantees/invariants/7a7889ebd7c54f30489364ae6b7a66a33350f0e77501a58510e1515c00ff25c6") {
             // L47
             try await runtime.assert((((state.get("datasets")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("stale"))) }).isEmpty), message: "Expected no datasets whose status is \"stale\"")
-            try await runtime.checkpoint(label: "/SchemaEvolution/guarantees/invariants/174b2d599ffefc6c5baa03ca300acb490c1d8dd353975ed31ecc3de2e929daaf", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SchemaEvolution/guarantees/invariants/7a7889ebd7c54f30489364ae6b7a66a33350f0e77501a58510e1515c00ff25c6", state: state.snapshot())
         }
-        if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270") {
+        if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620") {
             // L29
-            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/SchemaEvolution/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
+            let datasets = try await runtime.invoke(tool: "dataset.list", args: [:], step: "/SchemaEvolution/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "dataset.list"))
             state.bind("datasets", datasets)
 
-            try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/822666a82055d52622d12abf5fb4cbdf52b08885218589cf257fad8e827d7270", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/3d88da38f6a6312195df7e9c45a7245282dec8fe7148b1cc82876062c4ec2620", state: state.snapshot())
         }
         // L30
         let __meridianColl_0_2 = (state.get("datasets")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/SchemaEvolution/workflow-steps/procedure/d439b7f889716d5ea5fe7038475ffb10ffa97ab3ac90b5beec5ea9f65ee449df")
+        try await runtime.recordIterateStart(over: "state.get(\"datasets\")", step: "/SchemaEvolution/workflow-steps/procedure/5a0d360af3314c255fc5ea811f75967128d82048d10388670f5c658342ce832f")
         for (__meridianLoopIndex_0_2, dataset) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/SchemaEvolution/workflow-steps/procedure/d439b7f889716d5ea5fe7038475ffb10ffa97ab3ac90b5beec5ea9f65ee449df")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/SchemaEvolution/workflow-steps/procedure/5a0d360af3314c255fc5ea811f75967128d82048d10388670f5c658342ce832f")
             state.bind("dataset", dataset)
-                if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/iterate.body/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067") {
+                if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/iterate.body/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e") {
                     // L31
                     let schema = try await runtime.invoke(
                         tool: "schema.validate",
                         args: [
                             "dataset": state.get("dataset") ?? .null,
                         ],
-                        step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067",
+                        step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e",
                         capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "schema.validate")
                     )
                     state.bind("schema", schema)
 
-                    try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/iterate.body/6928d14fa7775183cecbbbd4299626a4eb1810de83e82235edca0c74fc08b067", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/iterate.body/48145730753904791e95058c62149f6068336e1ec24b6f42945b54cd6b50c77e", state: state.snapshot())
                 }
                 // L32
                 if meridianDef_Schema_compatible(state.get("schema")) {
-                    try await runtime.recordBranchTaken(condition: "meridianDef_Schema_compatible(state.get(\"schema\"))", into: "then", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
-                    if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/branch.then/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc") {
+                    try await runtime.recordBranchTaken(condition: "meridianDef_Schema_compatible(state.get(\"schema\"))", into: "then", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/68ba4b5da4b9df4c52bbe6e2446dcd76c4de3c4bb32e59a3a8cfdbb8f9e82751")
+                    if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/branch.then/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f") {
                         // L33
                         let dataset = try await runtime.invoke(
                             tool: "load",
@@ -427,46 +427,46 @@ public struct SchemaEvolution: MeridianWorkflow {
                                 "dataset": state.get("dataset") ?? .null,
                                 "warehouse sink": state.get("warehouseWarehouseSink") ?? .null,
                             ],
-                            step: "/SchemaEvolution/workflow-steps/procedure/branch.then/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc",
+                            step: "/SchemaEvolution/workflow-steps/procedure/branch.then/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f",
                             capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "load")
                         )
                         state.bind("dataset", dataset)
 
-                        try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.then/309dd2ea08d9c708bf2fd4bde0fc73791b856ddd4ba398461b04aac02d5804cc", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.then/f29f40064632907468e252fb708826af6a3c2cd2ddaebbeec0c2b82fe236587f", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
+                    try await runtime.recordBranchEnded(into: "then", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/68ba4b5da4b9df4c52bbe6e2446dcd76c4de3c4bb32e59a3a8cfdbb8f9e82751")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "meridianDef_Schema_compatible(state.get(\"schema\"))", into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
+                    try await runtime.recordBranchTaken(condition: "meridianDef_Schema_compatible(state.get(\"schema\"))", into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/68ba4b5da4b9df4c52bbe6e2446dcd76c4de3c4bb32e59a3a8cfdbb8f9e82751")
 
-                    if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/branch.else/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad") {
+                    if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/branch.else/396c20d84fd536e2f5d12b29e705b4a5787b40af7f8aab2ebec46a8265b5acf9") {
                         // L35
                         try await runtime.emit(
                             event: "etl.note",
                             payload: [
                                 "message": .string("schema incompatible, dataset held for manual review"),
                             ],
-                            step: "/SchemaEvolution/workflow-steps/procedure/branch.else/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad"
+                            step: "/SchemaEvolution/workflow-steps/procedure/branch.else/396c20d84fd536e2f5d12b29e705b4a5787b40af7f8aab2ebec46a8265b5acf9"
                         )
-                        try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.else/d625e25b788887b0267c8fe759aae9b61b2d7bb1703e52c0101bd45750e3cfad", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/branch.else/396c20d84fd536e2f5d12b29e705b4a5787b40af7f8aab2ebec46a8265b5acf9", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/05b2a0c9f5a23c9846bb2c3e615a46b0a513ec5ef84b0c914862d7135027edaf")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/SchemaEvolution/workflow-steps/procedure/iterate.body/68ba4b5da4b9df4c52bbe6e2446dcd76c4de3c4bb32e59a3a8cfdbb8f9e82751")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_2.count, step: "/SchemaEvolution/workflow-steps/procedure/d439b7f889716d5ea5fe7038475ffb10ffa97ab3ac90b5beec5ea9f65ee449df")
+        try await runtime.recordIterateEnd(over: "state.get(\"datasets\")", count: __meridianColl_0_2.count, step: "/SchemaEvolution/workflow-steps/procedure/5a0d360af3314c255fc5ea811f75967128d82048d10388670f5c658342ce832f")
 
-        if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/1a74c3f6ebcb34ebe99f96919e7727a9916d9439bf748409709565c01c0cc4d6") {
+        if __meridianShouldRun("/SchemaEvolution/workflow-steps/procedure/aa5cd98f27035d589ef46dea3ce7dbe9fa5cf8e9f80658fa7531eb7728ec207a") {
             // L36
             try await runtime.emit(
                 event: "etl.report",
                 payload: [
                     "message": .string("schema evolution pass complete"),
                 ],
-                step: "/SchemaEvolution/workflow-steps/procedure/1a74c3f6ebcb34ebe99f96919e7727a9916d9439bf748409709565c01c0cc4d6"
+                step: "/SchemaEvolution/workflow-steps/procedure/aa5cd98f27035d589ef46dea3ce7dbe9fa5cf8e9f80658fa7531eb7728ec207a"
             )
-            try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/1a74c3f6ebcb34ebe99f96919e7727a9916d9439bf748409709565c01c0cc4d6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/SchemaEvolution/workflow-steps/procedure/aa5cd98f27035d589ef46dea3ce7dbe9fa5cf8e9f80658fa7531eb7728ec207a", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "SchemaEvolution.complete")
@@ -526,12 +526,12 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckschemaevolutionFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3") {
+        if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/eaec76988d186cda70b8260483fbaad63a7b49e2c16f01ed29ce9cf5acae3d09") {
             // L1
             try await runtime.wait(.event("checkSchemaEvolution", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckschemaevolutionFires/root/procedure/de53c0264b4e5b4bf70e55cbe3eb710f1ffd402ad74754641f5f881f96a145c3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckschemaevolutionFires/root/procedure/eaec76988d186cda70b8260483fbaad63a7b49e2c16f01ed29ce9cf5acae3d09", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e") {
+        if __meridianShouldRun("/WhenCheckschemaevolutionFires/root/procedure/b9939e721f3db8492b8241fee390cbad63a08342ae9e3455d2da717140419ba4") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkSchemaEvolution.fired",
@@ -539,9 +539,9 @@ public struct WhenCheckschemaevolutionFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check schema evolution"),
                 ],
-                step: "/WhenCheckschemaevolutionFires/root/procedure/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e"
+                step: "/WhenCheckschemaevolutionFires/root/procedure/b9939e721f3db8492b8241fee390cbad63a08342ae9e3455d2da717140419ba4"
             )
-            try await runtime.checkpoint(label: "/WhenCheckschemaevolutionFires/root/procedure/ecf46cd97da9eb843e071796250912befd2749cf0020c09ed57ead156fc1e97e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckschemaevolutionFires/root/procedure/b9939e721f3db8492b8241fee390cbad63a08342ae9e3455d2da717140419ba4", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckschemaevolutionFires.complete")
@@ -601,12 +601,12 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenValidateschemacompatibilityFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6") {
+        if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/b32661a5c93b328ae8343682ad921f7a0ba260e34a7af6ebeb769e47052efd1a") {
             // L1
             try await runtime.wait(.event("validateSchemaCompatibility", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenValidateschemacompatibilityFires/root/procedure/7c6a8743ca9b8bc2d5dcc09095b5853599142ec129bad3c0a92e9e5d7cd266b6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidateschemacompatibilityFires/root/procedure/b32661a5c93b328ae8343682ad921f7a0ba260e34a7af6ebeb769e47052efd1a", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca") {
+        if __meridianShouldRun("/WhenValidateschemacompatibilityFires/root/procedure/01a37b892cf05718728791eab49bd81354ad7c4d75cfcf5cf7c55b515ffe9474") {
             // L1
             try await runtime.emit(
                 event: "trigger.validateSchemaCompatibility.fired",
@@ -614,9 +614,9 @@ public struct WhenValidateschemacompatibilityFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("validate schema compatibility"),
                 ],
-                step: "/WhenValidateschemacompatibilityFires/root/procedure/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca"
+                step: "/WhenValidateschemacompatibilityFires/root/procedure/01a37b892cf05718728791eab49bd81354ad7c4d75cfcf5cf7c55b515ffe9474"
             )
-            try await runtime.checkpoint(label: "/WhenValidateschemacompatibilityFires/root/procedure/8defa598853f5199a2f40ac345c0ddf87816820f9ffb0b704f4e0cbea54a21ca", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidateschemacompatibilityFires/root/procedure/01a37b892cf05718728791eab49bd81354ad7c4d75cfcf5cf7c55b515ffe9474", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenValidateschemacompatibilityFires.complete")
@@ -676,12 +676,12 @@ public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunschemacompatibilitycheckFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a") {
+        if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/348b0c79e333054802308984bd719b128658eb9d108c26e21e894490ba349e3d") {
             // L1
             try await runtime.wait(.event("runSchemaCompatibilityCheck", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunschemacompatibilitycheckFires/root/procedure/d832441d535341d77fd3f6f4fa51d88edfca7ebbd4447a0be51e5a7e34b65b0a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunschemacompatibilitycheckFires/root/procedure/348b0c79e333054802308984bd719b128658eb9d108c26e21e894490ba349e3d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb") {
+        if __meridianShouldRun("/WhenRunschemacompatibilitycheckFires/root/procedure/bb1b476b6d7d96011c92361ab81de2e9b31068ddeb6679de3502e08c43a655be") {
             // L1
             try await runtime.emit(
                 event: "trigger.runSchemaCompatibilityCheck.fired",
@@ -689,9 +689,9 @@ public struct WhenRunschemacompatibilitycheckFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run schema compatibility check"),
                 ],
-                step: "/WhenRunschemacompatibilitycheckFires/root/procedure/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb"
+                step: "/WhenRunschemacompatibilitycheckFires/root/procedure/bb1b476b6d7d96011c92361ab81de2e9b31068ddeb6679de3502e08c43a655be"
             )
-            try await runtime.checkpoint(label: "/WhenRunschemacompatibilitycheckFires/root/procedure/9db44b6ec17e0690eeae73c2c754d61c460b046fdfb3140180f4ef4d00d1e7bb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunschemacompatibilitycheckFires/root/procedure/bb1b476b6d7d96011c92361ab81de2e9b31068ddeb6679de3502e08c43a655be", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunschemacompatibilitycheckFires.complete")

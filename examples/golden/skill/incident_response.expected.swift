@@ -213,35 +213,35 @@ public struct IncidentResponsePullRequest: MeridianWorkflow {
         }
         await runtime.workflowStarted(workflowName: "IncidentResponsePullRequest", parameters: [:])
 
-        if __meridianShouldRun("/IncidentResponsePullRequest/first-response/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e") {
+        if __meridianShouldRun("/IncidentResponsePullRequest/first-response/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272") {
             let ciStatus = try await runtime.invoke(
                 tool: "getCIStatus",
                 args: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/IncidentResponsePullRequest/first-response/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e",
+                step: "/IncidentResponsePullRequest/first-response/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getCIStatus")
             )
             state.bind("ciStatus", ciStatus)
 
-            try await runtime.checkpoint(label: "/IncidentResponsePullRequest/first-response/procedure/0659a6e62964992c706fe59b3f8c9f3b78e6610774edc61e3817800c5c81185e", state: state.snapshot())
+            try await runtime.checkpoint(label: "/IncidentResponsePullRequest/first-response/procedure/916db7fef12a43920f6655e659222f2c3907c5bd3cda6ae8f242c8e150fdc272", state: state.snapshot())
         }
         if try await runtime.discretion.decide(DiscretionContext(question: "the incident is severe", snapshot: state.snapshot())) {
-            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the incident is severe\", snapshot: state.snapshot()))", into: "then", step: "/IncidentResponsePullRequest/first-response/procedure/8e87ac7a22ff8810fc451a5434956ef6ab3a54c36514afd1126387c29ec433bb")
-            if __meridianShouldRun("/IncidentResponsePullRequest/first-response/procedure/branch.then/3f78f2689e9e0dcefc324d1e6209625ffe4a407a16b2505bf6792297c31d85e6") {
+            try await runtime.recordBranchTaken(condition: "try await runtime.discretion.decide(DiscretionContext(question: \"the incident is severe\", snapshot: state.snapshot()))", into: "then", step: "/IncidentResponsePullRequest/first-response/procedure/8be32d012a7d3761b201d1f6447e78ec8e7d690419a0afa3ad85dce43bc9c508")
+            if __meridianShouldRun("/IncidentResponsePullRequest/first-response/procedure/branch.then/0231bc498199571e543fed221e5ed46f4dabd52e3081bbadf33aa69179401aaf") {
                 let fix = try await runtime.invoke(
                     tool: "commitFix",
                     args: [
                         "message": .string("start incident mitigation"),
                     ],
-                    step: "/IncidentResponsePullRequest/first-response/procedure/branch.then/3f78f2689e9e0dcefc324d1e6209625ffe4a407a16b2505bf6792297c31d85e6",
+                    step: "/IncidentResponsePullRequest/first-response/procedure/branch.then/0231bc498199571e543fed221e5ed46f4dabd52e3081bbadf33aa69179401aaf",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "commitFix")
                 )
                 state.bind("fix", fix)
 
-                try await runtime.checkpoint(label: "/IncidentResponsePullRequest/first-response/procedure/branch.then/3f78f2689e9e0dcefc324d1e6209625ffe4a407a16b2505bf6792297c31d85e6", state: state.snapshot())
+                try await runtime.checkpoint(label: "/IncidentResponsePullRequest/first-response/procedure/branch.then/0231bc498199571e543fed221e5ed46f4dabd52e3081bbadf33aa69179401aaf", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/IncidentResponsePullRequest/first-response/procedure/8e87ac7a22ff8810fc451a5434956ef6ab3a54c36514afd1126387c29ec433bb")
+            try await runtime.recordBranchEnded(into: "then", step: "/IncidentResponsePullRequest/first-response/procedure/8be32d012a7d3761b201d1f6447e78ec8e7d690419a0afa3ad85dce43bc9c508")
         }
 
 
@@ -310,7 +310,7 @@ public struct CoordinateIncidentResponse: MeridianWorkflow {
             maxSteps: 32,
             replanAfterFailures: 1,
             outputKind: "record",
-            step: "/CoordinateIncidentResponse/first-response/procedure/60c6aeb24f35c487b0ff54386072eb1364478382aac0914fcda7c5a2312a69e0"
+            step: "/CoordinateIncidentResponse/first-response/procedure/d90b6ad8c5a5b1c372330581a526fc80db9e9bc02bee3374f225a2ca59122b0b"
         )
         for (__key, __value) in __meridianProseResults_L15 {
             state.bind(__key, __value)

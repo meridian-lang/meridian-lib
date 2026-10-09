@@ -777,105 +777,105 @@ public struct CustomerSupportRouterPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "CustomerSupportRouterPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/CustomerSupportRouterPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/CustomerSupportRouterPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/3306480455ffe2d0132475b5e8fe87745fd81fc52db3aaab7644e8f84219114b") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/24e77d3e3de28c6cf0b72a4766ba7bc7474cb3e108416b80e3d8b7b506cfd191") {
             let ticket = try await runtime.invoke(
                 tool: "readCustomerTicket",
                 args: [
                     "ticketId": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/CustomerSupportRouterPullRequest/read-context/procedure/3306480455ffe2d0132475b5e8fe87745fd81fc52db3aaab7644e8f84219114b",
+                step: "/CustomerSupportRouterPullRequest/read-context/procedure/24e77d3e3de28c6cf0b72a4766ba7bc7474cb3e108416b80e3d8b7b506cfd191",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "readCustomerTicket")
             )
             state.bind("ticket", ticket)
 
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/3306480455ffe2d0132475b5e8fe87745fd81fc52db3aaab7644e8f84219114b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/24e77d3e3de28c6cf0b72a4766ba7bc7474cb3e108416b80e3d8b7b506cfd191", state: state.snapshot())
         }
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/11331d792de6d897d2cebefdf8b8ba134bb84ad729624ccfb0d2747748d7ac0a") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/read-context/procedure/79b1fee005989bcb8ccc002892b9f260830cd80c4acae9271d3b695842e57b59") {
             let profile = try await runtime.invoke(
                 tool: "readCustomerProfile",
                 args: [
                     "customerId": state.get("ticket.customerId") ?? .null,
                 ],
-                step: "/CustomerSupportRouterPullRequest/read-context/procedure/11331d792de6d897d2cebefdf8b8ba134bb84ad729624ccfb0d2747748d7ac0a",
+                step: "/CustomerSupportRouterPullRequest/read-context/procedure/79b1fee005989bcb8ccc002892b9f260830cd80c4acae9271d3b695842e57b59",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "readCustomerProfile")
             )
             state.bind("profile", profile)
 
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/11331d792de6d897d2cebefdf8b8ba134bb84ad729624ccfb0d2747748d7ac0a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/read-context/procedure/79b1fee005989bcb8ccc002892b9f260830cd80c4acae9271d3b695842e57b59", state: state.snapshot())
         }
         if MeridianComparison.eq(state.get("profile.tier"), .string("vip")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"profile.tier\"), .string(\"vip\"))", into: "then", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/a1efbdf6cdafaf1ae6abd3893f9d74beb30f6574f6eade454c9b736ad61e9c55")
-            if __meridianShouldRun("/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/cbd47765cd2087c1ae12d1d2b00409ded56859de8149fefe276a17a4d7e362a3") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"profile.tier\"), .string(\"vip\"))", into: "then", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/8425644afb7fd575c2f23f06e8b96a7c22b53790bed5f94d08262b5bcf6e7e2c")
+            if __meridianShouldRun("/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/7e92c186d67efd5e6e9a1896a900fdf574004b8414c73fd579c17d51d9caa1d5") {
                 let customerTicket = try await runtime.invoke(
                     tool: "escalateCustomerTicket",
                     args: [
                         "ticketId": state.get("ticket.id") ?? .null,
                         "reason": .string("vip-tier auto-escalation"),
                     ],
-                    step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/cbd47765cd2087c1ae12d1d2b00409ded56859de8149fefe276a17a4d7e362a3",
+                    step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/7e92c186d67efd5e6e9a1896a900fdf574004b8414c73fd579c17d51d9caa1d5",
                     capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "escalateCustomerTicket")
                 )
                 state.bind("customerTicket", customerTicket)
 
-                try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/cbd47765cd2087c1ae12d1d2b00409ded56859de8149fefe276a17a4d7e362a3", state: state.snapshot())
+                try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/7e92c186d67efd5e6e9a1896a900fdf574004b8414c73fd579c17d51d9caa1d5", state: state.snapshot())
             }
-            if __meridianShouldRun("/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/800c5463948186a67c9c4c447e41a2ec31266349e534e6eabd02bfa6d0837b06") {
+            if __meridianShouldRun("/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/3818918876181581e632ee3f9a59afa5243d0c87c5bfdc48fedfb487b173205f") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("vip ticket escalated"),
                     ],
-                    step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/800c5463948186a67c9c4c447e41a2ec31266349e534e6eabd02bfa6d0837b06"
+                    step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/3818918876181581e632ee3f9a59afa5243d0c87c5bfdc48fedfb487b173205f"
                 )
-                try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/800c5463948186a67c9c4c447e41a2ec31266349e534e6eabd02bfa6d0837b06", state: state.snapshot())
+                try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/3818918876181581e632ee3f9a59afa5243d0c87c5bfdc48fedfb487b173205f", state: state.snapshot())
             }
-            await runtime.complete(reason: "vip_escalated", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/d754a94e724ae49d7d37531b5bd761f912be7fbfde610ff7ff27c19bd26da52e")
+            await runtime.complete(reason: "vip_escalated", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/branch.then/7ac6c63d9d9bf67d7a4849422536fa2d67a21bb752fad33a254cbe529475dfcc")
             return WorkflowResult(reason: "vip_escalated", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/a1efbdf6cdafaf1ae6abd3893f9d74beb30f6574f6eade454c9b736ad61e9c55")
+            try await runtime.recordBranchEnded(into: "then", step: "/CustomerSupportRouterPullRequest/vip-escalation-path-is-deterministic/procedure/8425644afb7fd575c2f23f06e8b96a7c22b53790bed5f94d08262b5bcf6e7e2c")
         }
 
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/ad4de0a9d8c1ebde36ba05d131d8bab53a6fd571ad0adc9dccd231af586d3433") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/4573ad6cc801462c32463ab91b507291a14479cc6e39d91ec7506399610c0032") {
             _ = try await DraftResponse(runtime: runtime, pullRequest: pullRequest).run()
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/ad4de0a9d8c1ebde36ba05d131d8bab53a6fd571ad0adc9dccd231af586d3433", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/plan-a-draft-response-under-discretion/procedure/4573ad6cc801462c32463ab91b507291a14479cc6e39d91ec7506399610c0032", state: state.snapshot())
         }
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/39ceac39010b40f597f3d6d8d7a2458776f7db9093011e658cc69aeb2b45a25b") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/de33c1c675b2f5b40b343ab83055773eb3b0119f7de7c68b05ddc42eef19de63") {
             try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "support lead")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/39ceac39010b40f597f3d6d8d7a2458776f7db9093011e658cc69aeb2b45a25b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/de33c1c675b2f5b40b343ab83055773eb3b0119f7de7c68b05ddc42eef19de63", state: state.snapshot())
         }
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/01ff76d3b20128ad25ae7ddaa78856c1d336855ba0f679752f5f8b3061c45bc5") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/227118f59c8f6a13d057a36f5cecec336c200da29467c8bf2353a211b12a76e8") {
             let sent = try await runtime.invoke(
                 tool: "sendSupportReply",
                 args: [
                     "ticketId": state.get("ticket.id") ?? .null,
                     "body": .string("approved draft"),
                 ],
-                step: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/01ff76d3b20128ad25ae7ddaa78856c1d336855ba0f679752f5f8b3061c45bc5",
+                step: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/227118f59c8f6a13d057a36f5cecec336c200da29467c8bf2353a211b12a76e8",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "sendSupportReply")
             )
             state.bind("sent", sent)
 
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/01ff76d3b20128ad25ae7ddaa78856c1d336855ba0f679752f5f8b3061c45bc5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/send-the-drafted-reply-once-approved/procedure/227118f59c8f6a13d057a36f5cecec336c200da29467c8bf2353a211b12a76e8", state: state.snapshot())
         }
-        if __meridianShouldRun("/CustomerSupportRouterPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/CustomerSupportRouterPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/CustomerSupportRouterPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/CustomerSupportRouterPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/CustomerSupportRouterPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "CustomerSupportRouterPullRequest.complete")
@@ -943,7 +943,7 @@ public struct DraftResponse: MeridianWorkflow {
             snapshot: state.snapshot(),
             scopedTools: ["applySmallestRepair", "draftSupportReply", "escalateCustomerTicket", "evaluatePolicy", "getCIStatus", "getDeploymentHealth", "getFailingJobs", "getMergeStatus", "getPullRequest", "haltRelease", "listOutdatedDependencies", "listPullRequestComments", "mitigateService", "notifyChannel", "openIncident", "openRemediationTask", "pageOncall", "promoteDeployment", "pushBranch", "readCustomerProfile", "readCustomerTicket", "recordAuditNote", "requestReviewerApproval", "resolveComment", "rollbackDeployment", "runTestSuite", "scanVulnerabilities", "sendSupportReply", "snapshotServiceHealth", "syncBranch", "updateIncident", "updateRemediationTask", "upgradeDependency"],
             outputKind: "record",
-            step: "/DraftResponse/sub-workflow/procedure/dd1c7d104827e228d5f7a4a6120c77c1754c7cba84e09a17b0771e06dd6fbaa1"
+            step: "/DraftResponse/sub-workflow/procedure/394a0f275f2210bfba550c937f942e758d9990a5fb1c8df8f118865b0b37aa0f"
         )
         for (__key, __value) in __meridianProseResults_L37 {
             state.bind(__key, __value)

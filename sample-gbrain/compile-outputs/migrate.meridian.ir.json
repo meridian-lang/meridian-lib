@@ -4,56 +4,56 @@
       "canonical" : "emit trigger.importNotion.fired with kind = \"keyword\", spec = \"import from notion\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/be797a3595bb8e2d61f84c8fd20ff0c918a0dd71bc3c3dba03da9bbadf1bfdfa",
+      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/35a148b0f754bd62a7279eceb5ca0c8fb7af2845c4ac7cd568d6aa29470dde52",
       "swift_line" : 856
     },
     {
       "canonical" : "wait for event importNotion.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/ceabc7195cb50612b353019188ac86b8d344562fff1cb59d330cb3a979dc1820",
-      "swift_line" : 856
-    },
-    {
-      "canonical" : "emit trigger.importObsidian.fired with kind = \"keyword\", spec = \"import from obsidian\".",
-      "meridian_line" : 1,
-      "primitive" : "emit",
-      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/3e842608038e4f4654a5100730eb5ea97bdb43c06b5b1fd8be75a51ef304e1bf",
+      "stable_step_path" : "\/WhenImportnotionFires\/root\/procedure\/d30c0fd84c67acdf80833f84c84a4561e145dd8809b4f2991d1e60b91c661cbc",
       "swift_line" : 856
     },
     {
       "canonical" : "wait for event importObsidian.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/4070e3a1691fb8b704bb3d51bfede2075b5313ca9423f01052132c1810d61580",
+      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/7b6de87162b6bda22584d205add4f2492f661972911f324d38b578223e08b832",
       "swift_line" : 856
     },
     {
-      "canonical" : "wait for event migrate.",
+      "canonical" : "emit trigger.importObsidian.fired with kind = \"keyword\", spec = \"import from obsidian\".",
       "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/78078f829f73267ff97719f5e3dc962636aabe3c248e55d50d43243329c3038a",
+      "primitive" : "emit",
+      "stable_step_path" : "\/WhenImportobsidianFires\/root\/procedure\/948c7f76686df1a29497f003d0d92d5024208e02a58a219c91f500d4112c3267",
       "swift_line" : 856
     },
     {
       "canonical" : "emit trigger.migrate.fired with kind = \"keyword\", spec = \"migrate from\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/fd1780b808564153980d9963579cc99d9b4e03c37be25d47badb9d6285a803ee",
+      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/5dcb2a9e0ffdea15d98cb8df1e8873a17989dfc187c81fbf3ebe6fe0497b211b",
+      "swift_line" : 856
+    },
+    {
+      "canonical" : "wait for event migrate.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenMigrateFires\/root\/procedure\/e62ec4dd7c6bfe8957ef307dd43d2b35c761a8f9c88df30242b660628f08e858",
       "swift_line" : 856
     },
     {
       "canonical" : "for each row in csv,",
       "meridian_line" : 97,
       "primitive" : "iterate",
-      "stable_step_path" : "\/MigrateInput\/csv-migration-steps\/procedure\/553ec9d93b5b5667ff39946dd16894000b72cf8fc6a629066743088983a00a54",
+      "stable_step_path" : "\/MigrateInput\/csv-migration-steps\/procedure\/fc24b888e8a9c5b1b8305bb9e3b43c04eba584c1ff8cb48d0507c67d3482c0da",
       "swift_line" : 625
     },
     {
       "canonical" : "bind health = invoke health.get.",
       "meridian_line" : 109,
       "primitive" : "invoke",
-      "stable_step_path" : "\/MigrateInput\/verification-steps\/procedure\/d0da2a7635725918530130023cd4ab9337bf84e68ad0d7eb20fcfd46b58a40a0",
+      "stable_step_path" : "\/MigrateInput\/verification-steps\/procedure\/712fe4aaba5b72d87963c7853862b35d21797a0d24198209f71baf3ede5486b3",
       "swift_line" : 639
     }
   ],

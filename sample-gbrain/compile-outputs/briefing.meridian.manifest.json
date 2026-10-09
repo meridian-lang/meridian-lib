@@ -648,8 +648,8 @@
       "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "briefing a input",
       "step_paths" : [
-        "\/BriefingInput\/contract-steps\/invariants\/6f59a1c46659827e912c5184face56cf0482853f826d9849cf6175511b913f22",
-        "\/BriefingInput\/phases-steps-2\/procedure\/76cdc64261e598f9b7c9cb18f89bfd8c58ebef9aa9c8bfb977434d0d1c9e924a"
+        "\/BriefingInput\/contract-steps\/invariants\/b3455d0d62f7477b18ceca4dd7c71e0821750ac96a5d845030d6181c8c1b2a07",
+        "\/BriefingInput\/phases-steps-2\/procedure\/9a0d4ff9ea83fd5b5852dbf4a7c2063a26778204da621b40a69da7be12e25baa"
       ],
       "swift_struct" : "BriefingInput"
     },
@@ -662,8 +662,8 @@
       "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when dailyBriefing fires",
       "step_paths" : [
-        "\/WhenDailybriefingFires\/root\/procedure\/3bbf40fb76103f773c917df074ea6e93f03f031afa8d547104ff6e04144ea547",
-        "\/WhenDailybriefingFires\/root\/procedure\/6e838accaaaa92cdcf852df57f22fa14101b97a87defad93f43528afaaa7bab1"
+        "\/WhenDailybriefingFires\/root\/procedure\/5fe24969e6e70966ac73ddbcd5aa2b0cd12da849b6224c1bc7724fb5962bef42",
+        "\/WhenDailybriefingFires\/root\/procedure\/e1c4f5043a6042dd25198c991ae43ddb6d492bd306a14a629249a23179b40ffa"
       ],
       "swift_struct" : "WhenDailybriefingFires"
     },
@@ -676,8 +676,8 @@
       "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when morningBriefing fires",
       "step_paths" : [
-        "\/WhenMorningbriefingFires\/root\/procedure\/46409c88bcb1d500de60fd5fe0ee1f021ebbc02b19784d1a4dcec777bd8472fb",
-        "\/WhenMorningbriefingFires\/root\/procedure\/f8744cd472ca28b48326f6e485f7fbfe8b03d0cb681e9288c582aa179ee60f51"
+        "\/WhenMorningbriefingFires\/root\/procedure\/4e8168f5f8ad2250485963806479bf1a0e550f40687982274c3683b9ff42c3d8",
+        "\/WhenMorningbriefingFires\/root\/procedure\/e9053bfe2eed1e4bae6fd34070077ebb0f3c94bd635191cfd7b582bd857667db"
       ],
       "swift_struct" : "WhenMorningbriefingFires"
     },
@@ -690,8 +690,8 @@
       "skill_version_hash" : "5f7d1ca6b98820e68726f71e39062b60a666bc8e796212f892c1591c30dc7c4f",
       "source_name" : "when whatSHappeningToday fires",
       "step_paths" : [
-        "\/WhenWhatshappeningtodayFires\/root\/procedure\/0db8c9fb09d7e78c7c43f87414f3c899d5bf93bcfb1e64f7354d1686210e9cb8",
-        "\/WhenWhatshappeningtodayFires\/root\/procedure\/7fe925aad4f9b913541694f568003c7c30fd4b04eeeb00b4c78ce59937b16cb0"
+        "\/WhenWhatshappeningtodayFires\/root\/procedure\/5954c2ba12b97194b16727fd36c8818dcf438d02fd1c3b63aa75bd104f81b265",
+        "\/WhenWhatshappeningtodayFires\/root\/procedure\/ea380c250f6c8b7fb37d17ab1b693a20561e638d80bf473331a630b8eaa8e782"
       ],
       "swift_struct" : "WhenWhatshappeningtodayFires"
     }

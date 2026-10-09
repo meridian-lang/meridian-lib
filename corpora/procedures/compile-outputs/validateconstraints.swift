@@ -453,80 +453,80 @@ public struct ValidateConstraints: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "ValidateConstraints", parameters: [:])
 
-        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/1bcbc6230f4d9e46605ea45e918b7ff1b5e9648648d5f945e541de0b28da9084") {
+        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/1313eaf0571e99b543b5f8002f0220ec06472577d213fef62452a923e8d63aa2") {
             // L19
             let constraints = try await runtime.invoke(
                 tool: "constraint.list",
                 args: [
                     "status": .string("violated"),
                 ],
-                step: "/ValidateConstraints/procedure-steps/procedure/1bcbc6230f4d9e46605ea45e918b7ff1b5e9648648d5f945e541de0b28da9084",
+                step: "/ValidateConstraints/procedure-steps/procedure/1313eaf0571e99b543b5f8002f0220ec06472577d213fef62452a923e8d63aa2",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "constraint.list")
             )
             state.bind("constraints", constraints)
 
-            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/1bcbc6230f4d9e46605ea45e918b7ff1b5e9648648d5f945e541de0b28da9084", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/1313eaf0571e99b543b5f8002f0220ec06472577d213fef62452a923e8d63aa2", state: state.snapshot())
         }
-        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/e425833796c978a30d32f128e8652d058dd00c3a2aa0564f21ca2d78700be72d") {
+        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/71574c6c277e1cc292924cd5bd658566da240605dd03d5e704c22dc7f445d8a1") {
             // L20
             try await runtime.assert((((state.get("constraints")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("violated"))) }).isEmpty), message: "Expected no constraints whose status is \"violated\"")
-            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/e425833796c978a30d32f128e8652d058dd00c3a2aa0564f21ca2d78700be72d", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/71574c6c277e1cc292924cd5bd658566da240605dd03d5e704c22dc7f445d8a1", state: state.snapshot())
         }
         // L21
         let __meridianColl_0_2 = (state.get("constraints")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"constraints\")", step: "/ValidateConstraints/procedure-steps/procedure/89865a354070af2f0959d7588735cb4702ae4df52a98be1061542d1bde63d99d")
+        try await runtime.recordIterateStart(over: "state.get(\"constraints\")", step: "/ValidateConstraints/procedure-steps/procedure/45bc46e375ebd998df438998d1127bebd7c349df35edcc6b19f68966aab44f31")
         for (__meridianLoopIndex_0_2, constraint) in __meridianColl_0_2.enumerated() {
             let __meridianLoopLabel_0_2 = "progress:0.2:iteration:\(__meridianLoopIndex_0_2)"
             if __meridianShouldRun(__meridianLoopLabel_0_2) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/ValidateConstraints/procedure-steps/procedure/89865a354070af2f0959d7588735cb4702ae4df52a98be1061542d1bde63d99d")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_2, step: "/ValidateConstraints/procedure-steps/procedure/45bc46e375ebd998df438998d1127bebd7c349df35edcc6b19f68966aab44f31")
             state.bind("constraint", constraint)
                 // L22
                 if (MeridianComparison.isNotEmpty(state.get("constraint.tableName"))) && ((MeridianComparison.eq(state.get("constraint.status"), .string("violated"))) || (MeridianComparison.eq(state.get("constraint.status"), .string("pending")))) {
-                    try await runtime.recordBranchTaken(condition: "(MeridianComparison.isNotEmpty(state.get(\"constraint.tableName\"))) && ((MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"violated\"))) || (MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"pending\"))))", into: "then", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/aeef16a2d0cc722f88d36d1137994aaec6a31b70a8164a3b6bb8351aa30e8a39")
+                    try await runtime.recordBranchTaken(condition: "(MeridianComparison.isNotEmpty(state.get(\"constraint.tableName\"))) && ((MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"violated\"))) || (MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"pending\"))))", into: "then", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/cad67e2f0af2f57da8d8ed4236cfedc3ae7efb8250bd2e6d504d4cb64498aa23")
                     // L23
                     let __meridianProseResults_L23 = try await runtime.executeProsePlan(
                         prose: "classify the constraint violation and recommend the least destructive remediation that keeps referential integrity,",
                         snapshot: state.snapshot(),
                         scopedTools: ["audit_row.list", "batch.list", "batch.retry", "batch.settle", "constraint.list", "index.list", "index.rebuild", "ledger.reconcile", "migration.apply", "migration.list", "migration.rollback", "record.checksum", "record.list", "record.mark_canonical", "record.purge", "table.list", "table.vacuum"],
                         outputKind: "record",
-                        step: "/ValidateConstraints/procedure-steps/procedure/branch.then/e570e895185382d8c34533bb8bf1ca0f462b29b8121304169a4859bf2faf3dd1"
+                        step: "/ValidateConstraints/procedure-steps/procedure/branch.then/5f5fe9c9b7f1dc44e80eb1efcb5fc4e57f9adca3b4b5e68eb4ca6337fc95bcb2"
                     )
                     for (__key, __value) in __meridianProseResults_L23 {
                         state.bind(__key, __value)
                     }
-                    try await runtime.recordBranchEnded(into: "then", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/aeef16a2d0cc722f88d36d1137994aaec6a31b70a8164a3b6bb8351aa30e8a39")
+                    try await runtime.recordBranchEnded(into: "then", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/cad67e2f0af2f57da8d8ed4236cfedc3ae7efb8250bd2e6d504d4cb64498aa23")
                 } else {
-                    try await runtime.recordBranchTaken(condition: "(MeridianComparison.isNotEmpty(state.get(\"constraint.tableName\"))) && ((MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"violated\"))) || (MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"pending\"))))", into: "otherwise", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/aeef16a2d0cc722f88d36d1137994aaec6a31b70a8164a3b6bb8351aa30e8a39")
+                    try await runtime.recordBranchTaken(condition: "(MeridianComparison.isNotEmpty(state.get(\"constraint.tableName\"))) && ((MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"violated\"))) || (MeridianComparison.eq(state.get(\"constraint.status\"), .string(\"pending\"))))", into: "otherwise", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/cad67e2f0af2f57da8d8ed4236cfedc3ae7efb8250bd2e6d504d4cb64498aa23")
 
-                    if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/branch.else/3940c3a87bbb4ff1c1a08760378fe76aa66c9f1420372211fa8629153063dedf") {
+                    if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/branch.else/637ddf31c53521190a20db2c9f7953478b7b166db71f2632b84066d9fde0ac45") {
                         // L25
                         try await runtime.emit(
                             event: "procedure.note",
                             payload: [
                                 "message": .string("constraint check clean"),
                             ],
-                            step: "/ValidateConstraints/procedure-steps/procedure/branch.else/3940c3a87bbb4ff1c1a08760378fe76aa66c9f1420372211fa8629153063dedf"
+                            step: "/ValidateConstraints/procedure-steps/procedure/branch.else/637ddf31c53521190a20db2c9f7953478b7b166db71f2632b84066d9fde0ac45"
                         )
-                        try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/branch.else/3940c3a87bbb4ff1c1a08760378fe76aa66c9f1420372211fa8629153063dedf", state: state.snapshot())
+                        try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/branch.else/637ddf31c53521190a20db2c9f7953478b7b166db71f2632b84066d9fde0ac45", state: state.snapshot())
                     }
-                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/aeef16a2d0cc722f88d36d1137994aaec6a31b70a8164a3b6bb8351aa30e8a39")
+                    try await runtime.recordBranchEnded(into: "otherwise", step: "/ValidateConstraints/procedure-steps/procedure/iterate.body/cad67e2f0af2f57da8d8ed4236cfedc3ae7efb8250bd2e6d504d4cb64498aa23")
                 }
 
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_2, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"constraints\")", count: __meridianColl_0_2.count, step: "/ValidateConstraints/procedure-steps/procedure/89865a354070af2f0959d7588735cb4702ae4df52a98be1061542d1bde63d99d")
+        try await runtime.recordIterateEnd(over: "state.get(\"constraints\")", count: __meridianColl_0_2.count, step: "/ValidateConstraints/procedure-steps/procedure/45bc46e375ebd998df438998d1127bebd7c349df35edcc6b19f68966aab44f31")
 
-        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/9c232834ca776789d597f036259be5023b58e95ddb17391e17ac2074b3386eb9") {
+        if __meridianShouldRun("/ValidateConstraints/procedure-steps/procedure/904a7c94d63d652334b0a6ebdd7c253b66c5e7cc69394e92e35764f0e0d19ab0") {
             // L26
             try await runtime.emit(
                 event: "procedure.report",
                 payload: [
                     "message": .string("constraints validated"),
                 ],
-                step: "/ValidateConstraints/procedure-steps/procedure/9c232834ca776789d597f036259be5023b58e95ddb17391e17ac2074b3386eb9"
+                step: "/ValidateConstraints/procedure-steps/procedure/904a7c94d63d652334b0a6ebdd7c253b66c5e7cc69394e92e35764f0e0d19ab0"
             )
-            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/9c232834ca776789d597f036259be5023b58e95ddb17391e17ac2074b3386eb9", state: state.snapshot())
+            try await runtime.checkpoint(label: "/ValidateConstraints/procedure-steps/procedure/904a7c94d63d652334b0a6ebdd7c253b66c5e7cc69394e92e35764f0e0d19ab0", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "ValidateConstraints.complete")
@@ -586,12 +586,12 @@ public struct WhenValidateconstraintsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenValidateconstraintsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenValidateconstraintsFires/root/procedure/a1153d9692b933e4e76aaf6aa56027e7db22e2e0cb34d95696fbdb82a42a6c31") {
+        if __meridianShouldRun("/WhenValidateconstraintsFires/root/procedure/5c8238018bc420fd41752a8f8dac300b9858cda58aec86ff7d120eb6e02a0172") {
             // L1
             try await runtime.wait(.event("validateConstraints", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenValidateconstraintsFires/root/procedure/a1153d9692b933e4e76aaf6aa56027e7db22e2e0cb34d95696fbdb82a42a6c31", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidateconstraintsFires/root/procedure/5c8238018bc420fd41752a8f8dac300b9858cda58aec86ff7d120eb6e02a0172", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenValidateconstraintsFires/root/procedure/1db25daf09e32798b35aced8266ccab3446a8fba78233210b8b5ff1a6ff8e7e3") {
+        if __meridianShouldRun("/WhenValidateconstraintsFires/root/procedure/08c7a846361447555c34bd3f7f2586f6354149eb937c5f5fe90896e5951e9561") {
             // L1
             try await runtime.emit(
                 event: "trigger.validateConstraints.fired",
@@ -599,9 +599,9 @@ public struct WhenValidateconstraintsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("validate constraints"),
                 ],
-                step: "/WhenValidateconstraintsFires/root/procedure/1db25daf09e32798b35aced8266ccab3446a8fba78233210b8b5ff1a6ff8e7e3"
+                step: "/WhenValidateconstraintsFires/root/procedure/08c7a846361447555c34bd3f7f2586f6354149eb937c5f5fe90896e5951e9561"
             )
-            try await runtime.checkpoint(label: "/WhenValidateconstraintsFires/root/procedure/1db25daf09e32798b35aced8266ccab3446a8fba78233210b8b5ff1a6ff8e7e3", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenValidateconstraintsFires/root/procedure/08c7a846361447555c34bd3f7f2586f6354149eb937c5f5fe90896e5951e9561", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenValidateconstraintsFires.complete")
@@ -661,12 +661,12 @@ public struct WhenConstraintviolatedFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenConstraintviolatedFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenConstraintviolatedFires/root/procedure/896a43f0d1df31f9a01441d1d76b9e3aa49da94a3cedc0c729433382090a7694") {
+        if __meridianShouldRun("/WhenConstraintviolatedFires/root/procedure/474e3deb8e25da22d3b542fbff357358456a2a8c1ba4ad9cc07ffe89f5deb2a3") {
             // L1
             try await runtime.wait(.event("constraintViolated", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenConstraintviolatedFires/root/procedure/896a43f0d1df31f9a01441d1d76b9e3aa49da94a3cedc0c729433382090a7694", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenConstraintviolatedFires/root/procedure/474e3deb8e25da22d3b542fbff357358456a2a8c1ba4ad9cc07ffe89f5deb2a3", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenConstraintviolatedFires/root/procedure/4c917ffa6338f2be46076f467c67973ee5839a523bf91f3917553e853a6ef61a") {
+        if __meridianShouldRun("/WhenConstraintviolatedFires/root/procedure/43f05c9ea0fbe4daac5110b82e47ba8a4f3ba9011666b3f1e4d2edbea83b8d60") {
             // L1
             try await runtime.emit(
                 event: "trigger.constraintViolated.fired",
@@ -674,9 +674,9 @@ public struct WhenConstraintviolatedFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("constraint violated"),
                 ],
-                step: "/WhenConstraintviolatedFires/root/procedure/4c917ffa6338f2be46076f467c67973ee5839a523bf91f3917553e853a6ef61a"
+                step: "/WhenConstraintviolatedFires/root/procedure/43f05c9ea0fbe4daac5110b82e47ba8a4f3ba9011666b3f1e4d2edbea83b8d60"
             )
-            try await runtime.checkpoint(label: "/WhenConstraintviolatedFires/root/procedure/4c917ffa6338f2be46076f467c67973ee5839a523bf91f3917553e853a6ef61a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenConstraintviolatedFires/root/procedure/43f05c9ea0fbe4daac5110b82e47ba8a4f3ba9011666b3f1e4d2edbea83b8d60", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenConstraintviolatedFires.complete")

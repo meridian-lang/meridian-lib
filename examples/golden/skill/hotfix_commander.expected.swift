@@ -777,103 +777,103 @@ public struct HotfixCommanderPullRequest: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "HotfixCommanderPullRequest", parameters: [:])
 
-        if __meridianShouldRun("/HotfixCommanderPullRequest/capture-intent/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/capture-intent/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0") {
             try await runtime.emit(
                 event: "audit.opened",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/HotfixCommanderPullRequest/capture-intent/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f"
+                step: "/HotfixCommanderPullRequest/capture-intent/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0"
             )
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/capture-intent/procedure/6d523f8234c09b1490c8e4138e4c61c079e9e2ca9106360c08390403d0fc549f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/capture-intent/procedure/ab5d35b3f09f87e740621d9bb622e6321de08e5ec1cf9d3eeffb146483bc53b0", state: state.snapshot())
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/capture-intent/procedure/aff4d2c0cbbe9fd5507ec912d047ff9afa453a38a51215d56632ad083a0e4a2c") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/capture-intent/procedure/f54273503abf6bdb51aaca6bed655b838899cd1272ac9a92ad978333ca9c66c7") {
             try await runtime.emit(
                 event: "hotfix.started",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/HotfixCommanderPullRequest/capture-intent/procedure/aff4d2c0cbbe9fd5507ec912d047ff9afa453a38a51215d56632ad083a0e4a2c"
+                step: "/HotfixCommanderPullRequest/capture-intent/procedure/f54273503abf6bdb51aaca6bed655b838899cd1272ac9a92ad978333ca9c66c7"
             )
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/capture-intent/procedure/aff4d2c0cbbe9fd5507ec912d047ff9afa453a38a51215d56632ad083a0e4a2c", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/capture-intent/procedure/f54273503abf6bdb51aaca6bed655b838899cd1272ac9a92ad978333ca9c66c7", state: state.snapshot())
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/c566390bf48c0d227ec5575c01cc962ab82866fa9dece317e7a1fcc94ff507e7") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/e7bb7af3ba0fc908ea6a55b25fcd4b975b017834efc66a6966b5bb12520c4ca3") {
             try await runtime.wait(.approval(of: .string(""), by: RoleRef(identifier: "incident commander")), sourceRange: nil)
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/c566390bf48c0d227ec5575c01cc962ab82866fa9dece317e7a1fcc94ff507e7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-incident-commander-approval/procedure/e7bb7af3ba0fc908ea6a55b25fcd4b975b017834efc66a6966b5bb12520c4ca3", state: state.snapshot())
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/59b3d5a31369ade3f814e67c07db5aeb711006d5b553b515c9d7fa051ef4c0e6") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/509716713072cb8508730b8524aaf039892d675fd42541e52491cd8292d06e5c") {
             try await runtime.wait(.signal("hotfix.green-light"), sourceRange: nil)
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/59b3d5a31369ade3f814e67c07db5aeb711006d5b553b515c9d7fa051ef4c0e6", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/block-on-a-release-engineer-signal/procedure/509716713072cb8508730b8524aaf039892d675fd42541e52491cd8292d06e5c", state: state.snapshot())
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/inspect-rollout-health/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/inspect-rollout-health/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4") {
             let health = try await runtime.invoke(
                 tool: "getDeploymentHealth",
                 args: [
                     "deploymentId": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39",
+                step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "getDeploymentHealth")
             )
             state.bind("health", health)
 
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/42fc08a4e896474c7e366e6f6573a8804911f7b239dd304a00ffaf352bedad39", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/ecd6f74452aca2515dd8b735e0283a043e29e58f54c72887461d20d9ecea22a4", state: state.snapshot())
         }
         if MeridianComparison.eq(state.get("health"), .string("unhealthy")) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"health\"), .string(\"unhealthy\"))", into: "then", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/dc4815b09397b0877298ac124803d78755f67ddde5cccb02250552db42ad24af")
-            if __meridianShouldRun("/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/324cbba53b82b214d0c8bd2379789bc17354c8fda78e0a28eeaec8ac5223180f") {
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.eq(state.get(\"health\"), .string(\"unhealthy\"))", into: "then", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/5d49f56dfb4088a303021ab1709935b947f00d3a04c63ab8f97c28833178473b")
+            if __meridianShouldRun("/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/ce9552fbf010ef19d76b82dbe6e77c44bc33a2665d1cdd747bfe3baad66d65cf") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("hotfix blocked: unhealthy deployment"),
                     ],
-                    step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/324cbba53b82b214d0c8bd2379789bc17354c8fda78e0a28eeaec8ac5223180f"
+                    step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/ce9552fbf010ef19d76b82dbe6e77c44bc33a2665d1cdd747bfe3baad66d65cf"
                 )
-                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/324cbba53b82b214d0c8bd2379789bc17354c8fda78e0a28eeaec8ac5223180f", state: state.snapshot())
+                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/ce9552fbf010ef19d76b82dbe6e77c44bc33a2665d1cdd747bfe3baad66d65cf", state: state.snapshot())
             }
-            await runtime.complete(reason: "deployment_unhealthy", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/0a072d61990582206301bcd5cbbdad06b749b8fcd4612a43e2032d92f49947ff")
+            await runtime.complete(reason: "deployment_unhealthy", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/branch.then/fe2b35ab984d99c477ba43997d5fa16042260d5cf1153d5849a8a98130bb0f0c")
             return WorkflowResult(reason: "deployment_unhealthy", durationMS: await runtime.elapsedMS(), eventCount: await runtime.eventCount(), bindings: state.snapshot().asValues)
-            try await runtime.recordBranchEnded(into: "then", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/dc4815b09397b0877298ac124803d78755f67ddde5cccb02250552db42ad24af")
+            try await runtime.recordBranchEnded(into: "then", step: "/HotfixCommanderPullRequest/inspect-rollout-health/procedure/5d49f56dfb4088a303021ab1709935b947f00d3a04c63ab8f97c28833178473b")
         }
 
         do {
-            if __meridianShouldRun("/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.body/d7d8e1222ac2c77e6c03791c887e5a4645d6fe5ab90d75dba19608c3f7003f15") {
+            if __meridianShouldRun("/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.body/c33fb84b0384a40ac9c977d98fe6795acbb721383b3f517f586158327eac3d61") {
                 _ = try await AutonomouslyLandHotfix(runtime: runtime, pullRequest: pullRequest).run()
-                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.body/d7d8e1222ac2c77e6c03791c887e5a4645d6fe5ab90d75dba19608c3f7003f15", state: state.snapshot())
+                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.body/c33fb84b0384a40ac9c977d98fe6795acbb721383b3f517f586158327eac3d61", state: state.snapshot())
             }
         } catch let _recoveredError {
-            try await runtime.recordRecoverEngaged(pattern: "any", step: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/07bfd721b021786f3ac44e28be2fd5a16e329271be5a67e735265f7b1daab74c")
-            if __meridianShouldRun("/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/0be0653f04ad328b6f83568076cdd4339bdfffcf02144f6002bacbea44798dca") {
+            try await runtime.recordRecoverEngaged(pattern: "any", step: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/6e88486f863d7f7452569e4b145eebc4bcbeff542148b5862d6271da0db193ba")
+            if __meridianShouldRun("/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/bf4d4adc4b7095519d2ce03a26c733abfa909aa0ec009b0d091dd0c9e23d2a45") {
                 try await runtime.emit(
                     event: "audit.note",
                     payload: [
                         "pr": state.get("pullRequest.number") ?? .null,
                         "reason": .string("hotfix recovery: autonomous landing failed"),
                     ],
-                    step: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/0be0653f04ad328b6f83568076cdd4339bdfffcf02144f6002bacbea44798dca"
+                    step: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/bf4d4adc4b7095519d2ce03a26c733abfa909aa0ec009b0d091dd0c9e23d2a45"
                 )
-                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/0be0653f04ad328b6f83568076cdd4339bdfffcf02144f6002bacbea44798dca", state: state.snapshot())
+                try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/hand-off-to-a-guarded-autonomy-loop/procedure/recover.handler/bf4d4adc4b7095519d2ce03a26c733abfa909aa0ec009b0d091dd0c9e23d2a45", state: state.snapshot())
             }
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/audit-close/procedure/a047988fb5b88e13de5edd61498399488d255e71d1ba0b6740dc27a4c053fce7") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/audit-close/procedure/a209ba5a56ec6ff0d2a5e7b280f3c8742f42c1b84c5b4b18f8cba8db9bdc7e50") {
             try await runtime.emit(
                 event: "hotfix.completed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/HotfixCommanderPullRequest/audit-close/procedure/a047988fb5b88e13de5edd61498399488d255e71d1ba0b6740dc27a4c053fce7"
+                step: "/HotfixCommanderPullRequest/audit-close/procedure/a209ba5a56ec6ff0d2a5e7b280f3c8742f42c1b84c5b4b18f8cba8db9bdc7e50"
             )
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/audit-close/procedure/a047988fb5b88e13de5edd61498399488d255e71d1ba0b6740dc27a4c053fce7", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/audit-close/procedure/a209ba5a56ec6ff0d2a5e7b280f3c8742f42c1b84c5b4b18f8cba8db9bdc7e50", state: state.snapshot())
         }
-        if __meridianShouldRun("/HotfixCommanderPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17") {
+        if __meridianShouldRun("/HotfixCommanderPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464") {
             try await runtime.emit(
                 event: "audit.closed",
                 payload: [
                     "pr": state.get("pullRequest.number") ?? .null,
                 ],
-                step: "/HotfixCommanderPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17"
+                step: "/HotfixCommanderPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464"
             )
-            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/audit-close/procedure/ee62138ca499b693f6a6709a3c7d054d5c34a52f75b518fda23c600a0d0d3f17", state: state.snapshot())
+            try await runtime.checkpoint(label: "/HotfixCommanderPullRequest/audit-close/procedure/4625da2f78d6b5531a70ac822d9159d7a88c5605c7c0c59113d39a58c7de2464", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "HotfixCommanderPullRequest.complete")
@@ -943,7 +943,7 @@ public struct AutonomouslyLandHotfix: MeridianWorkflow {
             maxSteps: 3,
             replanAfterFailures: 1,
             outputKind: "record",
-            step: "/AutonomouslyLandHotfix/sub-workflow/procedure/46a35f93cdc78efc21f3b63bc0ba9b2aa44768a288bc0da016bb950fef406658",
+            step: "/AutonomouslyLandHotfix/sub-workflow/procedure/031a73312c89ea09ee1973a88a27ea36d42d0baba39307d237f0f0d0b3f53305",
             until: { __meridianAutonomySnapshot in
                 var state = State()
                 state.restore(from: __meridianAutonomySnapshot)

@@ -579,7 +579,7 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "PaymentFailureMonitorInvoice", parameters: [:])
 
-        if __meridianShouldRun("/PaymentFailureMonitorInvoice/contract/invariants/19147fda65daf042098ca2895daf75708c381d7d98190b1cfe6eba329e0713c4") {
+        if __meridianShouldRun("/PaymentFailureMonitorInvoice/contract/invariants/65b1f9bf4d8afadd0a62a10b1191019a5a0baee34cfc48f95f62f6f76b0388d0") {
             // L21
             await runtime.registerMonitor(
                 query: TraceStatisticalQuery(
@@ -594,38 +594,38 @@ public struct PaymentFailureMonitorInvoice: MeridianWorkflow {
                 cadence: .seconds(86400),
                 message: "Expected the payment step succeeds in at least 90% of runs within the last 30 days",
                 blocking: false,
-                step: "/PaymentFailureMonitorInvoice/contract/invariants/19147fda65daf042098ca2895daf75708c381d7d98190b1cfe6eba329e0713c4",
+                step: "/PaymentFailureMonitorInvoice/contract/invariants/65b1f9bf4d8afadd0a62a10b1191019a5a0baee34cfc48f95f62f6f76b0388d0",
                 sourceRange: nil
             )
-            try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/contract/invariants/19147fda65daf042098ca2895daf75708c381d7d98190b1cfe6eba329e0713c4", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/contract/invariants/65b1f9bf4d8afadd0a62a10b1191019a5a0baee34cfc48f95f62f6f76b0388d0", state: state.snapshot())
         }
         // L39
         if (try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step("payment"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true) {
-            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step(\"payment\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc")
-            if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5") {
+            try await runtime.recordBranchTaken(condition: "(try await runtime.evaluateTrace(TraceTemporalQuery(scope: .currentRun, scopeSkills: [], kind: .inARow(TraceEventPatternQuery(subject: .step(\"payment\"), outcome: .failed, subjectKey: nil, payloadContains: nil, negated: false), count: 3)), evaluationInstant: await runtime.currentDate()) == .true)", into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/2362da723e06ec9eaedc09d74a01993bee957613df82e956320e550d6997b861")
+            if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/2929b699aef7582ed9ba5e940b0b89936b372c855991b6907c36fc16a88ea66a") {
                 // L40
                 try await runtime.emit(
                     event: "erp.report",
                     payload: [
                         "message": .string("payment failure monitor saw a live payment failure streak"),
                     ],
-                    step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5"
+                    step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/2929b699aef7582ed9ba5e940b0b89936b372c855991b6907c36fc16a88ea66a"
                 )
-                try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/10d2bbc2516e2f8026a84416bbc068e4ad52131fb0085754e03e39e8c3132fd5", state: state.snapshot())
+                try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/branch.then/2929b699aef7582ed9ba5e940b0b89936b372c855991b6907c36fc16a88ea66a", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/32cc63001a4f201cb285aaf0bc4f7834d6b36442962a843e41e70a1bbe56f0dc")
+            try await runtime.recordBranchEnded(into: "then", step: "/PaymentFailureMonitorInvoice/workflow-steps/procedure/2362da723e06ec9eaedc09d74a01993bee957613df82e956320e550d6997b861")
         }
 
-        if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/18111ab9e476a9af58fbefcee7f4b70ff5c339ac60156930af3790bcf0740d3a") {
+        if __meridianShouldRun("/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/fb12658a057a19ab7e0a3a838d4acc3fd650a0aeb0434fa2ae14eb6354e66a89") {
             // L44
             try await runtime.emit(
                 event: "erp.report",
                 payload: [
                     "message": .string("payment failure monitor pass complete"),
                 ],
-                step: "/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/18111ab9e476a9af58fbefcee7f4b70ff5c339ac60156930af3790bcf0740d3a"
+                step: "/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/fb12658a057a19ab7e0a3a838d4acc3fd650a0aeb0434fa2ae14eb6354e66a89"
             )
-            try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/18111ab9e476a9af58fbefcee7f4b70ff5c339ac60156930af3790bcf0740d3a", state: state.snapshot())
+            try await runtime.checkpoint(label: "/PaymentFailureMonitorInvoice/workflow-steps-2/procedure/fb12658a057a19ab7e0a3a838d4acc3fd650a0aeb0434fa2ae14eb6354e66a89", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "PaymentFailureMonitorInvoice.complete")
@@ -685,12 +685,12 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunpaymentfailuremonitorFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/decfbaa41c2d6acb5f904c3231943a80d2f24f7a2848c50279cec61a7ff0138f") {
+        if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/89f745333776db8887149c124473e1ed5144e66fa1e91dd6adeb7387aed3de83") {
             // L1
             try await runtime.wait(.event("runPaymentFailureMonitor", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunpaymentfailuremonitorFires/root/procedure/decfbaa41c2d6acb5f904c3231943a80d2f24f7a2848c50279cec61a7ff0138f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpaymentfailuremonitorFires/root/procedure/89f745333776db8887149c124473e1ed5144e66fa1e91dd6adeb7387aed3de83", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/8f312cc7036289d2bebbefc0fae6d71302ae6d5c180f035d8cf5a19e7c9d5484") {
+        if __meridianShouldRun("/WhenRunpaymentfailuremonitorFires/root/procedure/7df98292daa20b3af85a2e5f27a93ae6dfac7153dff7af74c75e0de151cb38e1") {
             // L1
             try await runtime.emit(
                 event: "trigger.runPaymentFailureMonitor.fired",
@@ -698,9 +698,9 @@ public struct WhenRunpaymentfailuremonitorFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run payment failure monitor"),
                 ],
-                step: "/WhenRunpaymentfailuremonitorFires/root/procedure/8f312cc7036289d2bebbefc0fae6d71302ae6d5c180f035d8cf5a19e7c9d5484"
+                step: "/WhenRunpaymentfailuremonitorFires/root/procedure/7df98292daa20b3af85a2e5f27a93ae6dfac7153dff7af74c75e0de151cb38e1"
             )
-            try await runtime.checkpoint(label: "/WhenRunpaymentfailuremonitorFires/root/procedure/8f312cc7036289d2bebbefc0fae6d71302ae6d5c180f035d8cf5a19e7c9d5484", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunpaymentfailuremonitorFires/root/procedure/7df98292daa20b3af85a2e5f27a93ae6dfac7153dff7af74c75e0de151cb38e1", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunpaymentfailuremonitorFires.complete")
@@ -760,12 +760,12 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenMonitorpaymentfailuresFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/75d177d480c40d8f99126176ca8a7eef3a86797a3349a9d64b2772e9aba9f65f") {
+        if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/29ce0ce2fb6e635c2cfd706621176c6a455694ab290d29ebbcd0862a9f3b4b1c") {
             // L1
             try await runtime.wait(.event("monitorPaymentFailures", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenMonitorpaymentfailuresFires/root/procedure/75d177d480c40d8f99126176ca8a7eef3a86797a3349a9d64b2772e9aba9f65f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorpaymentfailuresFires/root/procedure/29ce0ce2fb6e635c2cfd706621176c6a455694ab290d29ebbcd0862a9f3b4b1c", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/7aaa8b3288aa3ed0d1c3f227af6161f03bba38bab8c71e5003a2928bd951a988") {
+        if __meridianShouldRun("/WhenMonitorpaymentfailuresFires/root/procedure/14ea2116a53556dad003e6a4e64c74f2b67076ff3d9f69855e70e044ea05ed48") {
             // L1
             try await runtime.emit(
                 event: "trigger.monitorPaymentFailures.fired",
@@ -773,9 +773,9 @@ public struct WhenMonitorpaymentfailuresFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("monitor payment failures"),
                 ],
-                step: "/WhenMonitorpaymentfailuresFires/root/procedure/7aaa8b3288aa3ed0d1c3f227af6161f03bba38bab8c71e5003a2928bd951a988"
+                step: "/WhenMonitorpaymentfailuresFires/root/procedure/14ea2116a53556dad003e6a4e64c74f2b67076ff3d9f69855e70e044ea05ed48"
             )
-            try await runtime.checkpoint(label: "/WhenMonitorpaymentfailuresFires/root/procedure/7aaa8b3288aa3ed0d1c3f227af6161f03bba38bab8c71e5003a2928bd951a988", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenMonitorpaymentfailuresFires/root/procedure/14ea2116a53556dad003e6a4e64c74f2b67076ff3d9f69855e70e044ea05ed48", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenMonitorpaymentfailuresFires.complete")
@@ -835,12 +835,12 @@ public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenCheckpaymentretryhealthFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/5042409e920ce154e4a556087f63ac765ac38f9c06354d94599421aa59854d9f") {
+        if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/3afbf9462786b889e4e61685be0aa7bac1636cbf2ef5c7aacc8c277d0f6d355d") {
             // L1
             try await runtime.wait(.event("checkPaymentRetryHealth", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenCheckpaymentretryhealthFires/root/procedure/5042409e920ce154e4a556087f63ac765ac38f9c06354d94599421aa59854d9f", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckpaymentretryhealthFires/root/procedure/3afbf9462786b889e4e61685be0aa7bac1636cbf2ef5c7aacc8c277d0f6d355d", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/71170ab67bfdccc1cf98a0d066f8329320239aa9823bfa0dd1247fdc49576fdb") {
+        if __meridianShouldRun("/WhenCheckpaymentretryhealthFires/root/procedure/deb9078792a321f4f8d60d1b96a79ce8ced1c8b942ebbd549fb28471989bffb2") {
             // L1
             try await runtime.emit(
                 event: "trigger.checkPaymentRetryHealth.fired",
@@ -848,9 +848,9 @@ public struct WhenCheckpaymentretryhealthFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("check payment retry health"),
                 ],
-                step: "/WhenCheckpaymentretryhealthFires/root/procedure/71170ab67bfdccc1cf98a0d066f8329320239aa9823bfa0dd1247fdc49576fdb"
+                step: "/WhenCheckpaymentretryhealthFires/root/procedure/deb9078792a321f4f8d60d1b96a79ce8ced1c8b942ebbd549fb28471989bffb2"
             )
-            try await runtime.checkpoint(label: "/WhenCheckpaymentretryhealthFires/root/procedure/71170ab67bfdccc1cf98a0d066f8329320239aa9823bfa0dd1247fdc49576fdb", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenCheckpaymentretryhealthFires/root/procedure/deb9078792a321f4f8d60d1b96a79ce8ced1c8b942ebbd549fb28471989bffb2", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenCheckpaymentretryhealthFires.complete")

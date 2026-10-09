@@ -434,7 +434,7 @@ struct DiagnosticTests {
             (.tableLookup(table: "", keyColumn: "id", key: .literal(.string("o-1")), valueColumn: "status"), "table lookup contains an empty table or column name"),
             (.definitionPredicate(functionName: " ", subject: .identifierRef(name: "order")), "definition predicate has an empty function name"),
             (.description(DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: " ")), "description has an empty element variable"),
-            (.description(DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: "order", sort: (path: "", ascending: true))), "description has an empty sort path"),
+            (.description(DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: "order", sort: IRSortSpec(path: "", ascending: true))), "description has an empty sort path"),
             (.superlative(SuperlativeIR(description: DescriptionIR(collection: .identifierRef(name: "orders"), elementVar: "order"), sortPath: " ", ascending: true)), "superlative has an empty sort path"),
             (.interpolatedString([.forEach(variable: " ", collection: .identifierRef(name: "items"), body: [.literal("x")])]), "interpolated string loop has an empty variable"),
             (.interpolatedString([.formatted(.identifierRef(name: "score"), formatter: " ")]), "interpolated string formatter is empty"),
@@ -497,7 +497,7 @@ struct DiagnosticTests {
             .iterate(IterateIR(
                 mode: .overCollection(parameter: " ", kind: KindRef("Order"), collection: .identifierRef(name: "orders")),
                 body: done,
-                source: IRIterationRefinement(sort: (path: " ", ascending: true))
+                source: IRIterationRefinement(sort: IRSortSpec(path: " ", ascending: true))
             )),
             .wait(WaitIR(condition: .signal(" "))),
             .wait(WaitIR(condition: .approval(of: .identifierRef(name: "order"), by: " "))),

@@ -418,63 +418,63 @@ public struct EscalateIncident: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "EscalateIncident", parameters: [:])
 
-        if __meridianShouldRun("/EscalateIncident/guarantees/invariants/00a8b6d3ce6721fb6a2d2ffc272a9cf5d23f1b4eb126beec7f42ce8447e8cd16") {
+        if __meridianShouldRun("/EscalateIncident/guarantees/invariants/87a6e01034e1bb51e875808fff9272eb7d3c816fd3df61c904afe9782d6d2d69") {
             // L41
             try await runtime.assert((((state.get("incidents")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("status"), .string("open"))) }).count >= 0), message: "Expected at least 0 incidents whose status is \"open\"")
-            try await runtime.checkpoint(label: "/EscalateIncident/guarantees/invariants/00a8b6d3ce6721fb6a2d2ffc272a9cf5d23f1b4eb126beec7f42ce8447e8cd16", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateIncident/guarantees/invariants/87a6e01034e1bb51e875808fff9272eb7d3c816fd3df61c904afe9782d6d2d69", state: state.snapshot())
         }
-        if __meridianShouldRun("/EscalateIncident/workflow/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49") {
+        if __meridianShouldRun("/EscalateIncident/workflow/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a") {
             // L25
             let incidents = try await runtime.invoke(
                 tool: "incident.list",
                 args: [
                     "status": .string("open"),
                 ],
-                step: "/EscalateIncident/workflow/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49",
+                step: "/EscalateIncident/workflow/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a",
                 capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "incident.list")
             )
             state.bind("incidents", incidents)
 
-            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/15ab40d7bdc259bf6347830f0161203ac409fcc13467180b69527a42ea05bc49", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/b5514b5a64e8e524522fe17f2dcb981fae3c5950ed3affb24ee0d7153f54562a", state: state.snapshot())
         }
-        if __meridianShouldRun("/EscalateIncident/workflow/procedure/55c095c7fc24cf3d5e492128af938c0f9869c2ad58aff3f7033a432a9ef49cbd") {
+        if __meridianShouldRun("/EscalateIncident/workflow/procedure/1ba403ddb84b4bcf404eb260b74f13390fae9c776784e3f9781bfb226c0f361b") {
             // L26
             try await runtime.assert((((state.get("incidents")?.asList ?? []).filter { __e in (MeridianComparison.eq(__e.member("severity"), .string("sev1"))) }).count >= 1), message: "Expected at least 1 incident whose severity is \"sev1\"")
-            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/55c095c7fc24cf3d5e492128af938c0f9869c2ad58aff3f7033a432a9ef49cbd", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/1ba403ddb84b4bcf404eb260b74f13390fae9c776784e3f9781bfb226c0f361b", state: state.snapshot())
         }
         // L27
         let __meridianColl_0_3 = (state.get("incidents")?.asList ?? [])
-        try await runtime.recordIterateStart(over: "state.get(\"incidents\")", step: "/EscalateIncident/workflow/procedure/d9a4fb70f684903dd059932fa257df864de951129da69e04671ef4e96f1ea378")
+        try await runtime.recordIterateStart(over: "state.get(\"incidents\")", step: "/EscalateIncident/workflow/procedure/512cb23d366d67c318970caaa6a1d7b0b115c715f1aeb2f273c821b63d168dae")
         for (__meridianLoopIndex_0_3, incident) in __meridianColl_0_3.enumerated() {
             let __meridianLoopLabel_0_3 = "progress:0.3:iteration:\(__meridianLoopIndex_0_3)"
             if __meridianShouldRun(__meridianLoopLabel_0_3) {
-                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/EscalateIncident/workflow/procedure/d9a4fb70f684903dd059932fa257df864de951129da69e04671ef4e96f1ea378")
+                try await runtime.recordIterateIteration(index: __meridianLoopIndex_0_3, step: "/EscalateIncident/workflow/procedure/512cb23d366d67c318970caaa6a1d7b0b115c715f1aeb2f273c821b63d168dae")
             state.bind("incident", incident)
-                if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f") {
+                if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/a2b59a1fdf48982a211bd6f04b8f234b5f828e0081443c5eaf4e706f49d04b0f") {
                     // L28
                     try await runtime.wait(.event("alert.fired", matching: { _event in MeridianComparison.eq(state.get("event.serviceName"), state.get("incident.serviceName")) }), sourceRange: nil)
-                    try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/iterate.body/ced4b5fb1045a12209ebf5f0417c07cd6ae3f0ce1defb74895caf0bccc3d530f", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/iterate.body/a2b59a1fdf48982a211bd6f04b8f234b5f828e0081443c5eaf4e706f49d04b0f", state: state.snapshot())
                 }
-                if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/f95f981f873a7217ad6072b67917938387cae9de56865623731c84126c273f5c") {
+                if __meridianShouldRun("/EscalateIncident/workflow/procedure/iterate.body/660a5afb32583f00008b969593d3101032cda11eb211a649c04437d8cf09ac57") {
                     // L29
                     _ = try await EscalateIncident(runtime: runtime).run()
-                    try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/iterate.body/f95f981f873a7217ad6072b67917938387cae9de56865623731c84126c273f5c", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/iterate.body/660a5afb32583f00008b969593d3101032cda11eb211a649c04437d8cf09ac57", state: state.snapshot())
                 }
                 try await runtime.checkpoint(label: __meridianLoopLabel_0_3, state: state.snapshot())
             }
         }
-        try await runtime.recordIterateEnd(over: "state.get(\"incidents\")", count: __meridianColl_0_3.count, step: "/EscalateIncident/workflow/procedure/d9a4fb70f684903dd059932fa257df864de951129da69e04671ef4e96f1ea378")
+        try await runtime.recordIterateEnd(over: "state.get(\"incidents\")", count: __meridianColl_0_3.count, step: "/EscalateIncident/workflow/procedure/512cb23d366d67c318970caaa6a1d7b0b115c715f1aeb2f273c821b63d168dae")
 
-        if __meridianShouldRun("/EscalateIncident/workflow/procedure/0ccf2d780c7ad1138b42795af12258571781717307047ba1325d98c421665a6b") {
+        if __meridianShouldRun("/EscalateIncident/workflow/procedure/3e348b9eef15cdf465fa2038133f03ecb4e6165fa8ccd216a0c2cffdac620d69") {
             // L30
             try await runtime.emit(
                 event: "incident.report",
                 payload: [
                     "message": .string("incident escalation pass complete"),
                 ],
-                step: "/EscalateIncident/workflow/procedure/0ccf2d780c7ad1138b42795af12258571781717307047ba1325d98c421665a6b"
+                step: "/EscalateIncident/workflow/procedure/3e348b9eef15cdf465fa2038133f03ecb4e6165fa8ccd216a0c2cffdac620d69"
             )
-            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/0ccf2d780c7ad1138b42795af12258571781717307047ba1325d98c421665a6b", state: state.snapshot())
+            try await runtime.checkpoint(label: "/EscalateIncident/workflow/procedure/3e348b9eef15cdf465fa2038133f03ecb4e6165fa8ccd216a0c2cffdac620d69", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "EscalateIncident.complete")
@@ -534,12 +534,12 @@ public struct WhenEscalateopenincidentsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenEscalateopenincidentsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293") {
+        if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/16e50ad81758934e999ecd6cfc3f6b31c50f4c717b94af84f72ea388706f0aef") {
             // L1
             try await runtime.wait(.event("escalateOpenIncidents", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEscalateopenincidentsFires/root/procedure/ce3bb21b3cedcc07e382b30c727726742c211365bfa2842271b9a69be56d9293", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEscalateopenincidentsFires/root/procedure/16e50ad81758934e999ecd6cfc3f6b31c50f4c717b94af84f72ea388706f0aef", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db") {
+        if __meridianShouldRun("/WhenEscalateopenincidentsFires/root/procedure/b3ebaa3536137f2027011c7ac02c5b42b2c4a75e9230ea4451bb8217d0463546") {
             // L1
             try await runtime.emit(
                 event: "trigger.escalateOpenIncidents.fired",
@@ -547,9 +547,9 @@ public struct WhenEscalateopenincidentsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("escalate open incidents"),
                 ],
-                step: "/WhenEscalateopenincidentsFires/root/procedure/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db"
+                step: "/WhenEscalateopenincidentsFires/root/procedure/b3ebaa3536137f2027011c7ac02c5b42b2c4a75e9230ea4451bb8217d0463546"
             )
-            try await runtime.checkpoint(label: "/WhenEscalateopenincidentsFires/root/procedure/05c96d8782f29d2ac4b93c7822feca61b274b86c8308520a9ba8ae7a6881a2db", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEscalateopenincidentsFires/root/procedure/b3ebaa3536137f2027011c7ac02c5b42b2c4a75e9230ea4451bb8217d0463546", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEscalateopenincidentsFires.complete")
@@ -609,12 +609,12 @@ public struct WhenEscalatestalledincidentsFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenEscalatestalledincidentsFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5") {
+        if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/52781682ed41a95dda9c8962b4043fe3158a2cfe373a7decba3e2b301b4eded2") {
             // L1
             try await runtime.wait(.event("escalateStalledIncidents", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenEscalatestalledincidentsFires/root/procedure/37b5b7d2d929165975f96542f0e3f8031d276d25cddad6b9bb6b0c3e0c389cb5", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEscalatestalledincidentsFires/root/procedure/52781682ed41a95dda9c8962b4043fe3158a2cfe373a7decba3e2b301b4eded2", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781") {
+        if __meridianShouldRun("/WhenEscalatestalledincidentsFires/root/procedure/3018210c72830cda609d80b8960c7a7709e7115874576bbb2481941d5d4dd751") {
             // L1
             try await runtime.emit(
                 event: "trigger.escalateStalledIncidents.fired",
@@ -622,9 +622,9 @@ public struct WhenEscalatestalledincidentsFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("escalate stalled incidents"),
                 ],
-                step: "/WhenEscalatestalledincidentsFires/root/procedure/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781"
+                step: "/WhenEscalatestalledincidentsFires/root/procedure/3018210c72830cda609d80b8960c7a7709e7115874576bbb2481941d5d4dd751"
             )
-            try await runtime.checkpoint(label: "/WhenEscalatestalledincidentsFires/root/procedure/70e528b31f1550e9e16d4ed502f33fcffe83bccdf88433b91a41ba83af1de781", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenEscalatestalledincidentsFires/root/procedure/3018210c72830cda609d80b8960c7a7709e7115874576bbb2481941d5d4dd751", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenEscalatestalledincidentsFires.complete")
@@ -684,12 +684,12 @@ public struct WhenRunincidentescalationFires: MeridianWorkflow {
         let instances = Instances()
         await runtime.workflowStarted(workflowName: "WhenRunincidentescalationFires", parameters: [:])
 
-        if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0") {
+        if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/5182a08bbc1dd927e0d7f411061ee8662d8ac639e8a314552664f0a002168964") {
             // L1
             try await runtime.wait(.event("runIncidentEscalation", matching: nil), sourceRange: nil)
-            try await runtime.checkpoint(label: "/WhenRunincidentescalationFires/root/procedure/e972b12c9673545060b4aecb0922e11d4a95371b9f2d584aae05270e92f5f8c0", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunincidentescalationFires/root/procedure/5182a08bbc1dd927e0d7f411061ee8662d8ac639e8a314552664f0a002168964", state: state.snapshot())
         }
-        if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa") {
+        if __meridianShouldRun("/WhenRunincidentescalationFires/root/procedure/cc3cafd70ac768b3c9b76d8e8b2b6478e311eb0c0544cff0c3874cc31a319b03") {
             // L1
             try await runtime.emit(
                 event: "trigger.runIncidentEscalation.fired",
@@ -697,9 +697,9 @@ public struct WhenRunincidentescalationFires: MeridianWorkflow {
                     "kind": .string("keyword"),
                     "spec": .string("run incident escalation"),
                 ],
-                step: "/WhenRunincidentescalationFires/root/procedure/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa"
+                step: "/WhenRunincidentescalationFires/root/procedure/cc3cafd70ac768b3c9b76d8e8b2b6478e311eb0c0544cff0c3874cc31a319b03"
             )
-            try await runtime.checkpoint(label: "/WhenRunincidentescalationFires/root/procedure/c903d5d08cbcce8388b6d2d3a7fbf7bdff9afb428e90c828cbf91f43b6327faa", state: state.snapshot())
+            try await runtime.checkpoint(label: "/WhenRunincidentescalationFires/root/procedure/cc3cafd70ac768b3c9b76d8e8b2b6478e311eb0c0544cff0c3874cc31a319b03", state: state.snapshot())
         }
 
         await runtime.complete(reason: nil, step: "WhenRunincidentescalationFires.complete")

@@ -1,80 +1,80 @@
 {
   "entries" : [
     {
-      "canonical" : "wait for event agingReport.",
-      "meridian_line" : 1,
-      "primitive" : "wait",
-      "stable_step_path" : "\/WhenAgingreportFires\/root\/procedure\/dd28a1ec6f0d7f90a47a37386f5abd3dd1d14b1076ddfe70903f0fa9b3ae3ac4",
-      "swift_line" : 633
-    },
-    {
       "canonical" : "emit trigger.agingReport.fired with kind = \"keyword\", spec = \"aging report\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenAgingreportFires\/root\/procedure\/ece842f958f8ac8a2069393e59625946bedef50b7fc1c35739c5ba1921200d86",
+      "stable_step_path" : "\/WhenAgingreportFires\/root\/procedure\/182f794ec4ae49adacbe4cd96d9b6075544e04356168605c804a6baf3cd6afc5",
+      "swift_line" : 633
+    },
+    {
+      "canonical" : "wait for event agingReport.",
+      "meridian_line" : 1,
+      "primitive" : "wait",
+      "stable_step_path" : "\/WhenAgingreportFires\/root\/procedure\/800ef80d2cd69901e0803c8b98a2d1ad8ccb2cbb184cc4c2c33724595db733f2",
       "swift_line" : 633
     },
     {
       "canonical" : "emit trigger.staleRecordReport.fired with kind = \"keyword\", spec = \"stale record report\".",
       "meridian_line" : 1,
       "primitive" : "emit",
-      "stable_step_path" : "\/WhenStalerecordreportFires\/root\/procedure\/715c5bcde93c66f1a260a86e153481a2c9cbf25273506833a04433c0e0099fa2",
+      "stable_step_path" : "\/WhenStalerecordreportFires\/root\/procedure\/2e14626ae7e76942a2f35a37ccc7b11b793d020105545a181729ae96be14f052",
       "swift_line" : 633
     },
     {
       "canonical" : "wait for event staleRecordReport.",
       "meridian_line" : 1,
       "primitive" : "wait",
-      "stable_step_path" : "\/WhenStalerecordreportFires\/root\/procedure\/b0b03b088fec7386591f1a1559fbc250e65da57e3246e62e242a2f7dea86aff9",
+      "stable_step_path" : "\/WhenStalerecordreportFires\/root\/procedure\/64277e23687e680c880030036e3f9126c8866c566c8b6108d91eb08fecaa8c86",
       "swift_line" : 633
     },
     {
       "canonical" : "!!! table (( data: table ))\n| bucket | action |\n| ------ | ------ |\n| \"stale\" | \"review\" |\n| \"duplicate\" | \"merge\" |",
       "meridian_line" : 16,
       "primitive" : "bind",
-      "stable_step_path" : "\/AgingReport\/tables\/tables\/63b4f3a88fd8df1b6ff4f923979918f478d93f313498f102aa7584a3da66bf6e",
+      "stable_step_path" : "\/AgingReport\/tables\/tables\/b7720b545a42fe7531f28c8a4eb8492852629419975f588f9884815d6a4eb65f",
       "swift_line" : 456
     },
     {
       "canonical" : "bind records = invoke record.list with status = \"stale\".",
       "meridian_line" : 33,
       "primitive" : "invoke",
-      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/26b0ff1ba8be301364bb392ade7fe7e122387905108fd2379bad8e2835202f57",
+      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/ff10cd69ce5fe5f789eaa4565046aed54d7c63397a87ddb0fb6f6f4ede8a8465",
       "swift_line" : 459
     },
     {
       "canonical" : "assert any stale records.",
       "meridian_line" : 34,
       "primitive" : "assert",
-      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/dabb36657c4d17650bb610ea16f9900d2e38c5ccfaf0a5ee9550ea86111c94f0",
+      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/6d1236bbd051a151b92879e30394646cabe11edbcbf90b0391634e2e863976a7",
       "swift_line" : 473
     },
     {
       "canonical" : "bind staleCount = the number of stale records.",
       "meridian_line" : 35,
       "primitive" : "bind",
-      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/aef5634a564f53fe957fc80b84064de5835f769d5aed813df4670340eafa591d",
+      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/07054f0310000edd088408acff4d1d121cac536b24173c1966bd5f400c37dc90",
       "swift_line" : 477
     },
     {
       "canonical" : "bind oldestRecord = the smallest stale records by updated at.",
       "meridian_line" : 36,
       "primitive" : "bind",
-      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/41503c7f4353a59427695321585e5c7cef9fcee8d2ec10998529b63a1969f371",
+      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/316b590151de32721e77740220369af792bd3eb55ae6e1f1b70dd129eb532ad6",
       "swift_line" : 479
     },
     {
       "canonical" : "bind selectedAction = the action corresponding to the bucket \"stale\" in the table.",
       "meridian_line" : 37,
       "primitive" : "bind",
-      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/615d02452bf4f75bf16b2bcb3236dce979ee279636e815a089be30c8b78e0466",
+      "stable_step_path" : "\/AgingReport\/procedure-steps\/procedure\/d7ee6dba520e4ad202b1e6d9127473d2e3d98143790e1f0eb2f1e7884fef555f",
       "swift_line" : 481
     },
     {
       "canonical" : "emit procedure.report with message = aging report.",
       "meridian_line" : 41,
       "primitive" : "emit",
-      "stable_step_path" : "\/AgingReport\/procedure-steps-2\/procedure\/cccd322c4a37b271ed6c475550769ec101a7a5bcbdb4bf16c43aae84a7cb5638",
+      "stable_step_path" : "\/AgingReport\/procedure-steps-2\/procedure\/ca188ea199138c3c4b30e7f1caba796980e9e059c2e4c87898aeb2ec782f1755",
       "swift_line" : 484
     }
   ],
