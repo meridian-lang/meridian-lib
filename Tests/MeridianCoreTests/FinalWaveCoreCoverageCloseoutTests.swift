@@ -127,7 +127,6 @@ struct FinalWaveCoreCoverageCloseoutTests {
             sourceFileName: "greet.meridian",
             authoredSource: ""
         )
-        let swift = "struct Greet { func run() async throws {} }"
         let json = try IRSidecarEmitter().emit(
             workflows: [wf],
             verbalizer: Verbalizer(model: model),

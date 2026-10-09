@@ -17,7 +17,7 @@ struct SignalWaitTests {
     func signalDeliverWakes() async throws {
         let observer = InMemoryObserver()
         let runtime = makeRuntime(observer: observer)
-        let result = try await withThrowingTaskGroup(of: Void.self) { group in
+        try await withThrowingTaskGroup(of: Void.self) { group in
             group.addTask { try await runtime.wait(.signal("order.ready")) }
             group.addTask {
                 try await Task.sleep(for: .milliseconds(10))
@@ -25,7 +25,6 @@ struct SignalWaitTests {
             }
             try await group.waitForAll()
         }
-        _ = result
         let kinds = await observer.events.map(\.kind)
         #expect(kinds.contains(.waitStart))
         #expect(kinds.contains(.waitResume))

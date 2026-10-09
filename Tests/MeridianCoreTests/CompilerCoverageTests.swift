@@ -126,8 +126,7 @@ struct CompilerCoverageTests {
                   complete.
                 """, file: "t.meridian")], vocabularies: [ .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"), ]))["t.meridian"]!.swift
         }
-        let err = try? #require(caught)
-        #expect(err?.diagnostics.contains { $0.code == .unknownVocabulary } == true)
+        #expect(caught?.diagnostics.contains { $0.code == .unknownVocabulary } == true)
     }
 
     @Test("rulebook frontmatter must match a supplied rulebook input")
@@ -142,8 +141,7 @@ struct CompilerCoverageTests {
                   complete.
                 """, file: "t.meridian")], vocabularies: [ .init(name: "t", file: "t.merconfig", source: "=== vocabulary ===\nA thing is a kind of thing.\n"), ], rulebooks: []))["t.meridian"]!.swift
         }
-        let err = try? #require(caught)
-        #expect(err?.diagnostics.contains { $0.code == .unknownRulebook } == true)
+        #expect(caught?.diagnostics.contains { $0.code == .unknownRulebook } == true)
     }
 
     @Test("ambiguous usually defaults across enum properties are rejected")

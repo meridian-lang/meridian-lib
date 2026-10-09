@@ -3744,3 +3744,30 @@ hidden):**
    `dx-trace-diagnostic-matrix.json` still name a few deleted files
    (`DiagnosticCodeCatalog.swift`, `Obligations/*`); they are dated snapshots
    and regenerate only in the separate baseline flow.
+
+## 2026-10-09 — Post-programme audit: warning cleanup and flaky coverage floors
+
+**Audit findings (frozen tree):** zero stale references to removed APIs in
+`Sources/` (the only `legacyKind`/`emitMultiFile`/`SkillMarkdownShape` hits are
+the intentional decode-compatibility path, the renderer fallback, and two
+provenance comments); zero `Event(` constructions; the eight remaining
+`trace:` mentions are the `Compiler.Options.trace` injection point and
+`ParserTrace.capturing`'s tuple label. Library warnings were down to one
+pre-existing `public`-redundancy in `Observer.swift`; the rest were unused
+bindings in test files, six of which this audit cleaned (plus two redundant
+`#require` unwraps).
+
+**Two coverage floors re-based with headroom** because the suites that cover
+them are timing-sensitive and their region coverage varies run to run:
+`Runtime+Wait.swift` 89.30 → 87.50 (observed 88.35–90.4 across runs) and
+`MerConfigParser+Vocabulary.swift` 99.60 → 98.50 (observed 99.21–99.60). Both
+have dated comments. This is why the gate intermittently failed on a *clean*
+tree even when every test passed.
+
+**Known intermittent stall, precisely characterised:** the full
+coverage-instrumented run occasionally stalls with an idle process in the
+`migrate-skill --repair --dry-run` region; `MeridianCLITests` and
+`MeridianToolsTests` both pass *individually* under coverage, and a clean
+re-run passes, so it is a cross-suite interaction under instrumentation, not a
+product bug. When it happens the harness leaves a stale SwiftPM lock that
+blocks the next run until the leftover `swift-test` process is killed.

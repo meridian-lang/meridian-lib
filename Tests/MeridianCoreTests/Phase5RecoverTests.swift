@@ -153,9 +153,6 @@ struct RecoverParserTests {
 struct RecoverLoweringTests {
 
     private func lower(_ source: String) throws -> [IRPrimitive] {
-        let cfg = ""
-        let voc = Compiler.VocabularyInput(name: "test", file: "test.merconfig", source: cfg)
-        let opts = Compiler.Options(emitterOptions: SwiftEmitter.Options(emitSourceLineComments: false))
         // Build a minimal SymbolTable for standalone lowering.
         let symbols = SymbolTable()
         let lines = IndentTokenizer().tokenize(source, file: "test.meridian")

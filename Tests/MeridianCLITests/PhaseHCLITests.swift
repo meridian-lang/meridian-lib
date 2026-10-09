@@ -59,7 +59,7 @@ struct PhaseHCLITests {
         let cmd = try MigrateSkillCommand.parse([
             skill.path, "--out", out, "--repair", "--dry-run", "--force"
         ])
-        try await LLMProviderRegistry.withOverride(DeterministicLLMProvider()) {
+        await LLMProviderRegistry.withOverride(DeterministicLLMProvider()) {
             await #expect(throws: (any Error).self) { try await cmd.run() }
         }
         #expect(!FileManager.default.fileExists(atPath: out))

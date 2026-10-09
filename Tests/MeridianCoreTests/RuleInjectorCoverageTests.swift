@@ -502,7 +502,7 @@ struct RuleInjectorCoverageTests {
 
     @Test("trigger synthesis throws on unresolved actions in strict mode")
     func triggerUnresolvedStrict() throws {
-        var injector = RuleInjector(
+        let injector = RuleInjector(
             symbols: try symbols(),
             lowerAction: { _, _ in
                 throw CompilerError.diagnostics([
@@ -527,7 +527,7 @@ struct RuleInjectorCoverageTests {
 
     @Test("trigger synthesis tolerates unresolved actions when the fallback is allowed")
     func triggerUnresolvedLenient() throws {
-        var injector = RuleInjector(
+        let injector = RuleInjector(
             symbols: try symbols(),
             lowerAction: { _, _ in
                 throw CompilerError.diagnostics([
