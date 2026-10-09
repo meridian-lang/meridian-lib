@@ -591,8 +591,8 @@ public struct RuleAnalyzer {
     }
 
     /// Walk a parsed predicate expression and qualify its bare identifiers:
-    ///   - `"total amount"` (no possessive) → `objectKind.totalAmount`
-    ///   - `"their X"` / `"his X"` / `"her X"` / `"its X"` → `subjectKind.X`
+    ///   `"total amount"` (no possessive) → `objectKind.totalAmount`
+    ///   `"their X"` / `"his X"` / `"her X"` / `"its X"` → `subjectKind.X`
     ///
     /// Used by parameter-guard predicate lowering so `state.get("order.totalAmount")`
     /// and `state.get("customer.creditLimit")` actually resolve at runtime.

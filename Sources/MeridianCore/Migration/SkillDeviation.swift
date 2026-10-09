@@ -46,7 +46,7 @@ public struct SkillDeviation {
         public var similarity: Double
         public var categories: [String]
         public var unifiedDiff: String
-        /// Wave 0 expressiveness counters over the ported `.meri` (see
+        /// expressiveness counters over the ported `.meri` (see
         /// `SkillMetrics`): section inert ratio and judgment block/line counts.
         public var metrics: SkillMetrics
         /// Ported sections that became inert even though the corresponding
@@ -332,11 +332,11 @@ public struct SkillDeviation {
 
     /// The structural transforms the universal-sections migration applies, named
     /// to match the marking pass in `SkillMigrator`:
-    ///   - `frontmatter-injected` — the port added frontmatter keys.
-    ///   - `section-marker-added` — the port introduced `(( … ))` heading markers.
-    ///   - `shell-block-routed` — at least one heading became `(( role: procedure ))`
+    ///   `frontmatter-injected` — the port added frontmatter keys.
+    ///   `section-marker-added` — the port introduced `(( … ))` heading markers.
+    ///   `shell-block-routed` — at least one heading became `(( role: procedure ))`
     ///     because its body was pure shell fences.
-    ///   - `preamble-blockquoted` — the port blockquoted pre-heading prose the
+    ///   `preamble-blockquoted` — the port blockquoted pre-heading prose the
     ///     original carried as plain text.
     static func detectCategories(
         originalMarkdown: String,

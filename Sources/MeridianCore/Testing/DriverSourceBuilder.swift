@@ -175,7 +175,7 @@ enum DriverSourceBuilder {
     }
 
     /// The `valueFromJSON` / `convertAny` JSON→`Value` bridge.
-    /// - Parameter includeMoneyCoercion: when `true`, a `{amount, currency}`
+    /// Parameter includeMoneyCoercion: when `true`, a `{amount, currency}`
     ///   record decodes to `.money` (the `.meridian.test` runner relies on
     ///   this); the CLI `run` driver omits it (records stay records).
     static func jsonBridge(includeMoneyCoercion: Bool) -> [String] {
@@ -225,7 +225,7 @@ enum DriverSourceBuilder {
     }
 
     /// Lines decoding one workflow parameter from JSON.
-    /// - Parameter force: `true` uses `try` and lets a decode failure propagate
+    /// Parameter force: `true` uses `try` and lets a decode failure propagate
     ///   (CLI `run`); `false` falls back to a zero-arg `Type()` (test runner,
     ///   which tolerates partial fixtures).
     static func paramDecode(name: String, swiftType: String, json: String, indent: String, force: Bool) -> [String] {

@@ -119,7 +119,7 @@ struct IRExpressionEmissionTests {
     }
 }
 
-// MARK: - Wave 3 query-plan golden
+// MARK: - query-plan golden
 
 @Suite("Wave 3 query-plan emission")
 struct Wave3QueryPlanGoldenTests {
@@ -847,7 +847,7 @@ struct SwiftEmitterFormattingTests {
         #expect(lines.contains("                    \"customer_id\": state.get(\"customer.id\") ?? .null,"))
         #expect(lines.contains("                    \"amount\": state.get(\"order.totalAmount\") ?? .null,"))
         #expect(lines.contains("                    \"timestamp\": .date(Date()),"))
-        // Wave 8: the emit carries a trace step-path argument, so the payload
+        // the emit carries a trace step-path argument, so the payload
         // literal now closes with a trailing comma before `step:`.
         #expect(lines.contains("                ],"))
         #expect(lines.contains("                step: \"analytics.order_processed\""))

@@ -243,17 +243,17 @@ public enum VocabularyStatement: Sendable {
     case relation(RelationDeclaration)
     case inverse(InverseDeclaration)
     case phrase(PhraseDefinition)
-    /// 2B: `Definition: a page is stale if <condition>.` — a checkable
+    /// `Definition: a page is stale if <condition>.` — a checkable
     /// adjective declared in the merconfig vocabulary.
     case definition(DefinitionDeclaration)
-    /// 3A: `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
+    /// `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
     /// <tool>.` — the evaluation backing of a previously-declared relation.
     case relationBacking(RelationBackingDeclaration)
-    /// 3B: `The verb to own (he owns, it is owned) means the ownership relation.`
+    /// `The verb to own (he owns, it is owned) means the ownership relation.`
     case verb(VerbDeclaration)
 }
 
-/// 2B: A checkable adjective definition (`Definition: a <kind> is <adjective>
+/// A checkable adjective definition (`Definition: a <kind> is <adjective>
 /// if <condition>.`). The `body` condition is parsed with `it`/`its`
 /// preprocessed to the subject, so it reads as a predicate over `subjectVar`
 /// (the singular kind name). Lowered to a file-scope `private func
@@ -335,7 +335,7 @@ public struct RelationDeclaration: Sendable {
     }
 }
 
-/// 3A: how a relation is evaluated. Backing is mandatory — an unbacked relation
+/// how a relation is evaluated. Backing is mandatory — an unbacked relation
 /// is a compile error (relations must be witnessable, not a hidden datastore).
 public enum RelationBackingAST: Sendable, Equatable {
     /// `Ownership is read from the page's owner.` — the link lives at
@@ -347,7 +347,7 @@ public enum RelationBackingAST: Sendable, Equatable {
     case tool(toolID: String)
 }
 
-/// 3A: `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
+/// `<Relation> is read from the <kind>'s <prop>.` / `… is read via the
 /// <tool>.`. Pairs a relation name with its evaluation backing.
 public struct RelationBackingDeclaration: Sendable {
     public let relation: String
@@ -358,7 +358,7 @@ public struct RelationBackingDeclaration: Sendable {
     }
 }
 
-/// 3B: a verb bound to a relation, with its conjugation table.
+/// a verb bound to a relation, with its conjugation table.
 /// `The verb to own (he owns, it is owned) means the ownership relation.`
 public struct VerbDeclaration: Sendable {
     public let base: String            // "own"
@@ -578,7 +578,7 @@ public struct MeridianFile: Sendable {
     /// Tool IDs mined from a `## Tools Used` section (1D). Merged into the
     /// workflow's `scopedTools` and the manifest `tools_used`. Empty otherwise.
     public let toolsUsed: [String]
-    /// 2B: Top-level `Definition:` lines pulled out of the implicit body. These
+    /// Top-level `Definition:` lines pulled out of the implicit body. These
     /// are registered into the symbol table before workflow lowering so an
     /// adjective resolves regardless of source order.
     public let definitions: [DefinitionDeclaration]
@@ -959,7 +959,7 @@ public struct IterationRefinementAST: Sendable {
     public var take: Int?
     /// `the last N` take-suffix (distinct from temporal windows).
     public var takeFromEnd: Int?
-    /// 2B: Leading adjective modifiers (`for each stale page`) split off the
+    /// Leading adjective modifiers (`for each stale page`) split off the
     /// kind noun. Resolved to `.definitionPredicate` filters at lowering.
     public var adjectives: [String]
 
@@ -1111,7 +1111,7 @@ public struct RecoverStatementAST: Sendable {
 
 // MARK: - Expressions (AST level)
 
-/// B6/B7: One segment of a fenced-code-block string that contains `{{ expr }}`
+/// One segment of a fenced-code-block string that contains `{{ expr }}`
 /// interpolation markers.  A plain (non-interpolated) code block is lowered
 /// directly to `.literal(.string(body))` and never produces segments.
 public enum InterpolationSegment: Sendable {
@@ -1135,26 +1135,26 @@ public indirect enum ExpressionAST: Sendable {
     case constantRef(String)
     /// B3: `decide whether <question>` — delegates to `llm.decide` at runtime.
     case decideWhether(question: String)
-    /// B6/B7: Fenced code block that contains `{{ expr }}` interpolation markers.
+    /// Fenced code block that contains `{{ expr }}` interpolation markers.
     case interpolatedString([InterpolationSegment])
     /// Data table: a list of records sharing `fields`, one record per row.
     /// Lowers to `.list([.record([...])])`.
     case recordList(fields: [String], rows: [[ExpressionAST]])
-    /// Wave 4B: deterministic lookup in a named data table.
+    /// deterministic lookup in a named data table.
     case tableLookup(table: String, keyColumn: String, key: ExpressionAST, valueColumn: String)
-    /// 2C: A quantified description (`all/any/no/at least N … <description>`).
+    /// A quantified description (`all/any/no/at least N … <description>`).
     case quantified(QuantifierAST)
-    /// 3B: An active verb condition (`the user owns the page`). Resolved to a
+    /// An active verb condition (`the user owns the page`). Resolved to a
     /// relation predicate at lowering via the verb table.
     case verbPredicate(subject: ExpressionAST, verb: String, object: ExpressionAST)
-    /// 3C: Scalar relation navigation (`the task assigned to the user`). `relation`
+    /// Scalar relation navigation (`the task assigned to the user`). `relation`
     /// is the surface verb/relation form; resolved + directed at lowering.
     case relationTraversal(ExpressionAST, relation: String, navKind: String)
-    /// 3C: A description used as a value (`the stale pages that mention the entity`).
+    /// A description used as a value (`the stale pages that mention the entity`).
     case description(DescriptionAST)
-    /// 3C: An aggregate over a description (`the number of …`, `the list of …`).
+    /// An aggregate over a description (`the number of …`, `the list of …`).
     case aggregate(AggregateKindAST, DescriptionAST)
-    /// 3C: A superlative over a description (`the oldest stale page`,
+    /// A superlative over a description (`the oldest stale page`,
     /// `the largest deal by amount`).
     case superlative(SuperlativeAST)
     case eventPattern(EventPatternAST)
@@ -1190,7 +1190,7 @@ public struct EventPatternAST: Sendable {
         case prevented
         case violated
         /// Generic completion of the subject, regardless of success/failure —
-        /// the reading `E has ever occurred` (SEM-5-1) and outcome-less
+        /// the reading `E has ever occurred` and outcome-less
         /// kind-flavored anchors (`since the last production deploy`) need.
         case occurred
     }
@@ -1333,13 +1333,13 @@ public struct DescriptionAST: Sendable {
     public let noun: String
     public let adjectives: [String]
     public let wherePredicate: ExpressionAST?
-    /// 3B: relation relative/passive clauses restricting the element set.
+    /// relation relative/passive clauses restricting the element set.
     public let verbClauses: [VerbClauseAST]
-    /// 3C: a `sorted by <property>[, dir]` order.
+    /// a `sorted by <property>[, dir]` order.
     public let sort: (property: String, ascending: Bool)?
-    /// 3C: a `the first N` take-prefix (post-filter, post-sort).
+    /// a `the first N` take-prefix (post-filter, post-sort).
     public let take: Int?
-    /// 3C: a `the last N` take-suffix (post-filter, post-sort) — disambiguated
+    /// a `the last N` take-suffix (post-filter, post-sort) — disambiguated
     /// from temporal `within the last N <unit>` by requiring a kind noun, not a
     /// duration unit, immediately after the count.
     public let takeFromEnd: Int?
@@ -1353,7 +1353,7 @@ public struct DescriptionAST: Sendable {
     }
 }
 
-/// 3B: a relation clause restricting a description's element set. The element
+/// a relation clause restricting a description's element set. The element
 /// (the iterated kind) plays either the subject or object role of `verbForm`'s
 /// relation; `operand` is the fixed other side.
 ///   `pages that mention the entity`  → elementIsSubject = true,  operand = entity
@@ -1370,7 +1370,7 @@ public struct VerbClauseAST: Sendable {
 
 public enum AggregateKindAST: Sendable, Equatable { case count, list }
 
-/// 3C: a superlative — a description reduced to a single element by a sort key.
+/// a superlative — a description reduced to a single element by a sort key.
 /// `ascending == true` takes the minimum (oldest/smallest); `false` the maximum.
 public struct SuperlativeAST: Sendable {
     public let description: DescriptionAST
@@ -1410,7 +1410,7 @@ public enum ComparisonOpAST: Sendable {
     case contains, oneOf
     case matchesPattern
     /// Shared condition grammar: one-sided temporal windows (`within the last`
-    /// / `in the next`) and property-backed emptiness (`has no` / `has a` /
+    /// `in the next`) and property-backed emptiness (`has no` / `has a` /
     /// `is empty` / `is not empty`).
     case withinPast, withinFuture
     case isEmpty, isNotEmpty

@@ -8,8 +8,8 @@ import Foundation
 // truth for "would this text actually lower today?" — replaces the marking
 // pass's former shape heuristics (AGENTS.md Phase 1: "Trial lowering as the
 // oracle"). Used by:
-//   - `SkillMigrator`'s marking pass (a real, load-bearing decision), and
-//   - `InertYieldAnalyzer` (a read-only measurement, Phase 0).
+//   `SkillMigrator`'s marking pass (a real, load-bearing decision), and
+//   `InertYieldAnalyzer` (a read-only measurement, Phase 0).
 struct TrialLowering {
     let knowledge: Compiler.KnowledgeContext
     let probeTally: ProbeTally?

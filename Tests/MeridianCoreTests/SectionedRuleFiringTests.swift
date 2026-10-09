@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import MeridianCore
 
-// Phase 0B coverage: Phase-8 rule sugar (`must not` / `may` [+ bounded `up to
+// coverage: Phase-8 rule sugar (`must not` / `may` [+ bounded `up to
 // N`] / `must be … by … before` / `When …, …`) now fires inside executable
 // sections of a sectioned (heading-bearing) skill document, exactly like it
 // already did at the top level of a heading-less `.meridian`/`.meri` file.

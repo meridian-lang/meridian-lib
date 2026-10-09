@@ -166,7 +166,7 @@ struct BrokenTwinDiagnosticsTests {
         // Line 4 of the Broken Twin: `a service is flaky if it has failed
         // recently`. The vague window (`recently`, MER-TMP-017) is reported
         // first, short-circuiting before the unkeyed-definition check
-        // (MER-TMP-016) can fire — "vague window reported first" per NS §C.4.
+        // can fire — "vague window reported first" per NS §C.4.
         let diagnostic = try requireExpressionDiagnostic(
             "the deploy step has failed recently",
             code: .traceRecently
@@ -271,7 +271,7 @@ struct BrokenTwinDiagnosticsTests {
             cfg: cfg,
             code: .traceWindowExceedsRetention
         )
-        // The message must name BOTH durations (SEM-4-06 / D1).
+        // The message must name BOTH durations.
         #expect(diagnostic.message.contains("90 days"),
                 Comment(rawValue: "expected the window `90 days` named, got: \(diagnostic.message)"))
         #expect(diagnostic.message.contains("30 days"),

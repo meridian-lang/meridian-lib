@@ -14,7 +14,7 @@ struct TraceEventPatternGrammar {
     /// Anchor-position resolution (`since the last <anchor>`): same as
     /// `parse`, but a subject with no explicit outcome verb defaults to
     /// generic completion (`.occurred`) — the kind-flavored anchor reading
-    /// SEM-5-06 / cookbook 18.5's `since the last production deploy` needs.
+    /// / cookbook 18.5's `since the last production deploy` needs.
     func parseAnchor(_ raw: String) -> EventPatternAST? {
         parse(raw, allowBareAnchor: true)
     }
@@ -107,7 +107,7 @@ struct TraceEventPatternGrammar {
 
         // Skill-scoped step: `the fetch step of the briefing skill` (cookbook
         // 17). Parsed (not silently folded into `.named`) so lowering can
-        // raise a precise cross-skill-scope diagnostic (D4) instead.
+        // raise a precise cross-skill-scope diagnostic instead.
         if lower.hasSuffix(" skill"),
            let ofRange = QuoteAwareScanner.rangeOfMarker(" of the ", in: stripped, caseInsensitive: true) {
             let stepPart = String(stripped[stripped.startIndex..<ofRange.lowerBound]).trimmingCharacters(in: .whitespaces)

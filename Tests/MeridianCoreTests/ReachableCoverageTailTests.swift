@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Phase 1 (pure-helper tail): direct unit tests for the near-100% helpers whose
+// (pure-helper tail): direct unit tests for the near-100% helpers whose
 // remaining gaps are leaf switch arms, morphology edges, and rendering branches
 // that the corpus fixtures don't happen to hit. Each test names the file +
 // arm-cluster it closes so a regression points back here precisely.

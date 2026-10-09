@@ -146,7 +146,7 @@ struct VerbalizerGenerativeTests {
             return .simultaneously(SimultaneouslyIR(branches: [done], detached: true))
         case 12:
             // Guidance folds into `text` on reparse; keep a single-line goal so
-            // SEM-8-03 structural equality (via IREquality AI normalization) holds.
+            // structural equality (via IREquality AI normalization) holds.
             return .aiJudgment(AIJudgmentIR(text: "decide next step"))
         case 13:
             return .aiAutonomy(AIAutonomyIR(
@@ -291,7 +291,7 @@ struct VerbalizerGenerativeTests {
             "complete except when score equals 1",
             "try complete; if it fails recover",
             "complete only when score equals 1",
-            // Wave 8 trace / statistical / compound-note surfaces. These mirror
+            // trace / statistical / compound-note surfaces. These mirror
             // the canonical examples on the matching `GrammarProduction`s; the
             // coverage checklist only substring-scans them (it does not parse).
             "the deploy step failed",
@@ -329,7 +329,7 @@ struct VerbalizerGenerativeTests {
             if surface.contains(" except when ") { hits.insert("except-when-idiom") }
             if surface.hasPrefix("try ") && surface.contains("if it fails") { hits.insert("try-recover-idiom") }
             if surface.contains(" only when ") { hits.insert("suffix-conditional") }
-            // Wave 8 trace / statistical / compound-note markers.
+            // trace / statistical / compound-note markers.
             if surface.contains(" step failed") || surface.contains(" step succeeded") { hits.insert("trace-event-pattern") }
             if surface.contains("across all runs") { hits.insert("trace-scope-marker") }
             if surface.contains("has ever ") { hits.insert("trace-temporal-ever") }

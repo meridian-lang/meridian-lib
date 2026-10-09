@@ -420,7 +420,7 @@ public struct StatementParser {
             return (.conditional(choiceBranch.statement), choiceBranch.consumed)
         }
 
-        // 3C: "let {name} be {value}." — sugar for `bind`. Used so a description
+        // "let {name} be {value}." — sugar for `bind`. Used so a description
         // value reads naturally (`let candidates be the stale pages …`). The
         // RHS goes through `parseBindValue`, so a tool-backed relation fetch is
         // hoisted at lowering exactly as for `bind`.

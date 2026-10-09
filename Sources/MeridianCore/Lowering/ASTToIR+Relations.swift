@@ -99,7 +99,7 @@ extension ASTToIR {
         return (rel.leftKind, rel.leftCardinality)
     }
 
-    /// 3B/3C: a relation operand must resolve to an in-scope name (a workflow
+    /// a relation operand must resolve to an in-scope name (a workflow
     /// parameter, an earlier bind, or an enclosing loop variable). Runs only when
     /// `scope` is known; constants/instances/literals/enum-cases contribute no
     /// free identifier roots, so they always pass.
@@ -136,7 +136,7 @@ extension ASTToIR {
         ])
     }
 
-    /// 3B: lower an active verb condition (`the user owns the page`) to a
+    /// lower an active verb condition (`the user owns the page`) to a
     /// property-backed `identifies` comparison. Tool-backed verbs can't be tested
     /// inline (they need an `await` fetch) — bind the related set first.
     func lowerVerbPredicate(subject: ExpressionAST, verbForm: String,
@@ -173,7 +173,7 @@ extension ASTToIR {
 
     struct ScalarNavPlan { let expr: IRExpression; let prelude: [IRPrimitive] }
 
-    /// 3C: lower scalar relation navigation (`the task assigned to the user`,
+    /// lower scalar relation navigation (`the task assigned to the user`,
     /// navigating TO `navKind`) to a single related value. Property-backed → a
     /// `member` read from the operand. Tool-backed → a single fetch-once `invoke`
     /// (hoisted into `prelude` when `allowToolFetch`), whose result IS the related
@@ -277,7 +277,7 @@ extension ASTToIR {
         return (filters, toolSource)
     }
 
-    /// 3C: lower a description to a fetch-once + filter + sort + take plan. A
+    /// lower a description to a fetch-once + filter + sort + take plan. A
     /// single tool-backed verb clause becomes the source (a hoisted `invoke`,
     /// returned in `prelude`); property-backed clauses, adjectives, and `whose`
     /// become element-context filters. `allowToolFetch` is false in value/condition

@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// MARK: - Phase 3 Forcing Function
+// MARK: - Forcing Function
 //
 // Specification (10_BUILD_PLAN.md, Phase 3):
 //   meridian compile examples/order_processing.meridian -o build/

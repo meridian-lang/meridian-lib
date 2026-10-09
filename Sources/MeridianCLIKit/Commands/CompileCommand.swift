@@ -151,7 +151,7 @@ public struct CompileCommand: AsyncParsableCommand, ModulePathSupporting {
         }
         var swift = compiled.swift
 
-        // D-DX-3: swift-format failure is cosmetic — keep the valid unformatted
+        // swift-format failure is cosmetic — keep the valid unformatted
         // Swift and surface a warning, never fail the compile or drop it silently.
         if !noFormat {
             do {

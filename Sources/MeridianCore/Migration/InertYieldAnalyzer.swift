@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - InertYieldAnalyzer
 //
-// Phase 0 measurement spike (see the "Deterministic lowering for gbrain" plan
+// measurement spike (see the "Deterministic lowering for gbrain" plan
 // and `IMPLEMENTATION_LOG.md`): for every section a `.meri`'s marking pass
 // left `(( inert ))`, answer "would this section's content actually lower
 // today, if the marking pass had real vocabulary/rulebook knowledge instead
@@ -63,7 +63,7 @@ public struct InertYieldAnalyzer {
         public let yield: Yield
         /// The exact unresolved-phrase text, present only for `.needsPhrase`.
         public let unresolvedPhrase: String?
-        /// P1 bucket this line would fall into under the cue-gated policy.
+        /// bucket this line would fall into under the cue-gated policy.
         public let p1Bucket: P1Bucket
 
         public init(line: Int, text: String, yield: Yield, unresolvedPhrase: String? = nil, p1Bucket: P1Bucket = .lower) {
@@ -201,7 +201,7 @@ public struct InertYieldAnalyzer {
         return out
     }
 
-    /// P1 precedence for a line that failed to lower (categories 2-4; category
+    /// precedence for a line that failed to lower (categories 2-4; category
     /// 1 — `.lower` — is only ever assigned on the `.success` probe branch
     /// above, since a line reaching here already failed to lower).
     private func p1Bucket(for text: String, trial: TrialLowering) -> P1Bucket {

@@ -4,7 +4,7 @@ import MeridianRuntime
 import MeridianTestKit
 import EcommerceWorkflows
 
-// MARK: - Phase 1 forcing-function integration tests
+// MARK: - forcing-function integration tests
 //
 // Runs ProcessOrder hand-written workflow against canned closure tools.
 // Captures event stream and normalizes for structural comparison.

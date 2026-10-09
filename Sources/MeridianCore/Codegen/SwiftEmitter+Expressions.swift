@@ -182,7 +182,7 @@ extension SwiftEmitter {
         }
     }
 
-    /// 3C: render a description as a `[Value]` pipeline — `(coll.asList ?? [])`
+    /// render a description as a `[Value]` pipeline — `(coll.asList ?? [])`
     /// filtered (element context), sorted, then `prefix`-taken. Shared by the
     /// description / aggregate / superlative emitters. See `emitCollectionArray`
     /// for what `env` carries; it is merged with this description's own
@@ -211,7 +211,7 @@ extension SwiftEmitter {
         return pipeline
     }
 
-    /// 3C: a superlative reuses the description pipeline but forces its own sort
+    /// a superlative reuses the description pipeline but forces its own sort
     /// key/direction so `.first` is the min (ascending) or max element.
     func emitSuperlativeList(_ s: SuperlativeIR, env: [String: String] = [:]) -> String {
         let forced = DescriptionIR(collection: s.description.collection,
@@ -890,7 +890,7 @@ TraceStatisticalQuery(
     func needsValueComparison(_ expr: IRExpression) -> Bool {
         switch expr {
         case .identifierRef, .propertyAccess: return true
-        // 3C: a superlative is a `Value?`; a `.list` aggregate / description is a
+        // a superlative is a `Value?`; a `.list` aggregate / description is a
         // `Value`. A `.count` aggregate is a bare `Int` and compares directly.
         case .superlative, .description:      return true
         case .aggregate(let kind, _):         return kind == .list

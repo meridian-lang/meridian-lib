@@ -43,7 +43,7 @@ public enum IRWalker {
         }
     }
 
-    /// D8 (SEM-4-07): true when any `AssertIR` anywhere is a "blocking site" —
+    ///: true when any `AssertIR` anywhere is a "blocking site" —
     /// an ordinary (non-monitored) assert, which is inherently blocking
     /// because its failure always throws, OR a monitored statistical assert
     /// that carries the explicit `, blocking` suffix. Mirrors

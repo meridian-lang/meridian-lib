@@ -3,9 +3,9 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// MARK: - Phase 4 Golden Diff
+// MARK: - Golden Diff
 //
-// Phase 4 deliverable (docs/status.md):
+// deliverable (docs/status.md):
 //   "Generated Swift output is byte-for-byte stable against a checked-in
 //    expected file. A drift triggers a test failure that surfaces a unified
 //    diff so a reviewer can decide whether the change is intentional."

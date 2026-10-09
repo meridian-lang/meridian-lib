@@ -55,7 +55,7 @@ struct NonterminalScreeningTests {
         #expect(result.screenedSeconds >= 0)
     }
 
-    // MARK: - Wave 5B acceptance: corpus-scale screened/unscreened differential
+    // MARK: - acceptance: corpus-scale screened/unscreened differential
     //
     // `NonterminalScreen` is a pure pre-filter optimization: it must never
     // change what a production parses to, only skip productions it can prove

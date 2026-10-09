@@ -167,7 +167,7 @@ extension ASTToIR {
         }
     }
 
-    /// 3C: lower a bind right-hand side, hoisting a tool-backed relation fetch
+    /// lower a bind right-hand side, hoisting a tool-backed relation fetch
     /// (description or scalar navigation) into a preceding `invoke` — so the
     /// `await` lives at statement scope, not inside the value expression.
     /// Non-relational values produce no prelude.

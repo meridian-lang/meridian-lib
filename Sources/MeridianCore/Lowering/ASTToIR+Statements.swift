@@ -359,7 +359,7 @@ extension ASTToIR {
 
         case .proseStep(let s):
             // An explicit local marker (`use judgment to …:` / `with discretion:`
-            // / `with autonomy …:`) sets the dispatch mode directly and is valid
+            // `with autonomy …:`) sets the dispatch mode directly and is valid
             // in any workflow. Without an explicit marker, the prose step inherits
             // the enclosing workflow's mode — and is a hard error if the workflow
             // is not itself discretion/autonomy (no unmarked prose ever promotes).

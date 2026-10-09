@@ -4,7 +4,7 @@ import Testing
 import MeridianRuntime
 
 /// Direct coverage for `IndeterminateAnalysis` syntactic walker arms that
-/// SEM-6 / Broken Twin integration tests only hit indirectly.
+/// Broken Twin integration tests only hit indirectly.
 @Suite("IndeterminateAnalysis coverage")
 struct IndeterminateAnalysisCoverageTests {
 

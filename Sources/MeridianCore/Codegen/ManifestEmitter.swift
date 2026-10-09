@@ -20,18 +20,18 @@ public struct ManifestEmitter {
         /// as `meridian_skill` in the manifest JSON.
         public let metadata: FileMetadataAST?
         public let outline: [HeadingEntry]
-        /// C5: Rule manifest entries derived from parsed rules.
+        /// Rule manifest entries derived from parsed rules.
         public let rules: [RuleManifestEntry]
         /// Universal sections: every markdown section of a sectioned document,
         /// executable and non-executable alike. Mandatory carrier — guaranteed
         /// to reach `meridian_skill.sections` so nothing is silently dropped.
         public let skillSections: [SkillSectionEntry]
-        /// 2B: Checkable adjective definitions (`Definition: a <kind> is <adj>
+        /// Checkable adjective definitions (`Definition: a <kind> is <adj>
         /// if …`). Emitted as `meridian_definitions` when non-empty.
         public let definitions: [DefinitionManifestEntry]
-        /// 3A: Relations + their evaluation backing. `meridian_relations`.
+        /// Relations + their evaluation backing. `meridian_relations`.
         public let relations: [RelationManifestEntry]
-        /// 3B: Verbs + conjugation + bound relation. `meridian_verbs`.
+        /// Verbs + conjugation + bound relation. `meridian_verbs`.
         public let verbs: [VerbManifestEntry]
         public let skillVersionHash: String?
 
@@ -70,7 +70,7 @@ public struct ManifestEmitter {
         }
     }
 
-    /// 3A: One relation + backing recorded for the manifest.
+    /// One relation + backing recorded for the manifest.
     public struct RelationManifestEntry: Sendable, Encodable {
         public let name: String
         public let leftKind: String
@@ -91,7 +91,7 @@ public struct ManifestEmitter {
         }
     }
 
-    /// 3B: One verb + conjugation + bound relation recorded for the manifest.
+    /// One verb + conjugation + bound relation recorded for the manifest.
     public struct VerbManifestEntry: Sendable, Encodable {
         public let base: String
         public let thirdPerson: String
@@ -105,7 +105,7 @@ public struct ManifestEmitter {
         }
     }
 
-    /// 2B: One checkable adjective definition recorded for the manifest.
+    /// One checkable adjective definition recorded for the manifest.
     public struct DefinitionManifestEntry: Sendable, Encodable {
         public let adjective: String
         public let kind: String
@@ -160,7 +160,7 @@ public struct ManifestEmitter {
         }
     }
 
-    /// C5: Manifest entry for a single rule statement, recording its
+    /// Manifest entry for a single rule statement, recording its
     /// classification and whether it produces executable IR.
     public struct RuleManifestEntry: Sendable, Encodable {
         public let text: String

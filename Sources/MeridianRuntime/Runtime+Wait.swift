@@ -9,13 +9,13 @@ extension Runtime {
 
     /// Suspend execution on a wait condition.
     ///
-    /// - `.duration`: suspends for the given duration via `Clock.sleep`.
-    /// - `.signal`: blocks until `deliverSignal(_:)` is called with the same name.
+    /// `.duration`: suspends for the given duration via `Clock.sleep`.
+    /// `.signal`: blocks until `deliverSignal(_:)` is called with the same name.
     ///   At-most-once delivery; if no workflow is waiting when a signal arrives it
     ///   is dropped (logged at warning level). FIFO when multiple waiters share a name.
-    /// - `.approval`: blocks until `deliverApproval(of:by:verdict:)` is called.
+    /// `.approval`: blocks until `deliverApproval(of:by:verdict:)` is called.
     ///   `.approved` resumes normally; `.denied` throws `MeridianRuntimeError.approvalDenied`.
-    /// - `.event`: blocks until `deliverEvent(id:payload:)` fires an event whose `id` and
+    /// `.event`: blocks until `deliverEvent(id:payload:)` fires an event whose `id` and
     ///   predicate (if any) both match. The spec notes this is v1-supported for internal
     ///   events; external delivery uses `deliverEvent`.
     ///
@@ -121,8 +121,8 @@ extension Runtime {
 
     /// Deliver an approval verdict to the first waiting `wait(.approval(of:by:))`.
     ///
-    /// - `.approved` resumes normally.
-    /// - `.denied` resumes with `MeridianRuntimeError.approvalDenied`, which the
+    /// `.approved` resumes normally.
+    /// `.denied` resumes with `MeridianRuntimeError.approvalDenied`, which the
     ///   workflow can catch via a `recover from approval.denied:` block.
     public func deliverApproval(
         of subject: Value,

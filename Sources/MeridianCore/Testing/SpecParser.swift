@@ -6,16 +6,16 @@ import MeridianRuntime
 /// Parses `.meridian.test` spec files into `MeridianTestRunner.Spec`.
 ///
 /// Format rules:
-///   - Lines starting with `#` or empty are ignored.
-///   - `key: value` — simple key/value pair.
-///   - `key: ```` (with an optional info-string suffix, e.g. ```` ```meridian````)
+///   Lines starting with `#` or empty are ignored.
+///   `key: value` — simple key/value pair.
+///   `key: ```` (with an optional info-string suffix, e.g. ```` ```meridian````)
 ///     opens a fenced code block. The body is read verbatim — no indent
 ///     stripping — until a line whose trimmed content is exactly the closing
 ///     fence (```` ```` ```). This is preferred for any value that itself
 ///     contains markdown-y boundaries (frontmatter `---`, list markers, etc.)
 ///     because the fence makes the value boundary unambiguous.
-///   - Keys may contain spaces (e.g. `tool_stub validate an order`).
-///   - Repeatable keys: `vocab`, `vocab_inline <name>`, `expect_swift_contains`,
+///   Keys may contain spaces (e.g. `tool_stub validate an order`).
+///   Repeatable keys: `vocab`, `vocab_inline <name>`, `expect_swift_contains`,
 ///     `expect_invoke_tool`, `expect_emit_event`, `expect_trace_contains`,
 ///     `tool_stub <id>`, `input <param>`, and any other `expect_*` assertion key.
 struct SpecParser {

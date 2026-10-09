@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import MeridianCore
 
-// Phase 1 observability matrix — expected compile-time trace stages for a
+// observability matrix — expected compile-time trace stages for a
 // successful full pipeline compile:
 //   1. symbols   — vocabulary/symbol table construction
 //   2. merconfig   — `.merconfig` bootstrap + lexicon merge

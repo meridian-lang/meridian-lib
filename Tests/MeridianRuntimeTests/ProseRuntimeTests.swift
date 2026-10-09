@@ -87,7 +87,7 @@ struct ProseRuntimeTests {
         #expect(await captured.value == nil)
     }
 
-    // MARK: - SEM-4-04 judgment witnessing (input/output hash + declared kind)
+    // MARK: - judgment witnessing (input/output hash + declared kind)
 
     @Test("planStart/planEnd carry a stable, matching input_payload_hash and the declared output_kind")
     func judgmentEventsCarryInputHashAndOutputKind() async throws {

@@ -4,7 +4,7 @@ import Testing
 /// Phase B1 (Diagnostics Tracing Overhaul): assert every parse-stage decision
 /// point that gained a `trace.log` call actually emits one, for both the
 /// accept and reject branches. These are white-box tests of the `.statement`
-/// / `.tokenize` category streams, distinct from the end-to-end pipeline
+/// `.tokenize` category streams, distinct from the end-to-end pipeline
 /// coverage in `TraceEnabledCompileTests`.
 @Suite("Parse-stage trace depth (B1)")
 struct ParseStageTraceTests {

@@ -4,7 +4,7 @@ import MeridianRuntime
 // MARK: - Bind / invoke / emit / match / assert
 //
 // Value-side statement productions extracted from StatementParser for
-// Phase 3 readability. Call sites in parseStatement remain on the
+// readability. Call sites in parseStatement remain on the
 // orchestrator.
 
 extension StatementParser {
@@ -30,7 +30,7 @@ extension StatementParser {
             return (.decideWhether(question: question), 0)
         }
 
-        // B6/B7: "decide using:" followed by an indented code-block sentinel.
+        // "decide using:" followed by an indented code-block sentinel.
         // Use parseAtom to decode the sentinel — this handles plain bodies
         // (.literal(.string)) and {{ expr }} interpolated bodies
         // (.interpolatedString) uniformly. Wrap both forms as .invoke so the

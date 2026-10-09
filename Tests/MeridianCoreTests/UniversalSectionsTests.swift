@@ -4,7 +4,7 @@ import Testing
 
 // Coverage for the universal, strictly-deterministic markdown-section model:
 // structural `hasHeadings` discriminator, the `(( inert ))` / `(( inert, role: R ))`
-// / `(( role: R ))` marker family, no-silent-drop hard errors, blockquote-as-
+// `(( role: R ))` marker family, no-silent-drop hard errors, blockquote-as-
 // comment, and the mandatory `meridian_skill.sections` manifest plumbing.
 
 @Suite("Universal sections — markers and roles")

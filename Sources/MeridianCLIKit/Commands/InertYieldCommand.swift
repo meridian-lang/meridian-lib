@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 import MeridianCore
 
-/// Phase 0 measurement-spike CLI surface for `InertYieldAnalyzer`. Read-only:
+/// measurement-spike CLI surface for `InertYieldAnalyzer`. Read-only:
 /// it never rewrites the input `.meri`/SKILL.md, only reports what the
 /// trial-lowering oracle found. See docs/13_SKILL_MD_PORTING.md and the
 /// "Deterministic lowering for gbrain" plan for context.

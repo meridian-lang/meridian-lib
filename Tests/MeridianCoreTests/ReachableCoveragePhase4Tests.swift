@@ -3,13 +3,13 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Phase 4: codegen / compiler / rules / migrator pure layers.
-//  - CompilerError projection helpers (diagnostics, primaryMessage).
-//  - RuleAnalyzer.classify across all five shapes + the unclassified path.
-//  - SkillMigrator.deterministicTransform command-placeholder rewrite + heading
+// codegen / compiler / rules / migrator pure layers.
+//  CompilerError projection helpers (diagnostics, primaryMessage).
+//  RuleAnalyzer.classify across all five shapes + the unclassified path.
+//  SkillMigrator.deterministicTransform command-placeholder rewrite + heading
 //    edge cases.
-//  - SwiftEmitter residual comparison/literal emit arms via crafted compiles.
-//  - RuleInjector permission softening + approval-handling detection.
+//  SwiftEmitter residual comparison/literal emit arms via crafted compiles.
+//  RuleInjector permission softening + approval-handling detection.
 
 @Suite("Reachable coverage — Phase 4 (compiler/rules/codegen/migrator)")
 struct ReachableCoveragePhase4Tests {

@@ -21,7 +21,7 @@ enum Frontmatter {
     /// Locate the leading `---`/`---` block. Returns the indices of the opening
     /// and closing fence lines, or `nil` when there is no well-formed block.
     ///
-    /// - Parameter skipLeadingBlanks: when `true`, blank lines may precede the
+    /// Parameter skipLeadingBlanks: when `true`, blank lines may precede the
     ///   opening fence (metrics/deviation tolerate this); when `false`, the
     ///   fence must be the very first line (the marking pass requires it at
     ///   line 0).

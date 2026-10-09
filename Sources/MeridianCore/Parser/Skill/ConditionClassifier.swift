@@ -52,7 +52,7 @@ struct ConditionClassifier {
         let lower = text.lowercased()
         // `emitted` is the signal that this is an output-format invariant on a
         // single bound result — NOT a `every <plural>` collection quantifier
-        // (Wave 2C), which must keep its quantifier meaning.
+        //, which must keep its quantifier meaning.
         for prefix in lexicon.grammar.emittedInvariantPrefixes where lower.hasPrefix(prefix) {
             guard let article = lexicon.definiteArticle else {
                 return String(text.dropFirst(prefix.count))

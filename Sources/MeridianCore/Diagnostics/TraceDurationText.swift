@@ -1,6 +1,6 @@
 import Foundation
 
-/// Human-readable duration rendering for trace diagnostics (MER-TMP-011). This
+/// Human-readable duration rendering for trace diagnostics. This
 /// is problem-message text, not canonical language surface — it renders a
 /// window/retention span in the largest whole unit that divides it evenly so
 /// `SEM-4-06` errors can name both durations the way an author wrote them

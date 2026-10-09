@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import MeridianRuntime
 
-// Phase 1 (pure-helper tail, runtime side): TraceTreeRenderer label arms and the
+// (pure-helper tail, runtime side): TraceTreeRenderer label arms and the
 // heterogeneous `stringValue` type ladder. Driven through the public
 // render(events:)/render(jsonl:) entry points.
 

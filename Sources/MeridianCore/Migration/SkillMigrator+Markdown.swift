@@ -26,7 +26,7 @@ extension SkillMigrator {
             .trimmingCharacters(in: .whitespaces)
     }
 
-    /// Phase 2 idiom: bold-label step tolerance. A numbered/bulleted step
+    /// idiom: bold-label step tolerance. A numbered/bulleted step
     /// written as `1. **Run health check.** Check gbrain health.` restates its
     /// own action as a bold label before the real statement. Left alone,
     /// `stripMarkdownLinksAndEmphasis` only removes the `**` markers, leaving

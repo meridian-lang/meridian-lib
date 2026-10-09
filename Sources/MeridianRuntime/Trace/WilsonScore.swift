@@ -3,25 +3,25 @@ import Foundation
 /// Wilson score confidence interval for a binomial proportion.
 ///
 /// Meridian uses this for statistical trace claims that carry
-/// `with <p>% confidence` (SEM-6-04). Given `successes` successes out of
+/// `with <p>% confidence`. Given `successes` successes out of
 /// `sampleSize` observations, the true success rate is unknown; the raw
 /// ratio `successes / sampleSize` is only a point estimate. A Wilson interval
 /// is a confidence interval around that rate: with the stated confidence, the
 /// true rate is expected to lie between `lower` and `upper`.
 ///
 /// Why Wilson (not a plain normal / Wald interval)?
-/// - It stays inside `[0, 1]` and remains well-behaved for small `n` and for
+/// It stays inside `[0, 1]` and remains well-behaved for small `n` and for
 ///   rates near 0 or 1, where the Wald interval often overshoots or collapses.
-/// - That matters for trace replay: skills often have modest sample sizes, and
+/// That matters for trace replay: skills often have modest sample sizes, and
 ///   gates like "at least 90% with 95% confidence" must not pass on a lucky
 ///   streak that a wider interval would reject.
 ///
 /// How `TraceEvaluator` consumes the interval:
-/// - `at least T` → true only if `interval.lower >= T` (conservative: even the
+/// `at least T` → true only if `interval.lower >= T` (conservative: even the
 ///   pessimistic end of the interval clears the floor).
-/// - `at most T` → true only if `interval.upper <= T` (conservative: even the
+/// `at most T` → true only if `interval.upper <= T` (conservative: even the
 ///   optimistic end stays under the ceiling).
-/// - Below the configured sample floor, evaluation is indeterminate and this
+/// Below the configured sample floor, evaluation is indeterminate and this
 ///   helper is not consulted.
 ///
 /// Formula (center ± margin, then scaled by the shared denominator):

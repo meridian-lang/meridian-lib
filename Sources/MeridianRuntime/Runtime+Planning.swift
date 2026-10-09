@@ -31,7 +31,7 @@ extension Runtime {
             guidance: guidance
         )
 
-        // SEM-4-04: every judgment invocation witnesses an input payload hash,
+        // every judgment invocation witnesses an input payload hash,
         // an output payload hash, and its declared output kind, alongside tool
         // scope (already present as `scoped_tools`). The input hash covers
         // exactly what the planner sees — prose, guidance, and the state
@@ -122,7 +122,7 @@ extension Runtime {
         var loopValues = snapshot.asValues
         var consecutiveFailures = 0
 
-        // SEM-4-04 — see `executeProsePlan`'s matching comment: same witness
+        // see `executeProsePlan`'s matching comment: same witness
         // shape (input hash / output hash / declared output kind) for the
         // autonomy dispatch path.
         let inputHash = judgmentPayloadHash(judgmentInputPayload(prose: prose, guidance: guidance, snapshot: snapshot))
@@ -390,7 +390,7 @@ extension Runtime {
         .list(scope.sorted().map(Value.string))
     }
 
-    // MARK: - SEM-4-04 judgment witnessing
+    // MARK: - judgment witnessing
 
     /// Exactly what the planner/actor sees for one judgment call: the prose
     /// goal, its optional guidance, and the state snapshot. Hashing this (not

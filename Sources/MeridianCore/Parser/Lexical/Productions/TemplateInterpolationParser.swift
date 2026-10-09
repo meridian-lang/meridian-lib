@@ -3,7 +3,7 @@ import Foundation
 /// `template-conditional` / `template-loop` / `template-formatter`
 /// (`GrammarTable`, `.hand-written`): the `{{ … }}` / `[if]…[otherwise]…[end
 /// if]` / `[for each]…[end for]` / `as a <formatter>` text-template
-/// mini-language (B6/B7).
+/// mini-language.
 ///
 /// Already a correct, well-isolated, independently-recursive state machine
 /// with no parallel implementation to strangle — moved here verbatim, not
@@ -18,8 +18,8 @@ struct TemplateInterpolationParser {
     /// Parse `body` (a fenced code-block body) into a sequence of literal and
     /// expression segments delimited by `{{ … }}` markers.
     ///
-    /// - `\{{` is treated as an escaped `{{` that produces a literal `{{`.
-    /// - Unclosed `{{` is treated as a literal fragment to the end of the string.
+    /// `\{{` is treated as an escaped `{{` that produces a literal `{{`.
+    /// Unclosed `{{` is treated as a literal fragment to the end of the string.
     func parseSegments(_ body: String) -> [InterpolationSegment] {
         parseTemplateSegments(body).segments
     }

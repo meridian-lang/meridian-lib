@@ -21,7 +21,7 @@ struct DescriptionGrammar {
     /// Recurses the full grammar for `whose`/`sorted by` sub-expressions.
     let recurse: (String) -> ExpressionAST
 
-    /// - Parameter allowSingularHead: when `true`, accept a singular head noun
+    /// Parameter allowSingularHead: when `true`, accept a singular head noun
     ///   (`service`) as well as the default plural (`services`). Used by the
     ///   `for each <adjectives> <singular kind> <verb clause>:` bare iteration
     ///   header (`StatementParser.parseIteration`), which — unlike quantifiers/
@@ -127,7 +127,7 @@ struct DescriptionGrammar {
         return DescriptionAST(noun: noun, adjectives: adjectives)
     }
 
-    /// 3B: a high-confidence "you meant a relation verb here" error. Fires ONLY
+    /// a high-confidence "you meant a relation verb here" error. Fires ONLY
     /// when the text is unambiguously shaped like a passive relation clause —
     /// `<plural declared kind> <participle-looking word> by <operand>` — but the
     /// participle word names no declared verb.

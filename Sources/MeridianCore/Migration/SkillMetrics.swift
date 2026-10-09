@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - SkillMetrics
 //
-// Wave 0 measurement. Computes the corpus expressiveness counters a deviation
+// measurement. Computes the corpus expressiveness counters a deviation
 // report carries, directly from a ported `.meri` text:
 //
 //   • total / inert section counts and the inert ratio — how much of a skill is

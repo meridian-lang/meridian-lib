@@ -13,11 +13,11 @@ extension StatementParser {
     /// lines consumed. The header line is *not* counted in `consumed`.
     ///
     /// Two early-exit conditions:
-    ///   - If the header line is `.`-terminated (a complete statement), no
+    ///   If the header line is `.`-terminated (a complete statement), no
     ///     continuation lines are folded — even if subsequent indented lines
     ///     exist. They belong to a structurally separate statement (e.g. an
     ///     attached `recover from …:` block).
-    ///   - A subsequent line that begins with a known structural keyword
+    ///   A subsequent line that begins with a known structural keyword
     ///     (`recover from`, `recover where`, `simultaneously:`) is also a
     ///     boundary — it cannot be a phrase continuation.
     func collectMultiLineCounted(_ lines: [SourceLine], at i: Int) -> (text: String, consumed: Int) {

@@ -3,7 +3,7 @@ import MeridianRuntime
 import MeridianTestKit
 import EcommerceWorkflows
 
-// MARK: - Phase 1 forcing function driver
+// MARK: - forcing function driver
 //
 // Usage:
 //   swift run order-processing-handwritten happy

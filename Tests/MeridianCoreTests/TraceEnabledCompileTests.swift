@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Phase 1 (trace lever): a full-pipeline compile with EVERY ParserTrace
+// (trace lever): a full-pipeline compile with EVERY ParserTrace
 // category captured. This is the single highest-yield coverage lever — it
 // flips the scattered `trace.log`/`trace.push` autoclosure arms that are
 // otherwise dead under the default silent trace, across SymbolTable,

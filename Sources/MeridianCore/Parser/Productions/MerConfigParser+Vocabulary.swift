@@ -83,7 +83,7 @@ extension MerConfigParser {
                 }
             }
 
-            // 2B: "Definition: a {kind} is {adjective} if {condition}."
+            // "Definition: a {kind} is {adjective} if {condition}."
             if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
                 if let def = DefinitionParser(lexicon: lexicon, symbols: nil)
                     .parse(t, line: line.number) {
@@ -97,7 +97,7 @@ extension MerConfigParser {
                 i += 1; continue
             }
 
-            // 3B: "The verb to {base} (…) means the {relation} relation."
+            // "The verb to {base} (…) means the {relation} relation."
             if t.lowercased().hasPrefix(lexicon.grammar.merconfig.verbDeclPrefix) {
                 if let v = parseVerb(t, line: line.number) {
                     results.append(.verb(v))
@@ -110,7 +110,7 @@ extension MerConfigParser {
                 i += 1; continue
             }
 
-            // 3A: "{Relation} is read from the {kind}'s {prop}." / "… via the {tool} tool."
+            // "{Relation} is read from the {kind}'s {prop}." / "… via the {tool} tool."
             if t.lowercased().contains(lexicon.grammar.merconfig.isReadMarker) {
                 if let backing = parseRelationBacking(t, line: line.number) {
                     results.append(.relationBacking(backing)); i += 1; continue
@@ -471,7 +471,7 @@ extension MerConfigParser {
 
     func parseCardinalityKind(_ s: String) -> (CardinalityAST, String) {
         let lower = s.lowercased()
-        // 3A: `various` is a synonym for `many`.
+        // `various` is a synonym for `many`.
         let merconfig = lexicon.grammar.merconfig
         let card: CardinalityAST = (lower.hasPrefix(merconfig.manyPrefix) || lower.hasPrefix(merconfig.variousPrefix)) ? .many : .one
         var rest = s

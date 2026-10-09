@@ -2,9 +2,9 @@ import Testing
 import Foundation
 @testable import MeridianCore
 
-// MARK: - Phase 4 multi-vocabulary
+// MARK: - multi-vocabulary
 //
-// Phase 4 deliverable (docs/status.md):
+// deliverable (docs/status.md):
 //   "Multi-vocabulary — support `import` of multiple `.merconfig` files."
 //
 // These tests exercise the `Compiler.compile(_:)` entry point with a

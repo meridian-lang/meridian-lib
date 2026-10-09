@@ -78,7 +78,7 @@ struct DiagnosticTests {
         #expect(note.contains("candidate"))
     }
 
-    // MARK: The guard test that makes "always-on" load-bearing (D-DX-4)
+    // MARK: The guard test that makes "always-on" load-bearing
 
     @Test("every nameResolution code yields a suggestion or candidate-list note")
     func everyNameResolutionCodeIsGuided() {
@@ -139,7 +139,7 @@ struct DiagnosticTests {
         #expect(out.contains("^"))
         #expect(out.contains("did you mean \"chargePayment\"?"))
         #expect(out.contains("meridian explain-diag \(DiagnosticCode.unknownTool.id)"))
-        // D-DX-5 rationale surfaced inline.
+        // rationale surfaced inline.
         #expect(out.contains("D-DX-5"))
     }
 
@@ -282,7 +282,7 @@ struct DiagnosticTests {
         return byName
     }
 
-    /// D-DX-4/AGENTS.md pitfall #11 (MER-TMP-014/015): a catalog entry listing
+    /// D-DX-4/AGENTS.md pitfall #11: a catalog entry listing
     /// a file as an emitter is a *claim*, not proof — this test loads each
     /// listed file's real source and requires the diagnostic's own case name
     /// (`.traceUnknownStep`, etc.) to actually appear in it, so a phantom

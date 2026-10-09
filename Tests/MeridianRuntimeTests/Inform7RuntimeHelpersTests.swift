@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianRuntime
 
 // Detailed unit coverage for the runtime helpers introduced by the Inform-7-tier
-// program (Wave 1): `Value.member` (1B/1C element-property reads),
+// program: `Value.member` (1B/1C element-property reads),
 // `MeridianComparison.orderedBefore` (1C `sorted by`), and
 // `isWithinPast` / `isWithinFuture` (1C `within the last` / `in the next`).
 // These are pure functions with precise semantics that codegen depends on, so

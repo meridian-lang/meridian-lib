@@ -84,7 +84,7 @@ extension SkillMigrator {
     /// (the caller marks it `(( role: reference ))`).
     ///
     /// The split threshold that used to discard small executable segments
-    /// below a minimum count/ratio has been removed (P1): every lowerable or
+    /// below a minimum count/ratio has been removed: every lowerable or
     /// AI-inference segment always survives as its own child section.
     ///
     /// - roleAlreadyAsserted: the heading itself is a recognized built-in role
@@ -320,7 +320,7 @@ extension SkillMigrator {
                    referenceHeadingContext: Bool = false) -> SplitPlan {
         let trace = ParserTrace.current
         let trial = TrialLowering(knowledge: knowledge, probeTally: probeSession.tally)
-        // Phase 0B rule-aware classifier hook: a line the compiler's own
+        // rule-aware classifier hook: a line the compiler's own
         // `RuleAnalyzer` recognizes as a Phase-8 rule shape (`must not …` /
         // `may …` [+ bounded `up to N`] / `must be … by … before …` /
         // `When …, …`) is lowerable (P1 category 1), never routed to
@@ -594,14 +594,14 @@ extension SkillMigrator {
             if !checkableOnly, isWholeLineBacktickedCommand(stripped) || isChoiceGateLine(stripped, lexicon: knowledge.lexicon) { kinds[idx] = .exec; continue }
             if trial.isCheckableCondition(stripped) { kinds[idx] = .exec; continue }
             if !checkableOnly, trial.lowersAsStatement(stripped) { kinds[idx] = .exec; continue }
-            // Phase 0B: a real Phase-8 rule shape is lowerable regardless of
+            // a real Phase-8 rule shape is lowerable regardless of
             // `TrialLowering`'s narrower statement/condition trial — it lowers
             // through `RuleAnalyzer`/`RuleInjector`, not `StatementParser`.
             // Gated by `ruleAware` (not `checkableOnly`): invariants/
             // prohibitions bodies (checkableOnly: true) are exactly where
             // `must not …`/`may …` rule prose is most likely to appear.
             if isRuleShaped(stripped) { kinds[idx] = .exec; continue }
-            // P1: the ONLY gate that may route non-lowerable content to an AI
+            // the ONLY gate that may route non-lowerable content to an AI
             // marker is an inference cue. A normative cue with no inference
             // cue is an operational reword error, never silent documentation.
             if trial.hasInferenceCue(stripped) { kinds[idx] = .aiInference; continue }

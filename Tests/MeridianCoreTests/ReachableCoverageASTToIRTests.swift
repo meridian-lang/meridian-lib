@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Phase 3: ASTToIR lowering coverage. Each cluster is a crafted compile —
+// ASTToIR lowering coverage. Each cluster is a crafted compile —
 // valid-but-rare lowering shapes plus malformed inputs that exercise the
 // semantic-error guards (relation/verb validation, malformed-expression
 // detection, Wave-3 relational lowering). These are the dominant remaining

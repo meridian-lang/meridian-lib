@@ -4,7 +4,7 @@ import MeridianRuntime
 // MARK: - ASTToIR
 //
 // Lowers MeridianFile and MerConfigFile ASTs to IR (IRWorkflow, IRBlock, etc.).
-// Phase 3: supports the 6 easy primitives + branch + wait + basic phrase inlining.
+// supports the 6 easy primitives + branch + wait + basic phrase inlining.
 // Phrase inlining: patterns are matched and argument expressions substituted
 // recursively, up to maxInlineDepth to prevent infinite loops.
 
@@ -63,7 +63,7 @@ public struct ASTToIR {
     /// `proseStep` AST node and an unresolved phrase invocation inside a
     /// discretion/autonomy workflow) share the same scoped-tools and
     /// source-range plumbing; only `text`, `dispatchMode`, and `autonomy` vary
-    /// — `dispatchMode` selects which of the two split IR primitives is built.
+    /// `dispatchMode` selects which of the two split IR primitives is built.
     func makeAIPrimitive(
         text: String,
         dispatchMode: ProseDispatchMode,
@@ -141,12 +141,12 @@ public struct ASTToIR {
                 )
             }
         }
-        // 2B: Register checkable adjectives (merconfig + file-level) before any
+        // Register checkable adjectives (merconfig + file-level) before any
         // workflow lowers, so `X is <adj>` and `for each <adj> <kind>` resolve
         // regardless of source order. Idempotent across repeated `lower` calls.
         try registerDefinitions(file.definitions)
 
-        // 3A/3B: validate the relational layer (backings, verb→relation, form
+        // validate the relational layer (backings, verb→relation, form
         // collisions) before any workflow body lowers.
         try validateRelationsAndVerbs()
 

@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import MeridianCore
 
-// MARK: - Phase 5 codegen smoke
+// MARK: - codegen smoke
 //
 // Exercises the `iterate` and `assert` IR primitives end-to-end through the
 // Swift emitter. These two are easy to break silently — `iterate` because of

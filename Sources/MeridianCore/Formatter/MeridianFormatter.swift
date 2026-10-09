@@ -20,12 +20,12 @@ import Foundation
 //
 // Things the formatter intentionally does NOT do:
 //
-//   - Re-indent based on parsed structure. The parser is indent-sensitive
+//   Re-indent based on parsed structure. The parser is indent-sensitive
 //     and we don't want a formatter regression to invalidate working files.
-//   - Lowercase identifiers or rewrite kind names. Casing is part of the
+//   Lowercase identifiers or rewrite kind names. Casing is part of the
 //     compiler's own canonicalisation step, which the formatter does not
 //     replicate.
-//   - Reflow long lines. Meridian sources read best when authors choose
+//   Reflow long lines. Meridian sources read best when authors choose
 //     line breaks deliberately; auto-wrapping breaks that intent.
 
 public struct MeridianFormatter {

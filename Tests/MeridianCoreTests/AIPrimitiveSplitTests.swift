@@ -1,7 +1,7 @@
 import Testing
 @testable import MeridianCore
 
-// Phase 0A: the generic `IRPrimitive.proseStep(ProseStepIR)` primitive was
+// the generic `IRPrimitive.proseStep(ProseStepIR)` primitive was
 // replaced by two explicit AI-routed primitives — `aiJudgment(AIJudgmentIR)`
 // and `aiAutonomy(AIAutonomyIR)` — because judgment and autonomy are handled
 // differently by the runtime/codegen and should be auditable separately. This

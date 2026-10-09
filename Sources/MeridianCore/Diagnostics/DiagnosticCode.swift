@@ -13,13 +13,13 @@ public struct DecisionRef: Sendable, Hashable {
 /// CI matchers, and tests rely on (messages may evolve, codes may not).
 ///
 /// Ranges:
-///   - `MER0xxx` — legacy/generic (migration shims)
-///   - `MER1xxx` — lexing / parsing (structural)
-///   - `MER2xxx` — name resolution
-///   - `MER3xxx` — semantics
-///   - `MER4xxx` — codegen
-///   - `MER5xxx` — configuration / vocabulary
-///   - `MER6xxx` — lint / authoring warnings
+///   `MER0xxx` — legacy/generic (migration shims)
+///   `MER1xxx` — lexing / parsing (structural)
+///   `MER2xxx` — name resolution
+///   `MER3xxx` — semantics
+///   `MER4xxx` — codegen
+///   `MER5xxx` — configuration / vocabulary
+///   `MER6xxx` — lint / authoring warnings
 public struct DiagnosticCode: Sendable, Hashable {
 
     /// How a code is fixed — drives the always-on remediation guarantee
@@ -462,7 +462,7 @@ extension DiagnosticCode {
         kind: .structural,
         emitters: ["ASTToIR+Bind.swift"])
 
-    // MARK: MER-DEO — deontic norms (Wave 9A)
+    // MARK: MER-DEO — deontic norms
 
     public static let deonticSameScopeConflict = DiagnosticCode(
         id: "MER-DEO-001", title: "deontic same-scope conflict",

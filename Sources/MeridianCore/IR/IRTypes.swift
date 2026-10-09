@@ -181,7 +181,7 @@ public enum UnknownHandlingPolicyIR: Sendable, Equatable, Codable {
 
 // MARK: - 3. branch
 
-/// D11 authored-form metadata: `unless` and `if not` lower to the same
+/// authored-form metadata: `unless` and `if not` lower to the same
 /// negated predicate but verbalize with the keyword the author used.
 public enum BranchAuthoredForm: String, Sendable, Equatable, Codable {
     case ifPositive
@@ -588,7 +588,7 @@ public struct AutonomyConfigIR: Sendable, Equatable, Codable {
 
 // MARK: - Expressions
 
-/// B6/B7: One segment of a lowered interpolated string.
+/// One segment of a lowered interpolated string.
 public enum IRInterpolationSegment: Sendable, Equatable, Codable {
     case literal(String)
     case expression(IRExpression)
@@ -616,28 +616,28 @@ public indirect enum IRExpression: Sendable, Equatable, Codable {
     case envVar(name: String)
     case nowExpression
     case invocation(InvokeIR)
-    /// B6/B7: Fenced code-block body with `{{ expr }}` interpolation.
+    /// Fenced code-block body with `{{ expr }}` interpolation.
     case interpolatedString([IRInterpolationSegment])
     /// Data table: a list of records sharing `fields`, one record per row.
     /// Emitted as `.list([.record([...]), ...])`.
     case recordList(fields: [String], rows: [[IRExpression]])
-    /// Wave 4B: deterministic lookup in a named data table.
+    /// deterministic lookup in a named data table.
     case tableLookup(table: String, keyColumn: String, key: IRExpression, valueColumn: String)
-    /// 2B: A checkable adjective predicate (`X is stale`). `functionName` is the
+    /// A checkable adjective predicate (`X is stale`). `functionName` is the
     /// precomputed `meridianDef_<Kind>_<adjCamel>` helper; `subject` is the
     /// value the predicate runs over. The emitter needs no definition registry.
     case definitionPredicate(functionName: String, subject: IRExpression)
-    /// 2C: A quantified description, emitted as a single-expression IIFE so it
+    /// A quantified description, emitted as a single-expression IIFE so it
     /// slots into any condition position (`if`, `assert`, `whose`, …).
     case quantified(QuantifierIR)
-    /// 3C: A description used as a value — emitted as a `Value.list(...)` of the
+    /// A description used as a value — emitted as a `Value.list(...)` of the
     /// fetched-once, filtered, sorted, taken element set.
     case description(DescriptionIR)
-    /// 3C: An aggregate over a description. `.count` emits a bare `Int`
+    /// An aggregate over a description. `.count` emits a bare `Int`
     /// expression (so it composes with numeric comparisons); `.list` emits a
     /// `Value.list(...)`.
     case aggregate(AggregateKind, DescriptionIR)
-    /// 3C: A superlative — a description reduced to a single element by a sort
+    /// A superlative — a description reduced to a single element by a sort
     /// key, emitted as `(…).sorted{…}.first` (a `Value?`).
     case superlative(SuperlativeIR)
     case eventPattern(EventPatternIR)
@@ -698,9 +698,9 @@ public indirect enum TraceTemporalKind: Sendable, Equatable, Codable {
     /// is the event pattern that predicate resolves to, which is what the
     /// runtime/emitter evaluate. Lowering guarantees the two agree and rejects a
     /// pure state predicate with MER-TMP-019 unless state-history retention is
-    /// enabled for the keyed subject (SEM-4-12 / SEM-5-13).
+    /// enabled for the keyed subject.
     case sinceLast(anchor: EventPatternIR, holds: IRExpression, holdsPattern: EventPatternIR?, holdsUsesStateHistory: Bool)
-    /// Bounded future monitor (SEM-5-12): Contract/obligation contexts only.
+    /// Bounded future monitor: Contract/obligation contexts only.
     case boundedFutureMonitor(condition: IRExpression, horizon: Duration, mode: FutureMonitorModeIR)
 }
 
@@ -785,7 +785,7 @@ public struct TraceStatisticalIR: Sendable, Equatable, Codable {
 
 public enum AggregateKind: Sendable, Equatable, Codable { case count, list }
 
-/// 3C: a lowered superlative (description + sort key + direction → first).
+/// a lowered superlative (description + sort key + direction → first).
 public struct SuperlativeIR: Sendable, Equatable, Codable {
     public let description: DescriptionIR
     public let sortPath: String
@@ -813,11 +813,11 @@ public struct DescriptionIR: Sendable, Equatable, Codable {
     public let collection: IRExpression
     public let elementVar: String
     public let filters: [IRExpression]
-    /// 3C: a post-filter total order (`sorted by <path>`).
+    /// a post-filter total order (`sorted by <path>`).
     public let sort: IRSortSpec?
-    /// 3C: a post-sort `first N` take-prefix.
+    /// a post-sort `first N` take-prefix.
     public let take: Int?
-    /// 3C: a post-sort `the last N` take-suffix.
+    /// a post-sort `the last N` take-suffix.
     public let takeFromEnd: Int?
     public init(collection: IRExpression, elementVar: String, filters: [IRExpression] = [],
                 sort: IRSortSpec? = nil, take: Int? = nil,
@@ -837,7 +837,7 @@ public struct QuantifierIR: Sendable, Equatable, Codable {
     }
 }
 
-/// 2B: A lowered checkable-adjective definition, ready for codegen. The emitter
+/// A lowered checkable-adjective definition, ready for codegen. The emitter
 /// produces `private func <functionName>(_ __subject: Value?) -> Bool { return
 /// <body in element context over subjectVar> }`.
 public struct LoweredDefinition: Sendable, Equatable, Codable {
@@ -849,7 +849,7 @@ public struct LoweredDefinition: Sendable, Equatable, Codable {
     }
 }
 
-// MARK: - Deontic norms (Wave 9A)
+// MARK: - Deontic norms
 
 public struct ActionArgumentConstraint: Sendable, Equatable, Codable {
     public let path: String
@@ -955,7 +955,7 @@ public enum ComparisonOp: Sendable, Equatable, Codable {
     /// 2 (shared condition grammar): property-backed emptiness checks. The RHS
     /// operand is unused (a `.literal(.boolean(true))` placeholder).
     case isEmpty, isNotEmpty
-    /// 3B: relation link identity (`page.owner identifies user`). LHS is the
+    /// relation link identity (`page.owner identifies user`). LHS is the
     /// link property (scalar or list); RHS is the entity being matched. Lowered
     /// from active verb predicates and property-backed verb clauses.
     case identifies

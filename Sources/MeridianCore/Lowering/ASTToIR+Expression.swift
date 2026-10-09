@@ -149,7 +149,7 @@ extension ASTToIR {
         )
     }
 
-    /// MER-TMP-014/021: resolve an event-pattern subject, rejecting a
+    /// resolve an event-pattern subject, rejecting a
     /// cross-skill-scoped step ([DECISION D4], SEM-4-03 — not yet supported)
     /// and a step name that closely misspells a declared kind/tool name.
     /// `.step`/`.named` names have no formal declaration surface today (a
@@ -370,7 +370,7 @@ extension ASTToIR {
         Duration.seconds(Int64(duration.0 * Double(duration.1.inSeconds)))
     }
 
-    /// SEM-4-06 / MER-TMP-011 (D1): a trace-temporal trailing window that exceeds
+    /// MER-TMP-011: a trace-temporal trailing window that exceeds
     /// configured retention `ρ` is a compile error, never a silently narrower
     /// query. Both durations are named. Retention defaults to 30 days when the
     /// merconfig declares no `=== trace ===` retention (matching
@@ -556,7 +556,7 @@ extension ASTToIR {
     /// operators (RHS is an ignored placeholder), and ordinary comparisons.
     func lowerComparison(_ lhs: ExpressionAST, _ op: ComparisonOpAST, _ rhs: ExpressionAST,
                                  scope: Set<String>? = nil, line: Int = 0) throws -> IRExpression {
-        // 2B: `X is <adj>` / `X is not <adj>` — a checkable-adjective predicate,
+        // `X is <adj>` / `X is not <adj>` — a checkable-adjective predicate,
         // recognised ONLY when the LHS is in subject position (lowers to a bare
         // identifier reference) and the RHS names a registered adjective.
         if op == .equal || op == .notEqual,

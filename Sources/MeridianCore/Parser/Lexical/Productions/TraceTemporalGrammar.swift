@@ -227,13 +227,13 @@ struct TraceTemporalGrammar {
         return nil
     }
 
-    /// `has been failing` (MER-TMP-018): perfect progressive, not a recorded
+    /// `has been failing`: perfect progressive, not a recorded
     /// completed event.
     private func isProgressiveHasBeen(_ lower: String) -> Bool {
         lower.contains(" has been ") && lower.hasSuffix("ing")
     }
 
-    /// Bare causal `since` (MER-TMP-012): a trace-flavored sentence (mentions
+    /// Bare causal `since`: a trace-flavored sentence (mentions
     /// a known outcome verb) using `since` without the `the last` anchor
     /// marker, e.g. `the deploy failed since the service degraded`. Scoped to
     /// outcome-verb-bearing text so ordinary non-trace prose containing

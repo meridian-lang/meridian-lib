@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Phase 2: crafted source fixtures for the parser layer. Direct parse() calls
+// crafted source fixtures for the parser layer. Direct parse() calls
 // (fast, no codegen) cover the rare expression-grammar arms; small compile/parse
 // fixtures cover the statement and merconfig declaration forms the corpus
 // doesn't exercise. Malformed-input cases drive the `return nil` / `.malformed`

@@ -195,7 +195,7 @@ public struct SwiftEmitter {
             fileHeader()
             ""
             if namespace == nil {
-                // 2B: checkable-adjective helpers live at file scope (private),
+                // checkable-adjective helpers live at file scope (private),
                 // so they resolve from every workflow `run()`. A `Definition:`
                 // body can reference a declared constant/instance
                 // (`constants.highValueThreshold`) — when namespaced, those

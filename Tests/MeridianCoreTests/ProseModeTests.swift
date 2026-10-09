@@ -54,7 +54,7 @@ struct ProseModeTests {
         #expect(out.contains("github.comment"))
     }
 
-    // SEM-4-04: no surface syntax declares a judgment's output kind yet, so
+    // no surface syntax declares a judgment's output kind yet, so
     // `ASTToIR.makeAIPrimitive` always lowers to the honest structural
     // default `"record"` — asserted here so a future single-value output
     // syntax has a pinned baseline to change.

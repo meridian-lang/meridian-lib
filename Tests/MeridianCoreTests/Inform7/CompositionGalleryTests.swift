@@ -145,7 +145,7 @@ struct CompositionGalleryTests {
                 Comment(rawValue: "expected MER6006 for the superlative anchor; got \(diagnostics)"))
     }
 
-    // MARK: - Line 6: table-conditioned `may invoke` permission (Wave 9).
+    // MARK: - Line 6: table-conditioned `may invoke` permission.
     //
     // Deviation: the cookbook's `only where the channel is the channel
     // corresponding to the severity "sev2" in the escalation table` is not yet

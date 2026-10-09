@@ -141,7 +141,7 @@ struct AutonomyRuntimeTests {
         #expect(results["recovered"] == .string("recovered-value"))
     }
 
-    // MARK: - SEM-4-04 judgment witnessing (autonomy dispatch path)
+    // MARK: - judgment witnessing (autonomy dispatch path)
 
     @Test("autonomyStart/autonomyEnd carry a matching input_payload_hash and the declared output_kind")
     func autonomyEventsCarryInputHashAndOutputKind() async throws {

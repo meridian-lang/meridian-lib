@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// MARK: - Phase 2 Forcing Function
+// MARK: - Forcing Function
 //
 // Specification: hand-built IR for LenientlySyncAnalytics (the lenient-mode workflow)
 // must codegen to Swift that is structurally equivalent to the Phase 1 hand-written file.
@@ -123,7 +123,7 @@ struct LenientlySyncAnalyticsForcingFunction {
     @Test("emits implicit complete with nil reason")
     func implicitComplete() throws {
         let src = try emittedSource()
-        // Wave 8: `complete` carries a trace step-path argument.
+        // `complete` carries a trace step-path argument.
         #expect(src.contains("await runtime.complete(reason: nil, step:"))
         #expect(src.contains("return WorkflowResult(reason: nil"))
     }
@@ -157,7 +157,7 @@ struct LenientlySyncAnalyticsForcingFunction {
     }
 }
 
-// MARK: - Phase 2 Forcing Function — ProcessOrder structural check
+// MARK: - Forcing Function — ProcessOrder structural check
 
 @Suite("Phase 2 Forcing Function — ProcessOrder structural")
 struct ProcessOrderForcingFunction {

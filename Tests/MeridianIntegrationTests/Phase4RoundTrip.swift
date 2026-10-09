@@ -4,9 +4,9 @@ import MeridianRuntime
 import MeridianTestKit
 import GeneratedOrderProcessing
 
-// MARK: - Phase 4 Round Trip
+// MARK: - Round Trip
 //
-// Phase 4 forcing function (docs/status.md):
+// forcing function (docs/status.md):
 //   compile examples/order_processing.meridian
 //     → swift build (the generated module)
 //     → swift run with canned tools

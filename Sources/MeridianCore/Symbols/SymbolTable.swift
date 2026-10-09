@@ -14,11 +14,11 @@ public final class SymbolTable: @unchecked Sendable {
     public private(set) var properties:[String: [PropertyEntry]]     = [:]   // keyed by kind name
     public private(set) var keyProperties: [String: String]          = [:]
     public private(set) var relations: [String: RelationDeclaration] = [:]   // keyed by verb
-    /// 3A: relation evaluation backings, keyed by relation name (lowercased). A
+    /// relation evaluation backings, keyed by relation name (lowercased). A
     /// relation declared without a backing sentence is a compile error
     /// (validated in `ASTToIR.validateRelationsAndVerbs`).
     public private(set) var relationBackings: [String: RelationBackingAST] = [:]
-    /// 3B: declared verbs, keyed by base form (lowercased).
+    /// declared verbs, keyed by base form (lowercased).
     public private(set) var verbs:     [String: VerbDeclaration]      = [:]
     public private(set) var constants: [String: ConstantDeclaration] = [:]
     public private(set) var instances: [String: InstanceDeclaration] = [:]
@@ -79,7 +79,7 @@ public final class SymbolTable: @unchecked Sendable {
         relationBackings[name.lowercased().trimmingCharacters(in: .whitespaces)]
     }
 
-    /// 3B: resolve a surface verb form to its declared verb and the conjugation
+    /// resolve a surface verb form to its declared verb and the conjugation
     /// that matched. Past participle ⇒ passive/object-gap reading; base/third
     /// person ⇒ active/subject reading. Verbs are scanned in a deterministic
     /// (base-sorted) order; genuine form collisions are reported at validation.
@@ -96,7 +96,7 @@ public final class SymbolTable: @unchecked Sendable {
     /// True when `form` is any conjugated form of a declared verb.
     public func isVerbForm(_ form: String) -> Bool { resolveVerbForm(form) != nil }
 
-    /// 3B: the declared verb surface form (base / 3rd person / participle) closest
+    /// the declared verb surface form (base / 3rd person / participle) closest
     /// to `form` by edit distance, when reasonably close. Powers "did you mean"
     /// hints on unknown-verb errors. Returns nil when nothing is within an
     /// edit-distance budget proportional to the form length.

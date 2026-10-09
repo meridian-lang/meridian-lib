@@ -3619,3 +3619,36 @@ dropped their reset lines. Three consecutive full fast-suite runs are green
 focused trace suites 120 tests; CLI `--trace` E2E + typecheck slow suites
 green; `git diff --stat corpora examples` empty; coverage gate green with no
 floors re-based.
+
+## 2026-10-09 — Simplification Phase 7: marker-comment and banner sweep
+
+A scripted sweep over `Sources/` + `Tests/` (+ `sample-gbrain/Tests/`), applied
+under the plan's seven rules: marker-only comment lines deleted; marker
+prefixes dropped while keeping the explanation; marker-only parentheticals and
+`// MARK: - <marker> …` titles cleaned; post-import `// MARK: - <FileStem>`
+banners and their "extracted … for Phase N readability" prose deleted; line-1
+title headers deleted (the five `// Vendored from …` notices and the
+generated-file notice kept). 84 files changed, 229 comment lines rewritten.
+Vendored sources, the committed generated demo, `docs/**`, `.ai/**`,
+`scripts/**` and `IMPLEMENTATION_LOG.md` were never touched.
+
+**Deliberately kept** (in-sentence references and data, not prefix slop):
+25 in-Sources references such as "`SEM-4-04`'s declared output kind witness",
+"(SEM-5-06, north-star flagship, cookbook 18.5/gallery line 4)", "Wave 2/3
+handling" — rewriting those needs prose judgement and would risk losing the
+spec pointers; `MER-TMP-0xx` / `D-DX-n` diagnostic-code ids and
+`DecisionRef("D-DX-2")` values (stable contracts); and the `// 1B: …` marker
+inside the emitter's *emitted* comment string (changing it would churn every
+generated artifact).
+
+Two mechanical rules had to be corrected during the sweep itself: bare `//`
+separator lines inside example blocks must stay (the first pass deleted them,
+which also shifted coverage region mapping), and a stripped prefix must not
+leave a dangling `/ ` separator.
+
+**Validation:** build clean; fast suite 2757 tests / 351 suites; coverage gate
+green (two earlier attempts stalled — one on a stale SwiftPM lock left by a
+killed run, one on an idle CFNetwork thread in an HTTP test; both passed on a
+clean re-run and in isolation, and are unrelated to this comment-only change);
+`git diff` shows only one test file changed under the corpus/example dirs and
+the committed generated demo still equals its golden.

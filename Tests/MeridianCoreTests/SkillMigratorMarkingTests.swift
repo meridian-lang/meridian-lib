@@ -1110,7 +1110,7 @@ struct SkillMigratorMarkingTests {
         #expect(step1.contains("Is the primary subject a NAMED PERSON? → person-typed directory"), Comment(rawValue: step1))
     }
 
-    // MARK: - Phase 2 idiom: question-arrow decision protocol
+    // MARK: - idiom: question-arrow decision protocol
 
     @Test("question-arrow case 1: checkable questions with statement-shaped rhs desugar to the suffix-conditional idiom")
     func questionArrowCase1DesugarsToSuffixConditional() throws {
@@ -1340,7 +1340,7 @@ struct SkillMigratorMarkingTests {
         // `!!! table (( ai-discretion ))` rather than left as a plain
         // operational-error child. Without that cue this would be
         // `.errorOperational` instead (see `brainTaxonomistStep5…` above) —
-        // P1 never auto-wraps cue-less content in judgment.
+        // never auto-wraps cue-less content in judgment.
         let out = try Self.mark("""
         ### Test tiers
 
@@ -1518,7 +1518,7 @@ struct SkillMigratorMarkingTests {
         #expect(try Self.mark(source) == source)
     }
 
-    // MARK: - Phase 2 idiom: bold-label step tolerance
+    // MARK: - idiom: bold-label step tolerance
 
     @Test("a bold label before a plain-prose statement is dropped so the statement lowers on its own")
     func boldLabelBeforePlainStatementIsDropped() throws {

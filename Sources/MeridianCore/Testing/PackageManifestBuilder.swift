@@ -6,7 +6,7 @@ import Foundation
 enum PackageManifestBuilder {
 
     /// Build a manifest for a temp package that depends on the meridian repo.
-    /// - Parameter includeMeridianTools: when `true`, the Driver target also
+    /// Parameter includeMeridianTools: when `true`, the Driver target also
     ///   links `MeridianTools` (CLI `run` registers builtins); the test runner
     ///   omits it and uses closure stubs only.
     static func meridianRunDriverPackageManifest(

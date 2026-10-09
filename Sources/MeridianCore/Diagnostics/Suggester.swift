@@ -6,9 +6,9 @@ import Foundation
 /// candidate set.
 ///
 /// Two public entry points:
-///   - `closest(_:among:budget:)` — the single best candidate within an
+///   `closest(_:among:budget:)` — the single best candidate within an
 ///     edit-distance budget (used for `did you mean "<x>"?`).
-///   - `ranked(_:among:limit:)`  — the top-N candidates ordered by closeness
+///   `ranked(_:among:limit:)`  — the top-N candidates ordered by closeness
 ///     (used for the candidate-list note when nothing is within budget).
 ///
 /// Scoring blends Levenshtein edit distance (primary) with token overlap

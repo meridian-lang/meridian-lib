@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - DomainEmitter
 //
-// Phase 4 deliverable: emit typed Swift structs for each kind declared in the
+// deliverable: emit typed Swift structs for each kind declared in the
 // merconfig vocabulary. The compiler threads a `DomainDecl` into
 // `SwiftEmitter.emit`, which delegates here.
 //

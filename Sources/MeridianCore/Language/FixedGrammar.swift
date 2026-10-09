@@ -905,7 +905,7 @@ public final class FixedGrammar: Sendable {
     public let compoundNoteIntroducer: String
     public let compoundNoteInMarker: String
 
-    // MARK: - Relational / condition-layer markers (Wave 3)
+    // MARK: - Relational / condition-layer markers
     //
     // Closed structural markers of the relational query surface. Each maps 1:1
     // to a fixed parse shape (not a domain-renamable term), centralized here so

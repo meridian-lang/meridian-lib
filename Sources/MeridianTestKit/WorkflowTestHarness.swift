@@ -10,10 +10,10 @@ import MeridianRuntime
 // a typed `RunResult` covering events, success/failure, and timing.
 //
 // The harness also exposes:
-//   - `stub(tool:_:)` — register a closure tool with one line.
-//   - `stub(tool:return:)` — even shorter, for fixed-value stubs.
-//   - `events()` — captured `TraceRecord` array.
-//   - `assertEvents { $0 .startsWith(...) }` — DSL-like assertions.
+//   `stub(tool:_:)` — register a closure tool with one line.
+//   `stub(tool:return:)` — even shorter, for fixed-value stubs.
+//   `events()` — captured `TraceRecord` array.
+//   `assertEvents { $0 .startsWith(...) }` — DSL-like assertions.
 //
 // Lifecycle: each `WorkflowTestHarness` is single-shot. Re-create one per
 // test to avoid bleeding events / tool registrations across tests.

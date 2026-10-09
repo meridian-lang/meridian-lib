@@ -4,8 +4,8 @@ import MeridianRuntime
 // MARK: - Compiler
 //
 // Top-level facade for the Meridian compiler pipeline.
-// Phase 2: IR → Swift (codegen only — no parser yet).
-// Phase 3: Source → AST → IR → Swift (full pipeline).
+// IR → Swift (codegen only — no parser yet).
+// Source → AST → IR → Swift (full pipeline).
 
 public struct Compiler {
 
@@ -138,12 +138,12 @@ public struct Compiler {
 
     /// Full pipeline: parse .merconfig + .meridian → lower to IR → emit Swift.
     ///
-    /// - Parameters:
+    /// Parameters:
     ///   - meridianSource: Contents of the .meridian file.
     ///   - meridianFile:   Filename for source-map comments.
     ///   - merconfigSource: Contents of the .merconfig file (optional).
     ///   - merconfigFile:  Filename for the merconfig (optional).
-    /// - Returns: A Swift source string ready to be written to disk.
+    /// Returns: A Swift source string ready to be written to disk.
     public func compile(
         meridianSource: String,
         meridianFile: String = "workflow.meridian",
@@ -447,7 +447,7 @@ public struct Compiler {
                       definitions: loweredDefinitions)
         }
 
-        // C5: Rule manifest entries. Reclassify `ast.rules` independently of
+        // Rule manifest entries. Reclassify `ast.rules` independently of
         // the lowering pass above (whose attach/no-attach bookkeeping is
         // local to `ASTToIR.lower` and isn't returned) — cheap because
         // `RuleAnalyzer.classify` is pure pattern matching, no lowering. Every
@@ -733,9 +733,9 @@ public struct Compiler {
         }
     }
 
-    /// 3A: backed relations rendered for the manifest (`meridian_relations`),
+    /// backed relations rendered for the manifest (`meridian_relations`),
     /// sorted by name. Unbacked legacy relations are omitted.
-    /// C5: Map a classified `ParsedRule` to its manifest `kind` string + the
+    /// Map a classified `ParsedRule` to its manifest `kind` string + the
     /// `bounded` flag (meaningful only for `.permission`, e.g. "may … up to N").
     private static func ruleManifestKind(_ rule: ParsedRule) -> (kind: String, bounded: Bool) {
         switch rule {
@@ -891,7 +891,7 @@ public struct Compiler {
         ensureUnique(config.instances, "instance", name: { $0.name }, line: { $0.sourceLine })
     }
 
-    /// D9 / SEM-4-08: in a production trace profile, every declared tool must
+    /// SEM-4-08: in a production trace profile, every declared tool must
     /// opt into an explicit capture policy instead of inheriting the runtime's
     /// development-oriented default.
     private func validateProductionTraceCapturePolicies(
@@ -921,7 +921,7 @@ public struct Compiler {
         }
     }
 
-    /// Wave 4A: `## Domain` sections in a `.meri` file are assembly-time
+    /// `## Domain` sections in a `.meri` file are assembly-time
     /// vocabulary declarations. They must be harvested before the main
     /// `MeridianParser` runs so frontmatter parameters, workflow headers, and
     /// expressions can resolve the newly-declared kinds/properties.
@@ -1042,7 +1042,7 @@ public struct Compiler {
         }
     }
 
-    /// Phase 4: distil the vocabulary section into a `DomainDecl` the emitter
+    /// distil the vocabulary section into a `DomainDecl` the emitter
     /// can turn into typed Swift structs. Inheritance is flattened here (each
     /// generated struct lists ancestor properties first, in declaration order)
     /// so the emitter doesn't need to know about kind chains.

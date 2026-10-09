@@ -37,7 +37,7 @@ extension ASTToIR {
                 help: "Bind the collection with `let`/`bind` first, then quantify over the bound name.")
         }
 
-        // 3B: a `that <verb> …` / `<participle> by …` relative clause
+        // a `that <verb> …` / `<participle> by …` relative clause
         // restricts the quantified collection through a declared relation —
         // the closed-grammar route for relation-backed conditions (`no pages
         // that mention the entity`), since relations have no bare-noun surface
@@ -85,7 +85,7 @@ extension ASTToIR {
     /// temporal clause into a one-sided window comparison.
     func lowerIterationRefinement(_ r: IterationRefinementAST, loopVar: String) throws -> IRIterationRefinement {
         var filters: [IRExpression] = []
-        // 2B: leading adjective modifiers (`for each stale page`) resolve to
+        // leading adjective modifiers (`for each stale page`) resolve to
         // definition predicates over the loop variable.
         for adj in r.adjectives {
             filters.append(try resolveAdjectiveFilter(adjective: adj,

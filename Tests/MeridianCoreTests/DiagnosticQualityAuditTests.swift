@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import MeridianCore
 
-// Phase 1 diagnostic quality audit — complements `DiagnosticTests` with a
+// diagnostic quality audit — complements `DiagnosticTests` with a
 // machine-readable completeness contract over the active catalog.
 
 @Suite("Diagnostic quality audit")

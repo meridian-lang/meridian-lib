@@ -3,9 +3,9 @@ import Foundation
 /// `emptiness` + `temporal-window` (`GrammarTable`, `.pegex`): the shared
 /// condition grammar used by both bare conditions and quantifier bodies.
 ///
-/// - Emptiness: `<subj> is empty` / `is not empty`, `<subj> has no <prop>` /
+/// Emptiness: `<subj> is empty` / `is not empty`, `<subj> has no <prop>` /
 ///   `has a <prop>` / `has some <prop>` (also plural `have …`).
-/// - Temporal window: `<subj> within the last N <unit>` /
+/// Temporal window: `<subj> within the last N <unit>` /
 ///   `<subj> is within the last N <unit>` / `<subj> in the next N <unit>`.
 ///   A bare participle subject (`updated`, `modified`, `changed`) — or an empty
 ///   subject — resolves to the lexicon's `timestampProperty`.

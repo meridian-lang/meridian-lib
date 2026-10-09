@@ -202,7 +202,7 @@ struct RuntimeTests {
         #expect(runtime.isCancelled() == false)
     }
 
-    // MARK: - Assert (Phase 5)
+    // MARK: - Assert
 
     @Test("assert(true) emits assertPassed")
     func assertPassedEmits() async throws {
@@ -281,7 +281,7 @@ struct RuntimeTests {
         #expect((event?.payload ?? [:])["step"] == .string("recover.step"))
     }
 
-    // MARK: - Resume (Phase 5)
+    // MARK: - Resume
 
     @Test("resume returns ResumeContext from latest checkpoint")
     func resumeReturnsLatestContext() async throws {

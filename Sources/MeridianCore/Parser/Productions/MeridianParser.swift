@@ -151,7 +151,7 @@ public struct MeridianParser {
             let t = line.statement
             let lower = t.lowercased()
 
-            // 2B: top-level `Definition:` lines are pulled out of the implicit
+            // top-level `Definition:` lines are pulled out of the implicit
             // body so they register as checkable adjectives, not procedure steps.
             if DefinitionParser.isDefinitionLine(t, lexicon: lexicon) {
                 if let def = DefinitionParser(lexicon: lexicon, symbols: symbols)

@@ -3,7 +3,7 @@ import Foundation
 @testable import MeridianCore
 import MeridianRuntime
 
-// Coverage for the Inform-7-tier expressiveness program (Wave 1): command
+// Coverage for the Inform-7-tier expressiveness program: command
 // annotations (1A), typed command holes (1B), predicate/temporal/ordering
 // iteration (1C), and metadata-shaped sections (1D).
 

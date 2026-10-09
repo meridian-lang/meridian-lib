@@ -2,7 +2,7 @@ import Foundation
 import MeridianRuntime
 
 // Iterate / element-context emission — extracted from SwiftEmitter for
-// Phase 3 readability. Shared element helpers are also used by
+// readability. Shared element helpers are also used by
 // SwiftEmitter+Expressions.
 
 extension SwiftEmitter {
@@ -13,7 +13,7 @@ extension SwiftEmitter {
         let inner = ctx.in(1)
         let loopIndex = "__meridianLoopIndex_\(swiftIdentifierSuffix(path))"
         let loopLabel = "__meridianLoopLabel_\(swiftIdentifierSuffix(path))"
-        // 1C: a refined `overCollection` builds the iteration source pre-loop so
+        // a refined `overCollection` builds the iteration source pre-loop so
         // `first N` counts post-filter.
         if case .overCollection(let param, _, let collection) = ir.mode, let refinement = ir.source {
             return emitRefinedIterate(ir, refinement: refinement, param: param,

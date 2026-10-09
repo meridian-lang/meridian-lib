@@ -135,7 +135,7 @@ public struct ExpressionParser {
             return .malformed("empty expression")
         }
 
-        // B6/B7: Fenced code-block sentinel — decode base64 body, then parse
+        // Fenced code-block sentinel — decode base64 body, then parse
         // for `{{ expr }}` / `[if]` / `[for each]` interpolation markers.
         if t.hasPrefix(codeBlockSentinelPrefix) {
             if let (_, body) = decodeCodeBlockSentinel(t) {
@@ -165,7 +165,7 @@ public struct ExpressionParser {
             return lookup
         }
 
-        // 3C: relational value atoms (need the symbol table to resolve kinds /
+        // relational value atoms (need the symbol table to resolve kinds /
         // verbs). A bare plural kind with no restriction is NOT a description
         // and falls through to an identifier.
         if symbols != nil {
