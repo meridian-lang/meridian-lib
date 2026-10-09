@@ -3706,3 +3706,41 @@ green; `meridian decisions --render docs/07_DECISIONS.md` re-render is a no-op
 (identical md5); `forbidden-deferral-scan` OK; `scripts/coverage.swift --gate`
 green (TOTAL 90.08% / 93.70%, no floors re-based); `docs/<NN>_` references
 outside the new names are gone from Sources/Tests/scripts/README/AGENTS/.cursor.
+
+## 2026-10-09 — Simplification programme: final validation and known follow-ups
+
+**Programme complete.** Thirteen commits from `196ced5` (phase 1a) through
+`c51462b` (phase 8): trace backends/crypto and the prover-obligation artifact
+layer removed; one compiler pipeline (six entry points → one); one IR
+serialization/equality (`Codable`/`Equatable` + `IRFingerprint` +
+`IRNormalizer`); one runtime event model (`TraceRecord`); de-duplication of
+frontmatter parsing, markdown outlines, the lexicon registry, the SwiftPM
+driver, the grammar bitset and the diagnostic catalog; `ParserTrace`
+de-threaded through a task-local; marker comments and file banners swept;
+24 numbered docs consolidated into 9 with `AGENTS.md` 734 → 177 lines.
+782 files touched, +30,122/−30,557; production Swift 62,100 → 57,959 lines.
+
+**Final validation on the frozen tree:** `swift build --build-tests` clean;
+fast suite **2757 tests / 351 suites, 0 failures**; `meridian decisions
+--render` in sync with `docs/07_DECISIONS.md`; `scripts/coverage.swift --gate`
+green (90.08% region / 93.7% line); CLI byte-compare of
+`examples/order_processing.meridian` against its golden; corpus/example
+compile outputs unchanged except where a phase regenerated them deliberately.
+
+**Known follow-ups (not caused by this programme, left visible rather than
+hidden):**
+1. `scripts/coverage.swift --full --gate` reports two files below their
+   *full-only* floors — `MeridianCLIKit/Commands/RunCommand.swift` 83.58% <
+   84.30 and `MeridianCore/Testing/MeridianTestRunner.swift` 90.29% < 90.60.
+   Both reproduce on the pre-change tree and were last touched by phase 3;
+   the fast gate they carry (91.70/91.80) passes. Re-base or investigate
+   separately.
+2. The coverage-instrumented run intermittently stalls in the
+   `migrate-skill --repair --dry-run` test (idle process, 0% CPU); a clean
+   re-run passes, and the test passes in isolation. When it stalls, the
+   harness leaves a stale SwiftPM lock that blocks subsequent runs until the
+   leftover `swift-test` process is cleared.
+3. `docs/coverage/coverage-baseline.md` and the archived
+   `dx-trace-diagnostic-matrix.json` still name a few deleted files
+   (`DiagnosticCodeCatalog.swift`, `Obligations/*`); they are dated snapshots
+   and regenerate only in the separate baseline flow.
