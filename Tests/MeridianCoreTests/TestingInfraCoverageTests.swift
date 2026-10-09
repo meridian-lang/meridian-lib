@@ -29,6 +29,64 @@ struct DriverSourceBuilderCoverageTests {
         let tolerant = DriverSourceBuilder.paramDecode(name: "order", swiftType: "Order", json: "{}", indent: "  ", force: false)
         #expect(tolerant.contains { $0.contains("(try? JSONDecoder().decode(Order.self") && $0.contains("?? Order()") })
     }
+
+    @Test("driver(spec:) emits the test-runner shell with result reporting")
+    func driverDetachedTaskShell() {
+        let source = DriverSourceBuilder.driver(spec: .init(
+            shell: .detachedTask,
+            sectionSpacing: true,
+            moneyCoercion: true,
+            observerExpr: "InMemoryObserver()",
+            checkpointRootExpr: "InMemoryCheckpointer()",
+            runID: "test-run",
+            workflowStructName: "ApproveOrder",
+            hasTraceConfiguration: false,
+            parameters: [("order", "order")],
+            inputs: [("order", "{}")],
+            toolStubs: [("http.get", "{}")],
+            reporting: .init(
+                finalReasonSentinel: "__MERIDIAN_FINAL_REASON__:",
+                finalBindingSentinel: "__MERIDIAN_FINAL_BINDING__:",
+                finalBindingKey: "report"
+            ),
+            indent: "    "
+        ))
+        #expect(source.contains("// Value JSON helper"))
+        #expect(source.contains("let _task = Task {"))
+        #expect(source.contains(".money("))
+        #expect(source.contains("(try? JSONDecoder().decode(Order.self"))
+        #expect(source.contains("__MERIDIAN_FINAL_REASON__:"))
+        #expect(source.contains("__MERIDIAN_FINAL_BINDING__:"))
+        #expect(source.contains("await _task.value"))
+        #expect(!source.contains("@main"))
+    }
+
+    @Test("driver(spec:) emits the CLI shell with builtins and no reporting")
+    func driverMainEntryPointShell() {
+        let source = DriverSourceBuilder.driver(spec: .init(
+            shell: .mainEntryPoint,
+            extraImports: ["MeridianTools"],
+            registerBuiltins: true,
+            observerExpr: "JSONLObserver.stdout",
+            checkpointRootExpr: "InMemoryCheckpointer()",
+            runID: "cli-run",
+            strictParamDecode: true,
+            workflowStructName: "ApproveOrder",
+            hasTraceConfiguration: false,
+            parameters: [("order", "order")],
+            inputs: [],
+            toolStubs: [],
+            indent: "        "
+        ))
+        #expect(source.contains("import MeridianTools"))
+        #expect(source.contains("@main"))
+        #expect(source.contains("await registry.registerBuiltins()"))
+        #expect(source.contains("let observer = JSONLObserver.stdout"))
+        #expect(source.contains("let order = try JSONDecoder().decode(Order.self"))
+        #expect(source.contains("_ = try await ApproveOrder(runtime: runtime, order: order).run()"))
+        #expect(!source.contains("__MERIDIAN_FINAL_REASON__:"))
+        #expect(!source.contains(".money("))
+    }
 }
 
 @Suite("RuntimeExecutor — early-return branches (no subprocess build)")

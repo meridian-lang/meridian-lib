@@ -1,115 +1,71 @@
 import Foundation
 
-/// 128-bit bitmask word for `NonterminalScreen`'s anchor vocabulary. A plain
-/// two-`UInt64` pair rather than the standard library's `UInt128` (SE-0400),
-/// which requires macOS 15+ — this package targets macOS 14 (`Package.swift`).
-/// Only the handful of operations `NonterminalScreen` needs are implemented.
-struct Bitset128: Sendable, Equatable, ExpressibleByIntegerLiteral {
-    private var lo: UInt64
-    private var hi: UInt64
-
-    private init(lo: UInt64, hi: UInt64) {
-        self.lo = lo
-        self.hi = hi
-    }
-
-    /// Supports the `== 0` / `!= 0` comparisons call sites use as an "is
-    /// empty" check; only the literal `0` is meaningful here.
-    init(integerLiteral value: UInt64) {
-        lo = value
-        hi = 0
-    }
-
-    /// The single-bit mask for `index` (0..<128).
-    init(bit index: Int) {
-        if index < 64 {
-            lo = UInt64(1) << UInt64(index)
-            hi = 0
-        } else {
-            lo = 0
-            hi = UInt64(1) << UInt64(index - 64)
-        }
-    }
-
-    static func | (a: Bitset128, b: Bitset128) -> Bitset128 {
-        Bitset128(lo: a.lo | b.lo, hi: a.hi | b.hi)
-    }
-
-    static func |= (a: inout Bitset128, b: Bitset128) {
-        a = a | b
-    }
-
-    static func & (a: Bitset128, b: Bitset128) -> Bitset128 {
-        Bitset128(lo: a.lo & b.lo, hi: a.hi & b.hi)
-    }
-}
-
 struct NonterminalScreen: Sendable {
-    /// The grammar has ~100 distinct anchors across all productions,
-    /// comfortably over 64, and every anchor needs a stable slot (see the
-    /// correctness note in `init` below) — `Bitset128` is capacity headroom,
-    /// not a perf choice.
     private let table: GrammarTable
-    private let vocabulary: [String: Bitset128]
-    private let masksByProduction: [String: Bitset128]
+    /// Anchor word → its stable vocabulary slot.
+    private let vocabulary: [String: Int]
+    /// The vocabulary slots of each production's anchors. An empty set means
+    /// "unscreened" — see the correctness note in `init`.
+    private let anchorsByProduction: [String: Set<Int>]
+
+    /// The grammar has ~100 distinct anchors across all productions. The
+    /// vocabulary is capped at 128 slots purely as a screening budget: every
+    /// tracked anchor needs a stable slot, and a production with an anchor
+    /// outside the budget is left unscreened rather than mis-screened.
+    private static let vocabularyBudget = 128
 
     init(table: GrammarTable) {
         self.table = table
-        let anchors = Array(stableUnique(table.anchors).prefix(128))
+        let anchors = Array(stableUnique(table.anchors).prefix(Self.vocabularyBudget))
         let vocabulary = Dictionary(uniqueKeysWithValues: anchors.enumerated().map { index, anchor in
-            (anchor, Bitset128(bit: index))
+            (anchor, index)
         })
-        // A production's mask is only meaningful if *every* one of its anchors
-        // made it into the (128-slot) vocabulary. If the grammar ever grows
-        // past that budget, some anchors would get no vocabulary slot at all
-        // (`vocabulary[anchor]` nil for them). Folding those in as `0` would
-        // silently produce a mask missing bits for real trigger words — e.g.
+        // A production's anchor set is only meaningful if *every* one of its
+        // anchors made it into the vocabulary. If the grammar ever grows past
+        // the budget, some anchors would get no vocabulary slot at all
+        // (`vocabulary[anchor]` nil for them). Ignoring those would silently
+        // produce a set missing entries for real trigger words — e.g.
         // quantifier's `all`/`every`/`any`/… determiners are 10 anchors, and
         // if only `all` fit in the budget, an "every …" sentence would compute
-        // a mask with no bit in common with quantifier's (partial) mask and
+        // a set with nothing in common with quantifier's (partial) set and
         // get wrongly screened out even though `every` is a valid trigger. So:
         // a production with any anchor outside the tracked vocabulary is
-        // simply left unscreened (mask 0 — `candidates` always includes it),
-        // which is strictly no less correct than screening it, just without
-        // the (currently unrealized for that production) speedup.
-        let masksByProduction = Dictionary(uniqueKeysWithValues: table.productions.map { production -> (String, Bitset128) in
+        // simply left unscreened (empty set — `candidates` always includes
+        // it), which is strictly no less correct than screening it, just
+        // without the (currently unrealized for that production) speedup.
+        let anchorsByProduction = Dictionary(uniqueKeysWithValues: table.productions.map { production -> (String, Set<Int>) in
             let fullyRepresented = production.anchors.allSatisfy { vocabulary[$0] != nil }
-            let mask = fullyRepresented ? Self.mask(for: production.anchors, vocabulary: vocabulary) : 0
-            return (production.name, mask)
+            let indices = fullyRepresented ? Set(production.anchors.compactMap { vocabulary[$0] }) : []
+            return (production.name, indices)
         })
         self.vocabulary = vocabulary
-        self.masksByProduction = masksByProduction
+        self.anchorsByProduction = anchorsByProduction
     }
 
     var anchorCount: Int {
         vocabulary.count
     }
 
-    func mask(for sentence: String) -> Bitset128 {
+    /// The vocabulary slots of every tracked anchor word occurring in `sentence`.
+    func anchorIndices(in sentence: String) -> Set<Int> {
         let lower = sentence.lowercased()
-        var mask: Bitset128 = 0
-        for (anchor, bit) in vocabulary where containsAnchor(anchor, in: lower) {
-            mask |= bit
+        var indices: Set<Int> = []
+        for (anchor, index) in vocabulary where containsAnchor(anchor, in: lower) {
+            indices.insert(index)
         }
-        return mask
+        return indices
     }
 
     func candidates(for sentence: String) -> [GrammarProduction] {
-        let sentenceMask = mask(for: sentence)
+        let sentenceAnchors = anchorIndices(in: sentence)
         return table.productions.filter { production in
-            let productionMask = masksByProduction[production.name] ?? 0
-            return productionMask == 0 || (sentenceMask & productionMask) != 0
+            let productionAnchors = anchorsByProduction[production.name] ?? []
+            return productionAnchors.isEmpty || !sentenceAnchors.isDisjoint(with: productionAnchors)
         }
     }
 
-    func anchorMask(for production: GrammarProduction) -> Bitset128 {
-        masksByProduction[production.name] ?? 0
-    }
-
-    private static func mask(for anchors: [String], vocabulary: [String: Bitset128]) -> Bitset128 {
-        anchors.reduce(Bitset128(0)) { mask, anchor in
-            mask | (vocabulary[anchor] ?? 0)
-        }
+    func anchorIndices(for production: GrammarProduction) -> Set<Int> {
+        anchorsByProduction[production.name] ?? []
     }
 }
 

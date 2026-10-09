@@ -37,19 +37,52 @@ public struct DiagnosticCode: Sendable, Hashable {
     public let explanation: String
     public let kind: Kind
     public let decision: DecisionRef?
+    /// Accountability metadata — see `DiagnosticCodeEntry`.
+    public let status: DiagnosticCodeStatus
+    /// Production emit sites (module-relative paths). Empty for reserved/deprecated.
+    public let emitters: [String]
 
     public init(id: String, title: String, explanation: String,
-                kind: Kind, decision: DecisionRef? = nil) {
+                kind: Kind, decision: DecisionRef? = nil,
+                status: DiagnosticCodeStatus = .active, emitters: [String] = []) {
         self.id = id
         self.title = title
         self.explanation = explanation
         self.kind = kind
         self.decision = decision
+        self.status = status
+        self.emitters = emitters
     }
 }
 
 extension DiagnosticCode: CustomStringConvertible {
     public var description: String { id }
+}
+
+// MARK: - Catalog accountability
+
+/// How a code is accounted for in the catalog.
+public enum DiagnosticCodeStatus: String, Sendable {
+    case active
+    case reserved
+    case deprecated
+}
+
+/// Accountability metadata for one `DiagnosticCode`: its `status` and its
+/// production `emitters`, projected straight off the code definition so the two
+/// can never drift. The inventory tests assert each active code names at least
+/// one emitter file that really references it.
+public struct DiagnosticCodeEntry: Sendable {
+    public let code: DiagnosticCode
+    public let status: DiagnosticCodeStatus
+    /// Production emit sites (module-relative paths). Empty for reserved/deprecated.
+    public let emitters: [String]
+
+    public init(_ code: DiagnosticCode) {
+        self.code = code
+        self.status = code.status
+        self.emitters = code.emitters
+    }
 }
 
 // MARK: - Catalog
@@ -61,537 +94,630 @@ extension DiagnosticCode {
     public static let notImplemented = DiagnosticCode(
         id: "MER0003", title: "not implemented",
         explanation: "Retired compatibility code formerly emitted by the compiler's unimplemented-feature error bridge. No production path emits MER0003.",
-        kind: .other)
+        kind: .other,
+        status: .deprecated)
 
     public static let internalError = DiagnosticCode(
         id: "MER0004", title: "internal compiler error",
         explanation: "An invariant the compiler relies on was violated. This is a compiler bug; please report it.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Expression.swift"])
 
     // MARK: MER1xxx — lex / parse (structural)
 
     public static let malformedWorkflowHeader = DiagnosticCode(
         id: "MER1001", title: "malformed workflow header",
         explanation: "A workflow header must end with a colon (':'). The line started a 'to …' workflow declaration but no ':' was found, so its body could not be attached.",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["MeridianParser.swift"])
 
     public static let orphanedCodeBlock = DiagnosticCode(
         id: "MER1002", title: "orphaned code block",
         explanation: "A fenced code block appeared where no statement could consume it (for example outside any workflow body or step). Move it under a statement that uses it, or remove it.",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["StatementParser.swift", "StatementParser+Blocks.swift"])
 
     public static let unparseableStatement = DiagnosticCode(
         id: "MER1003", title: "malformed statement",
         explanation: "A line inside a workflow body matched a structural statement introducer (bind/rebind, let … be, if/while/until block header, recover, etc.) but was malformed. Free-form natural language that does not match a structural form remains a phrase invocation and surfaces as MER2001 if unresolved.",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["StatementParser.swift", "StatementParser+Blocks.swift"])
 
     public static let unparseableRule = DiagnosticCode(
         id: "MER1004", title: "unparseable rule",
         explanation: "A top-level rule could not be classified into one of the supported shapes (must / must not / must be … by … before / when / may).",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["ASTToIR.swift"])
 
     public static let malformedCondition = DiagnosticCode(
         id: "MER1005", title: "malformed condition",
         explanation: "A boolean condition or expression was malformed (for example mixing bare 'and'/'or' at one level). Rewrite it using explicit grouping.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR.swift", "ASTToIR+Expression.swift"])
 
     public static let frontmatterPlacement = DiagnosticCode(
         id: "MER1006", title: "misplaced frontmatter",
         explanation: "A '---' frontmatter block may only appear at the very head of a file (optionally preceded by blank lines).",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["MeridianParser.swift"])
 
     public static let invalidTestSpecKey = DiagnosticCode(
         id: "MER1007", title: "unknown test-spec key",
         explanation: "A `.meridian.test` spec used a key the runner does not recognize.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["SpecParser.swift"])
 
     public static let removedImportForm = DiagnosticCode(
         id: "MER1008", title: "removed import form",
         explanation: "Body-level `import` is removed. Declare vocabulary/rulebook dependencies in frontmatter (`vocabulary:` / `rulebook:`).",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["MeridianParser.swift"])
 
     public static let sectionStructuralError = DiagnosticCode(
         id: "MER1009", title: "sectioned document structural error",
         explanation: "A heading-bearing `.meri` document violated the section-role model (content before the first heading, unrecognized heading, malformed marker, or malformed Tools Used bullet).",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["SkillSectionBuilder.swift"])
 
     public static let uncheckablePredicate = DiagnosticCode(
         id: "MER1010", title: "uncheckable predicate",
         explanation: "An invariant, prohibition, applicability, or checklist item is not a structurally checkable comparison and cannot lower to deterministic IR.",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["SkillSectionBuilder.swift", "StatementParser+Checklists.swift"])
 
     public static let invalidTableCell = DiagnosticCode(
         id: "MER1011", title: "invalid table cell",
         explanation: "A data-table cell value does not match the column's declared scalar type.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["StatementParser+Blocks.swift"])
 
     public static let matchBranchSyntax = DiagnosticCode(
         id: "MER1012", title: "match branch missing colon",
         explanation: "A match branch arm must be written as `case <pattern>:` (or a wildcard/default such as `anything:` / `otherwise:`) so the parser can attach the arm body.",
-        kind: .structural, decision: DecisionRef("D-DX-2"))
+        kind: .structural, decision: DecisionRef("D-DX-2"),
+        emitters: ["StatementParser+Bindings.swift:parseMatchBranch"])
 
     // MARK: MER2xxx — name resolution
 
     public static let unresolvedPhrase = DiagnosticCode(
         id: "MER2001", title: "unresolved phrase",
         explanation: "A phrase invocation did not match any declared phrase or workflow. Add a matching phrase/workflow, fix the wording, or set frontmatter `allow-fallbacks: unresolved-phrases` to emit a placeholder.",
-        kind: .nameResolution, decision: DecisionRef("D-DX-1"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-1"),
+        emitters: ["ASTToIR+PhraseInvocation.swift"])
 
     public static let unknownTool = DiagnosticCode(
         id: "MER2002", title: "unknown tool",
         explanation: "An invoked tool id is not a built-in, a vocabulary-declared tool, a frontmatter `tools:` entry, or a workflow reference. Declare it in `=== tools ===`, list it in frontmatter `tools:`, or set `allow-fallbacks: unknown-tools` for host-provided tools.",
-        kind: .nameResolution, decision: DecisionRef("D-DX-5"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-5"),
+        emitters: ["ASTToIR.swift"])
 
     public static let unknownKind = DiagnosticCode(
         id: "MER2003", title: "unknown kind",
         explanation: "A kind (type) name does not resolve to any declared vocabulary kind.",
-        kind: .nameResolution, decision: DecisionRef("D-DX-4"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-4"),
+        emitters: ["MeridianParser.swift"])
 
     public static let unknownProperty = DiagnosticCode(
         id: "MER2004", title: "unknown property",
         explanation: "A property name is not declared on the referenced kind.",
-        kind: .nameResolution, decision: DecisionRef("D-DX-4"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-4"),
+        emitters: ["ASTToIR+Definitions.swift", "ASTToIR+Relations.swift"])
 
     public static let unknownVocabulary = DiagnosticCode(
         id: "MER2005", title: "unknown vocabulary",
         explanation: "A `vocabulary:` reference did not match any supplied `.merconfig`.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["Compiler.swift"])
 
     public static let unknownRulebook = DiagnosticCode(
         id: "MER2006", title: "unknown rulebook",
         explanation: "A `rulebook:` reference did not match any supplied `.merrules`.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["Compiler.swift"])
 
     public static let unknownAdjective = DiagnosticCode(
         id: "MER2007", title: "unknown adjective",
         explanation: "A checkable adjective used in a condition was never defined (`Definition: a <kind> is <adj> if …`).",
-        kind: .nameResolution, decision: DecisionRef("D-DX-4"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-4"),
+        emitters: ["ASTToIR+Definitions.swift"])
 
     public static let unknownVerb = DiagnosticCode(
         id: "MER2008", title: "unknown verb",
         explanation: "A verb form does not resolve to any declared verb (`The verb to <base> … means the <relation> relation.`).",
-        kind: .nameResolution, decision: DecisionRef("D-DX-4"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-4"),
+        emitters: ["ASTToIR+Relations.swift"])
 
     public static let unknownFallbackKind = DiagnosticCode(
         id: "MER2009", title: "unknown allow-fallbacks kind",
         explanation: "A frontmatter `allow-fallbacks:` token is not a recognized fallback kind.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["Compiler.swift"])
 
     public static let unknownTraceCategory = DiagnosticCode(
         id: "MER2010", title: "unknown trace category",
         explanation: "A `--trace` token is not a recognized tracing category. Run `meridian trace categories` to list them.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["ParserTrace.swift", "CLISupport.swift"])
 
     public static let missingPhraseArgument = DiagnosticCode(
         id: "MER2011", title: "missing phrase argument",
         explanation: "A workflow-call phrase's declared parameter did not match any extracted argument (by name, kind, or a common spacing/case variant). The generated call would be missing a required initializer argument.",
-        kind: .nameResolution, decision: DecisionRef("D-DX-2"))
+        kind: .nameResolution, decision: DecisionRef("D-DX-2"),
+        emitters: ["ASTToIR+PhraseInvocation.swift:lowerPhraseInvocation"])
 
     public static let unknownTemplateFormatter = DiagnosticCode(
         id: "MER2012", title: "unknown template formatter",
         explanation: "A `{{ expr as a <formatter> }}` template interpolation named a formatter outside the closed set `FormatterRegistry` defines (`integer`, `decimal(N)`, `short date`, `long date`).",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: [
+            "ASTToIR+Expression.swift:validateFormatter",
+            "RuleInjector.swift:lowerInterpolationSegmentSimple",
+        ])
 
     // MARK: MER3xxx — semantics
 
     public static let phraseInlineDepthExceeded = DiagnosticCode(
         id: "MER3001", title: "phrase inlining too deep",
         explanation: "A phrase inlined other phrases beyond the recursion limit. This usually indicates a cyclic phrase definition.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["ASTToIR+PhraseInvocation.swift"])
 
     public static let definitionRecursion = DiagnosticCode(
         id: "MER3002", title: "recursive definition",
         explanation: "A checkable adjective definition refers back to itself (directly or transitively). Definitions must be acyclic.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Definitions.swift"])
 
     public static let duplicateDeclaration = DiagnosticCode(
         id: "MER3003", title: "duplicate declaration",
         explanation: "A kind / phrase / tool / constant / instance name was declared more than once in the merged vocabulary.",
-        kind: .other)
+        kind: .other,
+        emitters: ["Compiler.swift", "ASTToIR+Definitions.swift"])
 
     public static let duplicateName = DiagnosticCode(
         id: "MER3004", title: "duplicate name",
         explanation: "A vocabulary or rulebook name was supplied more than once.",
-        kind: .other)
+        kind: .other,
+        emitters: ["Compiler.swift"])
 
     public static let relationBackingInvalid = DiagnosticCode(
         id: "MER3005", title: "invalid relation backing",
         explanation: "A relation's evaluation backing referenced a kind, property, or tool that does not exist, or a verb-named relation has no backing.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Relations.swift"])
 
     public static let unattachedRule = DiagnosticCode(
         id: "MER3006", title: "unattached rule",
         explanation: "A rule parsed cleanly but matched no workflow's action surface. Align the rule's verb with a workflow name/parameter, or set `allow-fallbacks: unattached-rules`.",
-        kind: .other, decision: DecisionRef("D-DX-6"))
+        kind: .other, decision: DecisionRef("D-DX-6"),
+        emitters: ["ASTToIR.swift"])
 
     public static let unresolvedTriggerAction = DiagnosticCode(
         id: "MER3007", title: "unresolved trigger action",
         explanation: "A `when … , do X` trigger's action text did not lower to a real phrase invocation. Fix the action, or set `allow-fallbacks: unresolved-trigger-actions`.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["RuleInjector.swift"])
 
     public static let toolBackedInlineDisallowed = DiagnosticCode(
         id: "MER3008", title: "tool-backed expression must be a statement",
         explanation: "A tool-backed relation traversal or description requires an `await` fetch and cannot be used in an inline expression position. Bind it with `let`/`bind` first.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Relations.swift"])
 
     public static let ambiguousEntryWorkflow = DiagnosticCode(
         id: "MER3010", title: "ambiguous entry workflow",
         explanation: "Frontmatter `name` matches an explicit workflow while top-level statements also define an implicit entry workflow.",
-        kind: .other)
+        kind: .other,
+        emitters: ["MeridianParser.swift"])
 
     public static let proseDisallowed = DiagnosticCode(
         id: "MER3011", title: "prose not allowed",
         explanation: "Free-form prose steps require `with discretion` / `with autonomy` on the workflow or an explicit `use judgment to …:` marker.",
-        kind: .other, decision: DecisionRef("D-DX-1"))
+        kind: .other, decision: DecisionRef("D-DX-1"),
+        emitters: ["ASTToIR+Statements.swift"])
 
     public static let commandHoleOutOfScope = DiagnosticCode(
         id: "MER3012", title: "operand out of scope",
         explanation: "An expression position (a `{ expr }` command hole, a verb subject/object, a relation/navigation operand) references a name that is not in scope (workflow parameter, earlier bind, or loop variable).",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["ASTToIR+Commands.swift", "ASTToIR+Relations.swift"])
 
     public static let quantifierSemantic = DiagnosticCode(
         id: "MER3013", title: "quantifier semantic error",
         explanation: "A collection quantifier is missing its noun, uses a tool call as its source, or lacks a required body/restriction.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Quantifier.swift"])
 
     public static let ambiguousAnaphora = DiagnosticCode(
         id: "MER3014", title: "ambiguous anaphora",
         explanation: "An anaphoric marker (`it`, `this`, …) appears when more than one referent is in scope; spell out the referenced value.",
-        kind: .other)
+        kind: .other,
+        emitters: ["AnaphoraResolver.swift"])
 
     public static let invalidEnumDefault = DiagnosticCode(
         id: "MER3015", title: "invalid enum default",
         explanation: "A `can be` / `is usually` default case does not identify exactly one enum property, or two defaults conflict on the same property.",
-        kind: .other)
+        kind: .other,
+        emitters: ["Compiler.swift:mergeEnumDefaults"])
 
     public static let unlowerableRulePredicate = DiagnosticCode(
         id: "MER3016", title: "unlowerable rule predicate",
         explanation: "A rule body's condition used an expression shape (a quantifier, relational traversal, data table, or a parse-error carrier) that a rule predicate cannot express — permanently, by design, not a temporary gap. If the check can be restated as a direct comparison, boolean combination, or checkable adjective, rewrite it that way. Otherwise it cannot be an in-section rule at all: remove the rule line and add an equivalent `if`/`assert …`/`for each` statement to the skill's own `## Workflow` (or `## Rules`) body instead, where the full expression grammar is supported without restriction. Example: `A patient whose active prescriptions include a contraindicated drug must not receive the new order.` → `## Workflow` `if any of the patient's active prescriptions is contraindicated: stop with \"cannot administer: contraindicated prescription\".` (the `if any of … is …` shape already used by `corpora/clinical/skills/triagepatient.meri`).",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["RuleInjector.swift:lowerExprSimple"])
 
     public static let unsupportedTriggerCondition = DiagnosticCode(
         id: "MER3017", title: "unsupported trigger condition",
         explanation: "A `when … , do X` trigger's condition named a recognized, checkable predicate (a comparison, emptiness/temporal-window check, duration mention, quantifier, relation traversal, description, aggregate, superlative, table lookup, or declared-verb predicate) rather than opaque externally-raised-event prose. Meridian's `when` trigger compiles to an external-event stub with no scheduler/poller to re-evaluate such a predicate, so it would never actually fire. Delete the rule line and either (1) move the check into the skill's own `## Workflow`/`## Rules` body as a real `if …`/`assert …`/`wait until …` statement, or (2) reword the condition itself as an opaque event/signal a host raises and keep it as a `When …, …` trigger. Example (fix 2): `When an order has been on hold for more than 7 days, escalate the order.` → `When an order is flagged as stale, escalate the order.`",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["RuleInjector.swift:synthesizeTriggers"])
 
     public static let matchBranchSemantic = DiagnosticCode(
         id: "MER3018", title: "match branch semantic error",
         explanation: "A match branch is semantically invalid: it is empty, repeats a pattern, or declares more than one wildcard/default arm.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["ASTToIR+Statements.swift", "IRValidator.swift"])
 
     public static let traceBarePerfect = DiagnosticCode(
         id: "MER-TMP-010", title: "bare perfect trace predicate",
         explanation: "A trace event predicate used a bare perfect form (`has failed`) without an explicit temporal operator such as `has ever`, `within the last`, `times in a row`, or `since the last`.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceTemporalGrammar.swift"])
 
     public static let traceWindowExceedsRetention = DiagnosticCode(
         id: "MER-TMP-011", title: "trace window exceeds retention",
         explanation: "A trace-temporal trailing window is longer than the configured trace retention period, so the compiler cannot promise complete answers for that query.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Expression.swift"])
 
     public static let traceCausalSince = DiagnosticCode(
         id: "MER-TMP-012", title: "causal since form",
         explanation: "The `since the last` temporal form relates a state/predicate to an anchor event. It cannot be used as a causal chain between two event predicates.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceTemporalGrammar.swift"])
 
     public static let traceFuture = DiagnosticCode(
         id: "MER-TMP-013", title: "future trace predicate",
         explanation: "Trace-temporal predicates may only query recorded past events, not future or predicted ones.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceTemporalGrammar.swift", "ASTToIR+Expression.swift"])
 
     public static let traceUnknownStep = DiagnosticCode(
         id: "MER-TMP-014", title: "unknown trace step",
         explanation: "A trace event pattern named a step that does not exist in the current workflow or known instrumentation surface.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["ASTToIR+Expression.swift"])
 
     public static let traceUnknownPayloadField = DiagnosticCode(
         id: "MER-TMP-015", title: "unknown trace payload field",
         explanation: "A trace event payload predicate referenced a field the compiler cannot resolve for that event shape.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["ASTToIR+Expression.swift"])
 
     public static let traceUnkeyedDefinition = DiagnosticCode(
         id: "MER-TMP-016", title: "unkeyed temporal definition",
         explanation: "A temporal or statistical definition over a kind requires that kind to declare a key property so trace predicates can be restricted to the current instance.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Definitions.swift"])
 
     public static let traceRecently = DiagnosticCode(
         id: "MER-TMP-017", title: "ambiguous recently",
         explanation: "The word `recently` is intentionally unsupported in trace-temporal predicates because it has no stable duration semantics.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceTemporalGrammar.swift"])
 
     public static let traceProgressive = DiagnosticCode(
         id: "MER-TMP-018", title: "progressive trace predicate",
         explanation: "Progressive event wording such as `is failing` is not a recorded trace event. Use a completed event form like `failed` or `succeeded`.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceTemporalGrammar.swift"])
 
     public static let traceStateHistorySince = DiagnosticCode(
         id: "MER-TMP-019", title: "unsupported since-the-last state predicate",
         explanation: "A `since the last` predicate must reduce to a trace event pattern (or an adjective whose body is a `has ever` event query). A pure property-comparison holds such as `the service is healthy since the last …` has no trace backing even when state-history retention is enabled (SEM-4-12 / SEM-5-13). Back the predicate with an adjective whose body is a `has ever` event query — `Definition: a service is deploy-clean if the deploy step has ever succeeded.` then `if the service is deploy-clean since the last deploy step succeeded, …` — or drop the `since` form and guard the branch with an ordinary `otherwise`.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR+Expression.swift"])
 
     public static let traceMissingProductionCapturePolicy = DiagnosticCode(
         id: "MER-TMP-020", title: "missing production trace capture policy",
         explanation: "A merconfig trace profile set to `production` requires every declared tool to spell out its `capture:` policy explicitly as `full`, `hash-only`, or `redacted(fields)`. Development may default to full, but production may not rely on that default.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["Compiler.swift:validateProductionTraceCapturePolicies"])
 
     public static let traceCrossSkillScope = DiagnosticCode(
         id: "MER-TMP-021", title: "cross-skill trace scope not supported",
         explanation: "An event pattern scoped to another skill requires an explicit `across skills <declared list>` surface and a matching `=== trace ===` allow-list entry (D4a, SEM-4-10). Bare `the fetch step of the briefing skill` without a declared cross-skill scope is rejected.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR+Expression.swift:lowerEventSubject"])
 
     public static let traceMissingUnknownArm = DiagnosticCode(
         id: "MER-STA-001", title: "missing unknown arm",
         explanation: "A decision point whose predicate may evaluate to indeterminate needs either an explicit `if it is unknown whether` arm or an `otherwise` arm that accepts both false and indeterminate.",
-        kind: .other)
+        kind: .other,
+        emitters: ["ASTToIR+Statements.swift"])
 
     public static let statisticalConfidenceReserved = DiagnosticCode(
         id: "MER-STA-002", title: "statistical confidence reserved",
         explanation: "Deprecated: `with <n>% confidence` is now lowered to Wilson-score intervals (SEM-6-04). This code is retained for catalog stability only.",
-        kind: .structural)
+        kind: .structural,
+        status: .deprecated)
 
     public static let statisticalVagueFrequency = DiagnosticCode(
         id: "MER-STA-003", title: "vague statistical frequency",
         explanation: "A statistical claim used vague frequency wording such as `most of the time`. Use an explicit percentage or the fixed `usually` / `rarely` forms instead.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["TraceStatisticalGrammar.swift"])
 
     // MARK: MER-REF / MER-TYP — binding reference & type
 
     public static let noteBindingUndeclared = DiagnosticCode(
         id: "MER-REF-004", title: "note target binding undeclared",
         explanation: "`proceed, and note \"<text>\" in the <binding>` (INFORM7 §2.9) requires the named binding to already exist in scope. The target was never introduced by an earlier `let … be …` / `bind`, so there is nothing to append to. Declare the binding first (`let the receipt trailer be \"\".`) before noting into it.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR+Bind.swift"])
 
     public static let noteBindingNonText = DiagnosticCode(
         id: "MER-TYP-001", title: "note target binding is not text",
         explanation: "`proceed, and note \"<text>\" in the <binding>` (INFORM7 §2.9) appends to a `text` binding, but the named binding holds a non-text value (e.g. a number or list). Note only into a binding first declared with a text value.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR+Bind.swift"])
 
     // MARK: MER-DEO — deontic norms (Wave 9A)
 
     public static let deonticSameScopeConflict = DiagnosticCode(
         id: "MER-DEO-001", title: "deontic same-scope conflict",
         explanation: "A prohibition and a permission match the same action pattern in the same scope. Meridian rejects the overlap at compile time instead of picking a silent winner.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["DeonticLowering.swift"])
 
     public static let deonticStickyDeny = DiagnosticCode(
         id: "MER-DEO-002", title: "deontic sticky deny",
         explanation: "An inner permission cannot override an outer prohibition. Deny is sticky downward across nested scopes.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["DeonticLowering.swift"])
 
     public static let deonticNonNormModal = DiagnosticCode(
         id: "MER-DEO-003", title: "deontic non-norm modal",
         explanation: "Deontic norms use must, must not, and may only. Modals such as should, ought to, and probably must are rejected.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["DeonticLowering.swift"])
 
     public static let deonticToolOutsidePermissions = DiagnosticCode(
         id: "MER-DEO-004", title: "deontic tool outside permissions",
         explanation: "A tool invoke is not covered by any permission in a default-deny scope.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["DeonticLowering.swift:wrapInvokeIfNeeded"])
 
     public static let deonticOutcomeAsAction = DiagnosticCode(
         id: "MER-DEO-005", title: "deontic outcome as action",
         explanation: "Outcomes such as fail or succeed are not invokable actions. Prohibit a tool invoke or assert a condition instead.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["DeonticLowering.swift"])
 
     public static let normIdCollision = DiagnosticCode(
         id: "MER-DEO-006", title: "norm id collision",
         explanation: "Two distinct norms hashed to the same OBL- prefix. Meridian rejects nondeterministic disambiguation instead of silently renumbering.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["NormIdentity.swift"])
 
     public static let deonticUnlowerableCondition = DiagnosticCode(
         id: "MER-DEO-007", title: "deontic unlowerable condition",
         explanation: "A deontic norm names a condition Meridian cannot lower to checkable IR (for example an obligation `must hold` predicate or a permission `only where` clause). The compiler rejects the norm instead of compiling without the condition.",
-        kind: .structural, decision: DecisionRef("D3"))
+        kind: .structural, decision: DecisionRef("D3"),
+        emitters: ["RuleLowering.swift:lowerExprForDeontic", "DeonticLowering.swift:lowerCheckableDeonticExpr"])
 
     // MARK: MER-MOD — shared modules (Final Wave)
 
     public static let moduleNotFound = DiagnosticCode(
         id: "MER-MOD-001", title: "module not found",
         explanation: "An `import <module>` reference did not resolve to a `module.merconfig` / `<name>.merconfig` package on the module search path.",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["ModuleResolver.swift:locatePackage"])
 
     public static let moduleImportCycle = DiagnosticCode(
         id: "MER-MOD-002", title: "module import cycle",
         explanation: "Module imports form a cycle. Meridian requires an acyclic dependency graph.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ModuleResolver.swift:resolveOne"])
 
     public static let moduleExportCollision = DiagnosticCode(
         id: "MER-MOD-003", title: "module export collision",
         explanation: "Two imported modules export the same symbol name. Rename one export or import only one module.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ModuleResolver.swift:resolveOne"])
 
     public static let moduleSealedCollision = DiagnosticCode(
         id: "MER-MOD-004", title: "sealed module export overridden",
         explanation: "The importer redefines a symbol that an imported module marked `sealed` in its manifest.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ModuleResolver.swift:resolveOne"])
 
     public static let duplicateModuleImport = DiagnosticCode(
         id: "MER-MOD-005", title: "duplicate module import",
         explanation: "The same module was imported more than once without an `as` alias.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ModuleResolver.swift:resolve"])
 
     public static let judgmentToolOutsidePermissions = DiagnosticCode(
         id: "MER-JDG-002", title: "judgment tool outside permissions",
         explanation: "A tool named in a judgment `using` clause is not listed in the skill's `tools:` / `permissions` scope.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["ASTToIR.swift:resolveJudgmentTools"])
 
     public static let judgmentWithoutProducedValue = DiagnosticCode(
         id: "MER-JDG-001", title: "effectful judgment without produced value",
         explanation: "A judgment block must declare `producing a <kind> called <name>` when its purpose phrase names an effectful action. Judgment produces typed values; kernel steps perform effects that consume them.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["StatementParser+Decisions.swift:parseJudgmentMarker"])
 
     public static let conditionUnknownComparator = DiagnosticCode(
         id: "MER-CND-001", title: "unknown comparator",
         explanation: "A condition used a vague hedge or unknown comparator where the kernel expects a closed, checkable comparison form.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["StatementParser+Idioms.swift:extractIterationRefinement"])
 
     public static let domainContradictoryDefault = DiagnosticCode(
         id: "MER-DOM-002", title: "contradictory domain default",
         explanation: "Two domain assertions assign conflicting default cases to the same kind property (`can be` / `is usually`).",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["Compiler.swift:mergeEnumDefaults"])
 
     public static let descriptionSuperlativeNeedsProperty = DiagnosticCode(
         id: "MER-DSC-001", title: "superlative needs measurable backing",
         explanation: "A magnitude superlative (`largest`, `smallest`, …) requires an explicit `by <property>` unless the filtering adjective is declared under `Gradable adjectives:` in `=== language ===`.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["SuperlativeGrammar.swift"])
 
     // MARK: MER4xxx — codegen
 
     public static let codegenError = DiagnosticCode(
         id: "MER4001", title: "codegen error",
         explanation: "Code generation failed to produce valid Swift for a construct.",
-        kind: .other)
+        kind: .other,
+        emitters: ["Compiler.swift:codegenError projection"])
 
     public static let invalidIR = DiagnosticCode(
         id: "MER4002", title: "invalid IR",
         explanation: "Malformed IR was rejected before Swift emission or canonical verbalization. Fix the authored source so lowering cannot produce empty logicals, empty match arms, missing invoke ids, or inline invokes in expression position.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["IRValidator.swift"])
 
     // MARK: MER5xxx — configuration / vocabulary
 
     public static let swiftFormatFailed = DiagnosticCode(
         id: "MER5001", title: "swift-format failed",
         explanation: "swift-format could not format the generated Swift. The unformatted output was kept; the program is still valid.",
-        kind: .other, decision: DecisionRef("D-DX-3"))
+        kind: .other, decision: DecisionRef("D-DX-3"),
+        emitters: ["CompileCommand.swift"])
 
     public static let vocabularyDeclarationUnrecognized = DiagnosticCode(
         id: "MER5002", title: "unrecognized vocabulary declaration",
         explanation: "A line in a `.merconfig` looked like a declaration but matched no known vocabulary form.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["MerConfigParser+Vocabulary.swift", "MerConfigParser+Trace.swift"])
 
     public static let rulebookSectionUnknown = DiagnosticCode(
         id: "MER5003", title: "unknown rulebook section",
         explanation: "A `=== section ===` header in a `.merrules` is not one of the recognized rulebook sections (desugar / sections / conventions / triggers / language).",
-        kind: .nameResolution)
+        kind: .nameResolution,
+        emitters: ["RulebookParser.swift"])
 
     public static let unknownMerconfigSection = DiagnosticCode(
         id: "MER5010", title: "unknown merconfig section",
         explanation: "A `=== section ===` header in a `.merconfig` is not one of the recognized sections (vocabulary / constants / instances / tools / language).",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["MerConfigParser.swift"])
 
     public static let malformedRulebookEntry = DiagnosticCode(
         id: "MER5004", title: "malformed rulebook entry",
         explanation: "A line in a `.merrules` section matched a rule shape but was missing required fields (`match:`/`rewrite:`, `-> <role>`, or `<kind>: <words>`).",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["RulebookParser.swift"])
 
     public static let unrecognizedBlockProperty = DiagnosticCode(
         id: "MER5005", title: "unrecognized block property",
         explanation: "A line inside a `has properties:` block did not match any known property declaration form.",
-        kind: .structural)
+        kind: .structural,
+        emitters: ["MerConfigParser+Vocabulary.swift"])
 
     public static let unwritableTraceFile = DiagnosticCode(
         id: "MER5011", title: "unwritable trace file",
         explanation: "The CLI could not create or write the requested `--trace-file` path.",
-        kind: .other, decision: DecisionRef("D-DX-8"))
+        kind: .other, decision: DecisionRef("D-DX-8"),
+        emitters: ["CLISupport.swift:makeCLITrace"])
 
     public static let emptyLexiconMarkers = DiagnosticCode(
         id: "MER5012", title: "empty lexicon marker collection",
         explanation: "A lexicon marker collection required for canonical output is empty.",
-        kind: .other, decision: DecisionRef("D-DX-8"))
+        kind: .other, decision: DecisionRef("D-DX-8"),
+        emitters: ["Verbalizer.swift"])
 
     public static let inputFileNotFound = DiagnosticCode(
         id: "MER5013", title: "input file not found",
         explanation: "A CLI command was given a path that does not exist on disk.",
-        kind: .other, decision: DecisionRef("D-DX-8"))
+        kind: .other, decision: DecisionRef("D-DX-8"),
+        emitters: ["CLISupport.swift"])
 
     public static let directoryReadFailed = DiagnosticCode(
         id: "MER5014", title: "directory read failed",
         explanation: "The CLI could not list a directory while discovering inputs or dependencies.",
-        kind: .other, decision: DecisionRef("D-DX-8"))
+        kind: .other, decision: DecisionRef("D-DX-8"),
+        emitters: ["CLISupport.swift"])
 
     // MARK: MER6xxx — lint / authoring warnings
 
     public static let lintPoliteCommand = DiagnosticCode(
         id: "MER6001", title: "polite command lint",
         explanation: "A workflow step uses polite command wording that Meridian treats as noise; commands should be written directly.",
-        kind: .other, decision: DecisionRef("D-DX-7"))
+        kind: .other, decision: DecisionRef("D-DX-7"),
+        emitters: ["MeridianLinter.swift:paraphraseHint"])
 
     public static let lintUncertainty = DiagnosticCode(
         id: "MER6002", title: "uncertainty lint",
         explanation: "A workflow step uses uncertainty wording; use discretion/autonomy for planner judgment or spell out a deterministic condition.",
-        kind: .other, decision: DecisionRef("D-DX-7"))
+        kind: .other, decision: DecisionRef("D-DX-7"),
+        emitters: ["MeridianLinter.swift:paraphraseHint"])
 
     public static let migrationRouteFuzzyDowngrade = DiagnosticCode(
         id: "MER6003", title: "migration fuzzy-route downgrade",
         explanation: "`migrate-skill --route-fuzzy` marked a non-lowerable generated section as reference documentation so exploratory batch migration could continue. Review the named section and reword operational content before treating the port as complete.",
-        kind: .other, decision: DecisionRef("D-DX-7"))
+        kind: .other, decision: DecisionRef("D-DX-7"),
+        emitters: ["SkillMigrator+CommandRewrite.swift"])
 
     public static let diagnosticRecoverySummary = DiagnosticCode(
         id: "MER6004", title: "diagnostic recovery summary",
         explanation: "The compiler skipped one or more constructs after collecting their diagnostics so it could continue reporting additional errors in the same file.",
-        kind: .other, decision: DecisionRef("D-DX-2"))
+        kind: .other, decision: DecisionRef("D-DX-2"),
+        emitters: ["DiagnosticEngine.swift:throwIfErrors"])
 
     public static let lintCrossRunInARow = DiagnosticCode(
         id: "MER6005", title: "cross-run in-a-row lint",
         explanation: "An `in a row` trace-temporal claim spans `across all runs`, so the streak is evaluated over deterministic global trace order and may be affected by interleaved runs.",
-        kind: .other, decision: DecisionRef("D-DX-7"))
+        kind: .other, decision: DecisionRef("D-DX-7"),
+        emitters: ["MeridianLinter.swift:crossRunInARowHint"])
 
     public static let lintSuperlativeEventAnchor = DiagnosticCode(
         id: "MER6006", title: "superlative event-anchor lint",
         explanation: "A `since the last …` anchor names its subject with a superlative (e.g. `the most recent troubled service`), which is legal but nests a collection-ranking computation inside the anchor position of an event pattern. This is harder to read and to debug from a trace than resolving the superlative to a named value first.",
-        kind: .other, decision: DecisionRef("D-DX-7"))
+        kind: .other, decision: DecisionRef("D-DX-7"),
+        emitters: ["MeridianLinter.swift:superlativeEventAnchorHint"])
 
     /// Every catalog code, for `meridian explain-diag`, the staleness/guard tests,
     /// and uniqueness checks. Keep this list complete — a guard test asserts
     /// there are no duplicate ids and every code has a non-empty explanation.
     public static let all: [DiagnosticCode] = [
-        .notImplemented, .internalError,
-        .malformedWorkflowHeader, .orphanedCodeBlock, .unparseableStatement,
-        .unparseableRule, .malformedCondition, .frontmatterPlacement,
-        .invalidTestSpecKey, .removedImportForm,
-        .sectionStructuralError, .uncheckablePredicate, .invalidTableCell,
-        .matchBranchSyntax,
-        .unresolvedPhrase, .unknownTool, .unknownKind, .unknownProperty,
-        .unknownVocabulary, .unknownRulebook, .unknownAdjective, .unknownVerb,
-        .unknownFallbackKind, .unknownTraceCategory, .missingPhraseArgument,
-        .unknownTemplateFormatter,
-        .phraseInlineDepthExceeded, .definitionRecursion, .duplicateDeclaration,
-        .duplicateName, .relationBackingInvalid, .unattachedRule,
-        .unresolvedTriggerAction, .toolBackedInlineDisallowed,
-        .ambiguousEntryWorkflow, .proseDisallowed, .commandHoleOutOfScope,
-        .quantifierSemantic, .ambiguousAnaphora, .invalidEnumDefault,
-        .unlowerableRulePredicate, .unsupportedTriggerCondition,
+        .notImplemented, .internalError, .malformedWorkflowHeader,
+        .orphanedCodeBlock, .unparseableStatement, .unparseableRule,
+        .malformedCondition, .frontmatterPlacement, .invalidTestSpecKey,
+        .removedImportForm, .sectionStructuralError, .uncheckablePredicate,
+        .invalidTableCell, .matchBranchSyntax, .unresolvedPhrase,
+        .unknownTool, .unknownKind, .unknownProperty,
+        .unknownVocabulary, .unknownRulebook, .unknownAdjective,
+        .unknownVerb, .unknownFallbackKind, .unknownTraceCategory,
+        .missingPhraseArgument, .unknownTemplateFormatter, .phraseInlineDepthExceeded,
+        .definitionRecursion, .duplicateDeclaration, .duplicateName,
+        .relationBackingInvalid, .unattachedRule, .unresolvedTriggerAction,
+        .toolBackedInlineDisallowed, .ambiguousEntryWorkflow, .proseDisallowed,
+        .commandHoleOutOfScope, .quantifierSemantic, .ambiguousAnaphora,
+        .invalidEnumDefault, .unlowerableRulePredicate, .unsupportedTriggerCondition,
         .matchBranchSemantic, .traceBarePerfect, .traceWindowExceedsRetention,
         .traceCausalSince, .traceFuture, .traceUnknownStep,
         .traceUnknownPayloadField, .traceUnkeyedDefinition, .traceRecently,
         .traceProgressive, .traceStateHistorySince, .traceMissingProductionCapturePolicy,
-        .traceCrossSkillScope, .traceMissingUnknownArm,
-        .statisticalConfidenceReserved, .statisticalVagueFrequency,
-        .noteBindingUndeclared, .noteBindingNonText,
-        .deonticSameScopeConflict, .deonticStickyDeny, .deonticNonNormModal,
-        .deonticToolOutsidePermissions, .deonticOutcomeAsAction, .normIdCollision,
-        .deonticUnlowerableCondition,
-        .moduleNotFound, .moduleImportCycle, .moduleExportCollision,
-        .moduleSealedCollision, .duplicateModuleImport,
-        .judgmentWithoutProducedValue, .judgmentToolOutsidePermissions,
-        .conditionUnknownComparator, .domainContradictoryDefault,
-        .descriptionSuperlativeNeedsProperty,
-        .codegenError, .invalidIR,
-        .swiftFormatFailed, .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown,
-        .unknownMerconfigSection, .malformedRulebookEntry, .unrecognizedBlockProperty,
-        .unwritableTraceFile, .emptyLexiconMarkers, .inputFileNotFound, .directoryReadFailed,
+        .traceCrossSkillScope, .traceMissingUnknownArm, .statisticalConfidenceReserved,
+        .statisticalVagueFrequency, .noteBindingUndeclared, .noteBindingNonText,
+        .codegenError, .invalidIR, .swiftFormatFailed,
+        .vocabularyDeclarationUnrecognized, .rulebookSectionUnknown, .unknownMerconfigSection,
+        .malformedRulebookEntry, .unrecognizedBlockProperty, .unwritableTraceFile,
+        .emptyLexiconMarkers, .inputFileNotFound, .directoryReadFailed,
         .lintPoliteCommand, .lintUncertainty, .migrationRouteFuzzyDowngrade,
         .diagnosticRecoverySummary, .lintCrossRunInARow, .lintSuperlativeEventAnchor,
+        .deonticSameScopeConflict, .deonticStickyDeny, .deonticNonNormModal,
+        .deonticToolOutsidePermissions, .deonticOutcomeAsAction, .normIdCollision,
+        .deonticUnlowerableCondition, .moduleNotFound, .moduleImportCycle,
+        .moduleExportCollision, .moduleSealedCollision, .duplicateModuleImport,
+        .judgmentWithoutProducedValue, .judgmentToolOutsidePermissions, .conditionUnknownComparator,
+        .domainContradictoryDefault, .descriptionSuperlativeNeedsProperty,
     ]
 
     /// Look up a code by its stable id (`"MER2001"`), case-insensitively.
@@ -599,4 +725,13 @@ extension DiagnosticCode {
         let needle = id.uppercased()
         return all.first { $0.id == needle }
     }
+
+    /// Single source of truth for catalog accountability tests and
+    /// `meridian explain-diag`: a projection of `all`, so each code's
+    /// `status`/`emitters` live with its definition instead of in a parallel
+    /// list. Ordered exactly like `all`.
+    public static let catalog: [DiagnosticCodeEntry] = all.map { DiagnosticCodeEntry($0) }
+
+    public static let catalogByID: [String: DiagnosticCodeEntry] =
+        Dictionary(uniqueKeysWithValues: catalog.map { ($0.code.id, $0) })
 }

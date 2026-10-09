@@ -138,29 +138,32 @@ struct RuleInjector {
                 case .deonticProhibition, .deonticObligation, .deonticPermission:
                     attached.insert(rIdx)
 
-                case .permission(let kind, _, let allowedAction, let conditions, let isBounded, let sourceLine, let originalText):
+                case .permission(let permission):
                     // Permissions match by either:
                     //   - actor + verb (rule subject is the actor, workflow takes
                     //     that actor as a parameter, and the verbs overlap), OR
                     //   - object + verb (the action mentions a noun that matches
                     //     a workflow parameter; e.g. "may approve any order"
                     //     matches a workflow that operates on an order).
-                    if permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) {
-                        if isBounded, let conditions = conditions {
-                            let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                    if permissionMatches(
+                        actorKind: permission.subjectKind,
+                        allowedAction: permission.allowedActionText,
+                        workflow: workflow) {
+                        if permission.isBounded, let conditions = permission.conditions {
+                            let sr = SourceRange(file: sourceFile, line: permission.sourceLine, column: 0)
                             let gateExpr = try lowerExprSimple(conditions, sourceRange: sr)
                             guard isPlausibleGateCondition(gateExpr) else {
                                 throw CompilerError.diagnostics([
                                     Diagnostic.error(
                                         .unlowerableRulePredicate,
-                                        message: "bounded permission's clause has no comparison to check: \"\(originalText)\"",
+                                        message: "bounded permission's clause has no comparison to check: \"\(permission.originalText)\"",
                                         range: sr,
                                         help: "The clause after \"up to\"/\"whose\"/\"if\" must be a real comparison against a property (e.g. \"whose queue position is at most 3\"), not a bare number or bare value — a bare bound has no meaningful truthiness and would silently gate as always-true instead of actually enforcing the cap.")
                                 ])
                             }
                             insertGateAtZero = .assert(AssertIR(
                                 condition: gateExpr,
-                                message: "Permission required: \(originalText)",
+                                message: "Permission required: \(permission.originalText)",
                                 otherwiseAction: nil,
                                 sourceRange: sr
                             ))
@@ -259,18 +262,21 @@ struct RuleInjector {
             let newStatements = try workflow.body.statements.map { stmt -> IRPrimitive in
                 guard case .assert(let assertIR) = stmt else { return stmt }
                 var softened: [IRExpression] = []
-                for case .permission(let kind, let filter, let allowedAction, let conditions, _, let sourceLine, let originalText) in permissions {
-                    guard permissionMatches(actorKind: kind, allowedAction: allowedAction, workflow: workflow) else { continue }
-                    let sr = SourceRange(file: sourceFile, line: sourceLine, column: 0)
+                for case .permission(let permission) in permissions {
+                    guard permissionMatches(
+                        actorKind: permission.subjectKind,
+                        allowedAction: permission.allowedActionText,
+                        workflow: workflow) else { continue }
+                    let sr = SourceRange(file: sourceFile, line: permission.sourceLine, column: 0)
                     var parts: [IRExpression] = []
-                    if let f = filter { parts.append(try lowerExprSimple(f, sourceRange: sr)) }
-                    if let c = conditions {
+                    if let f = permission.subjectFilter { parts.append(try lowerExprSimple(f, sourceRange: sr)) }
+                    if let c = permission.conditions {
                         let condExpr = try lowerExprSimple(c, sourceRange: sr)
                         guard isPlausibleGateCondition(condExpr) else {
                             throw CompilerError.diagnostics([
                                 Diagnostic.error(
                                     .unlowerableRulePredicate,
-                                    message: "bounded permission's clause has no comparison to check: \"\(originalText)\"",
+                                    message: "bounded permission's clause has no comparison to check: \"\(permission.originalText)\"",
                                     range: sr,
                                     help: "The clause after \"up to\"/\"whose\"/\"if\" must be a real comparison against a property (e.g. \"whose queue position is at most 3\"), not a bare number or bare value.")
                             ])
@@ -651,7 +657,7 @@ struct RuleInjector {
         case .precondition(_, _, _, _, let line, _): return (line, "precondition")
         case .trigger(_, _, let line, _): return (line, "trigger")
         case .unsupportedTriggerCondition(_, _, let line, _): return (line, "unsupportedTriggerCondition")
-        case .permission(_, _, _, _, _, let line, _): return (line, "permission")
+        case .permission(let permission): return (permission.sourceLine, "permission")
         case .deonticProhibition(let norm): return (norm.sourceRange.startLine, "deonticProhibition")
         case .deonticObligation(let norm): return (norm.sourceRange.startLine, "deonticObligation")
         case .deonticPermission(let norm): return (norm.sourceRange.startLine, "deonticPermission")

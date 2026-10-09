@@ -386,7 +386,7 @@ public struct ASTToIR {
         case .precondition(_, _, _, _, let line, let txt): return "L\(line) [precondition] \(txt)"
         case .trigger(_, _, let line, let txt):            return "L\(line) [trigger] \(txt)"
         case .unsupportedTriggerCondition(_, _, let line, let txt): return "L\(line) [unsupportedTriggerCondition] \(txt)"
-        case .permission(_, _, _, _, _, let line, let txt):return "L\(line) [permission] \(txt)"
+        case .permission(let permission): return "L\(permission.sourceLine) [permission] \(permission.originalText)"
         case .deonticProhibition(let norm): return "L\(norm.sourceRange.startLine) [deonticProhibition] \(norm.originalText)"
         case .deonticObligation(let norm): return "L\(norm.sourceRange.startLine) [deonticObligation] \(norm.originalText)"
         case .deonticPermission(let norm): return "L\(norm.sourceRange.startLine) [deonticPermission] \(norm.originalText)"
@@ -399,9 +399,10 @@ public struct ASTToIR {
              .parameterGuard(_, _, _, let line, _),
              .precondition(_, _, _, _, let line, _),
              .trigger(_, _, let line, _),
-             .unsupportedTriggerCondition(_, _, let line, _),
-             .permission(_, _, _, _, _, let line, _):
+             .unsupportedTriggerCondition(_, _, let line, _):
             return line
+        case .permission(let permission):
+            return permission.sourceLine
         case .deonticProhibition(let norm), .deonticObligation(let norm), .deonticPermission(let norm):
             return norm.sourceRange.startLine
         }

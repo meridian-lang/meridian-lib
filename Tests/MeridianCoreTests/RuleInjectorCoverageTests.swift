@@ -221,7 +221,7 @@ struct RuleInjectorCoverageTests {
     @Test("object-driven permission matches a workflow that only takes the action object")
     func permissionObjectDrivenMatch() throws {
         let rules: [ParsedRule] = [
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: nil,
                 allowedActionText: "approve any order",
@@ -229,7 +229,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 2,
                 originalText: "stub"
-            )
+            ))
         ]
         let wf = workflow(name: "approve an order", params: [("order", "order")], body: [.complete(CompleteIR())])
         var injector = RuleInjector(symbols: try symbols(), trace: .silent(), sourceFile: "t.meridian")
@@ -247,7 +247,7 @@ struct RuleInjectorCoverageTests {
                 sourceLine: 2,
                 originalText: "A customer must not place an order."
             ),
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "customer",
                 subjectFilter: .comparison(.identifierRef("customer"), .equal, .literal(.boolean(true))),
                 allowedActionText: "place an order",
@@ -255,7 +255,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 3,
                 originalText: "A customer may place an order when ALLOW_GUEST_CHECKOUT is set."
-            ),
+            )),
         ]
         let wf = workflow(
             name: "place an order",
@@ -332,7 +332,7 @@ struct RuleInjectorCoverageTests {
     @Test("bounded permission injects a gate assert built from conditions")
     func boundedPermissionGate() throws {
         let rules: [ParsedRule] = [
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: nil,
                 allowedActionText: "approve any order",
@@ -344,7 +344,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: true,
                 sourceLine: 2,
                 originalText: "stub"
-            )
+            ))
         ]
         let wf = workflow(
             name: "approve an order",
@@ -382,7 +382,7 @@ struct RuleInjectorCoverageTests {
             .decideWhether(question: "proceed?"),
         ])
         let rules: [ParsedRule] = [
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: .literal(.boolean(true)),
                 allowedActionText: "approve any order",
@@ -390,7 +390,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 2,
                 originalText: "stub"
-            ),
+            )),
             .invariant(
                 subjectKind: "account manager",
                 subjectFilter: nil,
@@ -477,7 +477,7 @@ struct RuleInjectorCoverageTests {
     @Test("lowerInterpolationSegmentSimple rejects unknown formatters")
     func lowerExprSimpleRejectsUnknownFormatter() throws {
         let rules: [ParsedRule] = [
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: nil,
                 allowedActionText: "approve any order",
@@ -487,7 +487,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: true,
                 sourceLine: 2,
                 originalText: "stub"
-            ),
+            )),
         ]
         let wf = workflow(
             name: "approve an order",
@@ -565,7 +565,7 @@ struct RuleInjectorCoverageTests {
                 sourceLine: 2,
                 originalText: "stub"
             ),
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "customer",
                 subjectFilter: .envVar("ALLOW_CHECKOUT"),
                 allowedActionText: "place an order",
@@ -573,7 +573,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 3,
                 originalText: "stub filter-only"
-            ),
+            )),
         ]
         let wf = workflow(
             name: "place an order",
@@ -611,7 +611,7 @@ struct RuleInjectorCoverageTests {
                 sourceLine: 2,
                 originalText: "stub"
             ),
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: nil,
                 allowedActionText: "approve any order",
@@ -619,7 +619,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 3,
                 originalText: "stub"
-            ),
+            )),
         ]
         let wf = workflow(
             name: "approve an order",
@@ -639,7 +639,7 @@ struct RuleInjectorCoverageTests {
                 sourceLine: 2,
                 originalText: "stub"
             ),
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "customer",
                 subjectFilter: nil,
                 allowedActionText: "place an order",
@@ -647,7 +647,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 3,
                 originalText: "stub unconditional"
-            ),
+            )),
         ]
         let wf = workflow(
             name: "place an order",
@@ -677,7 +677,7 @@ struct RuleInjectorCoverageTests {
                 sourceLine: 2,
                 originalText: "stub"
             ),
-            .permission(
+            .permission(PermissionRule(
                 subjectKind: "account manager",
                 subjectFilter: nil,
                 allowedActionText: "approve any order",
@@ -685,7 +685,7 @@ struct RuleInjectorCoverageTests {
                 isBounded: false,
                 sourceLine: 3,
                 originalText: "stub"
-            ),
+            )),
         ]
         let wf = workflow(
             name: "approve an order",

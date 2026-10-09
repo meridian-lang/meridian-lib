@@ -100,11 +100,11 @@ struct RuleLoweringTests {
         guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
-        if case .permission(let kind, _, let action, let conditions, let bounded, _, _) = parsed {
-            #expect(kind == "customer")
-            #expect(action.lowercased().contains("order"))
-            #expect(!bounded)
-            #expect(conditions == nil)
+        if case .permission(let permission) = parsed {
+            #expect(permission.subjectKind == "customer")
+            #expect(permission.allowedActionText.lowercased().contains("order"))
+            #expect(!permission.isBounded)
+            #expect(permission.conditions == nil)
         } else {
             Issue.record("expected .permission, got: \(parsed)")
         }
@@ -123,8 +123,8 @@ struct RuleLoweringTests {
         guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected ParsedRule, got nil"); return
         }
-        if case .permission(_, _, _, _, let bounded, _, _) = parsed {
-            #expect(bounded, "Expected bounded=true for 'at most' clause")
+        if case .permission(let permission) = parsed {
+            #expect(permission.isBounded, "Expected bounded=true for 'at most' clause")
         } else {
             Issue.record("expected .permission, got: \(parsed)")
         }
@@ -191,10 +191,10 @@ struct RuleLoweringTests {
         let rule = RuleAST(text: "A customer with status premium may place orders.", sourceLine: 25)
         let parsed = try analyzer.classify(rule)
         #expect(parsed != nil, "Expected permission to parse")
-        if case .permission(let kind, _, let action, _, let bounded, _, _) = parsed! {
-            #expect(kind == "customer")
-            #expect(action.lowercased().contains("order"))
-            #expect(!bounded)
+        if case .permission(let permission) = parsed! {
+            #expect(permission.subjectKind == "customer")
+            #expect(permission.allowedActionText.lowercased().contains("order"))
+            #expect(!permission.isBounded)
         } else {
             Issue.record("expected .permission, got: \(String(describing: parsed))")
         }

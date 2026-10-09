@@ -3,6 +3,37 @@ import MeridianRuntime
 
 // MARK: - ParsedRule
 
+/// A classified `"… may …"` permission rule: the subject kind/filter it is
+/// scoped to, the action it allows, and the optional bound (`whose`/`if`/`up
+/// to` clause) that gates it.
+public struct PermissionRule: Sendable {
+    public let subjectKind: String
+    public let subjectFilter: ExpressionAST?
+    public let allowedActionText: String
+    public let conditions: ExpressionAST?
+    public let isBounded: Bool
+    public let sourceLine: Int
+    public let originalText: String
+
+    public init(
+        subjectKind: String,
+        subjectFilter: ExpressionAST?,
+        allowedActionText: String,
+        conditions: ExpressionAST?,
+        isBounded: Bool,
+        sourceLine: Int,
+        originalText: String
+    ) {
+        self.subjectKind = subjectKind
+        self.subjectFilter = subjectFilter
+        self.allowedActionText = allowedActionText
+        self.conditions = conditions
+        self.isBounded = isBounded
+        self.sourceLine = sourceLine
+        self.originalText = originalText
+    }
+}
+
 /// A rule classified from RuleAST text into a strongly-typed variant that
 /// the RuleInjector can act on without re-parsing the text.
 public enum ParsedRule: Sendable {
@@ -50,15 +81,7 @@ public enum ParsedRule: Sendable {
         sourceLine: Int,
         originalText: String
     )
-    case permission(
-        subjectKind: String,
-        subjectFilter: ExpressionAST?,
-        allowedActionText: String,
-        conditions: ExpressionAST?,
-        isBounded: Bool,
-        sourceLine: Int,
-        originalText: String
-    )
+    case permission(PermissionRule)
     case deonticProhibition(norm: NormIR)
     case deonticObligation(norm: NormIR)
     case deonticPermission(norm: NormIR)
@@ -509,7 +532,7 @@ public struct RuleAnalyzer {
             }
         }
 
-        return .permission(
+        return .permission(PermissionRule(
             subjectKind: subjectKind,
             subjectFilter: subjectFilter,
             allowedActionText: actionText,
@@ -517,7 +540,7 @@ public struct RuleAnalyzer {
             isBounded: isBounded,
             sourceLine: rule.sourceLine,
             originalText: rule.text
-        )
+        ))
     }
 
     // MARK: - Subject parsing helper

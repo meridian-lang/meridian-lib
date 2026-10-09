@@ -125,76 +125,25 @@ struct RuntimeExecutor {
 
     /// Generate the driver Swift source that runs `workflow` with the given stubs/inputs.
     private func driverSource(workflow: IRWorkflow, spec: MeridianTestRunner.RuntimeSpec) -> String {
-        var lines: [String] = []
-        lines.append("import Foundation")
-        lines.append("import MeridianRuntime")
-        lines.append("import GeneratedWorkflow")
-        lines.append("")
-        lines.append("// Value JSON helper")
-        lines.append(contentsOf: valueJSONHelper())
-        lines.append("")
-        lines.append("// Entry point")
-        lines.append("let _task = Task {")
-        lines.append("    do {")
-        lines.append("    let registry = ToolRegistry()")
-
-        // Register tool stubs
-        for (toolID, json) in spec.toolStubs {
-            lines.append(contentsOf: DriverSourceBuilder.toolStub(name: toolID, json: json, indent: "    "))
-        }
-
-        lines.append("    let observer = InMemoryObserver()")
-        lines.append(contentsOf: DriverSourceBuilder.runtimeBootstrap(
+        DriverSourceBuilder.driver(spec: DriverSourceBuilder.DriverSpec(
+            shell: .detachedTask,
+            sectionSpacing: true,
+            moneyCoercion: true,
+            observerExpr: "InMemoryObserver()",
+            checkpointRootExpr: "InMemoryCheckpointer()",
+            runID: "test-run",
             workflowStructName: workflow.structName,
             hasTraceConfiguration: workflow.runtimeTraceConfiguration != nil,
-            runID: "test-run",
-            observerExpr: "observer",
-            checkpointRootExpr: "InMemoryCheckpointer()",
+            parameters: workflow.parameters.map { ($0.name, $0.kind.name) },
+            inputs: spec.inputs.map { ($0.paramName, $0.json) },
+            toolStubs: spec.toolStubs.map { ($0.toolID, $0.json) },
+            reporting: .init(
+                finalReasonSentinel: Self.finalReasonSentinel,
+                finalBindingSentinel: Self.finalBindingSentinel,
+                finalBindingKey: spec.expectFinalBindingContains?.key
+            ),
             indent: "    "
         ))
-        lines.append("")
-
-        // Decode inputs
-        let inputsByParam = Dictionary(spec.inputs.map { ($0.paramName, $0.json) }, uniquingKeysWith: { _, new in new })
-        for param in workflow.parameters {
-            let swiftType = IdentifierNaming.pascalCase(param.kind.name)
-            let json      = inputsByParam[param.name] ?? "{}"
-            lines.append(contentsOf: DriverSourceBuilder.paramDecode(
-                name: param.name, swiftType: swiftType, json: json, indent: "    ", force: false))
-        }
-
-        lines.append("")
-        lines.append("    var __meridianResult: WorkflowResult?")
-        lines.append("    do {")
-        let params = (["runtime: runtime"] + workflow.parameters.map { "\($0.name): \($0.name)" }).joined(separator: ", ")
-        lines.append("        __meridianResult = try await \(workflow.structName)(\(params)).run()")
-        lines.append("    } catch {}")
-        lines.append("")
-        lines.append("    let events = await observer.events")
-        lines.append("    for event in events {")
-        lines.append("        print(event.kind.rawValue)")
-        lines.append("    }")
-        lines.append("    if let final = events.last(where: { $0.kind == .workflowCompleted || $0.kind == .workflowFailed }),")
-        lines.append("       case .string(let reason)? = (final.payload ?? [:])[\"reason\"] {")
-        lines.append("        print(\"\(Self.finalReasonSentinel)\\(reason)\")")
-        lines.append("    }")
-        if let expectBinding = spec.expectFinalBindingContains {
-            lines.append("    if let v = __meridianResult?.bindings?[\"\(expectBinding.key)\"] {")
-            lines.append("        print(\"\(Self.finalBindingSentinel)\\(v.scalarDescription)\")")
-            lines.append("    }")
-        }
-        lines.append("    } catch {")
-        lines.append("        fputs(\"driver: \\(error)\\n\", stderr)")
-        lines.append("    }")
-        lines.append("}")
-        lines.append("await _task.value")
-
-        return lines.joined(separator: "\n") + "\n"
-    }
-
-    /// Inline Value-from-JSON helper included in the driver (avoids extra deps).
-    private func valueJSONHelper() -> [String] {
-        DriverSourceBuilder.jsonBridge(includeMoneyCoercion: true)
     }
 
     // MARK: - Runtime assertion evaluation

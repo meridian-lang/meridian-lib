@@ -248,10 +248,7 @@ extension StatementParser {
 
         // 3. Leading `[the ]first N` or `[the ]last N` (take suffix disambiguated
         // from temporal windows by requiring a kind noun after the count).
-        var firstScan = work
-        for article in lexicon.articles where firstScan.lowercased().hasPrefix(article + " ") {
-            firstScan = String(firstScan.dropFirst(article.count + 1)); break
-        }
+        let firstScan = lexicon.stripLeadingArticle(work)
         let lowerFirst = firstScan.lowercased()
         if let definite = lexicon.definiteArticle,
            lowerFirst.hasPrefix(definite + " ") {

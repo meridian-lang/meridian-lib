@@ -292,7 +292,7 @@ struct AGENTSSharpEdgeRegressionTests {
         let screen = NonterminalScreen(table: GrammarTable(productions: fillers + [quantifierLike]))
 
         #expect(screen.anchorCount == 128)
-        #expect(screen.anchorMask(for: quantifierLike) == 0)
+        #expect(screen.anchorIndices(for: quantifierLike).isEmpty)
         #expect(screen.candidates(for: "no determinant here").contains { $0.name == "quantifier-like" })
     }
 }

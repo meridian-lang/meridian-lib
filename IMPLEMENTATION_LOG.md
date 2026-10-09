@@ -3429,3 +3429,60 @@ them. `AGENTS.md`'s lexicon recipe is now 2 steps; `docs/03` updated.
 **Validation:** build clean; fast suite 2752 tests / 351 suites; corpus/example
 diff empty; coverage gate green with **no floor re-basing** (MeridianAST
 88.00 → 94.97%, EnglishLexicon 92.89 → 95.36%, new files 100%).
+
+## 2026-10-09 — Simplification Phase 5 remainder: tuples, driver, bitset, catalog, helpers
+
+**A — `ParsedRule.permission`'s 7-element tuple** became `PermissionRule`
+(7 named fields); all producers/consumers/pattern matches updated. The two
+trigger-synthesis paths were deliberately **left alone**: they already share
+`TriggerWorkflowBuilder.make` and differ in validation/naming semantics
+(MER3016 + action-lowering validation vs frontmatter phrase naming and
+duplicate disambiguation), so merging them would change behaviour.
+`PermissionRule` is `Sendable` but not `Equatable` (`ExpressionAST` has no
+equality); nothing compares `ParsedRule`s.
+
+**B — one SwiftPM driver builder.** `DriverSourceBuilder` now owns
+`DriverSpec` + `driver(spec:)`; `RuntimeExecutor` and `SwiftPMPackageRunner`
+are ~20-line spec constructions. Sixteen enumerated differences (imports,
+section spacing, money coercion, shell shape, builtins registration, indent,
+observer, runID, checkpointer, tolerant vs strict param decode, tool stubs,
+inputs, result reporting, trace wiring, workflow/params, newline) are all
+expressed in the spec. **Byte-identity proved**: the five generated-driver
+shapes snapshotted before the change diff byte-for-byte identical after.
+`PackageManifestBuilder` was kept (folding it would duplicate the manifest
+text, since both callers need the same manifest with different flags).
+`docs/coverage/SILENT_FALLBACK_ALLOWLIST.md` row moved with the emitted
+`} catch {}`.
+
+**C — `NonterminalScreen`'s hand-rolled `Bitset128` deleted** in favour of an
+anchor→slot dictionary + per-production `Set<Int>`; the 128-slot budget stays
+explicit because the overflow tests pin it. Screening identity proved:
+`meridian bench-parse` over 10 287 corpus lines reports 10 282 screened
+candidates before and after.
+
+**D — `DiagnosticCodeCatalog` folded into `DiagnosticCode`** (file deleted):
+each of the 95 definitions carries its own `status`/`emitters` and `catalog`
+derives from `all`, which was reordered to the catalog's order so
+`docs/15_PROBLEM_MESSAGES.md` stays byte-identical (pinned by
+`ProblemMessageTests`). Inventory tests unchanged in intent and green.
+
+**E — duplicate-helper sweep:** two genuine copies of leading-article
+stripping (`StatementParser+ControlFlow`'s bare `for each {kind}:` header and
+`StatementParser+Idioms`' `[the ]first/last N` scan) now call
+`EnglishLexicon.stripLeadingArticle`. No duplicates found for
+`QuoteAwareScanner`, `WordStemmer`, `WholeWordRegex` or `IdentifierNaming`;
+six near-duplicates were reviewed and deliberately left (documented in the
+session report).
+
+**Validation:** build clean; fast suite 2755 tests / 351 suites; driver oracles
+(`RuntimeExecutorSlowTests` + `CLIRunAndTestCommandSlowTests`, 31 tests) green;
+corpus/example diff empty; coverage gate green with no floors re-based (one
+earlier gate failure was a stale-profile artifact after a SIGKILLed run; the
+clean run is green).
+
+**Known, pre-existing, not caused by this work:** `scripts/coverage.swift
+--full --gate` reports two files below their full-only floors —
+`MeridianCLIKit/Commands/RunCommand.swift` 83.58% < 84.30 and
+`MeridianCore/Testing/MeridianTestRunner.swift` 90.29% < 90.60 — both
+reproduced on the pre-change tree and last touched by Phase 3. Flagged for a
+follow-up rather than re-based here.

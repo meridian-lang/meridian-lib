@@ -68,6 +68,52 @@ struct ReachableCoverageASTToIRTests {
         #expect(lines.contains { $0.contains("did not attach") || $0.contains("allow-fallbacks") })
     }
 
+    @Test("an unattached permission rule reports through describeRule/ruleLine in both modes")
+    func unattachedPermissionRuleReporting() throws {
+        let cfg = """
+        === vocabulary ===
+        An order is a kind of thing.
+        A customer is a kind of thing.
+        An order has a total amount, which is a Money.
+        """
+        let workflow = """
+        To greet a customer:
+          complete with reason "hi".
+        """
+        // The permission's subject/action matches no workflow, so it lands in
+        // `unattachedRules` — the only path that formats a rule through
+        // `describeRule`/`ruleLine`.
+        let rule = "A customer may place orders whose total amount is at most $100."
+        let lenient = """
+        ---
+        vocabulary: t.merconfig
+        allow-fallbacks: unattached-rules
+        ---
+        \(rule)
+
+        \(workflow)
+        """
+        let cap = ParserTrace.capturing()
+        _ = try compile(lenient, cfg, trace: cap.trace)
+        #expect(cap.lines().contains { $0.contains("[permission]") })
+
+        let strict = """
+        ---
+        vocabulary: t.merconfig
+        ---
+        \(rule)
+
+        \(workflow)
+        """
+        do {
+            _ = try compile(strict, cfg)
+            Issue.record("expected the unattached permission rule to be a hard error")
+        } catch let error as CompilerError {
+            let messages = error.diagnostics.map(\.message).joined(separator: "\n")
+            #expect(messages.contains("[permission]"), Comment(rawValue: messages))
+        }
+    }
+
     // MARK: Relation / verb validation errors (validateRelationsAndVerbs)
 
     @Test("backing for an undeclared relation is a hard error")

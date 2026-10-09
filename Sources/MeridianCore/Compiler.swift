@@ -739,7 +739,7 @@ public struct Compiler {
         case .precondition: return ("precondition", false)
         case .trigger: return ("trigger", false)
         case .unsupportedTriggerCondition: return ("unsupportedTrigger", false)
-        case .permission(_, _, _, _, let isBounded, _, _): return ("permission", isBounded)
+        case .permission(let permission): return ("permission", permission.isBounded)
         case .deonticProhibition: return ("deonticProhibition", false)
         case .deonticObligation: return ("deonticObligation", false)
         case .deonticPermission: return ("deonticPermission", false)

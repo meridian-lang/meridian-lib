@@ -12,8 +12,9 @@ struct NonterminalScreeningTests {
         let comparison = try #require(table.production(named: "comparison"))
 
         #expect(screen.anchorCount > 0)
-        #expect(screen.anchorMask(for: comparison) != 0)
-        #expect(screen.mask(for: "total amount is more than 500") & screen.anchorMask(for: comparison) != 0)
+        #expect(!screen.anchorIndices(for: comparison).isEmpty)
+        #expect(!screen.anchorIndices(in: "total amount is more than 500")
+            .isDisjoint(with: screen.anchorIndices(for: comparison)))
     }
 
     @Test("candidates skip productions with missing anchors")
@@ -133,7 +134,7 @@ struct NonterminalScreeningTests {
         let screen = NonterminalScreen(table: GrammarTable(productions: [production]))
 
         #expect(screen.anchorCount == 0)
-        #expect(screen.anchorMask(for: production) == 0)
+        #expect(screen.anchorIndices(for: production).isEmpty)
         #expect(screen.candidates(for: "anything").map(\.name) == ["fallback"])
     }
 }

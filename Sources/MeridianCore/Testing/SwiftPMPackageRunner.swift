@@ -176,27 +176,6 @@ public final class SwiftPMPackageRunner {
         workflow: IRWorkflow,
         options: MeridianRunDriverOptions
     ) throws -> String {
-        var lines: [String] = [
-            "import Foundation",
-            "import MeridianRuntime",
-            "import MeridianTools",
-            "import GeneratedWorkflow",
-            "",
-        ]
-        lines.append(contentsOf: DriverSourceBuilder.jsonBridge(includeMoneyCoercion: false))
-        lines.append(contentsOf: [
-            "",
-            "@main",
-            "struct Driver {",
-            "    static func main() async throws {",
-            "        let registry = ToolRegistry()",
-            "        await registry.registerBuiltins()"
-        ])
-
-        for pair in try parseAssignments(options.toolStubs, option: "--tool-stub") {
-            lines.append(contentsOf: DriverSourceBuilder.toolStub(name: pair.name, json: pair.json, indent: "        "))
-        }
-
         let checkpointRootExpr: String
         if let checkpointRoot = options.checkpointRoot {
             checkpointRootExpr = "try FilesystemCheckpointer(rootURL: URL(fileURLWithPath: \"\(escapeSwiftStringLiteral(checkpointRoot))\"))"
@@ -204,34 +183,21 @@ public final class SwiftPMPackageRunner {
             checkpointRootExpr = "InMemoryCheckpointer()"
         }
 
-        lines.append(contentsOf: [
-            "        let observer = JSONLObserver.stdout",
-        ])
-        lines.append(contentsOf: DriverSourceBuilder.runtimeBootstrap(
+        return DriverSourceBuilder.driver(spec: DriverSourceBuilder.DriverSpec(
+            shell: .mainEntryPoint,
+            extraImports: ["MeridianTools"],
+            registerBuiltins: true,
+            observerExpr: "JSONLObserver.stdout",
+            checkpointRootExpr: checkpointRootExpr,
+            runID: options.runID,
+            strictParamDecode: true,
             workflowStructName: workflow.structName,
             hasTraceConfiguration: workflow.runtimeTraceConfiguration != nil,
-            runID: options.runID,
-            observerExpr: "observer",
-            checkpointRootExpr: checkpointRootExpr,
+            parameters: workflow.parameters.map { ($0.name, $0.kind.name) },
+            inputs: try parseAssignments(options.inputJSON, option: "--input-json"),
+            toolStubs: try parseAssignments(options.toolStubs, option: "--tool-stub"),
             indent: "        "
         ))
-
-        let inputs = try parseAssignments(options.inputJSON, option: "--input-json")
-        let inputsByName = Dictionary(inputs.map { ($0.name, $0.json) }, uniquingKeysWith: { _, new in new })
-        for param in workflow.parameters {
-            let swiftType = IdentifierNaming.pascalCase(param.kind.name)
-            let json = inputsByName[param.name] ?? "{}"
-            lines.append(contentsOf: DriverSourceBuilder.paramDecode(
-                name: param.name, swiftType: swiftType, json: json, indent: "        ", force: true))
-        }
-
-        let params = (["runtime: runtime"] + workflow.parameters.map { "\($0.name): \($0.name)" }).joined(separator: ", ")
-        lines.append(contentsOf: [
-            "        _ = try await \(workflow.structName)(\(params)).run()",
-            "    }",
-            "}"
-        ])
-        return lines.joined(separator: "\n") + "\n"
     }
 
     private func parseAssignments(_ raw: [String], option: String) throws -> [(name: String, json: String)] {

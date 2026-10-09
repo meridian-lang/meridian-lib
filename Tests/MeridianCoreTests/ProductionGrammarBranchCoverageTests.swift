@@ -300,7 +300,7 @@ struct ProductionGrammarBranchCoverageTests {
         let screen = NonterminalScreen(table: GrammarTable(productions: fillers + [overflow]))
 
         #expect(screen.anchorCount == 128)
-        #expect(screen.anchorMask(for: overflow) == 0)
+        #expect(screen.anchorIndices(for: overflow).isEmpty)
         #expect(screen.candidates(for: "no matching anchor").contains { $0.name == "overflow" })
         let unknown = GrammarProduction(
             name: "unknown",
@@ -310,6 +310,6 @@ struct ProductionGrammarBranchCoverageTests {
             summary: "Not in table.",
             anchors: ["unknown"]
         )
-        #expect(screen.anchorMask(for: unknown) == 0)
+        #expect(screen.anchorIndices(for: unknown).isEmpty)
     }
 }

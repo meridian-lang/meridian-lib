@@ -254,12 +254,12 @@ struct RuleAnalyzerCoverageTests {
         guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
-        guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
+        guard case .permission(let permission) = parsed else {
             Issue.record("expected permission"); return
         }
-        #expect(isBounded)
-        #expect(conditions != nil)
-        #expect(action.lowercased().contains("order"))
+        #expect(permission.isBounded)
+        #expect(permission.conditions != nil)
+        #expect(permission.allowedActionText.lowercased().contains("order"))
     }
 
     @Test("bounded permissions parse trailing if conditions")
@@ -271,12 +271,12 @@ struct RuleAnalyzerCoverageTests {
         guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
-        guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
+        guard case .permission(let permission) = parsed else {
             Issue.record("expected permission"); return
         }
-        #expect(isBounded)
-        #expect(conditions != nil)
-        #expect(action == "place orders")
+        #expect(permission.isBounded)
+        #expect(permission.conditions != nil)
+        #expect(permission.allowedActionText == "place orders")
     }
 
     @Test("bounded permissions parse trailing up to conditions")
@@ -288,12 +288,12 @@ struct RuleAnalyzerCoverageTests {
         guard let parsed = try analyzer.classify(rule) else {
             Issue.record("expected permission"); return
         }
-        guard case .permission(_, _, let action, let conditions, let isBounded, _, _) = parsed else {
+        guard case .permission(let permission) = parsed else {
             Issue.record("expected permission"); return
         }
-        #expect(isBounded)
-        #expect(conditions != nil)
-        #expect(action == "place orders")
+        #expect(permission.isBounded)
+        #expect(permission.conditions != nil)
+        #expect(permission.allowedActionText == "place orders")
     }
 
     @Test("parameter guards qualify possessive-chain predicate bases")

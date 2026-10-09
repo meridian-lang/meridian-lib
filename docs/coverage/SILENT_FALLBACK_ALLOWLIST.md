@@ -54,7 +54,7 @@ ParserTrace file-sink failures now use `do/catch` with MER5011 stderr fallback
 |---|---|---|---|---|---|---|
 | `Sources/MeridianCore/Testing/Assertions.swift` | `catch return` | `internal-invariant` | Golden-file helper returns descriptive failure string instead of throwing | returned assertion message | `MeridianTestRunnerTests` | no |
 | `Sources/MeridianCore/Testing/MeridianTestRunner.swift` | `catch return` | `internal-invariant` | Batch compile maps per-file failure into `(url, .failure)` result | aggregated spec failure report | `MeridianTestRunnerTests` | no |
-| `Sources/MeridianCore/Testing/RuntimeExecutor.swift` | `catch swallow` | `internal-invariant` | Generated temp-package harness uses empty catch in emitted Swift template | subprocess compile stderr | `RuntimeExecutorSlowTests` | no |
+| `Sources/MeridianCore/Testing/DriverSourceBuilder.swift` | `catch swallow` | `internal-invariant` | Shared driver emitter closes the `.meridian.test` driver's `Task` with an empty catch in the emitted Swift template | subprocess compile stderr | `RuntimeExecutorSlowTests` | no |
 | `Sources/MeridianRuntime/Runtime+Assert.swift` | `catch return` | `internal-invariant` | Monitor background task exits cleanly when `clock.sleep` is cancelled | none — task lifecycle | `MonitorLifecycleTests` | no |
 
 ## Intentional non-matches (not silent errors)

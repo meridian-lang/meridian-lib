@@ -351,8 +351,10 @@ role:
 - workflow headers in sectioned skill docs that read as prose (not `to …:`)
 
 Every other consume/drop must emit a coded diagnostic or use a named
-`allow-fallbacks:` kind. Accountability: `DiagnosticCodeCatalog.swift` lists
-every `MERxxxx` code as `active`, `reserved`, or `deprecated`; tests assert each
+`allow-fallbacks:` kind. Accountability: every `MERxxxx` code definition in
+`DiagnosticCode.swift` carries its `status` (`active`, `reserved`, or
+`deprecated`) and its production `emitters`, and `DiagnosticCode.catalog`
+projects that straight off `DiagnosticCode.all`; tests assert each
 non-reserved code has at least one production emitter.
 
 ---

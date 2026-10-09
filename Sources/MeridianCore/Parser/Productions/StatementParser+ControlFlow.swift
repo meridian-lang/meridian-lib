@@ -368,11 +368,8 @@ extension StatementParser {
             // Bare block header: `for each {kind}:` binds the singular kind and
             // iterates over its plural collection (`for each page:` → iterate
             // `pages` binding `page`).
-            var noun = headPhrase
-            for article in lexicon.articles where noun.lowercased().hasPrefix(article + " ") {
-                noun = String(noun.dropFirst(article.count + 1)); break
-            }
-            let singular = lexicon.singularize(noun.trimmingCharacters(in: .whitespaces))
+            let noun = lexicon.stripLeadingArticle(headPhrase)
+            let singular = lexicon.singularize(noun)
             variable   = camelize(singular)
             collection = .identifierRef(camelize(lexicon.pluralize(singular)))
         }
