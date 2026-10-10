@@ -3891,3 +3891,10 @@ unreachable through the public API because a box only carries an encoder when
 its wrapped value is Encodable. Gate green: fast suite 2767 tests / 353 suites,
 `scripts/coverage.swift --gate` "All in-scope files meet their required region
 coverage".
+
+**Full-gate re-run after the live-verification fixes:** `swift test` (all
+targets, including `MeridianSlowIntegrationTests`) — **2834 tests / 365 suites,
+0 failures**, single 756-second run on the tree containing all eight live
+fixes. Together with `scripts/coverage.swift --gate` green and the
+`GeneratedSwiftTypecheckSlowTests` pass, every gate the phase rule names is
+green on this tree.
