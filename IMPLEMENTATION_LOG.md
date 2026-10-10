@@ -3876,3 +3876,18 @@ classified`, which compiles and guards.
 **Verification:** fast suite 2757 tests / 351 suites green; all seven corpora
 regenerate with `FAILURES=0`; governance deviations regenerate; live runs
 demonstrate both branches of a conditional prohibition.
+
+**Coverage after the live-verification fixes:** added
+`Tests/MeridianRuntimeTests/OpaqueBoxCodableTests.swift` (5 tests: the opaque
+box renders/hashes as its fields, falls back to a description for a
+non-Encodable payload, dot-path traversal reaches its fields, and
+`InstanceHandle`/`PropertyValue` round-trip through `Codable`) and
+`Tests/MeridianCoreTests/MoneyLiteralTests.swift` (8 tests: `$5000` and
+`$5000.00 AUD` money literals, `$HOME` stays an env var, `$`, `$1000x` and a
+non-alphabetic currency are rejected, and a bounded permission with a money
+bound lowers to a real comparison). `Value.swift` carries one documented floor
+(96.00): the residual region is the Codable round-trip's `try?` failure path,
+unreachable through the public API because a box only carries an encoder when
+its wrapped value is Encodable. Gate green: fast suite 2767 tests / 353 suites,
+`scripts/coverage.swift --gate` "All in-scope files meet their required region
+coverage".

@@ -854,6 +854,12 @@ MeridianRuntime/Tracing/TraceTreeRenderer.swift              = 81.50
 # generic). Raised to 96.40 (observed 96.43%-97.32% across runs; date-coercion
 # branches appear timing-sensitive), so the floor still carries margin below
 # the low end of that observed range.
+# 2026-10-10: `Value.swift` gained the opaque-box Codable round-trip
+# (`decodeOpaqueRecord` plus the two JSON paths that use it). The residual
+# region is that round-trip's `try?` failure path, unreachable through the
+# public API: a box only carries an encoder when its wrapped value is
+# Encodable, so the encoder/decoder cannot throw for it.
+MeridianRuntime/Value/Value.swift                            = 96.00
 MeridianRuntime/Value/ValueCoercion.swift                    = 95.10
 # EventAssertions: residual is the unreachable JSONSerialization re-encode
 # failure fallback (the dict is always serializable).
