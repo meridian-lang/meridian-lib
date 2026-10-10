@@ -84,6 +84,7 @@ let out = try Compiler(options: opts).compile(
 - **Original `SKILL.md` files are read-only.** Never edit `sample-gbrain/original-skills/**/SKILL.md` or other upstream/original corpus `SKILL.md` sources to make strict compile pass; fix the compiler/migrator or the ported `.meri` and keep originals as the immutable deviation baseline.
 - **Append-only log.** Every assumption, decision, or blocker goes in `IMPLEMENTATION_LOG.md` with a UTC timestamp. Never delete entries.
 - **Commit messages.** No tool attribution footers (no `Generated with …`, no `Co-Authored-By: <tool>`). Simplification work uses the `refactor:` subject prefix — `simplify:` is not used. No implementation-stage or phase labels in subjects or bodies (`(phase 3)`, `Phase 5a/5b`, `Wave 6`, `phase-1a`) — describe the change, not the schedule. Same for branch names and PR titles.
+- **Ad-hoc generated outputs stay out of the repo root.** Anything `compile`/`run` produces for local verification (`*.swift`, `*.meridian.manifest.json`, traces) goes in `out/` (gitignored) or a temp dir. Never commit these; committed golden/generated artifacts live only in `examples/golden/`, `corpora/`, and their documented locations.
 
 ### Coding style
 
