@@ -2,14 +2,33 @@ import Foundation
 
 // MARK: - PropertyValue
 
-public enum PropertyValue: Sendable, Hashable {
+public enum PropertyValue: Sendable, Hashable, Codable {
     case literal(Value)
     case envVar(String)
+
+    private enum CodingKeys: String, CodingKey { case literal, envVar }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let env = try container.decodeIfPresent(String.self, forKey: .envVar) {
+            self = .envVar(env)
+        } else {
+            self = .literal(try container.decode(AnyCodable.self, forKey: .literal).value)
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .literal(let value): try container.encode(AnyCodable(value), forKey: .literal)
+        case .envVar(let name):   try container.encode(name, forKey: .envVar)
+        }
+    }
 }
 
 // MARK: - InstanceHandle
 
-public struct InstanceHandle: Sendable, Hashable {
+public struct InstanceHandle: Sendable, Hashable, Codable {
     public let kind: String
     public let name: String
     let properties: [String: PropertyValue]

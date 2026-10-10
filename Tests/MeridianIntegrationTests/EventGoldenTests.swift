@@ -56,17 +56,13 @@ struct EventGoldenTests {
 
     private func normalizeStable(_ lines: [String]) -> [String] {
         lines.map { line in
-            var out = line.replacingOccurrences(
-                of: #"placementDate: [^\\)]* \+0000"#,
-                with: "placementDate: <date>",
+            // Payloads are structured records now, so the only non-deterministic
+            // field is the fixture's own `Date()` placement date.
+            return line.replacingOccurrences(
+                of: #""placementDate":"[^"]*""#,
+                with: #""placementDate":"<date>""#,
                 options: .regularExpression
             )
-            out = out.replacingOccurrences(
-                of: #"properties: \[[^\]]*\]"#,
-                with: "properties: <properties>",
-                options: .regularExpression
-            )
-            return out
         }
     }
 

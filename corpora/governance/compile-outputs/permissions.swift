@@ -412,7 +412,7 @@ public struct LetUserAccessResource: MeridianWorkflow {
         "rulebook": "governance.merrules",
     ]
 
-    public static let skillVersionHash = "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+    public static let skillVersionHash = "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -430,7 +430,7 @@ public struct LetUserAccessResource: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "permissions",
-            versionHash: "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+            versionHash: "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -500,7 +500,7 @@ public struct HaveReviewerApproveAccessRequest: MeridianWorkflow {
     public let reviewerApprove: Value
     public let accessRequest: AccessRequest
 
-    public static let skillVersionHash = "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+    public static let skillVersionHash = "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -518,7 +518,7 @@ public struct HaveReviewerApproveAccessRequest: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "permissions",
-            versionHash: "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+            versionHash: "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -587,7 +587,7 @@ public struct GrantAccessRequest: MeridianWorkflow {
     public let accessRequest: AccessRequest
     public let resource: Resource
 
-    public static let skillVersionHash = "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+    public static let skillVersionHash = "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -605,7 +605,7 @@ public struct GrantAccessRequest: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "permissions",
-            versionHash: "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+            versionHash: "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -674,7 +674,7 @@ public struct EscalateOverdueAccessRequest: MeridianWorkflow {
     public let runtime: Runtime
     public let overdueAccessRequest: Value
 
-    public static let skillVersionHash = "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+    public static let skillVersionHash = "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -692,7 +692,7 @@ public struct EscalateOverdueAccessRequest: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "permissions",
-            versionHash: "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+            versionHash: "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )
@@ -757,7 +757,7 @@ public struct EscalateOverdueAccessRequest: MeridianWorkflow {
 public struct WhenAccessRequestIs: MeridianWorkflow {
     public let runtime: Runtime
 
-    public static let skillVersionHash = "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+    public static let skillVersionHash = "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
     public static let runtimeTraceConfiguration: RuntimeTraceConfiguration? = RuntimeTraceConfiguration(
         store: .memory,
         trace: TraceConfiguration(
@@ -775,7 +775,7 @@ public struct WhenAccessRequestIs: MeridianWorkflow {
         ),
         skillIdentity: TraceSkillIdentity(
             name: "permissions",
-            versionHash: "ba1591bc9c54dd5930c8e355786b25be9e9936a9bdaf3559d8cd46ac7bfcea69"
+            versionHash: "a3dfa7f030c2bf6a904693314c9ec2b9caaff1c5794ea38ac24de3c8e23b2748"
         ),
         toolCapturePolicies: ["access.grant": .hashOnly, "access.revoke": .hashOnly, "audit.log": .hashOnly, "credential.rotate": .hashOnly, "policy.evaluate": .hashOnly, "request.list": .hashOnly]
     )

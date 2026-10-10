@@ -188,7 +188,11 @@ enum ExpressionParserGoldenCorpus {
     /// entry alongside an `IMPLEMENTATION_LOG.md` note.
     static let baseline: [String: String] = [
         "lit-envvar": "$HOME",
-        "lit-dollar-shadows-money": "$5000",
+        // `$5000` is a Money literal (the form docs/03 documents), matching the
+        // .merconfig constant parser. It used to be read as an environment
+        // variable named "5000", which evaluated to "" and made comparisons
+        // against it silently take the wrong branch.
+        "lit-dollar-shadows-money": "$5000.0USD",
         "lit-string-double": "\"hello world\"",
         "lit-string-single": "\"bob\"",
         "lit-bool-true": "true",

@@ -253,6 +253,20 @@ public struct RuleAnalyzer {
         var actionText = String(text[mustNotRange.upperBound...])
             .trimmingCharacters(in: .whitespaces)
         if actionText.hasSuffix(".") { actionText = String(actionText.dropLast()) }
+        let fullActionText = actionText
+
+        // `… must not invoke <tool> when <condition>` — the clause after
+        // `when` is the norm's condition, not part of the tool id. Without
+        // this split the whole clause was methodized into the tool id, so the
+        // prohibition silently matched no invoke and guarded nothing.
+        var conditionExpr: IRExpression? = nil
+        if let whenRange = actionText.range(of: markers.whenPrefix, options: [.caseInsensitive]) {
+            let condText = String(actionText[whenRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+            actionText = String(actionText[actionText.startIndex..<whenRange.lowerBound])
+                .trimmingCharacters(in: .whitespaces)
+            let sr = SourceRange(file: "", line: rule.sourceLine, column: 0)
+            conditionExpr = try lowerExprForDeontic(exprParser.parse(condText), sourceRange: sr)
+        }
 
         guard let pattern = try DeonticLowering.parseInvokeActionPattern(
             actionText, exprParser: exprParser, lexicon: lexicon) else { return nil }
@@ -265,8 +279,8 @@ public struct RuleAnalyzer {
             kind: .prohibition,
             scope: scope,
             actionPattern: pattern,
-            condition: nil,
-            blocking: actionText.lowercased().contains(markers.blockingSpaceSuffix.trimmingCharacters(in: .whitespaces)),
+            condition: conditionExpr,
+            blocking: fullActionText.lowercased().contains(markers.blockingSpaceSuffix.trimmingCharacters(in: .whitespaces)),
             sourceRange: sr,
             originalText: rule.text
         )

@@ -448,21 +448,31 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
         }
         // L42
         if MeridianComparison.le(state.get("nurse.doseCount"), Value.from(constants.doseLimit)) {
-            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/51d643bb455498aa11d44f8c210258c4f25834283e1979e120bb45e9f05a82b0")
-            if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad") {
-                // L43
-                let medicationOrder = try await runtime.invoke(
-                    tool: "medication.administer",
-                    args: [
-                        "order": state.get("medicationOrder") ?? .null,
-                    ],
-                    step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad",
-                    capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "medication.administer")
-                )
-                state.bind("medicationOrder", medicationOrder)
+            try await runtime.recordBranchTaken(condition: "MeridianComparison.le(state.get(\"nurse.doseCount\"), Value.from(constants.doseLimit))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/f463505fb5cca3c7a106d6cd47c3b77d064f4f3cb8da4cae4c2cdcd6520c6444")
+            // L43
+            if !(MeridianComparison.gt(state.get("doseCount"), Value.from(constants.doseLimit))) {
+                try await runtime.recordBranchTaken(condition: "!(MeridianComparison.gt(state.get(\"doseCount\"), Value.from(constants.doseLimit)))", into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e")
+                if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad") {
+                    // L43
+                    let medicationOrder = try await runtime.invoke(
+                        tool: "medication.administer",
+                        args: [
+                            "order": state.get("medicationOrder") ?? .null,
+                        ],
+                        step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad",
+                        capturePolicy: Self.runtimeTraceConfiguration!.capturePolicy(for: "medication.administer")
+                    )
+                    state.bind("medicationOrder", medicationOrder)
 
-                try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad", state: state.snapshot())
+                    try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad", state: state.snapshot())
+                }
+                try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e")
+            } else {
+                try await runtime.recordBranchTaken(condition: "!(MeridianComparison.gt(state.get(\"doseCount\"), Value.from(constants.doseLimit)))", into: "otherwise", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e")
+                try await runtime.recordViolation(normID: "OBL-42840d35b67edf6e", disposition: "prevented", blocking: false, toolID: "medicationAdminister", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e")
+                try await runtime.recordBranchEnded(into: "otherwise", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e")
             }
+
             if __meridianShouldRun("/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5") {
                 // L44
                 try await runtime.emit(
@@ -474,7 +484,7 @@ public struct DoseCheckNurseMedicationOrder: MeridianWorkflow {
                 )
                 try await runtime.checkpoint(label: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/branch.then/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5", state: state.snapshot())
             }
-            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/51d643bb455498aa11d44f8c210258c4f25834283e1979e120bb45e9f05a82b0")
+            try await runtime.recordBranchEnded(into: "then", step: "/DoseCheckNurseMedicationOrder/workflow-steps/procedure/f463505fb5cca3c7a106d6cd47c3b77d064f4f3cb8da4cae4c2cdcd6520c6444")
         }
 
         // L45

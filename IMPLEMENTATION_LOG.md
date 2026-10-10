@@ -3816,3 +3816,63 @@ failures** in one 503-second run · `swift scripts/coverage.swift --gate` green
 with the tightened floors · `meridian decisions --render` in sync · CLI
 byte-compare against the golden · corpus/example outputs unchanged except where
 a phase regenerated them deliberately.
+
+## 2026-10-09/10 — Live end-to-end verification round: seven real defects found and fixed
+
+Ran the product for real (CLI compile → temp SwiftPM package → run → inspect
+events; `explain`/`drift`/`check`; corpus compiles; deontic guards) instead of
+trusting the suite. Every fix below was verified live, then by the suite.
+
+1. **`meridian run` rejected ISO-8601 date parameters.** The generated driver
+   decoded workflow parameters with a bare `JSONDecoder()` (default
+   `.deferredToDate`, a Double epoch). The driver now emits a
+   `meridianParameterDecoder()` with `.iso8601`.
+2. **`A thing has an id which is a string.` minted a garbage property**
+   (`idWhichIsAString`): the grammar's ` which is ` marker existed and the
+   parser's own help text promised the form, but only the comma variant was
+   wired. The marker is now applied **per list item**, so
+   `a name and a legacy id which is a String` types only the second item.
+3. **Emitting a kind-typed value produced `AnyHashableSendable(...)`** in
+   payloads. Two `State.bind` overloads differed only in constraints, so the
+   generated call picked the one that did not capture the `Encodable`
+   conformance; the box now captures it, and both JSON paths
+   (`Value.jsonEncodableObject`, `CanonicalJSON.valueNode`) round-trip an
+   opaque box to its fields. `InstanceHandle`/`PropertyValue` became `Codable`
+   (via the existing `AnyCodable` bridge) so instance arguments are structured
+   too. Dates inside such records encode ISO-8601.
+4. **`must not invoke <tool> when <condition>` silently guarded nothing.** The
+   whole clause was methodized into the tool id, so the norm matched no invoke
+   (and the manifest still reported `executes: true`). The `when` clause is now
+   the norm's condition, and `invokeAllowedCondition` combines it (allowed =
+   ¬condition), so a conditional prohibition blocks only when its condition
+   holds. Verified live: a payment under the limit charges; over the limit is
+   prevented and a `violated` event with the norm id is recorded.
+5. **Every prohibition on a *dotted* tool id silently guarded nothing.**
+   `normalizeToolID` was not idempotent: `methodize("medication.administer")`
+   → `medicationAdminister` but `methodize("medicationAdminister")` →
+   `medicationadminister`, so the two sides never compared equal. It now
+   compares lowercase alphanumerics. This is why the clinical/governance
+   corpora had no guards at all; their compile outputs now carry them.
+6. **`$5000` in an expression silently read an env var named `5000`**
+   (evaluating to `""`, so comparisons took the wrong branch) — including the
+   documented bounded-permission form `may … up to $10000`. `$<amount>[ CUR]`
+   is now the money literal the docs describe (same parser as the .merconfig
+   constants); `$NAME` stays an env var and anything else is rejected loudly.
+7. **The verbalizer printed a derived deontic guard as an explicit `if not …`**
+   *and* the rule line, so the canonical form carried the guard twice and
+   recompiling nested a second guard (breaking the canonical-fixpoint law for
+   both corpora that now guard). A guarded branch now verbalizes as its body;
+   the rule line carries the guard. `IRNormalizer` also treats an empty
+   optional block and no block as the same IR (they are).
+8. **`skill-deviation` could not compile module-importing skills**, so the
+   documented governance deviation regeneration failed; it now supports
+   `--module-path` (and `generate-deviations.swift` passes the catalog's
+   `modulePath`, which it declared but never used).
+
+Also fixed while live-verifying: the governance corpus rule was reworded from
+`… for classified resources` (unsupported clause) to `… whose resource is
+classified`, which compiles and guards.
+
+**Verification:** fast suite 2757 tests / 351 suites green; all seven corpora
+regenerate with `FAILURES=0`; governance deviations regenerate; live runs
+demonstrate both branches of a conditional prohibition.

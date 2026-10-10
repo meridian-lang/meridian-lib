@@ -5,28 +5,28 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenCheckdosecountFires\/root\/procedure\/a53b60943c75d562aaa624398c47720501e686fee022db84f2e025d2d5fabb6d",
-      "swift_line" : 647
+      "swift_line" : 657
     },
     {
       "canonical" : "wait for event checkDoseCount.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenCheckdosecountFires\/root\/procedure\/be28c83ee8443e58a252e8ede1f54608e75e9d4a8c21817971b943b6779a17d5",
-      "swift_line" : 647
+      "swift_line" : 657
     },
     {
       "canonical" : "wait for event runDoseLimitCheck.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenRundoselimitcheckFires\/root\/procedure\/2f400c10eb7278328547c5fe860f19bd541e63cf66418d2fcc1888bf8db510bf",
-      "swift_line" : 647
+      "swift_line" : 657
     },
     {
       "canonical" : "emit trigger.runDoseLimitCheck.fired with kind = \"keyword\", spec = \"run dose limit check\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenRundoselimitcheckFires\/root\/procedure\/efb0eaca0ff71b12a03a870f04216d3f5734bddfcc20b859737714d99494eafc",
-      "swift_line" : 647
+      "swift_line" : 657
     },
     {
       "canonical" : "assert either dose count is at most 2 or dose count is at most 2.",
@@ -39,7 +39,7 @@
       "canonical" : "if the nurse's dose count is at most the dose limit,\n  bind medicationOrder = invoke medication.administer with order = medication order.\n  emit clinical.report with message = \"dose check cleared\".",
       "meridian_line" : 42,
       "primitive" : "branch",
-      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/51d643bb455498aa11d44f8c210258c4f25834283e1979e120bb45e9f05a82b0",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/f463505fb5cca3c7a106d6cd47c3b77d064f4f3cb8da4cae4c2cdcd6520c6444",
       "swift_line" : 449
     },
     {
@@ -47,35 +47,42 @@
       "meridian_line" : 43,
       "primitive" : "invoke",
       "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/0c4c8f772ac477563bbcc5264e0981a619ba17c0395c308da200676e10fae9ad",
-      "swift_line" : 453
+      "swift_line" : 456
+    },
+    {
+      "canonical" : "bind medicationOrder = invoke medication.administer with order = medication order.",
+      "meridian_line" : 43,
+      "primitive" : "branch",
+      "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/c70f7a40d3900af6dffb4148e9feffebd286a78ee206e7fa2660d7aa02f4d20e",
+      "swift_line" : 456
     },
     {
       "canonical" : "emit clinical.report with message = \"dose check cleared\".",
       "meridian_line" : 44,
       "primitive" : "emit",
       "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/be62c099f348770cedde1427734df234317051f31b0808db56abd988c0d550b5",
-      "swift_line" : 467
+      "swift_line" : 477
     },
     {
       "canonical" : "if the nurse's dose count is more than the dose limit,\n  emit clinical.note with message = \"dose limit reached for this nurse, hand off to another nurse\".",
       "meridian_line" : 45,
       "primitive" : "branch",
       "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/70af866cf9ae9b4bc30720da17b11a0f49c3bb5fc599eb5dfd7e091f59d74513",
-      "swift_line" : 480
+      "swift_line" : 490
     },
     {
       "canonical" : "emit clinical.note with message = \"dose limit reached for this nurse, hand off to another nurse\".",
       "meridian_line" : 46,
       "primitive" : "emit",
       "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/branch.then\/fbc5a39e5d138d96caa56c20c088dd88c0ee9794b486e214a3b47b064cdd71de",
-      "swift_line" : 484
+      "swift_line" : 494
     },
     {
       "canonical" : "emit clinical.report with message = \"dose check pass complete\".",
       "meridian_line" : 47,
       "primitive" : "emit",
       "stable_step_path" : "\/DoseCheckNurseMedicationOrder\/workflow-steps\/procedure\/9ec1f07002bc1d77b98008c867b276267cca1e9a504567bb52803c87d82e0543",
-      "swift_line" : 498
+      "swift_line" : 508
     }
   ],
   "ir_version" : "1.1",

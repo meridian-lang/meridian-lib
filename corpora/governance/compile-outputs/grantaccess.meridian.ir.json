@@ -5,42 +5,42 @@
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenAuthorizeresourceaccessFires\/root\/procedure\/252805f889284c9ec6787c679a32b7eb1c372c0b478d723c3b39e677be1f8bec",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "wait for event authorizeResourceAccess.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenAuthorizeresourceaccessFires\/root\/procedure\/dd098cafeaa6e815861308954c79364eb3e3b276c7f9bbca06b2e7dfbf86e680",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "wait for event grantAccess.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGrantaccessFires\/root\/procedure\/c9256c5a0b8551cf32c9cd366df4268eadb56a1c7a6a4a0639970632c51e9060",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "emit trigger.grantAccess.fired with kind = \"keyword\", spec = \"grant access\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGrantaccessFires\/root\/procedure\/f708fcf50ea3f5103dcc0d9302210c2ba8f87a368211326e53a112061ecb12be",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "emit trigger.grantResourceAccess.fired with kind = \"keyword\", spec = \"grant resource access\".",
       "meridian_line" : 1,
       "primitive" : "emit",
       "stable_step_path" : "\/WhenGrantresourceaccessFires\/root\/procedure\/118fb8fc493c7cddbf234f17ee5ec3429d3050c09a509920a0ed00c4c87b6485",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "wait for event grantResourceAccess.",
       "meridian_line" : 1,
       "primitive" : "wait",
       "stable_step_path" : "\/WhenGrantresourceaccessFires\/root\/procedure\/90663f3b9ccdcf36a494dbafcf3544fd6ca8d2b4fbee5e339b2cdd6b2810ecd2",
-      "swift_line" : 752
+      "swift_line" : 762
     },
     {
       "canonical" : "assert either not the user's clearance equals \"denied\" or the user's role equals admin.",
@@ -60,21 +60,28 @@
       "canonical" : "if user is authorized,\n  bind access = invoke access.grant with user = user, resource = resource.\n  recover from \"access.denied\":\n    emit governance.note with message = \"access denied by provider, escalate manually\".\notherwise,\n  emit governance.note with message = \"user not authorized for this resource\".",
       "meridian_line" : 50,
       "primitive" : "branch",
-      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/952f1e6d81b16ddc79ac1a1a59a4aaf98d19d4698e54f4253984415946ea944b",
+      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/4dbba18b3ff8c183e68dc9abd02d52c3d73067c0d68b00512dfc8abe8cf0e3b3",
       "swift_line" : 475
     },
     {
       "canonical" : "bind access = invoke access.grant with user = user, resource = resource.",
       "meridian_line" : 51,
       "primitive" : "invoke",
-      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/recover.body\/d8a56e7f6f6a39e18eb67e407a349cf4cd9f2d7370e162bad04abde8e8147f57",
-      "swift_line" : 481
+      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.then\/d8a56e7f6f6a39e18eb67e407a349cf4cd9f2d7370e162bad04abde8e8147f57",
+      "swift_line" : 484
+    },
+    {
+      "canonical" : "bind access = invoke access.grant with user = user, resource = resource.",
+      "meridian_line" : 51,
+      "primitive" : "branch",
+      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/recover.body\/27117bc561e3b1d57dbf4b44a6eeb53167bab338f47231f27bf339674301168a",
+      "swift_line" : 484
     },
     {
       "canonical" : "bind access = invoke access.grant with user = user, resource = resource.\nrecover from \"access.denied\":\n  emit governance.note with message = \"access denied by provider, escalate manually\".",
       "meridian_line" : 52,
       "primitive" : "recover",
-      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.then\/d6c52094fd1d27bda59f647511b24923ade21848206f94f65f403dbadaeeff6e",
+      "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.then\/92a94d0e62a3b20749c9e957c62b25c732327f67fa4fdaf031d139c0b70f4db7",
       "swift_line" : 478
     },
     {
@@ -82,21 +89,21 @@
       "meridian_line" : 53,
       "primitive" : "emit",
       "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/recover.handler\/35fcc77a39896545e90cd294d5bf84dd95bf71090015f4469c57e179f88734d9",
-      "swift_line" : 498
+      "swift_line" : 508
     },
     {
       "canonical" : "emit governance.note with message = \"user not authorized for this resource\".",
       "meridian_line" : 55,
       "primitive" : "emit",
       "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/branch.else\/a5c069667dde897b1db0df210fecf44dd5988ee74c82fd5beb90d1085f6a98fb",
-      "swift_line" : 514
+      "swift_line" : 524
     },
     {
       "canonical" : "emit governance.report with message = \"grant access pass complete\".",
       "meridian_line" : 56,
       "primitive" : "emit",
       "stable_step_path" : "\/GrantAccessUserResource\/workflow-steps\/procedure\/b7f54cf9d3d3d70a2db2fc72bc2e3c91734a7876d56450303b86ca0fdf79de1b",
-      "swift_line" : 528
+      "swift_line" : 538
     }
   ],
   "ir_version" : "1.1",

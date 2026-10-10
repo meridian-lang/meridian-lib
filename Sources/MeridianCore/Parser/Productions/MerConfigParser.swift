@@ -241,7 +241,10 @@ public struct MerConfigParser {
         if (t.hasPrefix("\"") && t.hasSuffix("\"")) || (t.hasPrefix("'") && t.hasSuffix("'")) {
             return .string(String(t.dropFirst().dropLast()))
         }
-        if t.hasPrefix("$"), let v = Double(t.dropFirst()) { return .money(v, currency: "USD") }
+        if t.hasPrefix("$"),
+           let money = LiteralGrammar.parseMoneyLiteral(String(t.dropFirst())) {
+            return .money(money.0, currency: money.1)
+        }
         if t == "true"  { return .boolean(true) }
         if t == "false" { return .boolean(false) }
         if let dur = lexicon.parseDuration(t) { return .duration(dur.0, dur.1) }

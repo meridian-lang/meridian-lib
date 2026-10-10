@@ -47,7 +47,14 @@ enum DeonticLowering {
             constraints = try parseArgumentConstraints(predicatePart, exprParser: exprParser, lexicon: lexicon)
         }
 
-        let toolID = IdentifierNaming.methodize(rest.trimmingCharacters(in: .whitespaces))
+        let toolText = rest.trimmingCharacters(in: .whitespaces)
+        // A tool reference is one token (`chargeCard`, `medication.administer`).
+        // Anything with whitespace left over is an unsupported trailing clause
+        // (`… for classified resources`): refuse rather than methodize the whole
+        // sentence into a tool id that can never match an invoke — that is how
+        // a prohibition used to guard nothing while still reporting as attached.
+        guard !toolText.contains(where: { $0.isWhitespace }) else { return nil }
+        let toolID = IdentifierNaming.methodize(toolText)
         guard !toolID.isEmpty else { return nil }
         return ActionPatternIR(toolID: toolID, argumentConstraints: constraints)
     }
@@ -455,7 +462,8 @@ enum DeonticLowering {
         let permissions = norms.filter { $0.kind == .permission }
         if let prohibition = prohibitions.first(where: { matchesInvoke($0.actionPattern, invoke: invoke) }) {
             guard let pattern = prohibition.actionPattern else { return .invoke(invoke) }
-            let allowed = invokeAllowedCondition(pattern: pattern, invoke: invoke, negate: true)
+            let allowed = invokeAllowedCondition(
+                pattern: pattern, invoke: invoke, negate: true, condition: prohibition.condition)
             let guardIR = DeonticGuardIR(
                 normID: prohibition.id,
                 disposition: .prevented,
@@ -555,7 +563,11 @@ enum DeonticLowering {
     }
 
     private static func normalizeToolID(_ id: String) -> String {
-        IdentifierNaming.methodize(id.trimmingCharacters(in: .whitespaces))
+        id.trimmingCharacters(in: .whitespaces)
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .joined()
     }
 
     private static func matchesInvoke(_ pattern: ActionPatternIR?, invoke: InvokeIR) -> Bool {
@@ -589,9 +601,14 @@ enum DeonticLowering {
     private static func invokeAllowedCondition(
         pattern: ActionPatternIR,
         invoke: InvokeIR,
-        negate: Bool
+        negate: Bool,
+        condition: IRExpression? = nil
     ) -> IRExpression {
         var parts: [IRExpression] = []
+        // A conditional norm (`… must not invoke X when C`) contributes C: the
+        // invoke is allowed when C does not hold. Without this the guard
+        // degenerated to a literal `false` and blocked every invocation.
+        if let condition { parts.append(condition) }
         for constraint in pattern.argumentConstraints {
             let lhs: IRExpression
             if let arg = invoke.arguments.first(where: { $0.key == constraint.path }) {

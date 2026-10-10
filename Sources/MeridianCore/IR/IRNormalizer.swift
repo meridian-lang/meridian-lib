@@ -75,6 +75,14 @@ enum IRNormalizer {
         IRBlock(statements: a.statements.map(normalized), sourceRange: .unknown)
     }
 
+    /// An empty optional block and no block at all are the same IR: codegen
+    /// emits nothing for either, and the two forms arise from different
+    /// construction paths (a synthesised guard vs the canonical re-parse).
+    static func normalizedOptional(_ a: IRBlock?) -> IRBlock? {
+        guard let a, !a.statements.isEmpty else { return nil }
+        return normalized(a)
+    }
+
     static func normalized(_ a: IRParameter) -> IRParameter {
         IRParameter(name: normalizeIdentifier(a.name), kind: KindRef(normalizeIdentifier(a.kind.name)))
     }
@@ -112,8 +120,8 @@ enum IRNormalizer {
             return .branch(BranchIR(
                 condition: normalized(ir.condition),
                 thenBlock: normalized(ir.thenBlock),
-                unknownBlock: ir.unknownBlock.map(normalized),
-                elseBlock: ir.elseBlock.map(normalized),
+                unknownBlock: normalizedOptional(ir.unknownBlock),
+                elseBlock: normalizedOptional(ir.elseBlock),
                 unknownPolicy: ir.unknownPolicy,
                 authoredForm: ir.authoredForm,
                 deonticGuard: ir.deonticGuard.map(normalized),
@@ -132,7 +140,7 @@ enum IRNormalizer {
             return .assert(AssertIR(
                 condition: normalized(ir.condition),
                 message: nil,
-                otherwiseAction: ir.otherwiseAction.map(normalized),
+                otherwiseAction: normalizedOptional(ir.otherwiseAction),
                 monitored: ir.monitored,
                 cadence: ir.cadence,
                 blocking: ir.blocking,

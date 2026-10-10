@@ -100,7 +100,7 @@ struct CLICommandCatalogTests {
                 .filter(\.supportsModulePath)
                 .map(\.path)
         )
-        #expect(withModule == ["canonicalize", "check", "compile", "explain"])
+        #expect(withModule == ["canonicalize", "check", "compile", "explain", "skill-deviation"])
     }
 
     @Test("leafPaths mirrors leafCommands and entry(forPath:) resolves aliases")

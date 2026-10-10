@@ -94,7 +94,12 @@ public enum CanonicalJSON {
         case .null:
             return .null
         case .opaque(let box):
-            return .string(String(describing: box))
+            // Mirror `jsonEncodableObject`: an Encodable domain value hashes as
+            // its fields, not as a description string.
+            guard let fields = Value.decodeOpaqueRecord(box) else {
+                return .string(String(describing: box))
+            }
+            return .object(fields.mapValues(valueNode))
         }
     }
 

@@ -180,6 +180,11 @@ enum DriverSourceBuilder {
     ///   this); the CLI `run` driver omits it (records stay records).
     static func jsonBridge(includeMoneyCoercion: Bool) -> [String] {
         var lines = [
+            "func meridianParameterDecoder() -> JSONDecoder {",
+            "    let decoder = JSONDecoder()",
+            "    decoder.dateDecodingStrategy = .iso8601",
+            "    return decoder",
+            "}",
             "func valueFromJSON(_ s: String) -> Value {",
             "    guard let data = s.data(using: .utf8),",
             "          let obj = try? JSONSerialization.jsonObject(with: data) else { return .string(s) }",
@@ -229,9 +234,12 @@ enum DriverSourceBuilder {
     ///   (CLI `run`); `false` falls back to a zero-arg `Type()` (test runner,
     ///   which tolerates partial fixtures).
     static func paramDecode(name: String, swiftType: String, json: String, indent: String, force: Bool) -> [String] {
+        // ISO-8601 dates: the vocabulary's `date`/`dateTime` properties are
+        // Swift `Date`s, whose default `Codable` form is a Double epoch — an
+        // author passing `"2026-10-01T00:00:00Z"` must decode.
         let decode = force
-            ? "\(indent)let \(name) = try JSONDecoder().decode(\(swiftType).self, from: _\(name)Data)"
-            : "\(indent)let \(name) = (try? JSONDecoder().decode(\(swiftType).self, from: _\(name)Data)) ?? \(swiftType)()"
+            ? "\(indent)let \(name) = try meridianParameterDecoder().decode(\(swiftType).self, from: _\(name)Data)"
+            : "\(indent)let \(name) = (try? meridianParameterDecoder().decode(\(swiftType).self, from: _\(name)Data)) ?? \(swiftType)()"
         return [
             "\(indent)let _\(name)Data = Data(\"\(escapeSwiftStringLiteral(json))\".utf8)",
             decode,

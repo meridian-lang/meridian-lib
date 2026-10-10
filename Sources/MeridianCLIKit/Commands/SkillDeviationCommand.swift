@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 import MeridianCore
 
-public struct SkillDeviationCommand: AsyncParsableCommand {
+public struct SkillDeviationCommand: AsyncParsableCommand, ModulePathSupporting {
     public init() {}
 
     public static let configuration = CommandConfiguration(
@@ -27,6 +27,10 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
 
     @Flag(name: .long, help: "Omit the raw unified diff; emit summary-only reports.")
     var noDiff: Bool = false
+
+    @Option(name: .customLong("module-path"),
+            help: "Directory searched for shared module packages. Repeatable.")
+    var modulePath: [String] = []
 
     @OptionGroup var cliTrace: CLITraceOptions
 
@@ -239,7 +243,9 @@ public struct SkillDeviationCommand: AsyncParsableCommand {
     ) throws {
         guard !dependencies.vocabularies.isEmpty || !dependencies.rulebooks.isEmpty else { return }
         let model = try compiledModel(
-            Compiler(options: .init(trace: ParserTrace.current)),
+            Compiler(options: .init(
+                trace: ParserTrace.current,
+                moduleSearchPaths: modulePath.map { URL(fileURLWithPath: $0) })),
             portedMeri, portedFile, dependencies.vocabularies, dependencies.rulebooks)
         let trace = ParserTrace.current
         let canonical = try trace.phase("verbalize") {

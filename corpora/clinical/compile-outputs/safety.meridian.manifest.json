@@ -244,7 +244,7 @@
         }
       ],
       "skill_name" : "safety",
-      "skill_version_hash" : "62b1afc1a273f4eec01da8362dc649488dc927e92106cfd330ac4492b6d29d98",
+      "skill_version_hash" : "63e1d52af09d3587cab99cd9403c4573611047f60e58c2cf3546e6e78560318d",
       "source_name" : "let a nurse administer a medication order",
       "step_paths" : [
         "\/LetNurseAdministerMedicationOrder\/root\/procedure\/1512b18cc3e17c8df3f5cc93672cdd931064e1f98ee68880abd0f49b235a4833",
@@ -267,7 +267,7 @@
         }
       ],
       "skill_name" : "safety",
-      "skill_version_hash" : "62b1afc1a273f4eec01da8362dc649488dc927e92106cfd330ac4492b6d29d98",
+      "skill_version_hash" : "63e1d52af09d3587cab99cd9403c4573611047f60e58c2cf3546e6e78560318d",
       "source_name" : "have a attending approve the administration of a medication order",
       "step_paths" : [
         "\/HaveAttendingApproveAdministration\/root\/procedure\/9269dbd951f48eedf59f301c15ae198ec5da7b6ea3ac112a7bab6cd4a5a13b9a",
@@ -285,7 +285,7 @@
         }
       ],
       "skill_name" : "safety",
-      "skill_version_hash" : "62b1afc1a273f4eec01da8362dc649488dc927e92106cfd330ac4492b6d29d98",
+      "skill_version_hash" : "63e1d52af09d3587cab99cd9403c4573611047f60e58c2cf3546e6e78560318d",
       "source_name" : "escalate a unmonitored patient",
       "step_paths" : [
         "\/EscalateUnmonitoredPatient\/root\/procedure\/697bfa75329de4cf8e4e3ace4b97357eefa1de2df74c22e873a7215d2817877d"
@@ -298,7 +298,7 @@
 
       ],
       "skill_name" : "safety",
-      "skill_version_hash" : "62b1afc1a273f4eec01da8362dc649488dc927e92106cfd330ac4492b6d29d98",
+      "skill_version_hash" : "63e1d52af09d3587cab99cd9403c4573611047f60e58c2cf3546e6e78560318d",
       "source_name" : "when a patient is flagged as unmonitored",
       "step_paths" : [
         "\/WhenPatientIs\/root\/procedure\/e53696d24c984680d182df4e0e70f4cc857e478675ba2f14ca0f62f96f8b5f86",

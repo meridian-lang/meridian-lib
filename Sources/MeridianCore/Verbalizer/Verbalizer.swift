@@ -415,6 +415,14 @@ public struct Verbalizer: Sendable {
     }
 
     private func verbalizeBranch(_ branch: BranchIR) -> String {
+        // A deontic guard is *derived* from the rule that produced it, and the
+        // canonical form prints that rule (with its norm id) separately.
+        // Rendering the wrapper as well would make the canonical text carry the
+        // guard twice, and recompiling it would nest a second guard around the
+        // invoke. Print the guarded body only.
+        if branch.deonticGuard != nil {
+            return blockLines(branch.thenBlock).joined(separator: "\n")
+        }
         switch branch.condition {
         case .predicate(let condition):
             if branch.authoredForm == .unlessSuffix,

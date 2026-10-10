@@ -19,7 +19,7 @@ meridian --version
 
 ### `--module-path` (shared module imports)
 
-Four compile-family commands accept repeatable `--module-path <dir>` to search
+Five compile-family commands accept repeatable `--module-path <dir>` to search
 for shared Meridian module packages (`import module …` in source). See
 [03_LANGUAGE.md](03_LANGUAGE.md).
 
@@ -29,6 +29,7 @@ for shared Meridian module packages (`import module …` in source). See
 | `check` / `verify` | yes (`check` only; `verify` alias omits the flag) |
 | `explain` | yes |
 | `canonicalize` | yes |
+| `skill-deviation` | yes |
 | All other subcommands (`drift`, `run`, `trace eval`, `migrate-skill`, …) | no |
 
 ---

@@ -180,12 +180,15 @@ do {
 var failures = 0
 for corpus in selected {
     print("=== \(corpus.id) ===")
-    let args = [
+    var args = [
         "swift", "run", "meridian", "skill-deviation",
         corpus.originals, corpus.root,
         "--batch", "--index",
         "--out", corpus.migrationDeviations,
     ]
+    if let modulePath = corpus.modulePath {
+        args += ["--module-path", modulePath]
+    }
     let result = run("/usr/bin/env", args)
     if result.status == 0 {
         print("generated \(corpus.migrationDeviations)")

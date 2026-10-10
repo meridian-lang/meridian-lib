@@ -25,9 +25,9 @@ struct DriverSourceBuilderCoverageTests {
     @Test("paramDecode forced (try) and tolerant (try?) variants")
     func paramDecode() {
         let forced = DriverSourceBuilder.paramDecode(name: "order", swiftType: "Order", json: "{}", indent: "  ", force: true)
-        #expect(forced.contains { $0.contains("try JSONDecoder().decode(Order.self") })
+        #expect(forced.contains { $0.contains("try meridianParameterDecoder().decode(Order.self") })
         let tolerant = DriverSourceBuilder.paramDecode(name: "order", swiftType: "Order", json: "{}", indent: "  ", force: false)
-        #expect(tolerant.contains { $0.contains("(try? JSONDecoder().decode(Order.self") && $0.contains("?? Order()") })
+        #expect(tolerant.contains { $0.contains("(try? meridianParameterDecoder().decode(Order.self") && $0.contains("?? Order()") })
     }
 
     @Test("driver(spec:) emits the test-runner shell with result reporting")
@@ -54,7 +54,7 @@ struct DriverSourceBuilderCoverageTests {
         #expect(source.contains("// Value JSON helper"))
         #expect(source.contains("let _task = Task {"))
         #expect(source.contains(".money("))
-        #expect(source.contains("(try? JSONDecoder().decode(Order.self"))
+        #expect(source.contains("(try? meridianParameterDecoder().decode(Order.self"))
         #expect(source.contains("__MERIDIAN_FINAL_REASON__:"))
         #expect(source.contains("__MERIDIAN_FINAL_BINDING__:"))
         #expect(source.contains("await _task.value"))
@@ -82,7 +82,7 @@ struct DriverSourceBuilderCoverageTests {
         #expect(source.contains("@main"))
         #expect(source.contains("await registry.registerBuiltins()"))
         #expect(source.contains("let observer = JSONLObserver.stdout"))
-        #expect(source.contains("let order = try JSONDecoder().decode(Order.self"))
+        #expect(source.contains("let order = try meridianParameterDecoder().decode(Order.self"))
         #expect(source.contains("_ = try await ApproveOrder(runtime: runtime, order: order).run()"))
         #expect(!source.contains("__MERIDIAN_FINAL_REASON__:"))
         #expect(!source.contains(".money("))

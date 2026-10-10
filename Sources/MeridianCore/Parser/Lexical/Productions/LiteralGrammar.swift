@@ -25,7 +25,19 @@ struct LiteralGrammar {
         if t.isEmpty { return nil }
 
         if matchesWholeKeyword("now", in: t) { return .now }
-        if t.hasPrefix("$") { return .envVar(String(t.dropFirst())) }
+        if t.hasPrefix("$") {
+            // `$5000` / `$5000.00 AUD` — a money literal, the same form the
+            // `.merconfig` constant parser accepts (docs/03 "value forms").
+            // `$NAME` stays an environment-variable reference; a name that can
+            // be neither (`$1000x`) is rejected rather than silently read as an
+            // env var that evaluates to "".
+            let body = String(t.dropFirst())
+            if let money = Self.parseMoneyLiteral(body) { return .literal(.money(money.0, currency: money.1)) }
+            guard let first = body.first, first.isLetter || first == "_" else {
+                return .malformed("\(t)` is not an environment variable name or a money amount")
+            }
+            return .envVar(body)
+        }
         if matchesWholeKeyword("true", in: t) { return .literal(.boolean(true)) }
         if matchesWholeKeyword("false", in: t) { return .literal(.boolean(false)) }
 
@@ -40,6 +52,16 @@ struct LiteralGrammar {
         if let n = Int(t) { return .literal(.integer(n)) }
 
         return nil
+    }
+
+    /// `5000` or `5000.00 AUD` → (amount, currency); `nil` when the text is not
+    /// a money amount. Default currency is USD, matching the .merconfig parser.
+    static func parseMoneyLiteral(_ body: String) -> (Double, String)? {
+        let parts = body.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+        guard let amount = Double(parts.first ?? ""), parts.count <= 2 else { return nil }
+        let currency = parts.count == 2 ? parts[1].uppercased() : "USD"
+        guard currency.allSatisfy({ $0.isLetter }), !currency.isEmpty else { return nil }
+        return (amount, currency)
     }
 
     /// True when `text`, trimmed and with no remainder, is exactly the keyword

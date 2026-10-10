@@ -320,6 +320,16 @@ extension MerConfigParser {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         return items.map { item in
+            // `a legacy id which is a String` — the marker is declared in
+            // `FixedGrammar` and promised by this parser's help text. Applied
+            // per item so an Oxford list (`a name and a legacy id which is a
+            // String`) types only the item it belongs to.
+            if item.lowercased().contains(lexicon.grammar.merconfig.whichIsMarker) {
+                let parts = item.components(separatedBy: lexicon.grammar.merconfig.whichIsMarker)
+                let name = extractPropName(parts[0], before: nil)
+                let type = stripTypeArticle(parts[1])
+                return PropertyEntry(name: name, type: parsePropertyType(type))
+            }
             let name = extractPropName(item, before: nil)
             return PropertyEntry(name: name, type: .defaulted)
         }

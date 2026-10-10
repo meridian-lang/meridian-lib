@@ -101,15 +101,22 @@ extension Value {
     /// `traverse`. Returns `nil` when the box wasn't constructed with a
     /// captured `Encodable` conformance (`AnyHashableSendable.init<T: Hashable
     /// & Sendable>`, no encoder), or the round-trip otherwise fails.
-    private static func decodeOpaqueRecord(_ box: AnyHashableSendable) -> [String: Value]? {
+    static func decodeOpaqueRecord(_ box: AnyHashableSendable) -> [String: Value]? {
         struct Probe: Encodable {
             let box: AnyHashableSendable
             func encode(to encoder: Encoder) throws {
                 _ = try box.encodeIfEncodable(to: encoder)
             }
         }
-        guard let encoded = try? JSONEncoder().encode(Probe(box: box)),
-              let dict = try? JSONDecoder().decode([String: AnyCodable].self, from: encoded)
+        // ISO-8601 dates, matching the trace schema's convention: the default
+        // `.deferredToDate` strategy writes an Apple-epoch Double, which is
+        // neither readable nor comparable across payloads.
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        guard let encoded = try? encoder.encode(Probe(box: box)),
+              let dict = try? decoder.decode([String: AnyCodable].self, from: encoded)
         else { return nil }
         return dict.mapValues(\.value)
     }
@@ -130,7 +137,23 @@ public struct AnyHashableSendable: @unchecked Sendable, Hashable {
 
     public init<T: Hashable & Sendable>(_ value: T) {
         self.base = AnyHashable(value)
-        self.encoder = nil
+        // Capture the Encodable conformance when the wrapped type has one, so
+        // `decodeOpaqueRecord` can round-trip it. Encoding *through* the
+        // `any Encodable` existential is fine (only casting it back to a
+        // concrete type loses the conformance); without this, a domain-typed
+        // binding serializes as its `description` in payloads.
+        if value is any Encodable {
+            // Capture the (Sendable) value, not the existential: Swift 6
+            // rejects capturing a non-Sendable `any Encodable` in a
+            // `@Sendable` closure. Encoding *through* the existential inside
+            // the closure is fine.
+            self.encoder = { encoder in
+                guard let encodable = value as? any Encodable else { return }
+                try encodable.encode(to: encoder)
+            }
+        } else {
+            self.encoder = nil
+        }
     }
 
     /// Initialise with an Encodable value; the captured `encoder` closure
@@ -277,7 +300,14 @@ public extension Value {
         case .list(let arr): return arr.map { $0.jsonEncodableObject }
         case .reference(let r): return r
         case .null: return NSNull()
-        case .opaque(let box): return String(describing: box)
+        case .opaque(let box):
+            // A box built from an Encodable domain value round-trips to its
+            // fields; only a genuinely non-Encodable payload falls back to a
+            // description string.
+            guard let fields = Value.decodeOpaqueRecord(box) else {
+                return String(describing: box)
+            }
+            return fields.mapValues { $0.jsonEncodableObject }
         }
     }
 
